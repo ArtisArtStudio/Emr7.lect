@@ -2,7 +2,7 @@
 
 Türkçe dersi için haftalık çalışma planını, okuma etkinliklerini, kısa değerlendirmeleri ve Phaser mini oyunlarını tek sayfada bir araya getiren statik bir öğrenme uygulaması.
 
-**Canlı uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
+**GitHub Pages bağlantısı (Pages etkinleştirildiğinde):** <https://artisartstudio.github.io/Emr7.lect/>
 
 ## Neler var?
 
@@ -35,7 +35,7 @@ Yerel anahtar dosyaları ve proje aktarım arşivleri `.gitignore` ile dışarı
 
 ## GitHub Pages
 
-Depo herkese açıktır ve GitHub Pages ile şu adresten sunulur:
+Depo herkese açıktır. **GitHub Pages henüz etkinleştirilemedi.** Etkinleştirmek için depo ayarlarında **Settings → Pages → Build and deployment → Deploy from a branch** seçip `arena/2f2c4881-emr7-lect` dalını ve `/(root)` klasörünü seçin. Yayın başladıktan sonra uygulama şu adreste açılır:
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
