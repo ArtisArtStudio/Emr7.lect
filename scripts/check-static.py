@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """Check GitHub Pages file paths, JavaScript syntax, and merged-week behavior."""
 
+import json
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -88,6 +93,177 @@ console.log('Week grouping and saved-progress migration passed.');
     return grouping + "\n" + migration + "\n" + harness
 
 
+def text_reader_test_source(html: str) -> str:
+    def json_constant(name: str, next_name: str):
+        pattern = (
+            r"const " + re.escape(name) + r"=(\{.*?\});\nconst "
+            + re.escape(next_name)
+            + "="
+        )
+        match = re.search(pattern, html, re.DOTALL)
+        if not match:
+            raise ValueError(f"Could not find {name} in index.html")
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Could not parse {name}: {exc}") from exc
+
+    texts = json_constant("BOOK_TEXTS", "BOOK_MAP")
+    credits = json_constant("BOOK_CREDITS", "BOOK_PAUSE_PROMPTS")
+    prompt_match = re.search(
+        r"const BOOK_PAUSE_PROMPTS=(\{.*?\});\nconst BOOK_SUBHEADINGS=", html, re.DOTALL
+    )
+    if not prompt_match:
+        raise ValueError("Could not find BOOK_PAUSE_PROMPTS in index.html")
+    prompts = prompt_match.group(1)
+    map_match = re.search(
+        r"const BOOK_MAP=(\{.*?\});\nconst BOOK_CREDITS=", html, re.DOTALL
+    )
+    if not map_match:
+        raise ValueError("Could not find BOOK_MAP in index.html")
+    map_source = re.sub(
+        r"([{,])(\s*)(\d+):",
+        lambda match: f'{match.group(1)}{match.group(2)}"{match.group(3)}":',
+        map_match.group(1),
+    )
+    try:
+        book_map = json.loads(map_source)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Could not parse BOOK_MAP: {exc}") from exc
+
+    required = {
+        "marti",
+        "gencligin",
+        "adini",
+        "bayrak",
+        "mustafa",
+        "kagni",
+        "eskici",
+        "hayir",
+        "ogut",
+    }
+    if not required.issubset(texts):
+        raise ValueError(f"Missing source passages: {sorted(required - set(texts))}")
+    week_eight = book_map.get("8", [None, None])
+    if week_eight[1] != "mustafa" or "Tarihe Atılan İmza" not in week_eight[0]:
+        raise ValueError("The PDF's Tarihe Atılan İmza passage is not mapped to week 8")
+    if any(texts["marti"].count(f"[[PAUSE:{stop}]]") != 1 for stop in (1, 2)):
+        raise ValueError("Jonathan's two PDF prediction stops are missing or duplicated")
+    if len(texts["mustafa"]) < 6000 or "Üç Çıkış Yolu" not in texts["mustafa"]:
+        raise ValueError("The full available Mustafa passage is missing from the reader")
+    if (
+        len(texts["ogut"].split("\n\n")) != 5
+        or not texts["ogut"].startswith("Dinle sana bir nasihat edeyim")
+        or not texts["ogut"].endswith("Kötülerle konup göçücü olma.")
+    ):
+        raise ValueError("The Öğüt poem is missing one or more source stanzas")
+    if len(texts["kagni"].split("\n\n")) != 7 or "MUSTAFA KEMAL’İN KAĞNISI" in texts["kagni"]:
+        raise ValueError("The Kağnı poem's source title/stanza layout is incorrect")
+    if "Düşerim gerilere iyceden iyceden." not in texts["kagni"]:
+        raise ValueError("A line from the Kağnı poem is missing or incomplete")
+    activity_fragments = (
+        "metnin etkinliklerine göz gezdiriniz",
+        "hareketle okurken kullanacağınız stratejiyi",
+        "okuma süreciniz istediğiniz şekilde ilerlemezse",
+        "yakın çevrenizdeki insanlar birbirleriyle",
+        "sizce bir toprak parçasını ‘vatan’ yapan nedir",
+        "metni soru sorarak okuma yöntemiyle",
+    )
+    for key, text in texts.items():
+        if any(fragment in text.casefold() for fragment in activity_fragments):
+            raise ValueError(f"A workbook instruction was mixed into the {key} story")
+    if not re.search(r"#bookText\s*\{[^}]*font-size:\s*17px", html):
+        raise ValueError("The reading text font was not increased to 17px")
+
+    reader_start = html.find("function renderBookText(bm){")
+    reader_end = html.find("\nasync function speakEleven", reader_start)
+    if reader_start < 0 or reader_end < 0:
+        raise ValueError("The structured story-text renderer is missing")
+    reader_function = html[reader_start:reader_end]
+    headings_match = re.search(
+        r"const BOOK_SUBHEADINGS=\{mustafa:new Set\((\[.*?\])\)\};",
+        html,
+        re.DOTALL,
+    )
+    if not headings_match:
+        raise ValueError("The Mustafa passage's source subheadings are missing")
+    headings = json.loads(headings_match.group(1))
+    expected_headings = {
+        "MUSTAFA KEMAL PAŞA SAMSUN’DA",
+        "Tarihî Yolculuk Başlıyor",
+        "İlk Adım",
+        "‘Millî Mesai’ Başlıyor",
+        "(...) Düşman",
+        "Millî Bilinç Uyanıyor: Büyük İstanbul Mitingleri",
+        "Üç Çıkış Yolu",
+    }
+    if set(headings) != expected_headings:
+        raise ValueError("The Mustafa passage's PDF section headings are incomplete or changed")
+
+    harness = f"""
+const BOOK_TEXTS = {json.dumps(texts, ensure_ascii=False)};
+const BOOK_CREDITS = {json.dumps(credits, ensure_ascii=False)};
+const BOOK_PAUSE_PROMPTS = {prompts};
+const BOOK_SUBHEADINGS = {{mustafa: new Set({json.dumps(headings, ensure_ascii=False)})}};
+let current = 1;
+let data = {{}};
+let stored = 0;
+function store() {{ stored += 1; }}
+class FakeNode {{
+  constructor(tag) {{
+    this.tag = tag;
+    this.children = [];
+    this.listeners = {{}};
+    this.attributes = {{}};
+    this.className = '';
+    this.classList = {{add: (name) => {{ this.className = (this.className + ' ' + name).trim(); }}}};
+    this.hidden = false;
+  }}
+  append(child) {{ this.children.push(child); child.parent = this; }}
+  replaceChildren() {{ this.children = []; }}
+  addEventListener(name, callback) {{ this.listeners[name] = callback; }}
+  setAttribute(name, value) {{ this.attributes[name] = value; }}
+  focus() {{}}
+  scrollIntoView() {{}}
+}}
+const root = new FakeNode('div');
+global.document = {{getElementById: () => root, createElement: (tag) => new FakeNode(tag)}};
+{reader_function}
+renderBookText(['Martı Jonathan Livingston', 'marti']);
+const walk = (node) => [node, ...node.children.flatMap(walk)];
+const nodes = walk(root);
+const stops = nodes.filter((node) => node.className === 'reading-pause');
+const segments = nodes.filter((node) => node.className === 'reading-segment');
+if (stops.length !== 2 || segments.length !== 2) throw new Error('Expected two numbered Jonathan pause cards and two continuation segments');
+const labels = stops.map((stop) => stop.children[0].textContent);
+if (labels[0] !== '⏸ DURAK 1 · TAHMİN ET' || labels[1] !== '⏸ DURAK 2 · TAHMİN ET') throw new Error('The two pause cards are not numbered in source order');
+if (!segments[0].hidden || !segments[1].hidden) throw new Error('The story continuation should remain gated until a prediction is saved');
+const answer = stops[0].children.find((node) => node.tag === 'textarea');
+const button = stops[0].children.find((node) => node.tag === 'button');
+const guess = 'Jonathan ailesine uçmayı neden sevdiğini anlatacak.';
+answer.value = guess;
+answer.listeners.input();
+button.listeners.click();
+if (data[1].readingPredictions.marti['1'] !== guess) throw new Error('The learner prediction was not saved');
+if (data[1].readingStops.marti['1'] !== true || segments[0].hidden) throw new Error('Saving the first prediction did not reveal the next story section');
+if (!segments[1].hidden) throw new Error('The second stop should still require its own prediction');
+const answer2 = stops[1].children.find((node) => node.tag === 'textarea');
+const button2 = stops[1].children.find((node) => node.tag === 'button');
+answer2.value = 'Uçuş denemesi başarıyla sonuçlanacak.';
+answer2.listeners.input();
+button2.listeners.click();
+if (data[1].readingStops.marti['2'] !== true || segments[1].hidden) throw new Error('Saving the second prediction did not reveal the final story section');
+renderBookText(['Martı Jonathan Livingston', 'marti']);
+const restoredNodes = walk(root);
+const restoredSegments = restoredNodes.filter((node) => node.className === 'reading-segment');
+const restoredAnswers = restoredNodes.filter((node) => node.tag === 'textarea');
+if (restoredSegments.some((segment) => segment.hidden) || restoredAnswers[0].value !== guess || restoredAnswers[1].value !== answer2.value) throw new Error('Saved predictions or revealed story sections were not restored');
+if (stored < 4) throw new Error('Reader progress was not persisted');
+console.log('Structured story reader and prediction stops passed.');
+"""
+    return harness
+
+
 def main() -> int:
     errors = []
     if not HTML_FILE.is_file():
@@ -168,13 +344,35 @@ def main() -> int:
                 elif "Week grouping and saved-progress migration passed." not in result.stdout:
                     errors.append("Week grouping test did not report success")
 
+            if not errors:
+                try:
+                    reader_test = text_reader_test_source(html)
+                except ValueError as exc:
+                    errors.append(str(exc))
+                else:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".js"
+                    ) as temp:
+                        temp.write(reader_test)
+                        temp.flush()
+                        result = subprocess.run(
+                            [node, temp.name],
+                            capture_output=True,
+                            text=True,
+                            check=False,
+                        )
+                    if result.returncode:
+                        errors.append(f"Story reader test failed:\n{result.stderr.strip()}")
+                    elif "Structured story reader and prediction stops passed." not in result.stdout:
+                        errors.append("Story reader test did not report success")
+
     if errors:
         print("Static site checks failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: Pages paths, JavaScript, week grouping, and progress migration are valid.")
+    print("Static site checks passed: Pages paths, JavaScript, week grouping, progress migration, and the PDF story reader are valid.")
     return 0
 
 
