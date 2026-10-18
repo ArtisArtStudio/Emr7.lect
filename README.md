@@ -7,6 +7,7 @@ Türkçe dersi için haftalık çalışma planını, okuma etkinliklerini, kısa
 ## Neler var?
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
+- Aynı metin veya konunun art arda işlendiği haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir.
 - Metin odakları, çoktan seçmeli etkinlikler, yazılı yanıtlar ve isteğe bağlı yapay zekâ geri bildirimi.
 - Phaser tabanlı mini oyunlar.
 - İlerlemeyi tarayıcıda saklama ve JSON yedeği alıp geri yükleme.
