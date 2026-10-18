@@ -1,0 +1,47 @@
+# Local API credentials and private configuration — never commit these.
+.env
+.env.*
+!.env.example
+*.local
+*.local.*
+config.local.js
+config.local.json
+api-keys.*
+api_keys.*
+api-key*
+api_key*
+groq-key*
+groq_key*
+elevenlabs-key*
+elevenlabs_key*
+*.secret
+*.secrets
+secrets/
+.private/
+credentials*.json
+service-account*.json
+*.pem
+*.p12
+*.key
+
+# Personal learning backups and authoring/source materials not needed by GitHub Pages.
+turkce-ilerleme-yedek*.json
+google_drive/
+planunzip/
+illustrations/
+*.pdf
+*.xlsx
+*.zip
+turkce_extracted.txt
+booktexts*.json
+
+# OS/editor/build artifacts.
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/
+.venv/
+__pycache__/
+dist/
+build/
