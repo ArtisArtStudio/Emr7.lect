@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check GitHub Pages file paths, JavaScript syntax, and merged-week behavior."""
+"""Check GitHub Pages assets, theme navigation, Theme 1 practice, and reader behavior."""
 
 import json
 import re
@@ -10,9 +10,6 @@ import tempfile
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
-import subprocess
-import sys
-import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML_FILE = ROOT / "index.html"
@@ -48,12 +45,19 @@ def grouping_test_source(html: str) -> str:
     groups_start = html.find("const BOOK_MAP={")
     groups_end = html.find("const BOOK_QUIZZES={", groups_start)
     migration_start = html.find("const WEEK_GROUP_VERSION=", groups_end)
-    migration_end = html.find("let current=5;", migration_start)
-    if min(groups_start, groups_end, migration_start, migration_end) < 0:
-        raise ValueError("Could not find the week-grouping code to test")
+    migration_end = html.find("let current=1;", migration_start)
+    practice_renderer_start = html.find("function themePracticeEscape(")
+    practice_renderer_end = html.find("\nfunction renderList()", practice_renderer_start)
+    renderer_start = html.find("function renderList(){")
+    renderer_end = html.find("\nfunction render(){", renderer_start)
+    if min(groups_start, groups_end, migration_start, migration_end, practice_renderer_start, practice_renderer_end, renderer_start, renderer_end) < 0:
+        raise ValueError("Could not find the week-grouping or theme-practice code to test")
 
     grouping = html[groups_start:groups_end]
     migration = html[migration_start:migration_end]
+    practice_data = (ROOT / "theme1-practice.js").read_text(encoding="utf-8")
+    practice_renderer = html[practice_renderer_start:practice_renderer_end]
+    renderer = html[renderer_start:renderer_end]
     harness = r"""
 const BOOK_QUIZZES = {
   marti: Array(5), gencligin: Array(5), adini: Array(5), hayir: Array(5)
@@ -66,6 +70,10 @@ const actualGroups = weeks.filter((w) => w[5].length > 1).map((w) => w[5]);
 const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
 if (weeks.length !== 29) throw new Error(`Expected 29 study pages, got ${weeks.length}`);
 if (!equal(actualGroups, expectedGroups)) throw new Error(`Unexpected merged groups: ${JSON.stringify(actualGroups)}`);
+const themes = groupWeeksByTheme(weeks);
+if (themes.length !== 9 || themes[0].number !== 1 || themes[0].name !== 'Hayat Boyu Gelişim') throw new Error('Theme navigation is missing its first theme or special sections');
+if (!equal(themes[0].rows.map((w) => w[0]), [1,3,5]) || themes[0].weekCount !== 6) throw new Error('Theme 1 does not contain the three grouped study units from weeks 1–6');
+if (THEME_NUMBER_BY_NAME.get('Bir Hilal Uğruna') !== 2 || themeDisplayName('Dönem sonu') !== 'Dönem sonu') throw new Error('Theme numbering includes a non-theme section or is out of order');
 const byId = new Map(weeks.map((w) => [w[0], w]));
 for (const [id, date] of [[1,'14–25 Eyl'],[3,'28 Eyl–9 Eki'],[5,'12–23 Eki'],[10,'23 Kas–4 Ara'],[14,'21–31 Ara'],[20,'15–26 Şub'],[23,'15–26 Mar'],[31,'10–21 May']]) {
   if (byId.get(id)?.[1] !== date) throw new Error(`Wrong combined date for week group ${id}: ${byId.get(id)?.[1]}`);
@@ -89,8 +97,53 @@ if (migrated[5].phaserGame.gate !== 2) throw new Error('Mini-game progress from 
 if ('2' in migrated || '4' in migrated || '6' in migrated || '11' in migrated) throw new Error('Obsolete duplicate-week progress keys remain');
 if (mergeGroupedProgress(migrated) !== migrated) throw new Error('Week progress migration is not idempotent');
 console.log('Week grouping and saved-progress migration passed.');
+let current = 1;
+function render() {}
+class ThemeNode {
+  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.className = ''; this.textContent = ''; this.open = false; }
+  append(...children) { this.children.push(...children); }
+  replaceChildren() { this.children = []; this.innerHTML = ''; }
+  addEventListener(name, callback) { this.listeners[name] = callback; }
+  setAttribute(name, value) { this.attributes[name] = value; }
+}
+const themeRoot = new ThemeNode('div');
+const themePracticeCard = new ThemeNode('section');
+const themePracticeRoot = new ThemeNode('div');
+global.document = {
+  getElementById: (id) => ({weeklist: themeRoot, theme1Practice: themePracticeCard, theme1PracticeUnits: themePracticeRoot}[id]),
+  createElement: (tag) => new ThemeNode(tag)
+};
+renderList();
+const sections = themeRoot.children;
+if (sections.length !== 9 || sections[0].className !== 'theme-group' || !sections[0].open || sections[1].open) throw new Error('Theme navigation did not open only the active theme');
+if (sections[0].children[0].children[0].textContent !== 'Tema 1 · Hayat Boyu Gelişim') throw new Error('Theme 1 label is missing from the navigation');
+if (sections[0].children[0].children[1].textContent !== '3 çalışma · 6 hafta') throw new Error('Theme 1 study/week count is incorrect');
+const theme1Buttons = sections[0].children[1].children;
+if (!equal(theme1Buttons.map((button) => button.children[0].textContent), ['1–2','3–4','5–6'])) throw new Error('Theme 1 weeks are not ordered and grouped correctly');
+if (theme1Buttons[0].attributes['aria-current'] !== 'page') throw new Error('The active Theme 1 week is not marked accessibly');
+console.log('Theme navigation renders Theme 1 with its grouped weeks.');
+let data = {};
+let practiceStores = 0;
+function store() { practiceStores += 1; }
+const practiceUnits = window.THEME1_PRACTICE.units;
+const activityCounts = practiceUnits.map((unit) => unit.groups.map((group) => group.activities.length));
+if (!equal(practiceUnits.map((unit) => unit.weekId), [1,3,5])) throw new Error('The original activity set is not limited to Theme 1 study units');
+if (!equal(activityCounts, [[12],[8,1,10],[8,3,1]])) throw new Error(`Unexpected Theme 1 activity coverage: ${JSON.stringify(activityCounts)}`);
+const allPracticeActivities = practiceUnits.flatMap((unit) => unit.groups.flatMap((group) => group.activities));
+if (!allPracticeActivities.every((activity) => activity.id && activity.title && activity.count && activity.format && activity.source && activity.skill && activity.instruction)) throw new Error('A Theme 1 practice task is missing type, count, source, or skill metadata');
+if (allPracticeActivities.some((activity) => activity.game || /mini game|mini oyun/i.test(activity.format || ''))) throw new Error('A game was added to the original Theme 1 practice set');
+if (!allPracticeActivities[0].reuseReader) throw new Error('The two existing prediction stops were duplicated instead of reused');
+renderTheme1Practice(weeks.find((week) => week[0] === 1));
+if (themePracticeCard.hidden || !themePracticeRoot.innerHTML.includes('1–2. haftalar · Martı Jonathan Livingston') || !themePracticeRoot.innerHTML.includes('12 numaralı etkinlik')) throw new Error('Theme 1 practice navigation did not render the active unit and inventory count');
+themePracticeRoot.oninput({target: {matches: (selector) => selector === 'textarea[data-practice-id]', dataset: {practiceId: 'marti-a02'}, value: 'Yanıtım <kanıt>'}});
+if (data[1].theme1Practice['marti-a02'] !== 'Yanıtım <kanıt>' || practiceStores !== 1) throw new Error('Theme 1 written answers are not automatically saved');
+renderTheme1Practice(weeks.find((week) => week[0] === 1));
+if (!themePracticeRoot.innerHTML.includes('Yanıtım &lt;kanıt&gt;')) throw new Error('Saved practice answers were not safely restored in the response field');
+renderTheme1Practice(weeks.find((week) => week[0] === 7));
+if (!themePracticeCard.hidden || themePracticeRoot.innerHTML !== '') throw new Error('Theme 1 practice appeared outside Theme 1');
+console.log('Theme 1 practice inventory, rendering, and saved answers passed.');
 """
-    return grouping + "\n" + migration + "\n" + harness
+    return "global.window = {};\n" + grouping + "\n" + migration + "\n" + practice_data + "\n" + practice_renderer + "\n" + renderer + "\n" + harness
 
 
 def text_reader_test_source(html: str) -> str:
@@ -151,6 +204,8 @@ def text_reader_test_source(html: str) -> str:
         raise ValueError("Jonathan's two PDF prediction stops are missing or duplicated")
     if len(texts["mustafa"]) < 6000 or "Üç Çıkış Yolu" not in texts["mustafa"]:
         raise ValueError("The full available Mustafa passage is missing from the reader")
+    if credits.get("bayrak") != "Halide Edip Adıvar · Bursa, 11 Ekim · (Kısaltılmıştır.)":
+        raise ValueError("The Bayrağımız credit is missing its source date or abbreviation note")
     if (
         len(texts["ogut"].split("\n\n")) != 5
         or not texts["ogut"].startswith("Dinle sana bir nasihat edeyim")
@@ -292,7 +347,13 @@ def main() -> int:
     if not node:
         errors.append("Node.js is required to check JavaScript syntax and week grouping")
     else:
-        js_files = [(ROOT / "arcade.js", (ROOT / "arcade.js").read_text(encoding="utf-8"))]
+        js_files = []
+        for relative in ("arcade.js", "theme1-practice.js"):
+            asset = ROOT / relative
+            if not asset.is_file():
+                errors.append(f"Missing JavaScript asset: {relative}")
+            else:
+                js_files.append((asset, asset.read_text(encoding="utf-8")))
         if not parser.inline_scripts:
             errors.append("No inline application script found in index.html")
         for index, script in enumerate(parser.inline_scripts, start=1):
@@ -340,9 +401,13 @@ def main() -> int:
                         check=False,
                     )
                 if result.returncode:
-                    errors.append(f"Week grouping test failed:\n{result.stderr.strip()}")
+                    errors.append(f"Week grouping/theme navigation test failed:\n{result.stderr.strip()}")
                 elif "Week grouping and saved-progress migration passed." not in result.stdout:
                     errors.append("Week grouping test did not report success")
+                elif "Theme navigation renders Theme 1 with its grouped weeks." not in result.stdout:
+                    errors.append("Theme navigation test did not report success")
+                elif "Theme 1 practice inventory, rendering, and saved answers passed." not in result.stdout:
+                    errors.append("Theme 1 practice test did not report success")
 
             if not errors:
                 try:
@@ -372,7 +437,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: Pages paths, JavaScript, week grouping, progress migration, and the PDF story reader are valid.")
+    print("Static site checks passed: assets, theme navigation, week/progress migration, Theme 1 practice, Bayrağımız credit, and the PDF reader are valid.")
     return 0
 
 
