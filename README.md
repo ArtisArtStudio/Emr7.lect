@@ -1,15 +1,16 @@
 # 7. Sınıf Öğrenme Rotası
 
-Türkçe dersi için haftalık çalışma planını, okuma etkinliklerini, kısa değerlendirmeleri ve Phaser mini oyunlarını tek sayfada bir araya getiren statik bir öğrenme uygulaması.
+Türkçe dersi için tema bazlı haftalık çalışma planı, yapılandırılmış okuma alanı ve Tema 1 için ayrı, adım adım çalışma paketleri sunan statik bir öğrenme uygulaması.
 
-**GitHub Pages bağlantısı (Pages etkinleştirildiğinde):** <https://artisartstudio.github.io/Emr7.lect/>
+**Yayımlanan uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
 
 ## Neler var?
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
 - Aynı metin veya konunun art arda işlendiği haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir.
-- Metin odakları, çoktan seçmeli etkinlikler, yazılı yanıtlar ve isteğe bağlı yapay zekâ geri bildirimi.
-- Phaser tabanlı mini oyunlar.
+- Tema bazında gruplanmış haftalık rota ve PDF’deki kaynak metinleri paragraf/dize düzeniyle sunan okuyucu.
+- Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; ayrı paket sayfasında sırayla ilerleme.
+- Yazılı yanıt, seçim ve eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
 - İlerlemeyi tarayıcıda saklama ve JSON yedeği alıp geri yükleme.
 - İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
 
@@ -36,11 +37,11 @@ Yerel anahtar dosyaları ve proje aktarım arşivleri `.gitignore` ile dışarı
 
 ## GitHub Pages
 
-Depo herkese açıktır. **GitHub Pages henüz etkinleştirilemedi.** Etkinleştirmek için depo ayarlarında **Settings → Pages → Build and deployment → Deploy from a branch** seçip `arena/2f2c4881-emr7-lect` dalını ve `/(root)` klasörünü seçin. Yayın başladıktan sonra uygulama şu adreste açılır:
+Depo ve uygulama herkese açıktır; mevcut GitHub Pages yayını şu adrestedir:
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
-Sayfanın ana dosyaları `index.html`, `arcade.js` ve yerel `assets/phaser.min.js` dosyasıdır. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; yayın için uygulama sunucusu veya API anahtarı gerekmez.
+Ana dosyalar `index.html`, `book-texts.js`, `theme1-practice.html`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
 
 ## Kontroller
 
@@ -49,7 +50,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel dosya yollarını ve satır içi JavaScript sözdizimini denetler; bunun için Node.js gerekir.
+`check-static.py`, iki sayfanın yerel yollarını, JavaScript sözdizimini, 43 etkinliğin form türlerini, paket akışını, soru kontrollerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

@@ -20,18 +20,17 @@ window.THEME1_PRACTICE = {
               count: "2 tahmin durağı · 1 kontrol",
               source: "Martı Jonathan Livingston öyküsü",
               skill: "Okuma öncesi tahmin, metin ipucu kullanma, öz değerlendirme",
-              instruction: "İlk tahminini ve gerekçeni, iki durakta yaptığın güncellemeyi ve okuma sonundaki karşılaştırmanı yaz.",
-              reuseReader: true
+              instruction: "İlk tahminini ve gerekçeni, iki durakta yaptığın güncellemeyi ve okuma sonundaki karşılaştırmanı yaz."
             },
             {
               id: "marti-a02",
               number: "2",
-              title: "Söz varlığını bağlamda incele",
-              format: "Kelime–bağlam çalışması",
-              count: "4 kelime grubu",
+              title: "Anahtar söz varlığını incele",
+              format: "Anahtar kelime seçimi ve söz varlığı tablosu",
+              count: "4 sözcük × 3 anlam alanı · 4 sözcük ilişkisi",
               source: "Martı Jonathan Livingston öyküsü",
-              skill: "Bağlamdan anlam, sözlükle doğrulama, çağrışım",
-              instruction: "Her kelime için metinden uygun bir olay ya da ayrıntı bul; bağlamdaki anlamını kendi sözlerinle açıkla ve bir çağrışım yaz.",
+              skill: "Anahtar söz varlığı, bağlamdan anlam, sözlük, çağrışım ve anlam ilişkisi",
+              instruction: "Dört sözcükten anahtar söz varlığına uygun olanları belirle. Her biri için metindeki anlamı, sözlükteki anlamı ve çağrıştırdığı kelimeleri yaz; sonra sözcüklerin birbiriyle ilişkisini açıkla.",
               prompts: ["özgür", "sınırlarını zorlamak", "sıra dışı", "tutku"]
             },
             {
@@ -296,7 +295,7 @@ window.THEME1_PRACTICE = {
               id: "adiny-a02", number: "2", title: "Davranıştan kişilik özelliğine ulaş", format: "Kanıt–özellik eşleştirmesi", count: "4 kanıt", source: "Kaoru İkeya öyküsü", skill: "Metinden kanıt, karakter çözümleme, gerekçe", instruction: "Dört davranış seç. Her birinin yanına desteklediği kişilik özelliğini ve bağlantının nedenini yaz.", prompts: ["Davranış/kanıt 1 → özellik → gerekçe", "Davranış/kanıt 2 → özellik → gerekçe", "Davranış/kanıt 3 → özellik → gerekçe", "Davranış/kanıt 4 → özellik → gerekçe"]
             },
             {
-              id: "adiny-a03", number: "3", title: "Jonathan ile Kaoru’yu karşılaştır", format: "İki kişilik karşılaştırma tablosu", count: "2 kişi · 4 boyut · 2 benzerlik · 2 farklılık", source: "Martı Jonathan Livingston ve Kaoru İkeya öyküleri", skill: "Karşılaştırma, sentez, kanıt seçme", instruction: "Her iki öyküden de birer kanıt kullanarak karşılaştır.", prompts: ["Başlangıçtaki amaçları", "Karşılaştıkları engeller", "Engellere verdikleri tepkiler", "Öğrenme/çalışma yöntemleri", "İki benzerlik ve iki farklılık"]
+              id: "adiny-a03", number: "3", title: "Kaoru ile Yiğit Caner Aydın’ı karşılaştır", format: "Öykü–video karşılaştırma tablosu", count: "2 kişi · 4 boyut · 2 benzerlik · 2 farklılık", source: "Kaoru İkeya öyküsü ve Yiğit Caner Aydın video söyleşisi", skill: "Karşılaştırma, sentez, kanıt seçme", instruction: "Öyküden ve kitaptaki video söyleşisinden birer kanıt kullanarak karşılaştır. Video uygulamaya gömülü değildir.", prompts: ["Başlangıçtaki amaçları", "Karşılaştıkları engeller", "Engellere verdikleri tepkiler", "Öğrenme/çalışma yöntemleri", "İki benzerlik ve iki farklılık"]
             },
             {
               id: "adiny-a04", number: "4", title: "Öykü bölümleri için ölçüt oluştur", format: "Dört ölçüt grubu ve metin değerlendirmesi", count: "Serim, düğüm, çözüm, bağlantılar: 4 grup", source: "Kaoru İkeya öyküsü", skill: "Öykü yapısı, olay örgüsü, tutarlılık", instruction: "İyi bir öyküde her bölümde bulunması gereken bir ölçüt yaz. Sonra Kaoru öyküsünü ölçütlerinle değerlendir.", prompts: ["Serim bölümü ölçütü", "Düğüm bölümü ölçütü", "Çözüm bölümü ölçütü", "Bölümler arası bağlantı ölçütü", "Öyküden bir örnekle güçlü bulduğun ya da geliştireceğin yön"]

@@ -45,8 +45,8 @@ def grouping_test_source(html: str) -> str:
     groups_start = html.find("const BOOK_MAP={")
     groups_end = html.find("const BOOK_QUIZZES={", groups_start)
     migration_start = html.find("const WEEK_GROUP_VERSION=", groups_end)
-    migration_end = html.find("let current=1;", migration_start)
-    practice_renderer_start = html.find("function themePracticeEscape(")
+    migration_end = html.find("const requestedReadingWeek=", migration_start)
+    practice_renderer_start = html.find("function renderTheme1Practice(w){")
     practice_renderer_end = html.find("\nfunction renderList()", practice_renderer_start)
     renderer_start = html.find("function renderList(){")
     renderer_end = html.find("\nfunction render(){", renderer_start)
@@ -56,6 +56,7 @@ def grouping_test_source(html: str) -> str:
     grouping = html[groups_start:groups_end]
     migration = html[migration_start:migration_end]
     practice_data = (ROOT / "theme1-practice.js").read_text(encoding="utf-8")
+    practice_forms = (ROOT / "theme1-practice-forms.js").read_text(encoding="utf-8")
     practice_renderer = html[practice_renderer_start:practice_renderer_end]
     renderer = html[renderer_start:renderer_end]
     harness = r"""
@@ -98,9 +99,10 @@ if ('2' in migrated || '4' in migrated || '6' in migrated || '11' in migrated) t
 if (mergeGroupedProgress(migrated) !== migrated) throw new Error('Week progress migration is not idempotent');
 console.log('Week grouping and saved-progress migration passed.');
 let current = 1;
-function render() {}
+let data = {};
+function store() {}
 class ThemeNode {
-  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.className = ''; this.textContent = ''; this.open = false; }
+  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.dataset = {}; this.className = ''; this.textContent = ''; this.open = false; this.hidden = false; this.innerHTML = ''; }
   append(...children) { this.children.push(...children); }
   replaceChildren() { this.children = []; this.innerHTML = ''; }
   addEventListener(name, callback) { this.listeners[name] = callback; }
@@ -122,28 +124,185 @@ const theme1Buttons = sections[0].children[1].children;
 if (!equal(theme1Buttons.map((button) => button.children[0].textContent), ['1–2','3–4','5–6'])) throw new Error('Theme 1 weeks are not ordered and grouped correctly');
 if (theme1Buttons[0].attributes['aria-current'] !== 'page') throw new Error('The active Theme 1 week is not marked accessibly');
 console.log('Theme navigation renders Theme 1 with its grouped weeks.');
-let data = {};
-let practiceStores = 0;
-function store() { practiceStores += 1; }
+
 const practiceUnits = window.THEME1_PRACTICE.units;
 const activityCounts = practiceUnits.map((unit) => unit.groups.map((group) => group.activities.length));
 if (!equal(practiceUnits.map((unit) => unit.weekId), [1,3,5])) throw new Error('The original activity set is not limited to Theme 1 study units');
 if (!equal(activityCounts, [[12],[8,1,10],[8,3,1]])) throw new Error(`Unexpected Theme 1 activity coverage: ${JSON.stringify(activityCounts)}`);
 const allPracticeActivities = practiceUnits.flatMap((unit) => unit.groups.flatMap((group) => group.activities));
+if (allPracticeActivities.length !== 43) throw new Error(`Expected 43 Theme 1 activities, got ${allPracticeActivities.length}`);
 if (!allPracticeActivities.every((activity) => activity.id && activity.title && activity.count && activity.format && activity.source && activity.skill && activity.instruction)) throw new Error('A Theme 1 practice task is missing type, count, source, or skill metadata');
-if (allPracticeActivities.some((activity) => activity.game || /mini game|mini oyun/i.test(activity.format || ''))) throw new Error('A game was added to the original Theme 1 practice set');
-if (!allPracticeActivities[0].reuseReader) throw new Error('The two existing prediction stops were duplicated instead of reused');
+if (allPracticeActivities.some((activity) => activity.game || /mini game|mini oyun/i.test(activity.format || ''))) throw new Error('A game was added to the Theme 1 practice set');
+const activityIds = new Set(allPracticeActivities.map((activity) => activity.id));
+const configuredIds = new Set(Object.keys(window.THEME1_FORMS));
+if (activityIds.size !== configuredIds.size || [...activityIds].some((id) => !configuredIds.has(id))) throw new Error('Every activity needs an explicit, source-matched question form');
+for (const [activityId, questions] of Object.entries(window.THEME1_FORMS)) {
+  if (!questions.length || questions.some((question) => !question.id || !question.prompt || !question.fields?.length)) throw new Error(`An activity question is incomplete: ${activityId}`);
+  for (const question of questions) {
+    if (question.fields.some((field) => !field.id || !field.label)) throw new Error(`A response widget is missing a label: ${activityId}/${question.id}`);
+  }
+}
+const vocabulary = window.THEME1_FORMS['marti-a02'];
+for (const fieldName of ['key-word','context-meaning','dictionary-meaning','associations']) {
+  if (!vocabulary.some((question) => question.fields.some((field) => field.id === fieldName))) throw new Error(`Anahtar söz varlığı is missing ${fieldName}`);
+}
+if (!vocabulary.some((question) => question.id === 'word-relationships')) throw new Error('Anahtar söz varlığı word-selection/relationship work is missing');
+for (const section of ['serim','dugum','cozum']) {
+  if (!window.THEME1_FORMS['marti-a04'].some((question) => question.id === section && question.fields.some((field) => field.type === 'textarea'))) throw new Error(`Olay örgüsü needs a separate written ${section} response`);
+}
+if (!window.THEME1_FORMS['sport-a10'].some((question) => question.id === 'dugum') || !window.THEME1_FORMS['sport-a10'].some((question) => question.id === 'cozum')) throw new Error('The written story sections are not separate response fields');
+const matchingQuestions = Object.values(window.THEME1_FORMS).flat().filter((question) => question.responseType === 'matching');
+if (matchingQuestions.length < 10 || matchingQuestions.some((question) => !question.fields.some((field) => field.type === 'select'))) throw new Error('Source matching/classification tasks must use selection widgets');
+if (!window.THEME1_FORMS['adiny-review'].some((question) => question.id === 'review-2' && question.fields.some((field) => field.type === 'radio'))) throw new Error('The theme review multiple-choice item is not a real selection widget');
+if (!window.THEME1_FORMS['adiny-a03'].every((question) => question.sourceKeys?.includes('adini') && question.sourceNote?.includes('QR'))) throw new Error('The Kaoru–Yiğit Caner Aydın comparison must use the story text and note the QR-only video limit');
+
 renderTheme1Practice(weeks.find((week) => week[0] === 1));
-if (themePracticeCard.hidden || !themePracticeRoot.innerHTML.includes('1–2. haftalar · Martı Jonathan Livingston') || !themePracticeRoot.innerHTML.includes('12 numaralı etkinlik')) throw new Error('Theme 1 practice navigation did not render the active unit and inventory count');
-themePracticeRoot.oninput({target: {matches: (selector) => selector === 'textarea[data-practice-id]', dataset: {practiceId: 'marti-a02'}, value: 'Yanıtım <kanıt>'}});
-if (data[1].theme1Practice['marti-a02'] !== 'Yanıtım <kanıt>' || practiceStores !== 1) throw new Error('Theme 1 written answers are not automatically saved');
-renderTheme1Practice(weeks.find((week) => week[0] === 1));
-if (!themePracticeRoot.innerHTML.includes('Yanıtım &lt;kanıt&gt;')) throw new Error('Saved practice answers were not safely restored in the response field');
+if (themePracticeCard.hidden || !themePracticeRoot.innerHTML.includes('theme1-practice.html?unit=1') || !themePracticeRoot.innerHTML.includes('1–2. haftalar · Martı Jonathan Livingston') || !themePracticeRoot.innerHTML.includes('12 numaralı etkinlik')) throw new Error('Theme 1 separate-package link did not render the active unit and inventory count');
+if (themePracticeRoot.innerHTML.includes('<details') || themePracticeRoot.innerHTML.includes('textarea')) throw new Error('Inline collapsible practice activities are still being rendered');
 renderTheme1Practice(weeks.find((week) => week[0] === 7));
-if (!themePracticeCard.hidden || themePracticeRoot.innerHTML !== '') throw new Error('Theme 1 practice appeared outside Theme 1');
-console.log('Theme 1 practice inventory, rendering, and saved answers passed.');
+if (!themePracticeCard.hidden || themePracticeRoot.innerHTML !== '') throw new Error('Theme 1 practice links appeared outside Theme 1');
+console.log('Theme 1 practice inventory, typed forms, package links, and game removal passed.');
 """
-    return "global.window = {};\n" + grouping + "\n" + migration + "\n" + practice_data + "\n" + practice_renderer + "\n" + renderer + "\n" + harness
+    return "global.window = {};\n" + grouping + "\n" + migration + "\n" + practice_data + "\n" + practice_forms + "\n" + practice_renderer + "\n" + renderer + "\n" + harness
+
+
+def practice_app_test_source() -> str:
+    sources = [
+        (ROOT / name).read_text(encoding="utf-8")
+        for name in (
+            "book-texts.js",
+            "theme1-practice.js",
+            "theme1-practice-forms.js",
+            "theme1-practice-app.js",
+        )
+    ]
+    return f"""
+const vm = require('node:vm');
+const sources = {json.dumps(sources, ensure_ascii=False)};
+for (const unitId of [1,3,5]) {{
+  const elements = new Map();
+  const element = (id) => {{
+    if (!elements.has(id)) elements.set(id, {{
+      id, innerHTML: '', textContent: '', dataset: {{}}, value: '', checked: false,
+      disabled: false, attributes: {{}}, listeners: {{}}, style: {{}},
+      setAttribute(name, value) {{ this.attributes[name] = value; }},
+      addEventListener(name, callback) {{ this.listeners[name] = callback; }},
+      querySelectorAll() {{ return []; }},
+      getBoundingClientRect() {{ return {{top: 0}}; }}
+    }});
+    return elements.get(id);
+  }};
+  const store = new Map();
+  const browserWindow = {{
+    location: {{search: `?unit=${{unitId}}`}}, scrollY: 0,
+    scrollTo() {{}}, setTimeout() {{ return 1; }}, clearTimeout() {{}}
+  }};
+  const browserDocument = {{title: '', getElementById: element}};
+  const context = vm.createContext({{
+    window: browserWindow,
+    document: browserDocument,
+    localStorage: {{
+      getItem: (key) => store.get(key) || null,
+      setItem: (key, value) => store.set(key, value),
+      removeItem: (key) => store.delete(key)
+    }},
+    URLSearchParams, Date, console
+  }});
+  for (const source of sources) vm.runInContext(source, context);
+  const selected = context.window.THEME1_PRACTICE.units.find((unit) => unit.weekId === unitId);
+  const activities = selected.groups.flatMap((group) => group.activities);
+  for (let index = 0; index < activities.length; index += 1) {{
+    const activity = activities[index];
+    const expectedChecks = context.window.THEME1_FORMS[activity.id].length;
+    const actualChecks = (element('activity-stage').innerHTML.match(/data-check-question=/g) || []).length;
+    if (actualChecks !== expectedChecks) throw new Error(`Unit ${{unitId}} activity ${{activity.id}}: expected ${{expectedChecks}} question checks, got ${{actualChecks}}`);
+    if (!element('activity-stage').innerHTML.includes('Yanıt alanı')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} is missing a response area`);
+    if (index < activities.length - 1) element('next-step').listeners.click();
+  }}
+  const totalChecks = activities.reduce((sum, activity) => sum + context.window.THEME1_FORMS[activity.id].length, 0);
+  console.log(`Unit ${{unitId}} rendered ${{activities.length}} activities and ${{totalChecks}} question checks.`);
+}}
+"""
+
+
+def groq_prompt_test_source() -> str:
+    sources = [
+        (ROOT / name).read_text(encoding="utf-8")
+        for name in (
+            "book-texts.js",
+            "theme1-practice.js",
+            "theme1-practice-forms.js",
+            "theme1-practice-app.js",
+        )
+    ]
+    return f"""
+const vm = require('node:vm');
+const sources = {json.dumps(sources, ensure_ascii=False)};
+const saved = {{
+  1: {{theme1PracticeFlow: {{stepIndex: 0, answers: {{'marti-a03::evidence-1': {{answer: 'Jonathan tests a new way of turning.'}}}}, feedback: {{}}}}}}
+}};
+const storage = new Map([
+  ['turkceRota2026', JSON.stringify(saved)],
+  ['turkceGroqKey2026', 'unit-test-key']
+]);
+const elements = new Map();
+let capturedRequest = null;
+const element = (id) => {{
+  if (!elements.has(id)) {{
+    const item = {{
+      id, innerHTML: '', textContent: '', dataset: {{}}, value: '', checked: false,
+      disabled: false, hidden: false, attributes: {{}}, listeners: {{}}, style: {{}},
+      setAttribute(name, value) {{ this.attributes[name] = value; }},
+      addEventListener(name, callback) {{ this.listeners[name] = callback; }},
+      getBoundingClientRect() {{ return {{top: 0}}; }}
+    }};
+    item.querySelectorAll = (selector) => {{
+      if (id === 'activity-stage' && selector === '[data-check-question]') {{
+        const matches = [...item.innerHTML.matchAll(/data-check-question="([^"]+)"/g)];
+        item.checkButtons = matches.map((match) => {{
+          const feedback = {{dataset: {{}}, hidden: true, textContent: ''}};
+          const card = {{querySelector: (name) => name === '.feedback-box' ? feedback : null}};
+          return {{dataset: {{checkQuestion: match[1]}}, disabled: false, textContent: '', listeners: {{}}, closest: () => card, addEventListener(name, callback) {{ this.listeners[name] = callback; }}, feedback}};
+        }});
+        return item.checkButtons;
+      }}
+      return [];
+    }};
+    elements.set(id, item);
+  }}
+  return elements.get(id);
+}};
+const browserWindow = {{
+  location: {{search: '?unit=1'}}, scrollY: 0, scrollTo() {{}},
+  setTimeout() {{ return 1; }}, clearTimeout() {{}}
+}};
+const context = vm.createContext({{
+  window: browserWindow,
+  document: {{title: '', getElementById: element}},
+  localStorage: {{getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key)}},
+  URLSearchParams, Date, console,
+  fetch: async (url, options) => {{
+    capturedRequest = {{url, body: JSON.parse(options.body)}};
+    return {{ok: true, json: async () => ({{choices: [{{message: {{content: 'Geri bildirim: Metinden kanıt seçmen iyi bir başlangıç.'}}}}]}})}};
+  }}
+}});
+for (const source of sources) vm.runInContext(source, context);
+element('next-step').listeners.click();
+element('next-step').listeners.click();
+const stage = element('activity-stage');
+const button = stage.checkButtons.find(item => item.dataset.checkQuestion === 'marti-a03::evidence-1');
+if (!button) throw new Error('Could not find the story question check button');
+button.listeners.click();
+setTimeout(() => {{
+  if (!capturedRequest) throw new Error('Kontrol et did not send a Groq request');
+  const system = capturedRequest.body.messages.find(message => message.role === 'system').content;
+  const prompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
+  if (!system.includes('7. sınıf Türkçe') || !system.includes('Tema 1 · Hayat Boyu Gelişim') || !system.includes('Maarif/MEB')) throw new Error('Groq system message omitted grade, theme, or Maarif/MEB context');
+  if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
+  if (!button.feedback.textContent.includes('Geri bildirim')) throw new Error('Groq feedback was not rendered after the response');
+  console.log('Question-level Groq request includes age/theme context, source passage, and feedback.');
+}}, 0);
+"""
 
 
 def text_reader_test_source(html: str) -> str:
@@ -161,7 +320,14 @@ def text_reader_test_source(html: str) -> str:
         except json.JSONDecodeError as exc:
             raise ValueError(f"Could not parse {name}: {exc}") from exc
 
-    texts = json_constant("BOOK_TEXTS", "BOOK_MAP")
+    text_source = (ROOT / "book-texts.js").read_text(encoding="utf-8")
+    text_match = re.fullmatch(r"window\.BOOK_TEXTS=(\{.*\});\s*", text_source, re.DOTALL)
+    if not text_match:
+        raise ValueError("Could not find the standalone BOOK_TEXTS data")
+    try:
+        texts = json.loads(text_match.group(1))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Could not parse BOOK_TEXTS: {exc}") from exc
     credits = json_constant("BOOK_CREDITS", "BOOK_PAUSE_PROMPTS")
     prompt_match = re.search(
         r"const BOOK_PAUSE_PROMPTS=(\{.*?\});\nconst BOOK_SUBHEADINGS=", html, re.DOTALL
@@ -328,27 +494,46 @@ def main() -> int:
         errors.append("Missing .nojekyll for GitHub Pages")
 
     html = HTML_FILE.read_text(encoding="utf-8")
+    practice_html_file = ROOT / "theme1-practice.html"
+    if not practice_html_file.is_file():
+        errors.append("Missing separate Theme 1 study-package page")
+        practice_html = ""
+    else:
+        practice_html = practice_html_file.read_text(encoding="utf-8")
     parser = SiteParser()
     parser.feed(html)
-    for tag, attr, value in parser.local_refs:
-        parts = urlsplit(value)
-        if parts.scheme or parts.netloc or value.startswith(("#", "data:")):
-            continue
-        path = unquote(parts.path)
-        if not path:
-            continue
-        if path.startswith("/"):
-            errors.append(f"Use a relative path for GitHub Pages: <{tag} {attr}=\"{value}\">")
-            continue
-        if not (ROOT / path).is_file():
-            errors.append(f"Missing local asset referenced by index.html: {value}")
+    practice_parser = SiteParser()
+    practice_parser.feed(practice_html)
+    if 'id="textGame"' in html or "TEXT_GAMES" in html or "renderTextGame" in html:
+        errors.append("The old game card/runtime is still referenced from index.html")
+    if "<details class=\"practice-activity\"" in html or "data-practice-id" in html:
+        errors.append("Inline collapsible Theme 1 activity cards are still present")
+    if "Kontrol et" not in practice_html or "theme1-practice-app.js" not in practice_html:
+        errors.append("Separate practice page is missing question-level checks")
+    app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
+    for required_prompt in ("7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB", "sourceContext", "data-check-question"):
+        if required_prompt not in app_js:
+            errors.append(f"Groq evaluation context or per-question checking is missing: {required_prompt}")
+    for page_name, page_parser in (("index.html", parser), ("theme1-practice.html", practice_parser)):
+        for tag, attr, value in page_parser.local_refs:
+            parts = urlsplit(value)
+            if parts.scheme or parts.netloc or value.startswith(("#", "data:")):
+                continue
+            path = unquote(parts.path)
+            if not path:
+                continue
+            if path.startswith("/"):
+                errors.append(f"Use a relative path for GitHub Pages: <{tag} {attr}=\"{value}\">")
+                continue
+            if not (ROOT / path).is_file():
+                errors.append(f"Missing local asset referenced by {page_name}: {value}")
 
     node = shutil.which("node")
     if not node:
         errors.append("Node.js is required to check JavaScript syntax and week grouping")
     else:
         js_files = []
-        for relative in ("arcade.js", "theme1-practice.js"):
+        for relative in ("book-texts.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
             asset = ROOT / relative
             if not asset.is_file():
                 errors.append(f"Missing JavaScript asset: {relative}")
@@ -406,8 +591,46 @@ def main() -> int:
                     errors.append("Week grouping test did not report success")
                 elif "Theme navigation renders Theme 1 with its grouped weeks." not in result.stdout:
                     errors.append("Theme navigation test did not report success")
-                elif "Theme 1 practice inventory, rendering, and saved answers passed." not in result.stdout:
+                elif "Theme 1 practice inventory, typed forms, package links, and game removal passed." not in result.stdout:
                     errors.append("Theme 1 practice test did not report success")
+
+            if not errors:
+                try:
+                    app_test = practice_app_test_source()
+                except OSError as exc:
+                    errors.append(f"Could not prepare the practice-page test: {exc}")
+                else:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".js"
+                    ) as temp:
+                        temp.write(app_test)
+                        temp.flush()
+                        result = subprocess.run(
+                            [node, temp.name], capture_output=True, text=True, check=False
+                        )
+                    if result.returncode:
+                        errors.append(f"Separate practice-page runtime test failed:\n{result.stderr.strip()}")
+                    elif sum(int(value) for value in re.findall(r"rendered \d+ activities and (\d+) question checks", result.stdout)) != 220:
+                        errors.append("Separate practice-page runtime test did not render all 220 question checks")
+
+            if not errors:
+                try:
+                    prompt_test = groq_prompt_test_source()
+                except OSError as exc:
+                    errors.append(f"Could not prepare the Groq prompt test: {exc}")
+                else:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".js"
+                    ) as temp:
+                        temp.write(prompt_test)
+                        temp.flush()
+                        result = subprocess.run(
+                            [node, temp.name], capture_output=True, text=True, check=False
+                        )
+                    if result.returncode:
+                        errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
+                    elif "Question-level Groq request includes age/theme context, source passage, and feedback." not in result.stdout:
+                        errors.append("Groq prompt test did not report success")
 
             if not errors:
                 try:
@@ -437,7 +660,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, theme navigation, week/progress migration, Theme 1 practice, Bayrağımız credit, and the PDF reader are valid.")
+    print("Static site checks passed: assets, theme navigation, saved-progress migration, separate typed Theme 1 packages, question-level Groq context, no game card, Bayrağımız credit, and the PDF reader are valid.")
     return 0
 
 

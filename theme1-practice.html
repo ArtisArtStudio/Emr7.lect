@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173a67">
+  <meta name="description" content="Türkçe 7 · Tema 1 Hayat Boyu Gelişim için adım adım çalışma paketleri ve soru bazlı geri bildirim.">
+  <title>Tema 1 Çalışma Paketleri · Türkçe 7</title>
+  <link rel="stylesheet" href="theme1-practice.css">
+</head>
+<body>
+  <main class="page-shell">
+    <div class="topline">
+      <a class="home-link" href="./index.html#theme1Practice">← Ana öğrenme rotasına dön</a>
+      <span class="save-indicator" id="save-indicator" aria-live="polite">Yanıtlar bu tarayıcıda kaydedilir</span>
+    </div>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Türkçe 7 · Tema 1</span>
+        <h1>Hayat Boyu Gelişim</h1>
+        <p>Her paketi sırayla ilerle. Soru türüne uygun alanı doldur; istersen her yanıtını “Kontrol et” düğmesiyle gözden geçir. İlerleme bu cihazdaki tarayıcıda saklanır.</p>
+      </div>
+    </header>
+
+    <nav class="package-nav" id="package-nav" aria-label="Tema 1 çalışma paketleri"></nav>
+    <section class="package-overview" id="package-overview" aria-live="polite"></section>
+
+    <section class="groq-panel" aria-labelledby="groq-heading">
+      <div class="groq-panel-head">
+        <h2 id="groq-heading">Soru bazlı AI geri bildirimi · Groq</h2>
+        <p>Bir soru için “Kontrol et” düğmesine basınca çalışır.</p>
+      </div>
+      <div class="key-controls">
+        <label class="setting-label" for="groq-key">Groq API anahtarı
+          <input class="setting-input" id="groq-key" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_…">
+        </label>
+        <label class="setting-label" for="groq-model">Model
+          <select class="setting-input" id="groq-model">
+            <option value="openai/gpt-oss-20b">GPT OSS 20B · hızlı</option>
+            <option value="openai/gpt-oss-120b">GPT OSS 120B · ayrıntılı</option>
+          </select>
+        </label>
+        <label class="remember-setting"><input id="remember-key" type="checkbox"> Bu cihazda hatırla</label>
+        <button class="small-button" id="save-settings" type="button">Ayarları kaydet</button>
+      </div>
+      <p class="groq-status" id="groq-status" role="status" aria-live="polite"></p>
+      <p class="privacy-note">Anahtar GitHub’a yazılmaz. Hatırlama seçili değilse bu sayfanın belleğinde kalır; “Kontrol et” sırasında doğrudan Groq’a gönderilir. Bu uygulama bir cevap anahtarı değil, geliştirici geri bildirimi sunar.</p>
+    </section>
+
+    <section aria-label="Adım adım çalışma akışı">
+      <div class="flow-head">
+        <p class="flow-step-title" id="flow-step-title">Adım</p>
+        <span class="flow-count" id="flow-count"></span>
+        <div class="progress-track" role="progressbar" id="progress-track" aria-label="Paket ilerlemesi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-value" id="progress-value" style="width:0%"></div>
+        </div>
+      </div>
+      <nav class="step-track" id="step-track" aria-label="Paketteki adımlar"></nav>
+      <div id="activity-stage" aria-live="polite"></div>
+      <div class="flow-controls">
+        <button class="flow-button" id="previous-step" type="button">← Önceki adım</button>
+        <button class="flow-button primary" id="next-step" type="button">Sonraki adım →</button>
+      </div>
+      <p class="end-note">Kaynak QR videoları bu uygulamada barındırılmaz. QR isteyen etkinliklerde kitabındaki kaydı açıp kendi gözlem ve notlarını kullan.</p>
+    </section>
+  </main>
+
+  <script src="book-texts.js"></script>
+  <script src="theme1-practice.js"></script>
+  <script src="theme1-practice-forms.js"></script>
+  <script src="theme1-practice-app.js"></script>
+</body>
+</html>
