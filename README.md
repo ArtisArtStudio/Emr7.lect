@@ -1,6 +1,6 @@
 # 7. Sınıf Öğrenme Rotası
 
-Türkçe dersi için tema bazlı haftalık çalışma planı, yapılandırılmış okuma alanı ve Tema 1 için ayrı, adım adım çalışma paketleri sunan statik bir öğrenme uygulaması.
+Türkçe dersi için tema bazlı haftalık çalışma planı, yapılandırılmış okuma alanı ve aynı okuma sayfasına gömülü Tema 1 çalışma paketleri sunan statik bir öğrenme uygulaması.
 
 **Yayımlanan uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
 
@@ -9,8 +9,8 @@ Türkçe dersi için tema bazlı haftalık çalışma planı, yapılandırılmı
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
 - Aynı metin veya konunun art arda işlendiği haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir.
 - Tema bazında gruplanmış haftalık rota ve PDF’deki kaynak metinleri paragraf/dize düzeniyle sunan okuyucu.
-- Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; ayrı paket sayfasında sırayla ilerleme.
-- Yazılı yanıt, seçim ve eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
+- Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; seçilen haftanın numaralı paketi aynı okuma sayfasında sırayla açılır.
+- Kaynak görevine uygun yazılı yanıt, seçim ve erişilebilir sürükle-bırak / dokunarak eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
 - İlerlemeyi tarayıcıda saklama ve JSON yedeği alıp geri yükleme.
 - İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
 
@@ -41,7 +41,7 @@ Depo ve uygulama herkese açıktır; mevcut GitHub Pages yayını şu adrestedir
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
-Ana dosyalar `index.html`, `book-texts.js`, `theme1-practice.html`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
+Ana dosyalar `index.html`, `book-texts.js`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince diğer tema/haftalar gizlenir ve hafta listesine dönüş kontrolü sunulur. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
 
 ## Kontroller
 
@@ -50,7 +50,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, iki sayfanın yerel yollarını, JavaScript sözdizimini, 43 etkinliğin form türlerini, paket akışını, soru kontrollerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 etkinliğin form türlerini, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

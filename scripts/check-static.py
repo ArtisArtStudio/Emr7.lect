@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check GitHub Pages assets, theme navigation, Theme 1 practice, and reader behavior."""
+"""Check GitHub Pages assets, focused-week navigation, Theme 1 practice, and reader behavior."""
 
 import json
 import re
@@ -100,6 +100,7 @@ if (mergeGroupedProgress(migrated) !== migrated) throw new Error('Week progress 
 console.log('Week grouping and saved-progress migration passed.');
 let current = 1;
 let data = {};
+let renderedPracticeUnit = null;
 function store() {}
 class ThemeNode {
   constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.dataset = {}; this.className = ''; this.textContent = ''; this.open = false; this.hidden = false; this.innerHTML = ''; }
@@ -110,9 +111,9 @@ class ThemeNode {
 }
 const themeRoot = new ThemeNode('div');
 const themePracticeCard = new ThemeNode('section');
-const themePracticeRoot = new ThemeNode('div');
+window.renderTheme1PracticeFlow = (unitId) => { renderedPracticeUnit = Number(unitId); };
 global.document = {
-  getElementById: (id) => ({weeklist: themeRoot, theme1Practice: themePracticeCard, theme1PracticeUnits: themePracticeRoot}[id]),
+  getElementById: (id) => ({weeklist: themeRoot, theme1Practice: themePracticeCard}[id]),
   createElement: (tag) => new ThemeNode(tag)
 };
 renderList();
@@ -152,18 +153,78 @@ for (const section of ['serim','dugum','cozum']) {
 }
 if (!window.THEME1_FORMS['sport-a10'].some((question) => question.id === 'dugum') || !window.THEME1_FORMS['sport-a10'].some((question) => question.id === 'cozum')) throw new Error('The written story sections are not separate response fields');
 const matchingQuestions = Object.values(window.THEME1_FORMS).flat().filter((question) => question.responseType === 'matching');
-if (matchingQuestions.length < 10 || matchingQuestions.some((question) => !question.fields.some((field) => field.type === 'select'))) throw new Error('Source matching/classification tasks must use selection widgets');
+if (matchingQuestions.length < 6 || matchingQuestions.some((question) => !question.fields.some((field) => ['select','sort'].includes(field.type)))) throw new Error('Source matching/classification tasks must use matching or sorting widgets');
+const sortingFields = Object.values(window.THEME1_FORMS).flat().flatMap((question) => question.fields.filter((field) => field.type === 'sort'));
+if (sortingFields.length < 6 || sortingFields.some((field) => !field.categories?.length || !field.items?.length || new Set(field.items.map((item) => item.id)).size !== field.items.length)) throw new Error('Drag-and-drop sorting fields need categories and unique, labelled cards');
 if (!window.THEME1_FORMS['adiny-review'].some((question) => question.id === 'review-2' && question.fields.some((field) => field.type === 'radio'))) throw new Error('The theme review multiple-choice item is not a real selection widget');
 if (!window.THEME1_FORMS['adiny-a03'].every((question) => question.sourceKeys?.includes('adini') && question.sourceNote?.includes('QR'))) throw new Error('The Kaoru–Yiğit Caner Aydın comparison must use the story text and note the QR-only video limit');
 
 renderTheme1Practice(weeks.find((week) => week[0] === 1));
-if (themePracticeCard.hidden || !themePracticeRoot.innerHTML.includes('theme1-practice.html?unit=1') || !themePracticeRoot.innerHTML.includes('1–2. haftalar · Martı Jonathan Livingston') || !themePracticeRoot.innerHTML.includes('12 numaralı etkinlik')) throw new Error('Theme 1 separate-package link did not render the active unit and inventory count');
-if (themePracticeRoot.innerHTML.includes('<details') || themePracticeRoot.innerHTML.includes('textarea')) throw new Error('Inline collapsible practice activities are still being rendered');
+if (themePracticeCard.hidden || renderedPracticeUnit !== 1) throw new Error('The selected Theme 1 week did not open its embedded package');
 renderTheme1Practice(weeks.find((week) => week[0] === 7));
-if (!themePracticeCard.hidden || themePracticeRoot.innerHTML !== '') throw new Error('Theme 1 practice links appeared outside Theme 1');
-console.log('Theme 1 practice inventory, typed forms, package links, and game removal passed.');
+if (!themePracticeCard.hidden || renderedPracticeUnit !== 1) throw new Error('Theme 1 practice appeared for another theme or changed the previous unit');
+console.log('Theme 1 practice inventory, typed forms, embedded package selection, and game-card removal passed.');
 """
     return "global.window = {};\n" + grouping + "\n" + migration + "\n" + practice_data + "\n" + practice_forms + "\n" + practice_renderer + "\n" + renderer + "\n" + harness
+
+
+
+def focus_week_test_source(html: str) -> str:
+    route_start = html.find("function updateWeekRoute(){")
+    route_end = html.find("\ndocument.getElementById('clearWeek').onclick=", route_start)
+    if route_start < 0 or route_end < 0:
+        raise ValueError("Could not find focused-week route handlers")
+    route_code = html[route_start:route_end]
+    return r"""
+const vm = require('node:vm');
+let current = 1;
+let focusMode = false;
+let renderCount = 0;
+let scrollCount = 0;
+const weeks = [[1], [3], [5], [7]];
+const listeners = {};
+const pushes = [];
+const title = {focusCount: 0, focus() { this.focusCount += 1; }};
+const activeWeek = {focusCount: 0, scrollCount: 0, focus() { this.focusCount += 1; }, scrollIntoView() { this.scrollCount += 1; }};
+const backButton = {listeners: {}, addEventListener(name, callback) { this.listeners[name] = callback; }};
+const browserWindow = {
+  location: {href: 'https://example.test/Emr7.lect/', search: '', hash: ''},
+  history: {pushState(state, title, url) {
+    pushes.push({state, url: String(url)});
+    const parsed = new URL(String(url));
+    browserWindow.location.href = parsed.href;
+    browserWindow.location.search = parsed.search;
+    browserWindow.location.hash = parsed.hash;
+  }},
+  addEventListener(name, callback) { listeners[name] = callback; },
+  scrollTo() { scrollCount += 1; }
+};
+const document = {
+  getElementById(id) { return id === 'title' ? title : id === 'backToWeeks' ? backButton : null; },
+  querySelector(selector) { return selector === '#weeklist .weekbtn.active' ? activeWeek : null; }
+};
+const context = vm.createContext({window: browserWindow, document, URL, URLSearchParams, weeks,
+  get current() { return current; }, set current(value) { current = value; },
+  get focusMode() { return focusMode; }, set focusMode(value) { focusMode = value; },
+  render() { renderCount += 1; }
+});
+vm.runInContext(__ROUTE_CODE__, context);
+context.selectReadingWeek(3);
+if (current !== 3 || !focusMode || !new URL(browserWindow.location.href).searchParams.has('week')) throw new Error('Selecting a week did not enter focused mode or create a week route');
+if (renderCount !== 1 || title.focusCount !== 1 || scrollCount !== 1) throw new Error('Week selection did not render and move focus to the selected week');
+backButton.listeners.click();
+if (focusMode || new URL(browserWindow.location.href).searchParams.has('week')) throw new Error('The return control did not restore the week-selection route');
+if (activeWeek.focusCount !== 1 || activeWeek.scrollCount !== 1 || renderCount !== 2) throw new Error('Returning to the list did not restore accessible focus');
+context.selectReadingWeek(99);
+if (current !== 3 || focusMode || pushes.length !== 2) throw new Error('An invalid week unexpectedly changed the reader state');
+browserWindow.location.search = '?week=5';
+listeners.popstate();
+if (current !== 5 || !focusMode || title.focusCount !== 2) throw new Error('Browser history did not restore focused-week mode');
+browserWindow.location.search = '';
+listeners.popstate();
+if (focusMode || activeWeek.focusCount !== 2 || renderCount !== 4) throw new Error('Browser history did not return to the week list');
+console.log('Focused-week selection, return control, browser history, and keyboard focus passed.');
+""".replace("__ROUTE_CODE__", json.dumps(route_code))
 
 
 def practice_app_test_source() -> str:
@@ -209,6 +270,7 @@ for (const unitId of [1,3,5]) {{
     URLSearchParams, Date, console
   }});
   for (const source of sources) vm.runInContext(source, context);
+  context.window.renderTheme1PracticeFlow(unitId);
   const selected = context.window.THEME1_PRACTICE.units.find((unit) => unit.weekId === unitId);
   const activities = selected.groups.flatMap((group) => group.activities);
   for (let index = 0; index < activities.length; index += 1) {{
@@ -216,6 +278,9 @@ for (const unitId of [1,3,5]) {{
     const expectedChecks = context.window.THEME1_FORMS[activity.id].length;
     const actualChecks = (element('activity-stage').innerHTML.match(/data-check-question=/g) || []).length;
     if (actualChecks !== expectedChecks) throw new Error(`Unit ${{unitId}} activity ${{activity.id}}: expected ${{expectedChecks}} question checks, got ${{actualChecks}}`);
+    const expectedSorts = context.window.THEME1_FORMS[activity.id].flatMap((question) => question.fields).filter((field) => field.type === 'sort').length;
+    const actualSorts = (element('activity-stage').innerHTML.match(/data-sort-widget=/g) || []).length;
+    if (actualSorts !== expectedSorts) throw new Error(`Unit ${{unitId}} activity ${{activity.id}}: expected ${{expectedSorts}} sorting widgets, got ${{actualSorts}}`);
     if (!element('activity-stage').innerHTML.includes('Yanıt alanı')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} is missing a response area`);
     if (index < activities.length - 1) element('next-step').listeners.click();
   }}
@@ -223,6 +288,135 @@ for (const unitId of [1,3,5]) {{
   console.log(`Unit ${{unitId}} rendered ${{activities.length}} activities and ${{totalChecks}} question checks.`);
 }}
 """
+
+
+def sort_interaction_test_source() -> str:
+    sources = [
+        (ROOT / name).read_text(encoding="utf-8")
+        for name in (
+            "book-texts.js",
+            "theme1-practice.js",
+            "theme1-practice-forms.js",
+            "theme1-practice-app.js",
+        )
+    ]
+    return r"""
+const vm = require('node:vm');
+const sources = __SOURCES__;
+const elements = new Map();
+const storage = new Map();
+let board = null;
+const element = (id) => {
+  if (!elements.has(id)) {
+    const item = {
+      id, innerHTML: '', textContent: '', dataset: {}, value: '', checked: false,
+      disabled: false, hidden: false, attributes: {}, listeners: {}, style: {},
+      setAttribute(name, value) { this.attributes[name] = value; },
+      addEventListener(name, callback) { this.listeners[name] = callback; },
+      querySelectorAll() { return []; },
+      getBoundingClientRect() { return {top: 0}; }
+    };
+    elements.set(id, item);
+  }
+  return elements.get(id);
+};
+const stage = element('activity-stage');
+stage.querySelectorAll = (selector) => selector === '[data-sort-widget]' && board ? [board] : [];
+const browserWindow = {
+  location: {search: '?week=1'}, scrollY: 0, scrollTo() {},
+  setTimeout() { return 1; }, clearTimeout() {}
+};
+const context = vm.createContext({
+  window: browserWindow,
+  document: {title: '', getElementById: element},
+  localStorage: {
+    getItem: (key) => storage.get(key) || null,
+    setItem: (key, value) => storage.set(key, value),
+    removeItem: (key) => storage.delete(key)
+  },
+  URLSearchParams, Date, console
+});
+for (const source of sources) vm.runInContext(source, context);
+const unit = context.window.THEME1_PRACTICE.units.find((item) => item.weekId === 1);
+const activity = unit.groups.flatMap((group) => group.activities).find((item) => context.window.THEME1_FORMS[item.id].some((question) => question.fields.some((field) => field.type === 'sort')));
+const question = context.window.THEME1_FORMS[activity.id].find((item) => item.fields.some((field) => field.type === 'sort'));
+const field = question.fields.find((item) => item.type === 'sort');
+const qKey = `${activity.id}::${question.id}`;
+const items = new Map();
+const targets = new Map();
+const status = {textContent: ''};
+const bankCount = {textContent: ''};
+const makeTarget = (id) => {
+  const target = {
+    dataset: {sortTarget: id}, listeners: {}, children: [],
+    classList: {add() {}, remove() {}},
+    addEventListener(name, callback) { this.listeners[name] = callback; },
+    querySelector() { return null; },
+    appendChild(item) {
+      if (item.parent) item.parent.children = item.parent.children.filter((child) => child !== item);
+      this.children.push(item);
+      item.parent = this;
+    }
+  };
+  targets.set(id, target);
+  return target;
+};
+const bank = makeTarget('bank');
+for (const category of field.categories) makeTarget(category.id);
+for (const definition of field.items) {
+  const item = {
+    dataset: {sortItem: definition.id}, listeners: {}, attributes: {}, parent: null,
+    classList: {add() {}, remove() {}},
+    setAttribute(name, value) { this.attributes[name] = value; },
+    addEventListener(name, callback) { this.listeners[name] = callback; }
+  };
+  items.set(definition.id, item);
+  bank.children.push(item);
+  item.parent = bank;
+}
+board = {
+  dataset: {qkey: qKey, fieldId: field.id, unitId: '1', assignments: '{}'},
+  querySelectorAll(selector) {
+    if (selector === '[data-sort-item]') return [...items.values()];
+    if (selector === '[data-sort-target]') return [...targets.values()];
+    return [];
+  },
+  querySelector(selector) {
+    if (selector === '[data-sort-status]' || selector === '.sort-status') return status;
+    if (selector === '.sort-bank-wrap h4 span') return bankCount;
+    const targetMatch = selector.match(/^\[data-sort-target="([^"]+)"\]$/);
+    if (targetMatch) return targets.get(targetMatch[1]);
+    const itemMatch = selector.match(/^\[data-sort-item="([^"]+)"\]$/);
+    if (itemMatch) return items.get(itemMatch[1]);
+    return null;
+  }
+};
+context.window.renderTheme1PracticeFlow(1);
+const activityIndex = unit.groups.flatMap((group) => group.activities).findIndex((item) => item.id === activity.id);
+for (let index = 0; index < activityIndex; index += 1) element('next-step').listeners.click();
+const firstId = field.items[0].id;
+const secondId = field.items[1].id;
+const thirdId = field.items[2].id;
+const categoryOne = field.categories[0].id;
+const categoryTwo = field.categories[1].id;
+items.get(firstId).listeners.click({preventDefault() {}, stopPropagation() {}});
+targets.get(categoryOne).listeners.click({target: {closest() { return null; }}});
+items.get(secondId).listeners.click({preventDefault() {}, stopPropagation() {}});
+targets.get(categoryTwo).listeners.keydown({key: 'Enter', preventDefault() {}});
+let draggedId = '';
+items.get(thirdId).listeners.dragstart({dataTransfer: {setData(type, value) { draggedId = value; }, effectAllowed: ''}});
+targets.get(categoryOne).listeners.drop({preventDefault() {}, dataTransfer: {getData() { return draggedId; }}});
+items.get(firstId).listeners.click({preventDefault() {}, stopPropagation() {}});
+targets.get('bank').listeners.click({target: {closest() { return null; }}});
+const saved = JSON.parse(storage.get('turkceRota2026'));
+const assignments = saved[1].theme1PracticeFlow.answers[qKey][field.id];
+if (assignments[firstId] !== undefined || assignments[secondId] !== categoryTwo || assignments[thirdId] !== categoryOne) {
+  throw new Error(`Tap, keyboard, drag, or return-to-bank sorting did not persist correctly: ${JSON.stringify(assignments)}`);
+}
+if (!status.textContent.includes('2 /')) throw new Error('Sorting status did not announce placed cards');
+console.log('Accessible sort widget supports tap-to-place, keyboard placement, drag-and-drop, and returning cards.');
+""".replace("__SOURCES__", json.dumps(sources, ensure_ascii=False))
+
 
 
 def groq_prompt_test_source() -> str:
@@ -287,6 +481,8 @@ const context = vm.createContext({{
   }}
 }});
 for (const source of sources) vm.runInContext(source, context);
+element('apiKey').value = 'unit-test-key';
+context.window.renderTheme1PracticeFlow(1);
 element('next-step').listeners.click();
 element('next-step').listeners.click();
 const stage = element('activity-stage');
@@ -298,6 +494,8 @@ setTimeout(() => {{
   const system = capturedRequest.body.messages.find(message => message.role === 'system').content;
   const prompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
   if (!system.includes('7. sınıf Türkçe') || !system.includes('Tema 1 · Hayat Boyu Gelişim') || !system.includes('Maarif/MEB')) throw new Error('Groq system message omitted grade, theme, or Maarif/MEB context');
+  const strictPromptChecks = ['yanlış, ilgisiz veya eksik', 'Harika', 'doğru yanıtı'].map((phrase) => system.includes(phrase));
+  if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require explicit strict error reporting without giving away the answer: ${{JSON.stringify(strictPromptChecks)}}`);
   if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
   if (!button.feedback.textContent.includes('Geri bildirim')) throw new Error('Groq feedback was not rendered after the response');
   console.log('Question-level Groq request includes age/theme context, source passage, and feedback.');
@@ -494,39 +692,47 @@ def main() -> int:
         errors.append("Missing .nojekyll for GitHub Pages")
 
     html = HTML_FILE.read_text(encoding="utf-8")
-    practice_html_file = ROOT / "theme1-practice.html"
-    if not practice_html_file.is_file():
-        errors.append("Missing separate Theme 1 study-package page")
-        practice_html = ""
-    else:
-        practice_html = practice_html_file.read_text(encoding="utf-8")
+    obsolete_practice_page = ROOT / "theme1-practice.html"
+    if obsolete_practice_page.exists():
+        errors.append("The separate Theme 1 practice page must be removed; the flow belongs in index.html")
     parser = SiteParser()
     parser.feed(html)
-    practice_parser = SiteParser()
-    practice_parser.feed(practice_html)
     if 'id="textGame"' in html or "TEXT_GAMES" in html or "renderTextGame" in html:
         errors.append("The old game card/runtime is still referenced from index.html")
     if "<details class=\"practice-activity\"" in html or "data-practice-id" in html:
         errors.append("Inline collapsible Theme 1 activity cards are still present")
-    if "Kontrol et" not in practice_html or "theme1-practice-app.js" not in practice_html:
-        errors.append("Separate practice page is missing question-level checks")
+    if "theme1-practice.html" in html:
+        errors.append("The main reader still links to the separate Theme 1 practice page")
+    for marker in (
+        'id="weekSelectionPrompt"', 'id="weekContent"', 'id="readerLayout"',
+        'id="backToWeeks"', 'id="theme1Practice"', 'id="step-track"',
+        'id="activity-stage"', 'id="previous-step"', 'id="next-step"',
+        'theme1-practice-forms.js', 'theme1-practice-app.js', 'theme1-practice.css',
+    ):
+        if marker not in html:
+            errors.append(f"The reader is missing integrated/focused-week markup: {marker}")
+    if "function selectReadingWeek" not in html or "week-focused" not in html or "renderTheme1PracticeFlow" not in html:
+        errors.append("The focused-week selection, return, or embedded package flow is not wired")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
-    for required_prompt in ("7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB", "sourceContext", "data-check-question"):
+    for required_prompt in (
+        "7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB",
+        "sourceContext", "data-check-question", "data-sort-target", "aria-keyshortcuts",
+        "yanlış, ilgisiz veya eksik", "Harika",
+    ):
         if required_prompt not in app_js:
-            errors.append(f"Groq evaluation context or per-question checking is missing: {required_prompt}")
-    for page_name, page_parser in (("index.html", parser), ("theme1-practice.html", practice_parser)):
-        for tag, attr, value in page_parser.local_refs:
-            parts = urlsplit(value)
-            if parts.scheme or parts.netloc or value.startswith(("#", "data:")):
-                continue
-            path = unquote(parts.path)
-            if not path:
-                continue
-            if path.startswith("/"):
-                errors.append(f"Use a relative path for GitHub Pages: <{tag} {attr}=\"{value}\">")
-                continue
-            if not (ROOT / path).is_file():
-                errors.append(f"Missing local asset referenced by {page_name}: {value}")
+            errors.append(f"Groq evaluation context or strict per-question checking is missing: {required_prompt}")
+    for tag, attr, value in parser.local_refs:
+        parts = urlsplit(value)
+        if parts.scheme or parts.netloc or value.startswith(("#", "data:")):
+            continue
+        path = unquote(parts.path)
+        if not path:
+            continue
+        if path.startswith("/"):
+            errors.append(f"Use a relative path for GitHub Pages: <{tag} {attr}=\"{value}\">")
+            continue
+        if not (ROOT / path).is_file():
+            errors.append(f"Missing local asset referenced by index.html: {value}")
 
     node = shutil.which("node")
     if not node:
@@ -591,14 +797,33 @@ def main() -> int:
                     errors.append("Week grouping test did not report success")
                 elif "Theme navigation renders Theme 1 with its grouped weeks." not in result.stdout:
                     errors.append("Theme navigation test did not report success")
-                elif "Theme 1 practice inventory, typed forms, package links, and game removal passed." not in result.stdout:
-                    errors.append("Theme 1 practice test did not report success")
+                elif "Theme 1 practice inventory, typed forms, embedded package selection, and game-card removal passed." not in result.stdout:
+                    errors.append("Theme 1 embedded practice test did not report success")
+
+            if not errors:
+                try:
+                    focus_test = focus_week_test_source(html)
+                except ValueError as exc:
+                    errors.append(str(exc))
+                else:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".js"
+                    ) as temp:
+                        temp.write(focus_test)
+                        temp.flush()
+                        result = subprocess.run(
+                            [node, temp.name], capture_output=True, text=True, check=False
+                        )
+                    if result.returncode:
+                        errors.append(f"Focused-week interaction test failed:\n{result.stderr.strip()}")
+                    elif "Focused-week selection, return control, browser history, and keyboard focus passed." not in result.stdout:
+                        errors.append("Focused-week interaction test did not report success")
 
             if not errors:
                 try:
                     app_test = practice_app_test_source()
                 except OSError as exc:
-                    errors.append(f"Could not prepare the practice-page test: {exc}")
+                    errors.append(f"Could not prepare the embedded practice test: {exc}")
                 else:
                     with tempfile.NamedTemporaryFile(
                         mode="w", encoding="utf-8", suffix=".js"
@@ -609,9 +834,32 @@ def main() -> int:
                             [node, temp.name], capture_output=True, text=True, check=False
                         )
                     if result.returncode:
-                        errors.append(f"Separate practice-page runtime test failed:\n{result.stderr.strip()}")
-                    elif sum(int(value) for value in re.findall(r"rendered \d+ activities and (\d+) question checks", result.stdout)) != 220:
-                        errors.append("Separate practice-page runtime test did not render all 220 question checks")
+                        errors.append(f"Embedded practice runtime test failed:\n{result.stderr.strip()}")
+                    else:
+                        reports = re.findall(r"Unit (\d+) rendered (\d+) activities and (\d+) question checks", result.stdout)
+                        if len(reports) != 3 or {int(unit) for unit, _, _ in reports} != {1, 3, 5}:
+                            errors.append("Embedded practice runtime test did not render all three Theme 1 units")
+                        elif sum(int(activities) for _, activities, _ in reports) != 43 or sum(int(checks) for _, _, checks in reports) < 43:
+                            errors.append("Embedded practice runtime test did not cover all 43 activities and their question checks")
+
+            if not errors:
+                try:
+                    sort_test = sort_interaction_test_source()
+                except OSError as exc:
+                    errors.append(f"Could not prepare the accessible sorting test: {exc}")
+                else:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".js"
+                    ) as temp:
+                        temp.write(sort_test)
+                        temp.flush()
+                        result = subprocess.run(
+                            [node, temp.name], capture_output=True, text=True, check=False
+                        )
+                    if result.returncode:
+                        errors.append(f"Accessible sort interaction test failed:\n{result.stderr.strip()}")
+                    elif "Accessible sort widget supports tap-to-place, keyboard placement, drag-and-drop, and returning cards." not in result.stdout:
+                        errors.append("Accessible sort interaction test did not report success")
 
             if not errors:
                 try:
@@ -660,7 +908,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, theme navigation, saved-progress migration, separate typed Theme 1 packages, question-level Groq context, no game card, Bayrağımız credit, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation and return, saved-progress migration, embedded typed Theme 1 packages, accessible sorting, strict per-question Groq context, no game card, Bayrağımız credit, and the PDF reader are valid.")
     return 0
 
 

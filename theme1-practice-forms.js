@@ -3,6 +3,7 @@
   const text = (id, label, rows = 3) => field(id, label, "textarea", { rows });
   const select = (id, label, options) => field(id, label, "select", { options });
   const radio = (id, label, options) => field(id, label, "radio", { options });
+  const sort = (id, label, categories, items, expectedAssignments = null) => field(id, label, "sort", { categories, items, ...(expectedAssignments ? { expectedAssignments } : {}) });
   const q = (id, prompt, fields, extra = {}) => ({ id, prompt, fields, ...extra });
   const opts = (...labels) => labels.map(label => ({ value: label, label }));
   const yesNo = opts("Evet", "Hayır", "Kararsızım");
@@ -38,7 +39,7 @@
       ], { sourceStage: "full" })
     ],
     "marti-a03": [
-      q("evidence-1", "Jonathan’ın sıradan uçuşların ötesine geçmek istediğini gösteren iki davranışı bul.", [text("answer", "İki davranış ve metindeki dayanak", 3)], { sourceStage: "full" }),
+      q("evidence-1", "Jonathan’ın sıradan uçuşların ötesine geçmek istediğini gösteren iki davranışı bul.", [text("answer", "İki davranış ve metindeki dayanak", 3)], { sourceStage: "full", rubric: "Yanıt, yiyecek aramadan farklı iki belirgin uçuş denemesi/öğrenme davranışı içermeli ve öyküyle desteklenmeli. ‘Balık tutmak’ gibi günlük beslenme davranışı veya tek başına belirsiz ‘dalmak’ ifadesi iki kanıtı karşılamaz. Yanıtın içermediği davranışları öğrencinin ağzından yazma; doğru örnekleri verme, metindeki uçuş denemeleri bölümüne yönlendir." }),
       q("evidence-2", "Bir denemesi başarısız olduğunda Jonathan yöntemini nasıl değiştirdi?", [text("answer", "Yanıtım ve olaydan kanıt", 3)], { sourceStage: "full" }),
       q("evidence-3", "Ailesinin kaygısının kaynağı ile Jonathan’ın önceliği arasındaki farkı açıkla.", [text("answer", "İki bakış açısı ve metinden dayanak", 3)], { sourceStage: "full" }),
       q("evidence-4", "Hangi olay Jonathan’ın uçuş hedefini daha belirgin hâle getirir? Olayın etkisini açıkla.", [text("answer", "Olay ve etkisi", 3)], { sourceStage: "full" }),
@@ -63,26 +64,27 @@
       q("choose", "Üç önerinden en uygulanabilirini seç. Neden bu çözüm diğerlerinden daha uygun?", [text("answer", "Seçimim ve gerekçem", 3)], { sourceStage: "full" })
     ],
     "marti-a07": [
-      ...[
-        "Bir balıkçı teknesini izleyip yiyeceğe ulaşmaya çalışmak",
-        "Yiyecek aramıyorken belirli bir manevrayı tekrar etmek",
-        "Sürünün alışılmış rotasını izleyerek kıyıya dönmek",
-        "Hızını denetlemek için kanat açısını değiştirmek",
-        "Günün çoğunu balıkçı teknesinin çevresinde yiyecek arayarak geçirmek",
-        "Düşüşün nedenini inceleyip yeni bir yöntem denemek",
-        "Uçuşu yalnızca karın doyurmanın aracı saymak",
-        "Bir sonraki gün için öğrenilecek bir uçuş hareketi seçmek"
-      ].map((behavior, index) => q(
-        `sort-${index + 1}`,
-        behavior,
-        [select("group", "Bu davranışı hangi gruba yerleştirirsin?", opts(
-          "Uçuşu günlük gereksinim (yiyecek) için kullanma",
-          "Uçuşu öğrenme ve deneme alanı olarak görme"
-        ))],
-        { sourceStage: "full", responseType: "matching" }
-      )),
-      q("group-check", "Her grupta dört davranış bulunduğunu kontrol et. Sınıflandırma ölçütünü kendi sözlerinle açıkla.", [text("criterion", "İki grubu ayıran ölçüt", 2)], { sourceStage: "full" })
+      q("sort-behaviors", "Sekiz davranış kartını iki gruba sürükle. Her grupta dört kart bulunmalı.", [
+        sort("behaviors", "Davranış kartları", [
+          { id: "daily", label: "Uçuşu günlük gereksinimler (özellikle yiyecek) için kullanma" },
+          { id: "learning", label: "Uçuşu öğrenme ve deneme alanı olarak görme" }
+        ], [
+          { id: "behavior-1", label: "Bir balıkçı teknesini izleyip yiyeceğe ulaşmaya çalışmak" },
+          { id: "behavior-2", label: "Yiyecek aramıyorken belirli bir manevrayı tekrar etmek" },
+          { id: "behavior-3", label: "Sürünün alışılmış rotasını izleyerek kıyıya dönmek" },
+          { id: "behavior-4", label: "Hızını denetlemek için kanat açısını değiştirmek" },
+          { id: "behavior-5", label: "Günün çoğunu balıkçı teknesinin çevresinde yiyecek arayarak geçirmek" },
+          { id: "behavior-6", label: "Düşüşün nedenini inceleyip yeni bir yöntem denemek" },
+          { id: "behavior-7", label: "Uçuşu yalnızca karın doyurmanın aracı saymak" },
+          { id: "behavior-8", label: "Bir sonraki gün için öğrenilecek bir uçuş hareketi seçmek" }
+        ], {
+          "behavior-1": "daily", "behavior-2": "learning", "behavior-3": "daily", "behavior-4": "learning",
+          "behavior-5": "daily", "behavior-6": "learning", "behavior-7": "daily", "behavior-8": "learning"
+        })
+      ], { sourceStage: "full", responseType: "matching", rubric: "Sekiz kartın tamamını değerlendir; her grupta dört kart olmalı. Yiyecek aramak günlük gereksinim, amaçlı tekrar/teknik denemesi öğrenme grubudur. Yanlış kartı göster ama doğru grubu doğrudan söyleme." }),
+      q("group-check", "İki grubu ayıran ölçütü kendi sözlerinle açıkla.", [text("criterion", "Sınıflandırma ölçütüm", 2)], { sourceStage: "full" })
     ],
+
     "marti-a08": [
       q("topic", "Kitaptaki QR içeriği ‘Hayat Büyük Bir Okuldur’ videosunu izledikten sonra konusunu tek cümleyle yaz.", [text("answer", "Videonun konusu", 2)], { sourceMode: "qr" }),
       q("keywords", "Videodan beş anahtar kelime seç. Her birinin ana düşünceyle bağını kısa notla belirt.", [
@@ -117,22 +119,23 @@
       ])
     ],
     "marti-a11": [
-      ...[
-        "Atölyede resim, seramik, ebru; sahnede müzik, şiir ve dans çalışmaları vardı.",
-        "Kamp çantasına harita, pusula, yağmurluk; mutfak kutusuna tabak, bardak, kaşık kondu.",
-        "Araştırma için dergi, kitap, ansiklopedi; sunum için grafik, fotoğraf ve çizelge hazırlandı.",
-        "Zil çaldı, öğrenciler sınıfa geçti; öğretmen yoklamayı aldı, dersi başlattı.",
-        "Kütüphanede kaynakları taradık, not aldık; eve dönünce planı gözden geçirip düzenledik.",
-        "Önce soruyu okudum, anahtar sözcükleri çizdim; sonra kanıtı buldum, cevabımı yazdım.",
-        "Öğrencilerden Nehir, Mert, Ela; afişleri zamanında hazırladılar.",
-        "Antrenörler Arda, Defne, Selin; çalışma takvimini birlikte düzenlediler.",
-        "Doğa gözlem ekibinden Ege, Lara, Can; fotoğrafları ve notları sınıfa sundular."
-      ].map((sentence, index) => q(
-        `example-${index + 1}`,
-        sentence,
-        [select("function", "Noktalı virgülün burada gösterilen işlevi", semicolonUses)],
-        { responseType: "matching" }
-      )),
+      q("sort-examples", "Dokuz cümleyi noktalı virgülün kullanımına göre uygun gruplara sürükle.", [
+        sort("semicolon-examples", "Cümle kartları", semicolonUses.map((label, index) => ({ id: `use-${index + 1}`, label })), [
+          { id: "example-1", label: "Atölyede resim, seramik, ebru; sahnede müzik, şiir ve dans çalışmaları vardı." },
+          { id: "example-2", label: "Kamp çantasına harita, pusula, yağmurluk; mutfak kutusuna tabak, bardak, kaşık kondu." },
+          { id: "example-3", label: "Araştırma için dergi, kitap, ansiklopedi; sunum için grafik, fotoğraf ve çizelge hazırlandı." },
+          { id: "example-4", label: "Zil çaldı, öğrenciler sınıfa geçti; öğretmen yoklamayı aldı, dersi başlattı." },
+          { id: "example-5", label: "Kütüphanede kaynakları taradık, not aldık; eve dönünce planı gözden geçirip düzenledik." },
+          { id: "example-6", label: "Önce soruyu okudum, anahtar sözcükleri çizdim; sonra kanıtı buldum, cevabımı yazdım." },
+          { id: "example-7", label: "Okul korosunda Ece, Mert ve Can şarkı söyledi; sahne ekibinde Duru, Alp ve Nehir dekorları yerleştirdi." },
+          { id: "example-8", label: "İlk bölümde soruyu okuduk, ipuçlarını belirledik; sonraki bölümde kanıtları bulduk, cevapları yazdık." },
+          { id: "example-9", label: "Sunum için çizelge, fotoğraf, harita; sergi için afiş, maket, açıklama kartı hazırladık." }
+        ], {
+          "example-1": "use-1", "example-2": "use-1", "example-3": "use-1",
+          "example-4": "use-2", "example-5": "use-2", "example-6": "use-2",
+          "example-7": "use-3", "example-8": "use-2", "example-9": "use-1"
+        })
+      ], { responseType: "matching", rubric: "Cümleleri virgülle ayrılmış listeleri ayırma ya da virgüllü ögeleri bulunan sıralı cümleleri ayırma işlevlerine göre değerlendir. Her eşleştirmeyi kaynak cümle yapısına göre kontrol et; yalnızca yanlış kartların adını ve ipucunu ver, doğru grubu açıklama." }),
       ...[
         ["lists", "Virgülle ayrılmış sözcük grupları"],
         ["sentences", "Virgüllerle sıralanmış bağlı cümleler"],
@@ -142,6 +145,7 @@
         text("example", "Yeni örnek cümlem", 2)
       ]))
     ],
+
     "marti-a12": [
       q("email-purpose", "E-postanın konusunu ve yanıtının amacını belirle.", [text("answer", "Konu ve yanıt amacım", 2)]),
       q("email-plan", "Yöneticinin yanıtında uygulanabilir bir çözüm ve gerekçe olmalı. Ne önereceğini planla.", [
@@ -159,17 +163,26 @@
       ], { sourceKey: "gencligin" }))
     ],
     "genclik-a02": [
-      ...[
-        ["Bir eğitim araştırmacısının görüşü, düzenli okumanın düşünme becerilerini beslediğini vurguluyor.", "Tanık gösterme"],
-        ["Bir hedefe emek vermek, her gün sulanan bir fidanı büyütmeye benzer.", "Benzetme"],
-        ["Bir öğrenci kitap okuyarak, enstrüman öğrenerek veya takım çalışmasına katılarak kendini geliştirebilir.", "Örneklendirme"],
-        ["Plansız çalışma dağınık ilerler; küçük hedeflere ayrılan çalışma daha kolay izlenir.", "Karşılaştırma"]
-      ].map(([sentence, expected], index) => q(`method-${index + 1}`, sentence, [
-        select("method", "Baskın düşünceyi geliştirme yolu", opts("Tanık gösterme", "Benzetme", "Örneklendirme", "Karşılaştırma")),
-        text("contribution", "Bu yol, anlatılan düşünceyi nasıl güçlendiriyor?", 2)
-      ], { expected, responseType: "matching" })),
-      q("methods-summary", "Düşünceyi geliştirme yollarından ikisini seç. Bir düşünceyi daha anlaşılır veya inandırıcı kılmak için nasıl kullanıldıklarını karşılaştır.", [text("answer", "İki yol ve anlatıma katkılarının karşılaştırması", 3)])
+      q("methods-sort", "Dört örnek cümleyi baskın düşünceyi geliştirme yoluyla eşleştir; sonra bir yöntemin anlatıma katkısını açıkla.", [
+        sort("methods", "Örnek cümleler", [
+          { id: "testimony", label: "Tanık gösterme" },
+          { id: "analogy", label: "Benzetme" },
+          { id: "example", label: "Örneklendirme" },
+          { id: "comparison", label: "Karşılaştırma" }
+        ], [
+          { id: "method-1", label: "Bir eğitim araştırmacısının görüşü, düzenli okumanın düşünme becerilerini beslediğini vurguluyor." },
+          { id: "method-2", label: "Bir hedefe emek vermek, her gün sulanan bir fidanı büyütmeye benzer." },
+          { id: "method-3", label: "Bir öğrenci kitap okuyarak, enstrüman öğrenerek veya takım çalışmasına katılarak kendini geliştirebilir." },
+          { id: "method-4", label: "Plansız çalışma dağınık ilerler; küçük hedeflere ayrılan çalışma daha kolay izlenir." }
+        ], { "method-1": "testimony", "method-2": "analogy", "method-3": "example", "method-4": "comparison" })
+      ], { responseType: "matching", rubric: "Her örneğin baskın düşünceyi geliştirme yolunu kontrol et. İlk örnekteki araştırmacı görüşünün bu çalışma için kurgusal örnek olduğunu unutma. Yanlış eşleştirmeleri göster; doğru etiketleri söylemeden ilgili cümledeki ipucuna yönlendir." }),
+      q("methods-summary", "Düşünceyi geliştirme yollarından ikisini seç. Bir düşünceyi daha anlaşılır veya inandırıcı kılmak için nasıl kullanıldıklarını karşılaştır.", [
+        select("first-method", "Birinci yöntem", opts("Tanık gösterme", "Benzetme", "Örneklendirme", "Karşılaştırma")),
+        select("second-method", "İkinci yöntem", opts("Tanık gösterme", "Benzetme", "Örneklendirme", "Karşılaştırma")),
+        text("contribution", "İki yöntemin anlatıma katkısı", 3)
+      ])
     ],
+
     "genclik-a03": [
       ...[
         "Metinde ilkbahar imgesi insan yaşamının hangi dönemini anlatmak için kullanılıyor?",
@@ -205,21 +218,27 @@
       ]))
     ],
     "genclik-a06": [
-      ...[
-        "— Bu kararı sen mi verdin? — Ben…",
-        "Duru!.. Bir dakika, seni bekliyoruz!",
-        "Yolun sonunda kapı açıldı ve karşısında…",
-        "— Kiminle konuşmak istiyorsun? — Öğretmenimle…"
-      ].map((example, index) => q(`function-${index + 1}`, example, [select("function", "Üç noktanın bu örnekteki işlevi", opts(
-        "Yanıtın tamamlanmadığını / eksik bırakıldığını gösterme",
-        "Seslenme veya vurguyu güçlendirme",
-        "Anlatımı sürdürmeden bırakma"
-      ))], { responseType: "matching" })),
+      q("ellipsis-sort", "Dört örneği üç noktanın işlevleriyle eşleştir. Kartı sürükle ya da karta ve hedef gruba sırayla tıkla.", [
+        sort("ellipsis", "Diyalog ve cümle kartları", [
+          { id: "unfinished-answer", label: "Yanıtın tamamlanmadığını / eksik bırakıldığını gösterme" },
+          { id: "call-emphasis", label: "Seslenme veya vurguyu güçlendirme" },
+          { id: "unfinished-narration", label: "Anlatımı sürdürmeden bırakma" }
+        ], [
+          { id: "ellipsis-1", label: "— Bu kararı sen mi verdin? — Ben…" },
+          { id: "ellipsis-2", label: "Duru!.. Bir dakika, seni bekliyoruz!" },
+          { id: "ellipsis-3", label: "Yolun sonunda kapı açıldı ve karşısında…" },
+          { id: "ellipsis-4", label: "— Kiminle konuşmak istiyorsun? — Öğretmenimle…" }
+        ], {
+          "ellipsis-1": "unfinished-answer", "ellipsis-2": "call-emphasis",
+          "ellipsis-3": "unfinished-narration", "ellipsis-4": "unfinished-answer"
+        })
+      ], { responseType: "matching", rubric: "Diyalogda tamamlanmayan yanıtı, seslenme/vurguyu ve sürdürülen anlatımı ayırt et. Yanlış kartı belirt, doğru işlevi doğrudan verme; noktalama işaretinin bulunduğu yere yeniden bakmasını iste." }),
       q("new-examples", "Üç noktanın iki farklı işlevine uygun iki yeni cümle yaz; her cümlenin hangi işlevi gösterdiğini belirt.", [
         text("example-one", "Yeni cümle 1 ve işlevi", 2),
         text("example-two", "Yeni cümle 2 ve işlevi", 2)
       ])
     ],
+
     "genclik-a07": [
       ...["Akran 1", "Akran 2", "Akran 3", "Yetişkin 1", "Yetişkin 2", "Yetişkin 3"].map((person, index) => q(`interview-${index + 1}`, `${person} ile görüş: önümüzdeki beş yıl için hedefi ve hedefe yönelik çalışmaları neler?`, [
         text("goal", "Hedefi", 2),
@@ -354,17 +373,20 @@
       ])
     ],
     "sport-a09": [
-      ...[
-        "Okulda Ece, Mert ve Can şiir; Duru, Alp ve Nehir sunum hazırladı.",
-        "Sabah araştırdık, kaynakları seçtik; öğleden sonra notları düzenleyip paylaştık.",
-        "Doğa gözlem ekibinden Lara, Deniz, Ozan; fotoğrafları ve çizelgeleri sergilediler."
-      ].map((example, index) => q(`function-${index + 1}`, example, [select("use", "Noktalı virgülün kullanım işlevi", semicolonUses)], { responseType: "matching" })),
+      q("semicolon-sort", "Üç cümleyi noktalı virgülün kullanım işlevleriyle eşleştir.", [
+        sort("examples", "Cümle kartları", semicolonUses.map((label, index) => ({ id: `use-${index + 1}`, label })), [
+          { id: "semicolon-1", label: "Okulda Ece, Mert ve Can şiir; Duru, Alp ve Nehir sunum hazırladı." },
+          { id: "semicolon-2", label: "Sabah araştırdık, kaynakları seçtik; öğleden sonra notları düzenleyip paylaştık." },
+          { id: "semicolon-3", label: "Doğa gözlem ekibinden Lara, Deniz ve Ozan fotoğrafları seçti; okul takımından Ece, Can ve Mira çizelgeleri düzenledi." }
+        ], { "semicolon-1": "use-1", "semicolon-2": "use-2", "semicolon-3": "use-3" })
+      ], { responseType: "matching", rubric: "Noktalı virgülün cümle içindeki göreviyle eşleştirmeleri karşılaştır. Cümledeki virgül gruplarına bak. Yanlış eşleştirme varsa kartın adını söyle; doğru işlevi doğrudan açıklama." }),
       ...[
         ["lists", "Virgülle ayrılmış kişi/tür adlarını iki grupta ayırma"],
         ["sentences", "Virgüllerle sıralanmış bağlı cümleleri ayırma"],
         ["subjects", "İçinde virgül bulunan sıralı cümleleri ayırma"]
       ].map(([id, description]) => q(`new-example-${id}`, `Bu işleve uygun özgün bir noktalı virgüllü cümle yaz: ${description}.`, [text("answer", "Yeni cümlem ve kullandığım işlev", 2)]))
     ],
+
     "sport-a10": [
       q("serim", "GİRİŞ: Arkadaşını kısaca tanıt ve gelecekte başarılı olabileceği meslek/alanı belirt.", [text("answer", "Giriş paragrafım", 4)]),
       q("dugum", "GELİŞME: Gözlem veya deneyimlerinden en az iki kanıtla meslek tahminini destekle.", [text("answer", "Gelişme paragrafım ve iki kanıt", 5)]),
@@ -424,18 +446,28 @@
       ].map((item, index) => q(`note-${index + 1}`, `${index + 1}. dinleme notu: ${item}.`, [field("answer", "Dinlediğim bilgi", "text")], { sourceMode: "qr" }))
     ],
     "adiny-a06": [
-      ...[
-        "Ailesi Semerkant’taki bilim çevreleriyle ilişkiliydi.",
-        "Uluğ Bey ve çevresindeki bilim insanlarından eğitim aldı.",
-        "Gözlemevi çalışmalarında sorumluluk üstlendi.",
-        "Uluğ Bey’in ölümünden sonra Semerkant’tan ayrıldı.",
-        "Hac yolculuğu sırasında Tebriz’e uğradı.",
-        "Fatih Sultan Mehmet’in daveti üzerine İstanbul’a geldi.",
-        "Ayasofya Medresesi’nde görev aldı ve farklı alanlarda eserler yazdı.",
-        "Fatih Camisi için güneş saati hazırladı."
-      ].map((fact, index) => q(`stage-${index + 1}`, fact, [select("section", "Bu bilgi anlatının hangi bölümüne aittir?", opts("Giriş", "Gelişme", "Sonuç"))], { sourceMode: "qr", responseType: "matching" })),
+      q("fact-sort", "Ali Kuşçu’nun yaşamına ilişkin sekiz bilgiyi giriş, gelişme ve sonuç bölümlerine sürükleyerek yerleştir.", [
+        sort("facts", "Dinleme notu kartları", [
+          { id: "intro", label: "Giriş" },
+          { id: "development", label: "Gelişme" },
+          { id: "conclusion", label: "Sonuç" }
+        ], [
+          { id: "fact-1", label: "Ailesi Semerkant’taki bilim çevreleriyle ilişkiliydi." },
+          { id: "fact-2", label: "Uluğ Bey ve çevresindeki bilim insanlarından eğitim aldı." },
+          { id: "fact-3", label: "Gözlemevi çalışmalarında sorumluluk üstlendi." },
+          { id: "fact-4", label: "Uluğ Bey’in ölümünden sonra Semerkant’tan ayrıldı." },
+          { id: "fact-5", label: "Hac yolculuğu sırasında Tebriz’e uğradı." },
+          { id: "fact-6", label: "Fatih Sultan Mehmet’in daveti üzerine İstanbul’a geldi." },
+          { id: "fact-7", label: "Ayasofya Medresesi’nde görev aldı ve farklı alanlarda eserler yazdı." },
+          { id: "fact-8", label: "Fatih Camisi için güneş saati hazırladı." }
+        ], {
+          "fact-1": "intro", "fact-2": "development", "fact-3": "development", "fact-4": "development",
+          "fact-5": "development", "fact-6": "development", "fact-7": "conclusion", "fact-8": "conclusion"
+        })
+      ], { sourceMode: "qr", responseType: "matching", rubric: "Dinleme kaynağındaki kronolojik akışı ve giriş-gelişme-sonuç düzenini kontrol et. QR kaydının dökümü yok; kartın kaynağa göre kesin yerini doğrulayamadığında bunu açıkça belirt, bilgi uydurma. Yanlış kartları göster ama doğru bölümlerini söyleme." }),
       q("coherence", "Bilgilerin hangi sırayla ilerlemesi, anlatımın tutarlılığını nasıl sağlıyor?", [text("answer", "Sıralama ve tutarlılık açıklamam", 3)], { sourceMode: "qr" })
     ],
+
     "adiny-a07": [
       q("position", "Tartışmada savunacağın görüşü seç.", [radio("view", "Görüşüm", opts(
         "Başarıyı başlatan en güçlü etken merak ve gözlem becerisidir.",
