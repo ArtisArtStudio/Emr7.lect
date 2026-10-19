@@ -185,6 +185,8 @@ const weeks = [[1], [3], [5], [7]];
 const listeners = {};
 const pushes = [];
 const title = {focusCount: 0, focus() { this.focusCount += 1; }};
+const practiceTitle = {focusCount: 0, focus() { this.focusCount += 1; }};
+const practice = {hidden: true, scrollCount: 0, scrollIntoView() { this.scrollCount += 1; }};
 const activeWeek = {focusCount: 0, scrollCount: 0, focus() { this.focusCount += 1; }, scrollIntoView() { this.scrollCount += 1; }};
 const backButton = {listeners: {}, addEventListener(name, callback) { this.listeners[name] = callback; }};
 const browserWindow = {
@@ -200,18 +202,18 @@ const browserWindow = {
   scrollTo() { scrollCount += 1; }
 };
 const document = {
-  getElementById(id) { return id === 'title' ? title : id === 'backToWeeks' ? backButton : null; },
+  getElementById(id) { return id === 'title' ? title : id === 'theme1Practice' ? practice : id === 'theme1PracticeTitle' ? practiceTitle : id === 'backToWeeks' ? backButton : null; },
   querySelector(selector) { return selector === '#weeklist .weekbtn.active' ? activeWeek : null; }
 };
 const context = vm.createContext({window: browserWindow, document, URL, URLSearchParams, weeks,
   get current() { return current; }, set current(value) { current = value; },
   get focusMode() { return focusMode; }, set focusMode(value) { focusMode = value; },
-  render() { renderCount += 1; }
+  render() { renderCount += 1; practice.hidden = !focusMode || ![3,5].includes(current); }
 });
 vm.runInContext(__ROUTE_CODE__, context);
 context.selectReadingWeek(3);
 if (current !== 3 || !focusMode || !new URL(browserWindow.location.href).searchParams.has('week')) throw new Error('Selecting a week did not enter focused mode or create a week route');
-if (renderCount !== 1 || title.focusCount !== 1 || scrollCount !== 1) throw new Error('Week selection did not render and move focus to the selected week');
+if (renderCount !== 1 || title.focusCount !== 0 || practiceTitle.focusCount !== 1 || practice.scrollCount !== 1 || scrollCount !== 0) throw new Error('Theme 1 selection did not scroll and move keyboard focus to its first practice package');
 backButton.listeners.click();
 if (focusMode || new URL(browserWindow.location.href).searchParams.has('week')) throw new Error('The return control did not restore the week-selection route');
 if (activeWeek.focusCount !== 1 || activeWeek.scrollCount !== 1 || renderCount !== 2) throw new Error('Returning to the list did not restore accessible focus');
@@ -219,11 +221,13 @@ context.selectReadingWeek(99);
 if (current !== 3 || focusMode || pushes.length !== 2) throw new Error('An invalid week unexpectedly changed the reader state');
 browserWindow.location.search = '?week=5';
 listeners.popstate();
-if (current !== 5 || !focusMode || title.focusCount !== 2) throw new Error('Browser history did not restore focused-week mode');
+if (current !== 5 || !focusMode || practiceTitle.focusCount !== 2 || practice.scrollCount !== 2) throw new Error('Browser history did not restore focused-week mode and the selected package');
 browserWindow.location.search = '';
 listeners.popstate();
 if (focusMode || activeWeek.focusCount !== 2 || renderCount !== 4) throw new Error('Browser history did not return to the week list');
-console.log('Focused-week selection, return control, browser history, and keyboard focus passed.');
+context.selectReadingWeek(7);
+if (current !== 7 || !focusMode || practiceTitle.focusCount !== 2 || title.focusCount !== 1 || scrollCount !== 1) throw new Error('A non-Theme 1 week did not retain its standard reader focus and scroll behavior');
+console.log('Focused-week selection, return control, browser history, Theme 1 practice visibility, and keyboard focus passed.');
 """.replace("__ROUTE_CODE__", json.dumps(route_code))
 
 
@@ -711,8 +715,13 @@ def main() -> int:
     ):
         if marker not in html:
             errors.append(f"The reader is missing integrated/focused-week markup: {marker}")
-    if "function selectReadingWeek" not in html or "week-focused" not in html or "renderTheme1PracticeFlow" not in html:
+    if "function selectReadingWeek" not in html or "function focusSelectedWeek" not in html or "window.setTimeout(focusSelectedWeek,0)" not in html or "week-focused" not in html or "renderTheme1PracticeFlow" not in html:
         errors.append("The focused-week selection, return, or embedded package flow is not wired")
+    if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
+        errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v="):
+        if asset not in html:
+            errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
     for required_prompt in (
         "7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB",
@@ -816,7 +825,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Focused-week interaction test failed:\n{result.stderr.strip()}")
-                    elif "Focused-week selection, return control, browser history, and keyboard focus passed." not in result.stdout:
+                    elif "Focused-week selection, return control, browser history, Theme 1 practice visibility, and keyboard focus passed." not in result.stdout:
                         errors.append("Focused-week interaction test did not report success")
 
             if not errors:
