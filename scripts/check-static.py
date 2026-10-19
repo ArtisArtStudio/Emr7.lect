@@ -534,6 +534,7 @@ const storage = new Map([
 ]);
 const elements = new Map();
 let capturedRequest = null;
+let mockResponse = 'DURUM: TAM DOĞRU | İPUCU: Başka bir örnek ara.';
 const element = (id) => {{
   if (!elements.has(id)) {{
     const item = {{
@@ -548,8 +549,9 @@ const element = (id) => {{
         const matches = [...item.innerHTML.matchAll(/data-check-question="([^"]+)"/g)];
         item.checkButtons = matches.map((match) => {{
           const feedback = {{dataset: {{}}, hidden: true, textContent: ''}};
-          const card = {{querySelector: (name) => name === '.feedback-box' ? feedback : null}};
-          return {{dataset: {{checkQuestion: match[1]}}, disabled: false, textContent: '', listeners: {{}}, closest: () => card, addEventListener(name, callback) {{ this.listeners[name] = callback; }}, feedback}};
+          const pill = {{dataset: {{}}, hidden: true, textContent: ''}};
+          const card = {{dataset: {{}}, querySelector: (name) => name === '.feedback-box' ? feedback : name === '[data-result-pill]' ? pill : null}};
+          return {{dataset: {{checkQuestion: match[1]}}, disabled: false, textContent: '', listeners: {{}}, closest: () => card, addEventListener(name, callback) {{ this.listeners[name] = callback; }}, card, feedback, pill}};
         }});
         return item.checkButtons;
       }}
@@ -570,7 +572,7 @@ const context = vm.createContext({{
   URLSearchParams, Date, console,
   fetch: async (url, options) => {{
     capturedRequest = {{url, body: JSON.parse(options.body)}};
-    return {{ok: true, json: async () => ({{choices: [{{message: {{content: 'Geri bildirim: Metinden kanıt seçmen iyi bir başlangıç.'}}}}]}})}};
+    return {{ok: true, json: async () => ({{choices: [{{message: {{content: mockResponse}}}}]}})}};
   }}
 }});
 for (const source of sources) vm.runInContext(source, context);
@@ -587,11 +589,22 @@ setTimeout(() => {{
   const system = capturedRequest.body.messages.find(message => message.role === 'system').content;
   const prompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
   if (!system.includes('7. sınıf Türkçe') || !system.includes('Tema 1 · Hayat Boyu Gelişim') || !system.includes('Maarif/MEB')) throw new Error('Groq system message omitted grade, theme, or Maarif/MEB context');
-  const strictPromptChecks = ['yanlış, ilgisiz veya eksik', 'Harika', 'doğru yanıtı'].map((phrase) => system.includes(phrase));
-  if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require explicit strict error reporting without giving away the answer: ${{JSON.stringify(strictPromptChecks)}}`);
+  const strictPromptChecks = ['yanlış, ilgisiz veya eksik', 'Harika', 'doğru yanıtı', 'hata/eksik yoksa hiçbir ipucu verme', 'DURUM: TAM DOĞRU'].map((phrase) => system.includes(phrase));
+  if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require strict labels and no hints for a fully correct response: ${{JSON.stringify(strictPromptChecks)}}`);
   if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
-  if (!button.feedback.textContent.includes('Geri bildirim')) throw new Error('Groq feedback was not rendered after the response');
-  console.log('Question-level Groq request includes age/theme context, source passage, and feedback.');
+  if (button.card.dataset.checkState !== 'correct' || button.pill.textContent !== '✓ Tam doğru') throw new Error('A fully correct AI result did not turn the question card and status badge green/correct');
+  if (!button.feedback.textContent.includes('DURUM: TAM DOĞRU') || button.feedback.textContent.includes('İPUCU') || button.feedback.textContent.includes('başka bir örnek')) throw new Error('A fully correct response still displays an AI hint');
+  mockResponse = 'DURUM: KISMEN DOĞRU';
+  button.listeners.click();
+  setTimeout(() => {{
+    if (button.card.dataset.checkState !== 'partial' || button.pill.textContent !== '◐ Kısmen doğru') throw new Error('A partially correct AI result did not set the yellow status');
+    mockResponse = 'DURUM: YANLIŞ';
+    button.listeners.click();
+    setTimeout(() => {{
+      if (button.card.dataset.checkState !== 'wrong' || button.pill.textContent !== '✕ Yanlış') throw new Error('A wrong AI result did not set the red status');
+      console.log('Question-level Groq context, no-hint correct status, yellow partial status, and red wrong status passed.');
+    }}, 0);
+  }}, 0);
 }}, 0);
 """
 
@@ -812,6 +825,12 @@ def main() -> int:
         if asset not in html:
             errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
+    practice_css = (ROOT / "theme1-practice.css").read_text(encoding="utf-8") if (ROOT / "theme1-practice.css").is_file() else ""
+    if "data-question-tone" in app_js or "data-question-tone" in practice_css:
+        errors.append("Question cards must not cycle through unrelated colors by question number")
+    for state in ("correct", "partial", "incomplete", "wrong", "unverified"):
+        if f'data-check-state="{state}"' not in practice_css or f'data-state="{state}"' not in practice_css:
+            errors.append(f"AI assessment needs matching card and feedback colors for {state}")
     video_analysis_path = ROOT / "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt"
     if not video_analysis_path.is_file():
         errors.append("Missing Gemini video analysis text used by the Hayat Büyük Bir Okuldur checks")
@@ -828,7 +847,8 @@ def main() -> int:
         "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "sourceNotesUrl", "loadSourceNotes", "hasVideoAnalysis", "videoUnavailable",
         "kullanıcı tarafından sağlanan Gemini analiz raporu", "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
         "data-check-question", "data-sort-target", "aria-keyshortcuts",
-        "yanlış, ilgisiz veya eksik", "Harika",
+        "yanlış, ilgisiz veya eksik", "Harika", "DURUM: TAM DOĞRU",
+        "hata/eksik yoksa hiçbir ipucu verme", "assessmentStateFromText", "data-result-pill",
     ):
         if required_prompt not in app_js:
             errors.append(f"Groq evaluation context or strict per-question checking is missing: {required_prompt}")
@@ -988,7 +1008,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
-                    elif "Question-level Groq request includes age/theme context, source passage, and feedback." not in result.stdout:
+                    elif "Question-level Groq context, no-hint correct status, yellow partial status, and red wrong status passed." not in result.stdout:
                         errors.append("Groq prompt test did not report success")
 
             if not errors:

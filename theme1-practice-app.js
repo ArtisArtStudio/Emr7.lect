@@ -193,6 +193,47 @@
     return `<label class="form-field${rows >= 4 ? " full" : ""}" for="${escapeHTML(fieldId)}"${rowClass}>${label}<textarea id="${escapeHTML(fieldId)}" rows="${rows}" ${baseAttrs}>${escapeHTML(value)}</textarea></label>`;
   }
 
+  const assessmentLabels = Object.freeze({
+    correct: "✓ Tam doğru",
+    partial: "◐ Kısmen doğru",
+    incomplete: "! Yanıt eksik",
+    wrong: "✕ Yanlış",
+    unverified: "ⓘ İçerik doğrulanamadı",
+    system: "⚠ Kontrol edilemedi",
+    pending: "… Kontrol ediliyor",
+    unrated: "? Sonuç sınıflandırılamadı"
+  });
+
+  function assessmentStateFromText(text) {
+    const content = String(text || "");
+    const match = content.match(/DURUM\s*:\s*([^\r\n]+)/i);
+    const status = (match?.[1] || "").trim().toLocaleLowerCase("tr-TR");
+    if (!status) return "unrated";
+    if (/doğrulanamad|doğrulanamıyor|doğrulanmadı/.test(status)) return "unverified";
+    if (/tam\s+doğru|tamamen\s+doğru/.test(status)) return "correct";
+    if (/eksik/.test(status)) return "incomplete";
+    if (/kısmen/.test(status)) return "partial";
+    if (/yanlış|hatalı/.test(status)) return "wrong";
+    return "unrated";
+  }
+
+  function storedAssessmentState(feedback) {
+    if (!feedback) return "";
+    const state = String(feedback.state || "");
+    if (Object.hasOwn(assessmentLabels, state) && state !== "pending") return state;
+    if (state === "error") return /önce yanıt|yanıt alanını doldur/i.test(feedback.text || "") ? "incomplete" : "system";
+    if (state === "success") return assessmentStateFromText(feedback.text);
+    return assessmentStateFromText(feedback.text);
+  }
+
+  function assessmentFeedbackText(text, state) {
+    if (state === "correct") return "DURUM: TAM DOĞRU\nYanıtın istenen ölçütleri karşılıyor.";
+    if (state === "unrated" && !/DURUM\s*:/i.test(String(text || ""))) {
+      return "Geri bildirimin durumu sınıflandırılamadı. Yeniden kontrol et.";
+    }
+    return String(text || "");
+  }
+
   function savedFeedback(activity, question) {
     return flowState().feedback[questionKey(activity, question)] || null;
   }
@@ -326,6 +367,9 @@
       const qKey = questionKey(activity, question);
       const answers = currentAnswer(activity, question, index);
       const feedback = savedFeedback(activity, question);
+      const feedbackState = storedAssessmentState(feedback);
+      const feedbackText = assessmentFeedbackText(feedback?.text, feedbackState);
+      const resultLabel = assessmentLabels[feedbackState] || "";
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
       const questionSourceLink = sourceLinkMarkup(question.sourceUrl, question.sourceLinkLabel || activity.sourceLinkLabel || "İlgili video", question.sourceLinkType || activity.sourceLinkType || "video");
@@ -335,13 +379,14 @@
           ? "Seçim ve gerekçe"
           : "Yazılı yanıt");
       const diagramHTML = questionDiagramMarkup(question.diagram);
-      return `<article class="question-card" data-question-key="${escapeHTML(qKey)}" data-question-tone="${index % 5}">
-        <div class="question-heading"><span class="question-number">${index + 1}</span><div class="question-copy"><p class="question-prompt">${escapeHTML(question.prompt)}</p>${questionSourceLink ? `<div class="question-source-links">${questionSourceLink}</div>` : ""}</div></div>
+      const cardStateAttribute = feedbackState ? `data-check-state="${escapeHTML(feedbackState)}"` : "";
+      return `<article class="question-card" data-question-key="${escapeHTML(qKey)}" ${cardStateAttribute}>
+        <div class="question-heading"><span class="question-number">${index + 1}</span><div class="question-copy"><div class="question-prompt-row"><p class="question-prompt">${escapeHTML(question.prompt)}</p><span class="question-result-pill" data-result-pill data-state="${escapeHTML(feedbackState || "none")}" role="status" aria-live="polite" ${resultLabel ? "" : "hidden"}>${escapeHTML(resultLabel)}</span></div>${questionSourceLink ? `<div class="question-source-links">${questionSourceLink}</div>` : ""}</div></div>
         ${diagramHTML}
         <span class="response-type">${escapeHTML(widgetName)}</span>
         <div class="answer-box"><p class="answer-box-title">Yanıt alanı</p><div class="form-fields">${fieldHTMLContent}</div></div>
         <div class="question-actions"><button type="button" class="check-button" data-check-question="${escapeHTML(qKey)}">✦ Kontrol et</button><span class="question-save-status">Yanıt otomatik kaydedilir.</span></div>
-        <div class="feedback-box" data-feedback-key="${escapeHTML(qKey)}" data-state="${escapeHTML(feedback?.state || "success")}" ${feedback?.text ? "" : "hidden"}>${escapeHTML(feedback?.text || "")}</div>
+        <div class="feedback-box" data-feedback-key="${escapeHTML(qKey)}" data-state="${escapeHTML(feedbackState || "none")}" ${feedbackText ? "" : "hidden"}>${escapeHTML(feedbackText || "")}</div>
       </article>`;
     }).join("");
 
@@ -392,6 +437,8 @@
           value = control.value;
         }
         flow.answers[key][fieldId] = value;
+        delete flow.feedback[key];
+        clearQuestionAssessment(control.closest?.(".question-card"));
         persist();
         flowCount.textContent = `${questions.filter((question, index) => answered(question, currentAnswer(activity, question, index))).length}/${questions.length} soru yanıtlandı`;
         renderStepTrack();
@@ -436,6 +483,8 @@
       const flow = flowState(unitId);
       if (!flow.answers[qKey] || typeof flow.answers[qKey] !== "object") flow.answers[qKey] = {};
       flow.answers[qKey][fieldId] = { ...assignments };
+      delete flow.feedback[qKey];
+      clearQuestionAssessment(board.closest?.(".question-card"));
       persist();
       const current = allSteps[stepIndex];
       if (current) {
@@ -627,11 +676,36 @@
     return fieldResponses.join("\n");
   }
 
+  function setQuestionAssessment(card, state) {
+    if (!card) return;
+    if (state) card.dataset.checkState = Object.hasOwn(assessmentLabels, state) ? state : "unrated";
+    else if (card.dataset) delete card.dataset.checkState;
+    const pill = card.querySelector?.("[data-result-pill]");
+    if (pill) {
+      const label = assessmentLabels[state] || "";
+      pill.textContent = label;
+      pill.dataset.state = state || "none";
+      pill.hidden = !label;
+    }
+  }
+
+  function clearQuestionAssessment(card) {
+    setQuestionAssessment(card, "");
+    const feedback = card?.querySelector?.(".feedback-box");
+    if (feedback) {
+      feedback.hidden = true;
+      feedback.textContent = "";
+      feedback.dataset.state = "none";
+    }
+  }
+
   function showFeedback(card, text, state) {
     const feedback = card?.querySelector(".feedback-box");
     if (!feedback) return;
-    feedback.textContent = text;
-    feedback.dataset.state = state;
+    const finalState = Object.hasOwn(assessmentLabels, state) ? state : "system";
+    setQuestionAssessment(card, finalState);
+    feedback.textContent = assessmentFeedbackText(text, finalState);
+    feedback.dataset.state = finalState;
     feedback.hidden = false;
   }
 
@@ -655,7 +729,7 @@
       return Array.isArray(value) ? value.length > 0 : String(value ?? "").trim().length > 0;
     });
     if (!hasResponse) {
-      showFeedback(card, "Önce yanıt alanını doldur ya da en az bir kartı yerleştir; sonra yeniden kontrol et.", "error");
+      showFeedback(card, "Önce yanıt alanını doldur ya da en az bir kartı yerleştir; sonra yeniden kontrol et.", "incomplete");
       return;
     }
 
@@ -663,7 +737,7 @@
     const modelInput = document.getElementById("model");
     const apiKey = keyInput?.value.trim();
     if (!apiKey) {
-      showFeedback(card, "Bu yanıtı kontrol etmek için önce üstteki Groq ayarlarına API anahtarını gir. Anahtar GitHub’a gönderilmez.", "error");
+      showFeedback(card, "Bu yanıtı kontrol etmek için önce üstteki Groq ayarlarına API anahtarını gir. Anahtar GitHub’a gönderilmez.", "system");
       openGroqSettings();
       return;
     }
@@ -673,8 +747,9 @@
     const prior = card?.querySelector(".feedback-box");
     if (prior) {
       prior.hidden = false;
-      prior.dataset.state = "success";
+      prior.dataset.state = "pending";
       prior.textContent = "Yanıt istenen ölçütler ve sağlanan kaynak bağlamı açısından kontrol ediliyor…";
+      setQuestionAssessment(card, "pending");
     }
 
     let context;
@@ -691,7 +766,9 @@
         "Öğrencinin yazdığı yanıtı aynen incele. Yanıtta bulunmayan bir sözü, davranışı, alıntıyı veya kanıtı asla varmış gibi gösterme. Kaynak metinde olmayan ayrıntı uydurma.",
         "Her zaman soruya uygunluğu, istenen sayıdaki öğeyi kapsama ve gerekçe/kanıtın yeterliliğini kontrol et. Olgusal doğruluğu yalnızca sana gerçekten sağlanan kaynakla karşılaştır; seçim/eşleştirmelerde her kartı ayrı kontrol et.",
         "Yanıt yanlış, ilgisiz veya eksikse bunu nazik ama doğrudan söyle. O durumda ‘Harika’, ‘çok iyi’, ‘doğru’ gibi övgü kullanma. Yanlış olan kısmı/karşılanmayan ölçütü belirt; ardından doğru yanıtı, doğru seçeneği, örnek yanıtı veya metinden doğru alıntıyı VERME. Öğrenciyi tek bir somut ipucu ya da metne geri götüren soru ile yönlendir.",
-        "Yanıt yalnızca tüm doğrulanabilir temel ölçütleri karşılıyorsa ‘Tam doğru’ de; kısmen karşılıyorsa ‘Kısmen doğru’, yanlış/ilgisizse ‘Yanlış’, boşlukları varsa ‘Eksik’ olarak sınıflandır. QR video doğruluğu doğrulanamıyorsa video kısmına ‘Tam doğru’ deme; açık anahtar kullanıldıysa sonucu yalnızca ‘sağlanan anahtara göre’ nitele. Gereksiz teselli ve genel övgü verme.",
+        "Yanıt tüm doğrulanabilir ölçütleri karşılıyor ve hata/eksik yoksa hiçbir ipucu verme; ‘İPUCU’ başlığı, yönlendirici soru, yeni örnek ya da bir sonraki adım ekleme. Yalnızca ‘DURUM: TAM DOĞRU’ ve kısa bir ölçüt teyidi yaz.",
+        "Çıktı biçimi: önce tek satırda ‘DURUM: TAM DOĞRU’, ‘DURUM: KISMEN DOĞRU’, ‘DURUM: YANLIŞ’, ‘DURUM: EKSİK’ veya ‘DURUM: DOĞRULANAMADI’ etiketlerinden birini aynen kullan. Kısmen doğru/yanlış/eksik yanıtta ardından ‘HATA/EKSİK:’ ve tek bir ‘İPUCU:’ satırı ver; cevabı asla yazma.",
+        "Sınıflandırma: tüm doğrulanabilir ölçütler karşılanmışsa TAM DOĞRU; bir kısmı karşılanmış ama bir ölçüt eksik/yanlışsa KISMEN DOĞRU; yanıt ilgisiz ya da temel yanıt yanlışsa YANLIŞ; hiç/çok az yanıt varsa EKSİK. QR video içeriği doğrulanamıyorsa ve yanıtın video iddiası içeriyorsa DOĞRULANAMADI de; doğrulanmamış videoya ‘Tam doğru’ deme. Açık anahtar kullanıldıysa sonucu yalnızca ‘sağlanan anahtara göre’ nitele.",
         "Öğrencinin yanıtında hata varsa önce hatayı ve nedenini göster, sonra cevabı söylemeden bir sonraki düşünme adımını ver. Yanıtın yerine yeni bir cevap yazma.",
         context.note,
         context.hasVideoAnalysis
@@ -701,7 +778,7 @@
             : context.hasVideoSource && context.answerKeyAvailable
               ? "QR video bağlantısını açıp izleyemezsin. Bu soruda sana açık bir değerlendirme anahtarı verildi; yalnızca yanıtı bu anahtara göre karşılaştır. Sonucun anahtar-temelli olduğunu, videoyu bağımsız izleyerek doğrulamadığını belirt ve anahtar dışında video ayrıntısı hakkında hüküm verme."
               : context.text ? "Kaynak metin aşağıdadır; değerlendirmeyi bu metne dayandır. Doğru cevabı öğrenciye doğrudan verme." : "Sağlanmış kaynak yoksa kesin bilgi iddiasında bulunma. Eksik kaynak hakkında uydurma; öğrencinin notunu değerlendiremediğinde bunu açıkça söyle.",
-        "Geri bildirimi Türkçe ve 3–5 kısa cümleyle, şu başlıklarla ver: DURUM:, HATA/EKSİK:, İPUCU:. Tam doğru yanıtta hata uydurma; kısa ve ölçüt temelli açıklama yap."
+        "Tam doğru yanıtta yalnızca DURUM ve kısa ÖLÇÜT teyidi ver; HATA/EKSİK veya İPUCU başlığı açma. Diğer sınıflandırmalarda Türkçe, kısa ve ölçüt temelli kal; öğrenciye doğru cevabı tamamlatacak tek ipucu ver. Gereksiz övgü/teselli kullanma."
       ].join("\n");
       userPrompt = [
         "Ders: Türkçe · 7. sınıf",
@@ -734,17 +811,19 @@
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
       if (!content) throw new Error("Groq yanıtında geri bildirim bulunamadı.");
-      flowState(activeUnit.weekId).feedback[qKey] = { state: "success", text: content, checkedAt: new Date().toISOString() };
+      const assessmentState = assessmentStateFromText(content);
+      const learnerFeedback = assessmentFeedbackText(content, assessmentState);
+      flowState(activeUnit.weekId).feedback[qKey] = { state: assessmentState, text: learnerFeedback, checkedAt: new Date().toISOString() };
       persist();
-      showFeedback(card, content, "success");
+      showFeedback(card, learnerFeedback, assessmentState);
     } catch (error) {
       const message = String(error?.message || error || "Bilinmeyen hata");
       const friendly = /failed to fetch|networkerror|load failed/i.test(message)
         ? "Groq’a ulaşılamadı. İnternet bağlantısını ve API erişimini kontrol et; anahtar bu cihazda kalır."
         : `Kontrol tamamlanamadı: ${message}`;
-      flowState(activeUnit.weekId).feedback[qKey] = { state: "error", text: friendly, checkedAt: new Date().toISOString() };
+      flowState(activeUnit.weekId).feedback[qKey] = { state: "system", text: friendly, checkedAt: new Date().toISOString() };
       persist();
-      showFeedback(card, friendly, "error");
+      showFeedback(card, friendly, "system");
     } finally {
       button.disabled = false;
       button.textContent = "✦ Kontrol et";
