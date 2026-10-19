@@ -61,6 +61,8 @@ Kaynaklar: deneme; “Bir İyilik Hikâyesi” video içeriği ve fotoğraflar; 
 | 7 | Araştırma notlarıyla 1 hazırlıklı sunum ve soru-cevap | Akranlar/yetişkinlerle yapılan görüşmeler | Konuşma, karşılaştırma, sunum |
 | 8 | 5 ölçüt oluşturma ve kişinin kendini bu ölçütlere göre değerlendirdiği 1 yazı | Kişisel deneyim | Öz değerlendirme, gerekçeli yazma |
 
+**Uygulama biçimi:** `genclik-a01` bağlam ipucunu kısa bir alanda toplar ve dört sözcüğü sözlük anlamlarıyla eşleştirir. `genclik-a03` beş soruyu üç seçenekli anlama/çıkarım, bir imge–düşünce eşleştirmesi ve bir kişisel bağlantı yanıtı olarak sunar; denemenin temel imgeleri ve PDF’deki soru türü korunur.
+
 ### Metin yapısı ve neden-sonuç çalışması (numaralı etkinlik dizisinin dışında)
 
 PDF s. 38–41’de önce kısa bir açıklama ve öğretmen modeli; ardından “Öğrenmenin Bitmeyen Yolculuğu”, “İyiliğin Zincirleme Etkisi” ve “Saygın Bir Birey Olmak” metinleriyle büyük grup, küçük grup ve bireysel uygulama var. Öğrenciler neden-sonuç düzenleyicileri kullanıp bilgileri şemaya yerleştiriyor. Bu bölüm için yeni uygulama da kısa kaynak metin ile soru/yönergeyi ayrı tutar.
@@ -109,14 +111,14 @@ Tema 1 için **43 özgün etkinlik** üç haftalık pakette, seçilen haftanın 
 
 ### Tema 1 QR kaynakları — PDF’den çözümlenen bağlantılar
 
-QR kodları `turkce7-1.pdf` içindeki ilgili sayfalardan yerel olarak çözümlendi ve PDF’deki tıklanabilir EBA hedefleriyle eşleştirildi. Uygulamada bu bağlantılar etkinlik ya da ilgili soru başında açılır.
+QR kodları `turkce7-1.pdf` içindeki ilgili sayfalardan yerel olarak çözümlendi ve PDF’deki tıklanabilir EBA hedefleriyle eşleştirildi. Uygulamada bu bağlantılar etkinlik ya da ilgili soru başında belirgin medya düğmeleri olarak görünür: videolarda 🎥 “Videoyu aç”, dinleme kaydında 🎧 “Dinlemeyi aç”.
 
 | Kaynak | PDF sayfası | Uygulamadaki etkinlikler | QR bağlantısı |
 |---|---:|---|---|
 | “Hayat Büyük Bir Okuldur” | 22 | `marti-a08`, `marti-a09` | [Videoyu aç](https://www.eba.gov.tr/c?q=UEX7a3e23fb) |
 | “Bir İyilik Hikâyesi” | 33 | `genclik-a04` | [Videoyu aç](https://www.eba.gov.tr/c?q=UEXff7ff4bd) |
-| Yiğit Caner Aydın söyleşisi | 42 | `sport-a01`–`sport-a06`, `adiny-a03` | [Söyleşiyi aç](https://www.eba.gov.tr/c?q=UEX5afb21e6) |
-| Ali Kuşçu dinleme içeriği | 57 | `adiny-a05`, `adiny-a06`, `adiny-review` · 4. soru | [Dinlemeyi aç](https://www.eba.gov.tr/c?q=UEX3d0cd83c) |
+| Yiğit Caner Aydın söyleşisi | 42 | `sport-a01`–`sport-a06`, `adiny-a03` | [Videoyu aç](https://www.eba.gov.tr/c?q=UEX5afb21e6) |
+| Ali Kuşçu dinleme içeriği | 57 | `adiny-a05`, `adiny-a06`, `adiny-review` · 4. soru | [Dinleme kaydını aç](https://www.eba.gov.tr/c?q=UEX3d0cd83c) |
 
 “Hayat Büyük Bir Okuldur” için kullanıcı tarafından paylaşılan Gemini analiz metni [`docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt`](video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt) dosyasında saklanır. `marti-a08` ve `marti-a09` Groq kontrolü sırasında bu dosyayı kaynak bağlamı olarak yükler. Metin, seçilmiş konuşma bölümleri içerdiği için tam transkript değildir; Groq videoyu bağımsız olarak izlemiş sayılmaz ve dosyadaki yorumları doğrudan gözlem gibi sunmaması için yönlendirilir.
 

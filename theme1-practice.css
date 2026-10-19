@@ -885,6 +885,37 @@
   font-weight: 800;
 }
 #theme1Practice .source-link:hover { background: #dfeaff; }
+#theme1Practice .qr-source-link {
+  justify-content: flex-start;
+  gap: 9px;
+  max-width: 100%;
+  min-height: 52px;
+  padding: 9px 12px;
+  border: 2px solid #e6a17e;
+  border-radius: 13px;
+  color: #672b16;
+  background: #fff1e9;
+  box-shadow: 0 4px 12px #7a31151a;
+  font-size: 14px;
+  line-height: 1.3;
+  text-align: left;
+}
+#theme1Practice .qr-source-link:hover { background: #ffe4d5; }
+#theme1Practice .qr-link-icon { flex: 0 0 auto; font-size: 22px; line-height: 1; }
+#theme1Practice .qr-link-title { min-width: 0; overflow-wrap: anywhere; }
+#theme1Practice .qr-link-action {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 8px;
+  color: #fff;
+  background: #a63d19;
+  font-size: 13px;
+  white-space: nowrap;
+}
+#theme1Practice .qr-link-external { flex: 0 0 auto; font-size: 16px; }
+#theme1Practice .audio-source-link { border-color: #8ab7ca; color: #174e66; background: #eaf8fc; }
+#theme1Practice .audio-source-link:hover { background: #dbf1f8; }
+#theme1Practice .audio-source-link .qr-link-action { background: #17637b; }
 #theme1Practice .question-list {
   gap: 16px;
   padding: 18px clamp(13px, 3vw, 26px) 25px;
@@ -1281,6 +1312,8 @@
   #theme1Practice .activity-heading-row { align-items: flex-start; gap: 11px; }
   #theme1Practice .activity-icon { flex-basis: 50px; width: 50px; height: 50px; border-radius: 16px; font-size: 25px; }
   #theme1Practice .activity-instruction { font-size: 16px; }
+  #theme1Practice .qr-source-link { width: 100%; justify-content: flex-start; }
+  #theme1Practice .qr-link-title { flex: 1 1 110px; }
   #theme1Practice .quest-path { padding: 11px; }
   #theme1Practice .question-card { padding: 13px; }
   #theme1Practice .question-heading { grid-template-columns: 34px minmax(0, 1fr); gap: 9px; }

@@ -297,11 +297,30 @@
     ],
 
     "genclik-a01": [
-      ...["hüsran", "ihtimam", "dağarcık", "umursamazlık"].map((word, index) => q(`word-${index + 1}`, `“${word}” kelimesinin anlamını metindeki bağlamdan tahmin et; sonra sözlükten doğrula.`, [
-        text("context-clue", "Kelimenin geçtiği cümle/bağlamdan aldığım ipucu", 2),
-        text("guess", "Metindeki anlam tahminim", 2),
-        text("dictionary", "Sözlük anlamı ve tahminimle karşılaştırmam", 2)
-      ], { sourceKey: "gencligin" }))
+      q("word-context", "Önce metinden en az iki kelime için anlam ipucu bul. Bu ipucuna göre tahminini yaz; ‘dağarcık’ gösterilen metinde yoksa PDF'teki ilgili bölümü kontrol et.", [
+        text("context-clues", "Kelime → metin ipucu → tahminim", 4)
+      ], {
+        sourceKey: "gencligin",
+        rubric: "En az iki kelime için metin bağlamından gerçek bir ipucu ve makul tahmin ara. Sağlanan okuma metninde ara bölümler kısaltılmış olabilir; görünmeyen bir sözcüğün metinde geçtiğini iddia etme, öğrenciye PDF'teki etkinlik/ilgili satırı kontrol etmesini söyle."
+      }),
+      q("word-meaning-match", "Şimdi dört kelime kartını sözlük anlamına en yakın açıklamayla eşleştir.", [
+        sort("vocabulary", "Kelime–anlam eşleştirmesi", [
+          { id: "disappointment", label: "Beklenen sonuca ulaşamama; düş kırıklığı", description: "Umut edilen şey gerçekleşmediğinde yaşanan sonuç." },
+          { id: "care", label: "Özen ve dikkat", description: "Bir işi dikkatlice ve özen göstererek yapma." },
+          { id: "knowledge", label: "Kişinin bildiği sözcük ve bilgilerin birikimi", description: "Bir kişinin bildiklerini ve kullandığı kelimeleri kapsayan birikim." },
+          { id: "indifference", label: "Önemsememe, aldırış etmeme", description: "Bir durumu ya da sonucu dikkate almama." }
+        ], [
+          { id: "word-husran", label: "hüsran" },
+          { id: "word-ihtimam", label: "ihtimam" },
+          { id: "word-dagarcik", label: "dağarcık" },
+          { id: "word-umursamazlik", label: "umursamazlık" }
+        ], {
+          "word-husran": "disappointment", "word-ihtimam": "care", "word-dagarcik": "knowledge", "word-umursamazlik": "indifference"
+        }, {
+          instructions: "Sözlük anlamını karşılaştır: kelimenin taşıdığı duygu, davranış ya da birikimi tanımlayan kutuyu bul.",
+          guide: ["Kelimeyi oku", "Tahminini anımsa", "Uyan sözlük açıklamasına taşı"]
+        })
+      ], { sourceKey: "gencligin", responseType: "matching", rubric: "Dört eşleştirmeyi denetle. Yanlış kartın adını söyle ve sözlükteki açıklamanın hangi sözcükleriyle karşılaştırması gerektiğini belirt; doğru eşleşmeyi öğrenci adına verme." })
     ],
     "genclik-a02": [
       q("methods-sort", "Dört örnek cümleyi baskın düşünceyi geliştirme yoluyla eşleştir; sonra bir yöntemin anlatıma katkısını açıkla.", [
@@ -325,13 +344,35 @@
     ],
 
     "genclik-a03": [
-      ...[
-        "Metinde ilkbahar imgesi insan yaşamının hangi dönemini anlatmak için kullanılıyor?",
-        "Nehir benzetmesi zaman hakkında hangi düşünceyi destekliyor?",
-        "Yazar, gençlikte edinilen alışkanlıkların ileriki yaşlara etkisini nasıl kuruyor?",
-        "Bahçıvan ve meyve imgesindeki sorumluluğu iki farklı kişi açısından açıkla.",
-        "Kendi yaşamında geleceğe hazırlık için bugün atabileceğin bir adımı gerekçelendir."
-      ].map((prompt, index) => q(`interpret-${index + 1}`, prompt, [text("answer", "Yanıtım ve denemeden dayanağım", 3)], { sourceKey: "gencligin" }))
+      q("interpret-1", "Denemede “ömrünün ilkbaharı” sözü insan yaşamının hangi dönemini anlatıyor?", [
+        radio("meaning", "En uygun açıklama", opts("İnsanların gençlik dönemi", "İhtiyarlık dönemi", "Yalnızca hava olaylarının yaşandığı mevsim"))
+      ], { sourceKey: "gencligin", answerKey: { meaning: "İnsanların gençlik dönemi" }, rubric: "Seçimi metindeki “insanların genç olduklarını anlatmak için” ifadesiyle karşılaştır. Yanlışsa ilgili cümleye geri yönlendir; doğru seçeneği doğrudan verme." }),
+      q("interpret-2", "Yazarın Heraklit'in nehir benzetmesine verdiği açıklama hangi düşünceyi destekliyor?", [
+        select("message", "Nehir imgesinin iletisi", opts("Zaman akar ve geçen an geri getirilemez", "İnsan aynı anı istediği zaman yeniden yaşayabilir", "Zaman yalnızca yaşlılıkta ilerlemeye başlar"))
+      ], { sourceKey: "gencligin", answerKey: { message: "Zaman akar ve geçen an geri getirilemez" }, rubric: "Seçimi metindeki nehir suyunun akıp uzaklaşması ve onu geri getirmenin mümkün olmaması açıklamasıyla karşılaştır. Yanlışsa metin ipucunu göster; doğru seçeneği yazma." }),
+      q("interpret-3", "Şeftali ağacının çiçekten olgun meyveye geçişi, gençlik ve sonraki yaşlar arasındaki hangi bağı kuruyor?", [
+        radio("connection", "Yazarın düşüncesine en yakın seçenek", opts("Olgun yaşlarda alınan sonuçlar, gençlikteki dikkatli hazırlığın ürünü olabilir", "İnsan yaşlandıkça bütün güzelliklerini kaybeder", "Başarı için gençlikte hazırlanmaya gerek yoktur")),
+        text("evidence", "Seçimini destekleyen metin ipucu", 2)
+      ], { sourceKey: "gencligin", answerKey: { connection: "Olgun yaşlarda alınan sonuçlar, gençlikteki dikkatli hazırlığın ürünü olabilir" }, rubric: "Seçimi ve denemedeki çiçeklenme, hazırlık, ihtimam ve meyve bağını kullanan kanıtı değerlendir. Eksikse hangi bağı açıklaması gerektiğini belirt; tam yanıtı öğrenci yerine verme." }),
+      q("interpret-4", "Dört imgeyi denemede desteklediği düşünceyle eşleştir.", [
+        sort("images-and-ideas", "İmge → düşünce eşleştirmesi", [
+          { id: "youth", label: "Gençlik bir gelişme ve hazırlanma dönemidir", description: "Yazar insanların gençliğini tabiatın ilkbaharına benzetir." },
+          { id: "unfulfilled", label: "Yetenekleri kullanmadan yalnız görünüşte kalmak düş kırıklığı doğurabilir", description: "Yalnız çiçek açıp meyve vermeme örneğiyle açıklanır." },
+          { id: "preparation", label: "Sonraki sonuçlar önceki özenli hazırlığa dayanabilir", description: "Olgun şeftaliler, daha önceki çiçeklenme ve bakımla ilişkilendirilir." },
+          { id: "time", label: "Geçen zaman geri getirilemez", description: "Nehirden akan su, zamanın akışına benzetilir." }
+        ], [
+          { id: "image-1", label: "“Ömrünün ilkbaharı” sözü" },
+          { id: "image-2", label: "Çiçek açıp meyve vermeyen ağaç" },
+          { id: "image-3", label: "İlkbahardaki özenin ardından olgunlaşan şeftaliler" },
+          { id: "image-4", label: "İçinden akan suya iki kez girilemeyen nehir" }
+        ], {
+          "image-1": "youth", "image-2": "unfulfilled", "image-3": "preparation", "image-4": "time"
+        }, {
+          instructions: "İmgeyi oku ve denemede neyi anlattığını düşün. Her kutuya onu en iyi açıklayan bir kart yerleştir.",
+          guide: ["İmgeyi oku", "Denemedeki açıklamayı anımsa", "Anlamıyla eşleştir"]
+        })
+      ], { sourceKey: "gencligin", responseType: "matching", rubric: "Dört imge-düşünce eşleşmesini denetle. Yanlış kartın hangi imge olduğunu ve yeniden okuması gereken açıklama bölümünü belirt; doğru kutuyu söyleme." }),
+      q("interpret-5", "Denemenin gençlikte hazırlanma düşüncesini kendi yaşamınla ilişkilendir. Gelecekteki bir amacın için bugün atabileceğin bir adımı seç ve nedenini yaz.", [text("answer", "Adımım, amacıma katkısı ve gerekçem", 3)], { sourceKey: "gencligin" })
     ],
     "genclik-a04": [
       q("visual-link", "Kitaptaki ‘Bir İyilik Hikâyesi’ videosunu izleyip fotoğraflara bak. Bir fotoğrafla videodaki bir an arasında nasıl anlam bağı kurdun?", [
@@ -685,7 +726,7 @@
         text("timeline", "Zaman sırasını gösteren bilgi", 2),
         text("achievement", "Önemli buluş / çalışması", 2),
         text("message", "Ana mesaj", 2)
-      ], { sourceMode: "qr", sourceUrl: window.THEME1_QR_SOURCES.aliKuscu, sourceLinkLabel: "Ali Kuşçu dinleme kaydını aç" }),
+      ], { sourceMode: "qr", sourceUrl: window.THEME1_QR_SOURCES.aliKuscu, sourceLinkLabel: "Ali Kuşçu dinleme kaydı", sourceLinkType: "audio" }),
       q("review-5", "5. ‘Planlı çalışmanın öğrenmeye katkısı’ üzerine örnek ve gerekçe içeren kısa bir konuşma planla.", [
         text("claim", "Ana düşüncem", 2),
         text("example", "Örneğim", 3),

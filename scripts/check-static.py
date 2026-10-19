@@ -147,6 +147,10 @@ const vocabulary = window.THEME1_FORMS['marti-a02'];
 if (!vocabulary.some((question) => question.id === 'word-context-match' && question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort'))) throw new Error('Anahtar söz varlığı needs context matching');
 if (!vocabulary.some((question) => question.id === 'dictionary-meanings' && question.fields.filter((field) => field.type === 'select').length === 4)) throw new Error('Anahtar söz varlığı needs four dictionary-meaning choices');
 if (!vocabulary.some((question) => question.id === 'word-relationships' && question.fields.filter((field) => field.type === 'textarea').length >= 3)) throw new Error('Anahtar söz varlığı word-relationship work is missing');
+const genclikVocabulary = window.THEME1_FORMS['genclik-a01'];
+if (!genclikVocabulary.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !genclikVocabulary.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('Gençliğin Kıymeti vocabulary needs dictionary matching and text-context notes');
+const genclikComprehension = window.THEME1_FORMS['genclik-a03'];
+if (genclikComprehension.length !== 5 || !genclikComprehension.some((question) => question.responseType === 'matching') || !genclikComprehension.some((question) => question.fields.some((field) => field.type === 'radio')) || !genclikComprehension.some((question) => question.fields.some((field) => field.type === 'select')) || !genclikComprehension.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('Gençliğin Kıymeti comprehension needs varied types across five PDF-aligned questions');
 for (const section of ['serim','dugum','cozum']) {
   if (!window.THEME1_FORMS['marti-a04'].some((question) => question.id === section && question.fields.some((field) => field.type === 'textarea'))) throw new Error(`Olay örgüsü needs a separate written ${section} response`);
 }
@@ -302,6 +306,10 @@ for (const unitId of [1,3,5]) {{
   if (!plotQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !plotQuestions.some((question) => question.fields.some((field) => field.type === 'radio')) || !plotQuestions.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('The Jonathan story-structure task needs sorting, judgement, and writing');
   if (!viewpointQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !viewpointQuestions.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('The Jonathan perspective task needs matching and written inference');
   if (!solutionQuestions.some((question) => question.fields.some((field) => field.type === 'select')) || !solutionQuestions.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('The Jonathan problem-solving task needs a choice and a written rationale');
+  const nextVocabulary = context.window.THEME1_FORMS['genclik-a01'];
+  const nextComprehension = context.window.THEME1_FORMS['genclik-a03'];
+  if (!nextVocabulary.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort'))) throw new Error('The next text vocabulary task needs matching');
+  if (nextComprehension.length !== 5 || !nextComprehension.some((question) => question.responseType === 'matching') || !nextComprehension.some((question) => question.fields.some((field) => field.type === 'select'))) throw new Error('The next text needs five varied comprehension tasks');
   const emailQuestions = context.window.THEME1_FORMS['marti-a12'];
   if (JSON.stringify(emailQuestions.map((question) => question.id)) !== JSON.stringify(['email-purpose','email-plan','email-write']) || !emailQuestions.find((question) => question.id === 'email-write')?.fields.some((field) => field.id === 'answer' && field.rows === 7)) throw new Error('The existing Martı email activity must remain intact');
   const semicolonQuestions = context.window.THEME1_FORMS['marti-a11'];
@@ -320,9 +328,9 @@ for (const unitId of [1,3,5]) {{
   const qrActivity = activities.find((item) => item.id === 'marti-a08');
   if (qrActivity) {{
     qrActivity.sourceUrl = 'https://example.test/hayat-buyuk';
-    qrActivity.sourceLinkLabel = 'Videoyu aç';
+    qrActivity.sourceLinkLabel = 'Hayat Büyük Bir Okuldur';
     context.window.THEME1_FORMS['marti-a08'][0].sourceUrl = 'https://example.test/soru-videosu';
-    context.window.THEME1_FORMS['marti-a08'][0].sourceLinkLabel = 'Bu sorunun videosunu aç';
+    context.window.THEME1_FORMS['marti-a08'][0].sourceLinkLabel = 'Etkinlik videosu';
   }}
   context.window.renderTheme1PracticeFlow(unitId);
   for (let index = 0; index < activities.length; index += 1) {{
@@ -335,7 +343,20 @@ for (const unitId of [1,3,5]) {{
     if (actualSorts !== expectedSorts) throw new Error(`Unit ${{unitId}} activity ${{activity.id}}: expected ${{expectedSorts}} sorting widgets, got ${{actualSorts}}`);
     const renderedHTML = element('activity-stage').innerHTML;
     if (activity.sourceUrl && !renderedHTML.includes(`href="${{activity.sourceUrl}}"`)) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} source link was not rendered`);
-    for (const question of context.window.THEME1_FORMS[activity.id]) if (question.sourceUrl && !renderedHTML.includes(`href="${{question.sourceUrl}}"`)) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} question ${{question.id}} source link was not rendered`);
+    if (activity.sourceUrl) {{
+      const mediaClass = activity.sourceLinkType === 'audio' ? 'audio-source-link' : 'video-source-link';
+      const icon = activity.sourceLinkType === 'audio' ? '🎧' : '🎥';
+      const action = activity.sourceLinkType === 'audio' ? 'Dinlemeyi aç' : 'Videoyu aç';
+      if (!renderedHTML.includes(mediaClass) || !renderedHTML.includes(icon) || !renderedHTML.includes(action) || !renderedHTML.includes(activity.sourceLinkLabel || '')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} source link lacks its media icon, title, or open action`);
+    }}
+    for (const question of context.window.THEME1_FORMS[activity.id]) if (question.sourceUrl) {{
+      if (!renderedHTML.includes(`href="${{question.sourceUrl}}"`)) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} question ${{question.id}} source link was not rendered`);
+      const isAudio = question.sourceLinkType === 'audio' || /dinleme|ses kayd/i.test(question.sourceLinkLabel || '');
+      const mediaClass = isAudio ? 'audio-source-link' : 'video-source-link';
+      const icon = isAudio ? '🎧' : '🎥';
+      const action = isAudio ? 'Dinlemeyi aç' : 'Videoyu aç';
+      if (!renderedHTML.includes(mediaClass) || !renderedHTML.includes(icon) || !renderedHTML.includes(action) || !renderedHTML.includes(question.sourceLinkLabel || '')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} question ${{question.id}} source link lacks its media icon, title, or open action`);
+    }}
     if (activity.id === 'marti-a08') {{
       const html = element('activity-stage').innerHTML;
       if (!html.includes('href="https://example.test/hayat-buyuk"') || !html.includes('href="https://example.test/soru-videosu"')) throw new Error('QR video links were not rendered at activity and question level');

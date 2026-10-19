@@ -219,7 +219,7 @@
     ).join("");
   }
 
-  function sourceLinkMarkup(sourceUrl, label = "QR içeriğini aç") {
+  function sourceLinkMarkup(sourceUrl, title = "QR içeriği", mediaType = "video") {
     if (!sourceUrl) return "";
     let url;
     try {
@@ -227,8 +227,13 @@
     } catch {
       return "";
     }
-    if (!['https:', 'http:'].includes(url.protocol)) return "";
-    return `<a class="source-link qr-source-link" href="${escapeHTML(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHTML(label)} ↗</a>`;
+    if (!["https:", "http:"].includes(url.protocol)) return "";
+    const isAudio = String(mediaType).toLowerCase() === "audio" || /dinleme|ses kayd/i.test(String(title));
+    const icon = isAudio ? "🎧" : "🎥";
+    const action = isAudio ? "Dinlemeyi aç" : "Videoyu aç";
+    const className = isAudio ? "audio-source-link" : "video-source-link";
+    const ariaLabel = `${isAudio ? "Dinleme kaydını aç" : "Videoyu aç"}: ${title}`;
+    return `<a class="source-link qr-source-link ${className}" href="${escapeHTML(url.href)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHTML(ariaLabel)}"><span class="qr-link-icon" aria-hidden="true">${icon}</span><span class="qr-link-title">${escapeHTML(title)}</span><strong class="qr-link-action">${action}</strong><span class="qr-link-external" aria-hidden="true">↗</span></a>`;
   }
 
   function renderStepTrack() {
@@ -323,7 +328,7 @@
       const feedback = savedFeedback(activity, question);
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
-      const questionSourceLink = sourceLinkMarkup(question.sourceUrl, question.sourceLinkLabel || "İlgili QR kaydını aç");
+      const questionSourceLink = sourceLinkMarkup(question.sourceUrl, question.sourceLinkLabel || activity.sourceLinkLabel || "İlgili video", question.sourceLinkType || activity.sourceLinkType || "video");
       const widgetName = question.responseLabel || (question.responseType === "matching"
         ? (fields.some(field => field.type === "sort") ? "Sürükle-bırak eşleştirme" : "Eşleştirme / sınıflandırma")
         : fields.some(field => field.type === "radio" || field.type === "select" || field.type === "checkboxes")
@@ -347,7 +352,7 @@
     const qrQuestions = questions.filter(question => question.sourceMode === "qr" || question.videoSource || activity.videoSource);
     const hasGeminiAnalysisNotes = qrQuestions.some(question => question.sourceNotes || question.sourceNotesUrl || activity.sourceNotes || activity.sourceNotesUrl);
     const sourceModeNote = qrQuestions.length ? `<span>QR video/dinleme kaynağı</span>` : "";
-    const activitySourceLink = sourceLinkMarkup(activity.sourceUrl, activity.sourceLinkLabel || "QR videosunu / dinleme kaydını aç");
+    const activitySourceLink = sourceLinkMarkup(activity.sourceUrl, activity.sourceLinkLabel || "İlgili video", activity.sourceLinkType || "video");
     const questionLimitNote = qrQuestions.length
       ? `<p class="source-limit-note" role="note"><strong>Yapay zekâ sınırı:</strong> Groq QR bağlantısını açıp videoyu izleyemez/dinleyemez. ${hasGeminiAnalysisNotes ? "Bu etkinlikte kullanıcı tarafından sağlanan Gemini analiz notları (görüntü sahneleri ve seçilmiş konuşma bölümleri) kaynak olarak gönderilir; konuşma dökümü kısmi/özet olabilir, yorumlar doğrudan gözlem değildir ve rapor bağımsız olarak doğrulanmış sayılmaz." : "Yalnızca uygulamada bu soru için sağlanan transkript veya cevap anahtarını kullanabilir."} Notlarda/transkriptte/anahtarda bulunmayan ayrıntıları doğrulanmış gibi sunma. Bu, video içeriğinin doğru olduğu onayı değildir ve Groq'un videoyu bağımsız izleyerek doğruladığı anlamına gelmez.</p>`
       : "";
