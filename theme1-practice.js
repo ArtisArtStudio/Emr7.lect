@@ -1,3 +1,4 @@
+/* QR-backed activity metadata may include sourceUrl/sourceLinkLabel at activity level or question level. Add sourceTranscript/answerKey separately for factual Groq checking; a link alone is student-facing only. */
 window.THEME1_PRACTICE = {
   version: 1,
   source: "Türkçe 7 · 1. Tema: Hayat Boyu Gelişim · turkce7-1.pdf, basılı sayfalar 11–73",
@@ -295,7 +296,7 @@ window.THEME1_PRACTICE = {
               id: "adiny-a02", number: "2", title: "Davranıştan kişilik özelliğine ulaş", format: "Kanıt–özellik eşleştirmesi", count: "4 kanıt", source: "Kaoru İkeya öyküsü", skill: "Metinden kanıt, karakter çözümleme, gerekçe", instruction: "Dört davranış seç. Her birinin yanına desteklediği kişilik özelliğini ve bağlantının nedenini yaz.", prompts: ["Davranış/kanıt 1 → özellik → gerekçe", "Davranış/kanıt 2 → özellik → gerekçe", "Davranış/kanıt 3 → özellik → gerekçe", "Davranış/kanıt 4 → özellik → gerekçe"]
             },
             {
-              id: "adiny-a03", number: "3", title: "Kaoru ile Yiğit Caner Aydın’ı karşılaştır", format: "Öykü–video karşılaştırma tablosu", count: "2 kişi · 4 boyut · 2 benzerlik · 2 farklılık", source: "Kaoru İkeya öyküsü ve Yiğit Caner Aydın video söyleşisi", skill: "Karşılaştırma, sentez, kanıt seçme", instruction: "Öyküden ve kitaptaki video söyleşisinden birer kanıt kullanarak karşılaştır. Video uygulamaya gömülü değildir.", prompts: ["Başlangıçtaki amaçları", "Karşılaştıkları engeller", "Engellere verdikleri tepkiler", "Öğrenme/çalışma yöntemleri", "İki benzerlik ve iki farklılık"]
+              id: "adiny-a03", number: "3", title: "Kaoru ile Yiğit Caner Aydın’ı karşılaştır", format: "Öykü–video karşılaştırma tablosu", count: "2 kişi · 4 boyut · 2 benzerlik · 2 farklılık", source: "Kaoru İkeya öyküsü ve Yiğit Caner Aydın video söyleşisi", videoSource: true, skill: "Karşılaştırma, sentez, kanıt seçme", instruction: "Öyküden ve kitaptaki video söyleşisinden birer kanıt kullanarak karşılaştır. Video uygulamaya gömülü değildir.", prompts: ["Başlangıçtaki amaçları", "Karşılaştıkları engeller", "Engellere verdikleri tepkiler", "Öğrenme/çalışma yöntemleri", "İki benzerlik ve iki farklılık"]
             },
             {
               id: "adiny-a04", number: "4", title: "Öykü bölümleri için ölçüt oluştur", format: "Dört ölçüt grubu ve metin değerlendirmesi", count: "Serim, düğüm, çözüm, bağlantılar: 4 grup", source: "Kaoru İkeya öyküsü", skill: "Öykü yapısı, olay örgüsü, tutarlılık", instruction: "İyi bir öyküde her bölümde bulunması gereken bir ölçüt yaz. Sonra Kaoru öyküsünü ölçütlerinle değerlendir.", prompts: ["Serim bölümü ölçütü", "Düğüm bölümü ölçütü", "Çözüm bölümü ölçütü", "Bölümler arası bağlantı ölçütü", "Öyküden bir örnekle güçlü bulduğun ya da geliştireceğin yön"]

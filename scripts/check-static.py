@@ -271,12 +271,19 @@ for (const unitId of [1,3,5]) {{
       setItem: (key, value) => store.set(key, value),
       removeItem: (key) => store.delete(key)
     }},
-    URLSearchParams, Date, console
+    URL, URLSearchParams, Date, console
   }});
   for (const source of sources) vm.runInContext(source, context);
-  context.window.renderTheme1PracticeFlow(unitId);
   const selected = context.window.THEME1_PRACTICE.units.find((unit) => unit.weekId === unitId);
   const activities = selected.groups.flatMap((group) => group.activities);
+  const qrActivity = activities.find((item) => item.id === 'marti-a08');
+  if (qrActivity) {{
+    qrActivity.sourceUrl = 'https://example.test/hayat-buyuk';
+    qrActivity.sourceLinkLabel = 'Videoyu aç';
+    context.window.THEME1_FORMS['marti-a08'][0].sourceUrl = 'https://example.test/soru-videosu';
+    context.window.THEME1_FORMS['marti-a08'][0].sourceLinkLabel = 'Bu sorunun videosunu aç';
+  }}
+  context.window.renderTheme1PracticeFlow(unitId);
   for (let index = 0; index < activities.length; index += 1) {{
     const activity = activities[index];
     const expectedChecks = context.window.THEME1_FORMS[activity.id].length;
@@ -285,6 +292,12 @@ for (const unitId of [1,3,5]) {{
     const expectedSorts = context.window.THEME1_FORMS[activity.id].flatMap((question) => question.fields).filter((field) => field.type === 'sort').length;
     const actualSorts = (element('activity-stage').innerHTML.match(/data-sort-widget=/g) || []).length;
     if (actualSorts !== expectedSorts) throw new Error(`Unit ${{unitId}} activity ${{activity.id}}: expected ${{expectedSorts}} sorting widgets, got ${{actualSorts}}`);
+    if (activity.id === 'marti-a08') {{
+      const html = element('activity-stage').innerHTML;
+      if (!html.includes('href="https://example.test/hayat-buyuk"') || !html.includes('href="https://example.test/soru-videosu"')) throw new Error('QR video links were not rendered at activity and question level');
+      if (!html.includes('Groq videoyu açıp izleyemez')) throw new Error('QR activity does not explain that Groq cannot watch the video');
+    }}
+    if (activity.id === 'adiny-a03' && !element('activity-stage').innerHTML.includes('video içeriğinin doğru olduğu onayı değildir')) throw new Error('Mixed story/video comparison lacks an explicit verification limit');
     if (!element('activity-stage').innerHTML.includes('Yanıt alanı')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} is missing a response area`);
     if (index < activities.length - 1) element('next-step').listeners.click();
   }}
@@ -725,7 +738,9 @@ def main() -> int:
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
     for required_prompt in (
         "7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB",
-        "sourceContext", "data-check-question", "data-sort-target", "aria-keyshortcuts",
+        "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "videoUnavailable",
+        "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
+        "data-check-question", "data-sort-target", "aria-keyshortcuts",
         "yanlış, ilgisiz veya eksik", "Harika",
     ):
         if required_prompt not in app_js:

@@ -4,6 +4,7 @@
   const select = (id, label, options) => field(id, label, "select", { options });
   const radio = (id, label, options) => field(id, label, "radio", { options });
   const sort = (id, label, categories, items, expectedAssignments = null) => field(id, label, "sort", { categories, items, ...(expectedAssignments ? { expectedAssignments } : {}) });
+  // extra may hold sourceUrl/sourceLinkLabel for learners and sourceTranscript/answerKey for grounded checking.
   const q = (id, prompt, fields, extra = {}) => ({ id, prompt, fields, ...extra });
   const opts = (...labels) => labels.map(label => ({ value: label, label }));
   const yesNo = opts("Evet", "Hayır", "Kararsızım");

@@ -215,6 +215,18 @@
   font-size: 10px;
   line-height: 1.4;
 }
+#theme1Practice .source-limit-note {
+  margin: 10px clamp(12px, 2.5vw, 21px) 0;
+  padding: 10px 12px;
+  border: 1px solid #e6d6a8;
+  border-left: 4px solid #c1953d;
+  border-radius: 8px;
+  color: #66521f;
+  background: #fff9e9;
+  font-size: 12px;
+  line-height: 1.6;
+}
+#theme1Practice .source-limit-note strong { color: #5b4716; }
 #theme1Practice .reader-links {
   display: flex;
   gap: 7px;
@@ -254,6 +266,8 @@
   gap: 8px;
   align-items: start;
 }
+#theme1Practice .question-copy { min-width: 0; }
+#theme1Practice .question-source-links { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 7px; }
 #theme1Practice .question-number {
   display: grid;
   place-items: center;

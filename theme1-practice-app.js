@@ -193,6 +193,18 @@
     ).join("");
   }
 
+  function sourceLinkMarkup(sourceUrl, label = "QR içeriğini aç") {
+    if (!sourceUrl) return "";
+    let url;
+    try {
+      url = new URL(String(sourceUrl).trim(), window.location.href);
+    } catch {
+      return "";
+    }
+    if (!['https:', 'http:'].includes(url.protocol)) return "";
+    return `<a class="source-link qr-source-link" href="${escapeHTML(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHTML(label)} ↗</a>`;
+  }
+
   function renderStepTrack() {
     stepTrack.innerHTML = allSteps.map((step, index) => {
       const questions = questionList(step.activity);
@@ -225,13 +237,14 @@
       const feedback = savedFeedback(activity, question);
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
+      const questionSourceLink = sourceLinkMarkup(question.sourceUrl, question.sourceLinkLabel || "İlgili QR kaydını aç");
       const widgetName = question.responseType === "matching"
         ? (fields.some(field => field.type === "sort") ? "Sürükle-bırak eşleştirme" : "Eşleştirme / sınıflandırma")
         : fields.some(field => field.type === "radio" || field.type === "select")
           ? "Seçim ve gerekçe"
           : "Yazılı yanıt";
       return `<article class="question-card" data-question-key="${escapeHTML(qKey)}">
-        <div class="question-heading"><span class="question-number">${index + 1}</span><p class="question-prompt">${escapeHTML(question.prompt)}</p></div>
+        <div class="question-heading"><span class="question-number">${index + 1}</span><div class="question-copy"><p class="question-prompt">${escapeHTML(question.prompt)}</p>${questionSourceLink ? `<div class="question-source-links">${questionSourceLink}</div>` : ""}</div></div>
         <span class="response-type">${widgetName}</span>
         <div class="answer-box"><p class="answer-box-title">Yanıt alanı</p><div class="form-fields">${fieldHTMLContent}</div></div>
         <div class="question-actions"><button type="button" class="check-button" data-check-question="${escapeHTML(qKey)}">✦ Kontrol et</button><span class="question-save-status">Yanıt otomatik kaydedilir.</span></div>
@@ -243,8 +256,12 @@
       ? `<blockquote class="activity-source"><strong>Bu etkinliğin özgün kaynak metni</strong>${escapeHTML(activity.sourceText)}</blockquote>`
       : "";
     const readerHTML = readerLinksFor(activity);
-    const sourceModeNote = questions.some(question => question.sourceMode === "qr")
-      ? `<span>QR video/dinleme kaydı kitaptan açılır</span>`
+    const qrQuestions = questions.filter(question => question.sourceMode === "qr" || question.videoSource || activity.videoSource);
+    const hasUntranscribedQR = qrQuestions.some(question => !String(question.sourceTranscript || activity.sourceTranscript || "").trim());
+    const sourceModeNote = qrQuestions.length ? `<span>QR video/dinleme kaynağı</span>` : "";
+    const activitySourceLink = sourceLinkMarkup(activity.sourceUrl, activity.sourceLinkLabel || "QR videosunu / dinleme kaydını aç");
+    const questionLimitNote = hasUntranscribedQR
+      ? `<p class="source-limit-note" role="note"><strong>Yapay zekâ sınırı:</strong> Link verilse bile Groq videoyu açıp izleyemez. Yalnızca uygulamada bu soru için sağlanan transkript veya cevap anahtarıyla karşılaştırabilir; bunlar yoksa videoya ait bilgilerin doğruluğunu doğrulayamaz ve sadece yanıtın istenen bölümlerini/açıklamasını değerlendirebilir. Bu, video içeriğinin doğru olduğu onayı değildir.</p>`
       : "";
 
     stage.innerHTML = `<article class="activity-card">
@@ -255,7 +272,8 @@
       </header>
       ${sourceHTML}
       <div class="activity-meta"><span>${escapeHTML(activity.format || "Çalışma")}</span><span>${escapeHTML(activity.count || "")}</span><span>Kaynak: ${escapeHTML(activity.source || "Tema 1")}</span>${sourceModeNote}</div>
-      ${readerHTML ? `<div class="reader-links">${readerHTML}</div>` : ""}
+      ${readerHTML || activitySourceLink ? `<div class="reader-links">${readerHTML}${activitySourceLink}</div>` : ""}
+      ${questionLimitNote}
       <div class="question-list">${questionHTML}</div>
     </article>`;
 
@@ -405,16 +423,38 @@
 
   function sourceContext(activity, question) {
     const mode = question.sourceMode || (activity.sourceText ? "activity" : "story");
-    if (mode === "none") return { text: "", note: "Bu soru için ek kaynak metin kullanılmıyor." };
+    const transcript = String(question.sourceTranscript || activity.sourceTranscript || "").trim();
+    const hasVideoSource = mode === "qr" || Boolean(question.videoSource || activity.videoSource);
+    const activityQuestionKey = activity.answerKey && typeof activity.answerKey === "object" ? activity.answerKey[question.id] : undefined;
+    const hasExplicitAnswerKey = question.answerKey !== undefined || question.expectedAnswer !== undefined || activityQuestionKey !== undefined;
+    const answerKeyAvailable = hasExplicitAnswerKey || (question.fields || []).some(field => field.expectedAssignments && Object.keys(field.expectedAssignments).length);
+    const videoUnavailable = hasVideoSource && !transcript && !answerKeyAvailable;
+    if (mode === "none") return { text: "", note: "Bu soru için ek kaynak metin kullanılmıyor.", videoUnavailable: false, hasVideoSource: false, answerKeyAvailable };
     if (mode === "qr") return {
-      text: "",
-      note: "Kaynak, öğrencinin kitabındaki QR video/dinleme kaydıdır. Uygulamada video veya döküm bulunmadığından ayrıntı uydurma; öğrencinin sunduğu kanıtı ve açıklamasını değerlendirmeye odaklan."
+      text: transcript,
+      note: transcript
+        ? "QR video/dinleme kaynağının öğretmen tarafından sağlanan dökümü aşağıdadır. Yalnızca bu dökümde doğrulanabilen bilgileri kontrol et; görüntü/ses ayrıntısı dökümde yoksa uydurma."
+        : answerKeyAvailable
+          ? "Groq QR video/dinleme kaydını açıp izleyemez. Bu soruda ayrı bir öğretmen anahtarı yanıt verisine eklenmiş; yalnızca o anahtara göre kontrol et ve bunu videoyu bağımsız izleyerek doğrulamış gibi sunma."
+          : "Kaynak, kitaptaki QR video/dinleme kaydıdır. Groq bağlantıyı açıp izleyemez; döküm veya cevap anahtarı verilmediği için video ayrıntılarının doğruluğunu doğrulayamaz.",
+      videoUnavailable,
+      hasVideoSource,
+      answerKeyAvailable
     };
     if (mode === "book") return {
       text: "",
-      note: "Kaynak Türkçe 7 kitabının 47. sayfasındaki iki şiirdir; şiirlerin tam metni uygulamaya eklenmemiştir. Dize veya şiir ayrıntısı uydurma; öğrencinin alıntı ve inceleme dayanağını değerlendir."
+      note: "Kaynak Türkçe 7 kitabının 47. sayfasındaki iki şiirdir; şiirlerin tam metni uygulamaya eklenmemiştir. Dize veya şiir ayrıntısı uydurma; öğrencinin alıntı ve inceleme dayanağını değerlendir.",
+      videoUnavailable,
+      hasVideoSource,
+      answerKeyAvailable
     };
-    if (mode === "activity") return { text: activity.sourceText || "", note: "Etkinlik sayfasında görünen özgün kısa kaynak metin." };
+    if (mode === "activity") return {
+      text: activity.sourceText || "",
+      note: "Etkinlik sayfasında görünen özgün kısa kaynak metin.",
+      videoUnavailable,
+      hasVideoSource,
+      answerKeyAvailable
+    };
 
     const keys = question.sourceKeys || (question.sourceKey ? [question.sourceKey] : activitySourceKeys[activity.id] || []);
     const textParts = keys.map(key => window.BOOK_TEXTS?.[key]).filter(Boolean);
@@ -429,15 +469,15 @@
       }
       text = text.replace(/\[\[PAUSE:\d+\]\]/g, "").slice(0, 18000);
       const baseNote = "İlgili ders kitabı öyküsü / okuma metni aşağıda bağlam olarak verilmiştir.";
-      return { text, note: [baseNote, question.sourceNote].filter(Boolean).join(" ") };
+      return { text, note: [baseNote, question.sourceNote].filter(Boolean).join(" "), videoUnavailable, hasVideoSource, answerKeyAvailable };
     }
-    if (activity.sourceText) return { text: activity.sourceText, note: "Etkinlikte görünen özgün kısa kaynak metin." };
-    return { text: "", note: "Bu etkinlikte öğrenci kendi gözlem, deneyim veya kaynak notunu kullanır." };
+    if (activity.sourceText) return { text: activity.sourceText, note: "Etkinlikte görünen özgün kısa kaynak metin.", videoUnavailable, hasVideoSource, answerKeyAvailable };
+    return { text: "", note: "Bu etkinlikte öğrenci kendi gözlem, deneyim veya kaynak notunu kullanır.", videoUnavailable, hasVideoSource, answerKeyAvailable };
   }
 
   function answerForAI(activity, question, index) {
     const answers = currentAnswer(activity, question, index);
-    return (question.fields || []).map(field => {
+    const fieldResponses = (question.fields || []).map(field => {
       const value = answers[field.id];
       if (field.type === "sort") {
         const choices = new Map((field.categories || []).map(category => [category.id, category.label]));
@@ -449,7 +489,11 @@
       }
       const printable = Array.isArray(value) ? value.join(", ") : String(value ?? "").trim();
       return `${field.label || field.id}: ${printable || "(boş)"}`;
-    }).join("\n");
+    });
+    const activityQuestionKey = activity.answerKey && typeof activity.answerKey === "object" ? activity.answerKey[question.id] : undefined;
+    const explicitKey = question.answerKey ?? question.expectedAnswer ?? activityQuestionKey;
+    if (explicitKey !== undefined) fieldResponses.push(`Öğretmen değerlendirme anahtarı (öğrenciye doğru yanıtı açıklama): ${JSON.stringify(explicitKey)}`);
+    return fieldResponses.join("\n");
   }
 
   function showFeedback(card, text, state) {
@@ -499,7 +543,7 @@
     if (prior) {
       prior.hidden = false;
       prior.dataset.state = "success";
-      prior.textContent = "Yanıt doğruluk, eksiksizlik ve metin kanıtı açısından kontrol ediliyor…";
+      prior.textContent = "Yanıt istenen ölçütler ve sağlanan kaynak bağlamı açısından kontrol ediliyor…";
     }
 
     const context = sourceContext(activity, question);
@@ -508,12 +552,16 @@
       "Sen 7. sınıf Türkçe dersi için adil ama ölçütleri sıkı uygulayan bir öğretmensin.",
       "Bağlam: 7. sınıf Türkçe, Tema 1 · Hayat Boyu Gelişim. Maarif/MEB yönelimine ve yaş düzeyine uygun, açık ve kanıta dayalı değerlendir.",
       "Öğrencinin yazdığı yanıtı aynen incele. Yanıtta bulunmayan bir sözü, davranışı, alıntıyı veya kanıtı asla varmış gibi gösterme. Kaynak metinde olmayan ayrıntı uydurma.",
-      "Her zaman şu ölçütleri kontrol et: soruya uygunluk, metinle/konuyla doğruluk, istenen sayıdaki öğeyi kapsama, gerekçe veya kanıtın yeterliliği. Seçim/eşleştirmelerde her kartı ayrı kontrol et; kaçının doğru, yanlış veya boş olduğunu say.",
+      "Her zaman soruya uygunluğu, istenen sayıdaki öğeyi kapsama ve gerekçe/kanıtın yeterliliğini kontrol et. Olgusal doğruluğu yalnızca sana gerçekten sağlanan kaynakla karşılaştır; seçim/eşleştirmelerde her kartı ayrı kontrol et.",
       "Yanıt yanlış, ilgisiz veya eksikse bunu nazik ama doğrudan söyle. O durumda ‘Harika’, ‘çok iyi’, ‘doğru’ gibi övgü kullanma. Yanlış olan kısmı/karşılanmayan ölçütü belirt; ardından doğru yanıtı, doğru seçeneği, örnek yanıtı veya metinden doğru alıntıyı VERME. Öğrenciyi tek bir somut ipucu ya da metne geri götüren soru ile yönlendir.",
-      "Yanıt yalnızca tüm temel ölçütleri karşılıyorsa ‘Tam doğru’ de; kısmen karşılıyorsa ‘Kısmen doğru’, yanlış/ilgisizse ‘Yanlış’, boşlukları varsa ‘Eksik’ olarak sınıflandır. Gereksiz teselli ve genel övgü verme.",
+      "Yanıt yalnızca tüm doğrulanabilir temel ölçütleri karşılıyorsa ‘Tam doğru’ de; kısmen karşılıyorsa ‘Kısmen doğru’, yanlış/ilgisizse ‘Yanlış’, boşlukları varsa ‘Eksik’ olarak sınıflandır. QR video doğruluğu doğrulanamıyorsa video kısmına ‘Tam doğru’ deme; açık anahtar kullanıldıysa sonucu yalnızca ‘sağlanan anahtara göre’ nitele. Gereksiz teselli ve genel övgü verme.",
       "Öğrencinin yanıtında hata varsa önce hatayı ve nedenini göster, sonra cevabı söylemeden bir sonraki düşünme adımını ver. Yanıtın yerine yeni bir cevap yazma.",
       context.note,
-      context.text ? "Kaynak metin aşağıdadır; değerlendirmeyi bu metne dayandır. Doğru cevabı öğrenciye doğrudan verme." : "Sağlanmış kaynak yoksa kesin bilgi iddiasında bulunma. QR içeriği veya eksik kaynak hakkında uydurma; öğrencinin kendi notunu değerlendiremediğinde bunu açıkça söyle.",
+      context.videoUnavailable
+        ? "KAYNAK SINIRI: QR video/dinleme kaydına erişimin yok; URL verilse bile bağlantıyı açıp izleyemezsin. Transkript/cevap anahtarı olmayan video iddialarını doğru ya da yanlış olarak sınıflandırma. Yalnızca görevin istenen parçalarının bulunup bulunmadığını ve öğrencinin sunduğu açıklamanın tutarlılığını değerlendir; videodaki olgusal doğruluğun kontrol edilemediğini açıkça yaz. Karşılaştırmalı soruda yalnızca sana verilmiş öykü metnine dayalı kısmı doğrula; video tarafını doğrulanmamış olarak bırak."
+        : context.hasVideoSource && context.answerKeyAvailable
+          ? "QR video bağlantısını açıp izleyemezsin. Bu soruda sana açık bir öğretmen anahtarı verildi; yalnızca yanıtı bu anahtara göre karşılaştır. Sonucun anahtar-temelli olduğunu, videoyu bağımsız izleyerek doğrulamadığını belirt ve anahtar dışında video ayrıntısı hakkında hüküm verme."
+          : context.text ? "Kaynak metin aşağıdadır; değerlendirmeyi bu metne dayandır. Doğru cevabı öğrenciye doğrudan verme." : "Sağlanmış kaynak yoksa kesin bilgi iddiasında bulunma. Eksik kaynak hakkında uydurma; öğrencinin notunu değerlendiremediğinde bunu açıkça söyle.",
       "Geri bildirimi Türkçe ve 3–5 kısa cümleyle, şu başlıklarla ver: DURUM:, HATA/EKSİK:, İPUCU:. Tam doğru yanıtta hata uydurma; kısa ve ölçüt temelli açıklama yap."
     ].join("\n");
     const userPrompt = [
@@ -524,6 +572,7 @@
       `Soru: ${question.prompt}`,
       `Öğrencinin yanıtı:\n${response}`,
       rubric,
+      context.videoUnavailable ? "Video erişimi: Model QR bağlantısını açıp izleyemez/dinleyemez. Transkript/cevap anahtarı yoksa video içeriği doğrulanamaz; bu sınırlamayı geri bildirimde açıkça belirt." : context.hasVideoSource && context.answerKeyAvailable ? "Video erişimi: Bağlantı izlenemez; yanıtı yalnızca sağlanan öğretmen anahtarına göre denetle ve bunu açıkça söyle." : "Video/metin için sağlanan kaynak varsa yalnızca onu kullan.",
       context.text ? `\nİlgili kaynak metin:\n${context.text}` : `\nKaynak bilgisi: ${context.note}`,
       "Sıkı kontrol et: yanlış/ilgisiz cevabı doğruymuş gibi yorumlama, öğrencinin vermediği doğru davranışları onun cevabına ekleme ve doğru cevabı doğrudan yazma."
     ].join("\n");
