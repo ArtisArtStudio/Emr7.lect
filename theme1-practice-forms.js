@@ -3,6 +3,7 @@
   const text = (id, label, rows = 3) => field(id, label, "textarea", { rows });
   const select = (id, label, options) => field(id, label, "select", { options });
   const radio = (id, label, options) => field(id, label, "radio", { options });
+  const checkboxes = (id, label, options) => field(id, label, "checkboxes", { options });
   const sort = (id, label, categories, items, expectedAssignments = null, extra = {}) => field(id, label, "sort", { categories, items, ...(expectedAssignments ? { expectedAssignments } : {}), ...extra });
   // extra may hold sourceUrl/sourceLinkLabel for learners and sourceTranscript/answerKey for grounded checking.
   const q = (id, prompt, fields, extra = {}) => ({ id, prompt, fields, ...extra });
@@ -17,47 +18,172 @@
       q("after-reading", "Öyküyü bitirince iki tahminini olayların sonucuyla karşılaştır. Tahminlerinden birini değiştirmen gerekse hangisi olurdu?", [text("comparison", "Karşılaştırmam ve kısa öz değerlendirmem")], { sourceStage: "full" })
     ],
     "marti-a02": [
-      ...["özgür", "sınırlarını zorlamak", "sıra dışı", "tutku"].map((word, index) => q(
-        `word-${index + 1}`,
-        `“${word}” sözcüğünü anahtar söz varlığı çalışmana alıp almayacağına karar ver. Kararını öyküdeki kullanımına dayandır.`,
-        [
-          radio("key-word", "Bu sözcüğü anahtar söz varlığına seçiyor musun?", yesNo),
-          text("context-meaning", "Metindeki anlamı: Bu öyküde ne anlatıyor?", 2),
-          text("dictionary-meaning", "Sözlük anlamı: Kaynaktan doğruladığın anlam", 2),
-          text("associations", "Çağrıştırdığı kelimeler (en az iki)", 2)
-        ],
-        { sourceStage: "full" }
-      )),
-      q("word-relationships", "Dört sözcük arasında anlam bağı kur. İki sözcük çifti seç; her çiftte ilişkinin benzerlik, amaç, neden-sonuç ya da çağrışım olup olmadığını belirt.", [
-        text("pair-one", "Birinci sözcük çifti ve aralarındaki ilişki", 2),
-        text("pair-two", "İkinci sözcük çifti ve aralarındaki ilişki", 2),
-        text("selection-reason", "Seçtiğin anahtar sözcüklerin öykünün ana düşüncesini nasıl desteklediği", 3)
+      q("word-context-match", "Eşleştirme: Dört kelime kartını öyküdeki anlam ipucuyla buluştur. Her kutuda bir kelime olmalı.", [
+        sort("word-context", "Sözcükleri anlam ipuçlarıyla eşleştir", [
+          { id: "freedom", icon: "🕊️", label: "Kendi kararını verebilme", description: "Jonathan kendisi olmayı ve uçmayı öğrenebilmeyi istiyor." },
+          { id: "limits", icon: "📈", label: "Alıştığın düzeyin ötesine geçmeye çalışma", description: "Daha hızlı uçmayı öğrenmek için dikkatle çalışıp denemelerini geliştiriyor." },
+          { id: "unusual", icon: "🌟", label: "Alışılmıştan farklı olma", description: "Diğer martılar düşmekten utanırken Jonathan denemeye devam ediyor." },
+          { id: "passion", icon: "❤️", label: "Bir şeyi çok severek, güçlü istekle yapma", description: "Uçmak Jonathan için yiyecek aramaktan daha önemli." }
+        ], [
+          { id: "word-free", label: "özgür" },
+          { id: "word-limits", label: "sınırlarını zorlamak" },
+          { id: "word-unusual", label: "sıra dışı" },
+          { id: "word-passion", label: "tutku" }
+        ], {
+          "word-free": "freedom", "word-limits": "limits", "word-unusual": "unusual", "word-passion": "passion"
+        }, {
+          instructions: "Önce kelime kartını oku; sonra kutudaki kısa anlamı ve öykü ipucunu karşılaştır. Kelimeyi en uygun kutuya sürükle ya da karta, ardından kutuya dokun.",
+          guide: ["Kelimeyi oku", "Anlam ipucunu incele", "Uyan kutuya taşı"]
+        })
+      ], { sourceStage: "full", responseType: "matching", rubric: "Dört kelimenin hepsini kontrol et. Eşleşme yanlışsa kelime kartını ve yeniden düşünmesi gereken anlam ipucunu belirt; doğru eşleşmeyi doğrudan söyleme." }),
+      q("dictionary-meanings", "Sözlük kontrolü: Her kelime için sözlükteki anlama en yakın seçeneği işaretle.", [
+        select("free", "özgür", opts("Serbest; kendi kararını verebilen", "Alışılmışın dışında, farklı", "Bir şeye karşı güçlü sevgi ve istek")),
+        select("limits", "sınırlarını zorlamak", opts("Beceri sınırını aşmak için çaba göstermek", "Bir gruba katılmak", "Bir işi çok sevmek")),
+        select("unusual", "sıra dışı", opts("Alışılmışın dışında, farklı", "Serbest; kendi kararını verebilen", "Bir işi tekrar etmek")),
+        select("passion", "tutku", opts("Bir şeye karşı güçlü sevgi ve istek", "Yiyecek bulma gereksinimi", "Alışılmış bir davranış"))
+      ], {
+        sourceStage: "full",
+        answerKey: {
+          free: "Serbest; kendi kararını verebilen",
+          limits: "Beceri sınırını aşmak için çaba göstermek",
+          unusual: "Alışılmışın dışında, farklı",
+          passion: "Bir şeye karşı güçlü sevgi ve istek"
+        },
+        rubric: "Dört seçimi de değerlendirme ölçütlerine göre kontrol et. Yanlış seçim varsa kelimenin sözlük anlamına yeniden bakmasını söyle; doğru seçeneği öğrenci adına yazma."
+      }),
+      q("word-relationships", "Dört kelimeyi iki çift hâlinde düşün. İki çift seç; her çiftte kelimeler arasındaki bağı adlandır ve Jonathan'ın öyküsündeki amacına nasıl bağlandığını açıkla.", [
+        text("pair-one", "Birinci kelime çifti ve aralarındaki bağ", 2),
+        text("pair-two", "İkinci kelime çifti ve aralarındaki bağ", 2),
+        text("selection-reason", "Bu kelimeler Jonathan'ın amacını nasıl anlatıyor?", 3)
       ], { sourceStage: "full" })
     ],
     "marti-a03": [
-      q("evidence-1", "Jonathan’ın sıradan uçuşların ötesine geçmek istediğini gösteren iki davranışı bul.", [text("answer", "İki davranış ve metindeki dayanak", 3)], { sourceStage: "full", rubric: "Yanıt, yiyecek aramadan farklı iki belirgin uçuş denemesi/öğrenme davranışı içermeli ve öyküyle desteklenmeli. ‘Balık tutmak’ gibi günlük beslenme davranışı veya tek başına belirsiz ‘dalmak’ ifadesi iki kanıtı karşılamaz. Yanıtın içermediği davranışları öğrencinin ağzından yazma; doğru örnekleri verme, metindeki uçuş denemeleri bölümüne yönlendir." }),
-      q("evidence-2", "Bir denemesi başarısız olduğunda Jonathan yöntemini nasıl değiştirdi?", [text("answer", "Yanıtım ve olaydan kanıt", 3)], { sourceStage: "full" }),
-      q("evidence-3", "Ailesinin kaygısının kaynağı ile Jonathan’ın önceliği arasındaki farkı açıkla.", [text("answer", "İki bakış açısı ve metinden dayanak", 3)], { sourceStage: "full" }),
-      q("evidence-4", "Hangi olay Jonathan’ın uçuş hedefini daha belirgin hâle getirir? Olayın etkisini açıkla.", [text("answer", "Olay ve etkisi", 3)], { sourceStage: "full" }),
-      q("evidence-5", "Sürüden uzak kalması Jonathan’ın öğrenme biçimini nasıl etkiler? Metinden kanıtla.", [text("answer", "Çıkarımım ve metinden kanıt", 3)], { sourceStage: "full" })
+      q("evidence-1", "İki kanıt seç: Jonathan'ın yiyecek bulmaktan başka bir amacı olduğunu gösteren davranışları işaretle. Sonra birini öyküden bir ayrıntıyla destekle.", [
+        checkboxes("behaviors", "Jonathan'ın öğrenme isteğini gösteren iki davranış", opts(
+          "Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi",
+          "Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi",
+          "Balıkçı teknelerinin çevresinde yiyecek araması",
+          "Ailesinin isteğiyle bir süre diğer martılar gibi davranması",
+          "Annesinin ve babasının öğüdünü dinlemesi"
+        )),
+        text("evidence", "Seçtiğim davranışlardan biri için öyküdeki ipucu", 2)
+      ], {
+        sourceStage: "full",
+        answerKey: { behaviors: ["Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi", "Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi"] },
+        rubric: "Tam iki davranış seçilmesini ve en az birinin öyküden ayrıntıyla desteklenmesini kontrol et. Eksik ya da ilgisiz seçimi belirt; doğru kartların hangileri olduğunu söyleme."
+      }),
+      q("evidence-2", "Bir uçuş denemesi başarısız olunca Jonathan yeni bir yol aradı. Hangi seçeneği denedi?", [
+        radio("change", "Yöntemindeki değişiklik", opts(
+          "Kanatlarını gövdesine yaklaştırıp yalnızca kanat uçlarını kullanarak dalış yapmak",
+          "Uçuş denemelerini bırakıp yalnızca yiyecek aramak",
+          "Sürünün alışılmış uçuş yoluna dönmek"
+        )),
+        text("evidence", "Seçimini destekleyen metin ayrıntısı", 2)
+      ], { sourceStage: "full", answerKey: { change: "Kanatlarını gövdesine yaklaştırıp yalnızca kanat uçlarını kullanarak dalış yapmak" }, rubric: "Seçilen yöntemi ve metin ayrıntısını kontrol et. Yanlışsa yeni yöntemin anlatıldığı bölüme geri yönlendir; doğru seçeneği doğrudan verme." }),
+      q("evidence-3", "Jonathan ve ailesi uçuş konusunda aynı şeyi mi istiyor? Önce Jonathan'ın önceliğini seç, sonra iki bakış arasındaki farkı açıkla.", [
+        radio("priority", "Jonathan için öncelikli olan", opts("Uçmayı öğrenmek", "Yalnızca yiyecek bulmak", "Sürünün alışkanlıklarını değiştirmemek")),
+        text("difference", "Ailesinin kaygısı ile Jonathan'ın isteği arasındaki fark", 3)
+      ], { sourceStage: "full", answerKey: { priority: "Uçmayı öğrenmek" }, rubric: "Öncelik seçimini ve aile kaygısıyla karşılaştırmasını ayrı ayrı değerlendir. Yanıt eksikse hangi bakış açısını açıklamadığını söyle; karşılaştırmayı öğrenci yerine yapma." }),
+      q("evidence-4", "Olayları sonuçlarıyla eşleştir. Sonra bu zincirde Jonathan'ın hedefine en çok yardım eden olayı seç.", [
+        sort("events-and-results", "Olay → sonuç eşleştirmesi", [
+          { id: "returns-to-flight", icon: "↩️", label: "Yiyecek aramayı anlamsız bulup yeniden uçuş çalışmasına döner", description: "Avlanmayı denedikten sonra asıl öğrenmek istediği şeye geri döner." },
+          { id: "finds-technique", icon: "💡", label: "Kısa kanat uçlarının yeni bir yöntem olabileceğini fark eder", description: "Hız denemelerinde kontrolünü kaybettikten sonra çözüm arar." },
+          { id: "controls-dive", icon: "🪽", label: "Dalıştan çıkarak yüksek hızda kontrollü uçar", description: "Kanat uçlarını kullanarak yaptığı yeni denemenin sonucu budur." }
+        ], [
+          { id: "event-1", label: "Yiyecek aramak için bir süre diğer martılar gibi davranır." },
+          { id: "event-2", label: "Hız denemelerinde kontrolünü kaybeder." },
+          { id: "event-3", label: "Kanat uçlarını kullanıp yeni bir dalış dener." }
+        ], {
+          "event-1": "returns-to-flight", "event-2": "finds-technique", "event-3": "controls-dive"
+        }, {
+          instructions: "Önce olay kartını, sonra sonuç kutusundaki açıklamayı oku. Olayın ardından ne değiştiğini düşün ve eşleştir.",
+          guide: ["Olayı oku", "Ardından ne olduğunu düşün", "Sonucuyla eşleştir"]
+        }),
+        select("goal-event", "Hangi olay onun öğrenme hedefine en çok yardım etti?", opts("Yiyecek aramayı denemesi", "Kısa kanat tekniğini bulması", "Sürünün alışılmış yolunu izlemesi")),
+        text("goal-effect", "Seçtiğin olayın hedefine nasıl yardım ettiğini açıkla", 2)
+      ], { sourceStage: "full", responseType: "matching", rubric: "Üç olay-sonuç eşleşmesini, seçilen olayı ve neden-sonuç açıklamasını ayrı ayrı kontrol et. Eksik ya da yanlış kısmı ve bakması gereken ipucunu belirt; doğru eşleşmeyi veya tam açıklamayı verme." }),
+      q("evidence-5", "Jonathan'ın sürüden ayrı çalışması onun öğrenme biçimini nasıl etkiler? Metinden bir dayanak bul ve çıkarımını açıkla.", [text("answer", "Çıkarımım ve metinden kanıt", 3)], { sourceStage: "full" })
     ],
     "marti-a04": [
+      q("story-map", "Olay kartlarını serim, düğüm ve çözüm bölümleriyle eşleştir. Kutuların açıklamalarını kullan.", [
+        sort("plot-stages", "Olay örgüsü haritası", [
+          { id: "serim", icon: "🌅", label: "Serim · başlangıç", description: "Kişi, ortam ve başlangıçtaki amaç tanıtılır." },
+          { id: "dugum", icon: "🪢", label: "Düğüm · güçlük ve denemeler", description: "Sorun belirginleşir; kişi çözüm ararken dener." },
+          { id: "cozum", icon: "🌈", label: "Çözüm · sonuç", description: "Sorunun nasıl sonuçlandığı ve kişide ne değiştiği görülür." }
+        ], [
+          { id: "plot-1", label: "Jonathan yiyecekten çok uçmayı öğrenmek ister." },
+          { id: "plot-2", label: "Ailesi onun uçuş çalışmaları için kaygılanır." },
+          { id: "plot-3", label: "Hız denemelerinde kontrolünü kaybedip düşer." },
+          { id: "plot-4", label: "Başarısız denemelerden sonra yeni bir uçuş tekniği arar." },
+          { id: "plot-5", label: "Kısa kanat uçlarını kullanarak dalıştan kontrollü çıkar." },
+          { id: "plot-6", label: "Uçmanın yeni şeyler öğrenme ve özgür olma yolu olduğunu düşünür." }
+        ], {
+          "plot-1": "serim", "plot-2": "serim", "plot-3": "dugum", "plot-4": "dugum", "plot-5": "cozum", "plot-6": "cozum"
+        }, {
+          instructions: "Karttaki olayın öykünün hangi bölümünde yaşandığını düşün. Her kutuya iki olay kartı yerleştir.",
+          guide: ["Olayı oku", "Başlangıç–güçlük–sonuç sırasını düşün", "Uygun bölüme taşı"]
+        })
+      ], { sourceStage: "full", responseType: "matching", rubric: "Her bölüm için iki kartı kontrol et. Yanlışsa kartın adını ve olay akışındaki ipucunu belirt; doğru bölümü doğrudan söyleme." }),
       q("serim", "SERİM: Kişiyi, ortamı ve başlangıçtaki amacı kısa ve tutarlı biçimde tanıt.", [text("answer", "Serim özeti", 4)], { sourceStage: "full" }),
       q("dugum", "DÜĞÜM: Amaca ulaşırken yaşanan temel güçlüğü ve önemli bir denemeyi anlat.", [text("answer", "Düğüm özeti", 4)], { sourceStage: "full" }),
       q("cozum", "ÇÖZÜM: Öykünün sonunda Jonathan’ın durumunda nelerin değiştiğini açıkla.", [text("answer", "Çözüm özeti", 4)], { sourceStage: "full" }),
-      q("coherence-1", "Önemli olaylar birbirini hazırlıyor mu? Bir örnek ver.", [text("answer", "Değerlendirmem ve örnek", 3)], { sourceStage: "full" }),
-      q("coherence-2", "Bir olayın sonucu sonraki bir olaya neden oluyor mu? Metinden bir neden-sonuç zinciri kur.", [text("answer", "Neden → sonuç → sonraki olay", 3)], { sourceStage: "full" }),
-      q("coherence-3", "Kişi, zaman veya olay akışında tutarlı ya da geliştirilmesi gerektiğini düşündüğün bir yeri gerekçelendir.", [text("answer", "Değerlendirmem ve gerekçem", 3)], { sourceStage: "full" })
+      q("coherence-1", "Sence önemli olaylar birbirini hazırlıyor mu? Önce kararını seç, sonra öyküden bir örnek ver.", [
+        radio("decision", "Olayların akışı", opts("Evet, çoğunlukla", "Kısmen", "Daha fazla bağlantı gerekirdi")),
+        text("example", "Kararını destekleyen bir olay örneği", 2)
+      ], { sourceStage: "full" }),
+      q("coherence-2", "Bir olaydan sonraki olaya giden nedeni bul. Kartları neden-sonuç sırasına yerleştir ve zinciri bir cümleyle açıkla.", [
+        sort("cause-effect", "Neden → sonuç kartları", [
+          { id: "practice", icon: "🪽", label: "Uçuş çalışmalarına geri döner", description: "Yiyecek arama denemesinden sonra öğrenmek istediği şeye yönelir." },
+          { id: "finds-technique", icon: "💡", label: "Yeni bir uçuş tekniği arar", description: "Başarısız hız denemeleri onu başka bir yol düşünmeye götürür." },
+          { id: "controls-dive", icon: "🌊", label: "Dalıştan kontrollü çıkar", description: "Yeni kanat hareketi yüksek hızını denetlemesine yardım eder." }
+        ], [
+          { id: "cause-1", label: "Yiyecek aramak için bir süre diğer martılar gibi davranır ama bunu anlamsız bulur." },
+          { id: "cause-2", label: "Hız denemelerinde kontrolünü kaybedip suya düşer." },
+          { id: "cause-3", label: "Kısa kanat uçlarını kullanarak yeni bir dalış dener." }
+        ], { "cause-1": "practice", "cause-2": "finds-technique", "cause-3": "controls-dive" }, {
+          instructions: "Her neden kartının ardından hangi sonuç geldiğini bul. Kartı, onu en iyi tamamlayan sonuç kutusuna taşı.",
+          guide: ["Nedeni oku", "Sonraki olayı hatırla", "Nedenle sonucu eşleştir"]
+        }),
+        text("chain", "Eşleştirdiğin neden-sonuç zincirini kendi sözlerinle anlat.", 2)
+      ], { sourceStage: "full", responseType: "matching", rubric: "Üç neden-sonuç eşleşmesini ve öğrencinin yazdığı zinciri kontrol et. Hatalı eşleşmeyi belirt, doğru sonucu söylemeden metindeki sonraki olayı düşünmesine yardım et." }),
+      q("coherence-3", "Olay akışını değerlendir. En çok hangi noktaya dikkat ettin?", [
+        select("focus", "Değerlendirme odağın", opts("Kişi ve amacı", "Olayların sırası", "Neden-sonuç bağlantısı")),
+        radio("judgment", "Bu açıdan öykü nasıl ilerliyor?", opts("Tutarlı", "Kısmen tutarlı", "Geliştirilebilir")),
+        text("reason", "Kararının gerekçesi ve öyküden örnek", 3)
+      ], { sourceStage: "full" })
     ],
     "marti-a05": [
-      q("problem", "Jonathan’ın yaşadığı zorluğu (aç kalma, canının yanması ya da sürüden ayrı görülme gibi) bir cümleyle tanımla.", [text("answer", "Jonathan’ın temel problemi", 2)], { sourceStage: "full" }),
-      q("jonathan-view", "Jonathan’ın bakış açısından çıkarılabilecek bir sonucu, metinden dayanakla açıkla.", [text("answer", "Çıkarım ve dayanak", 3)], { sourceStage: "full" }),
-      q("relative-view", "Onu seven bir yakının bakış açısından çıkarılabilecek farklı bir sonucu yaz.", [text("answer", "Farklı bakış açısı ve gerekçesi", 3)], { sourceStage: "full" })
+      q("problem", "Jonathan'ın karşılaştığı zorluklardan birini seç. Sonra bu durumun onu nasıl etkilediğini kısaca açıkla.", [
+        select("challenge", "Hangi güçlüğü ele alıyorsun?", opts("Aç kalma ve yiyecek arama baskısı", "Uçuş denemelerinde başarısız olma", "Ailesinin kaygısı ile kendi isteğinin farklı olması")),
+        text("effect", "Bu güçlük Jonathan'ı nasıl etkiliyor?", 2)
+      ], { sourceStage: "full", rubric: "Seçilen güçlüğü öyküdeki durumla karşılaştır ve açıklamanın etkisini kontrol et. Yanlış/eksikse ilgili olayı işaret et, yanıtı öğrenci yerine yazma." }),
+      q("viewpoint-match", "Kısa düşünceleri kimin bakış açısıyla söylendiğine göre eşleştir.", [
+        sort("perspectives", "Jonathan mı, ailesi mi?", [
+          { id: "jonathan", icon: "🪽", label: "Jonathan'ın bakış açısı", description: "Uçmayı öğrenmek ve yeni denemeler yapmak onun için önemli." },
+          { id: "family", icon: "🏠", label: "Ailesinin bakış açısı", description: "Onun sağlığı, yiyecek bulması ve yaklaşan kış için kaygılanıyorlar." }
+        ], [
+          { id: "thought-1", label: "Havada ne yapıp yapamayacağımı öğrenmek istiyorum." },
+          { id: "thought-2", label: "Kış geliyor; yiyecek bulmayı öğrenmen gerek." },
+          { id: "thought-3", label: "Aç kalmak umurumda değil; uçmayı öğrenmek istiyorum." },
+          { id: "thought-4", label: "Uçma çabası güzel ama önce yiyecek bulmalısın." }
+        ], { "thought-1": "jonathan", "thought-2": "family", "thought-3": "jonathan", "thought-4": "family" }, {
+          instructions: "Her düşünceyi oku. Düşünce uçmayı öğrenme isteğini mi, yoksa ailenin güvenlik ve yiyecek kaygısını mı anlatıyor? Uygun kutuya taşı.",
+          guide: ["Düşünceyi oku", "Kimin ne istediğini düşün", "Bakış açısıyla eşleştir"]
+        })
+      ], { sourceStage: "full", responseType: "matching", rubric: "Dört düşünce kartını iki bakış açısına göre değerlendir. Yanlış kart varsa hangi sözün/isteğin ipucu olduğunu belirt; doğru kişiyi doğrudan söyleme." }),
+      q("viewpoint-conclusions", "İki farklı bakış açısından sonuç çıkar. Her sonuca öyküden bir dayanak ekle.", [
+        text("jonathan-inference", "Jonathan'ın bakış açısından çıkarım", 2),
+        text("family-inference", "Ailesinin bakış açısından farklı çıkarım", 2),
+        text("evidence", "Çıkarımlarını destekleyen öykü ayrıntısı", 3)
+      ], { sourceStage: "full" })
     ],
     "marti-a06": [
       q("problem", "Jonathan’ın çevresinden yeterli destek alamadığı durumu kısaca özetle.", [text("answer", "Sorunun özeti", 2)], { sourceStage: "full" }),
       ...[1, 2, 3].map(number => q(`solution-${number}`, `${number}. çözüm önerini açıkla. Öneri uygulanabilir ve diğerlerinden farklı olsun.`, [text("answer", `Öneri ${number} ve neden işe yarayabileceği`, 3)], { sourceStage: "full" })),
-      q("choose", "Üç önerinden en uygulanabilirini seç. Neden bu çözüm diğerlerinden daha uygun?", [text("answer", "Seçimim ve gerekçem", 3)], { sourceStage: "full" })
+      q("choose", "Üç önerini karşılaştır. En uygulanabilir olanı seç ve nedenini açıkla.", [
+        select("solution", "Seçtiğim öneri", opts("1. öneri", "2. öneri", "3. öneri")),
+        text("reason", "Bu öneri neden uygun? Kim, ne zaman, nasıl destek olabilir?", 3)
+      ], { sourceStage: "full" })
     ],
     "marti-a07": [
       q("sort-behaviors", "Sekiz davranış kartını iki gruba sürükle. Her grupta dört kart bulunmalı.", [

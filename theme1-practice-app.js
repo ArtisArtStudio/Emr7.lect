@@ -326,7 +326,7 @@
       const questionSourceLink = sourceLinkMarkup(question.sourceUrl, question.sourceLinkLabel || "İlgili QR kaydını aç");
       const widgetName = question.responseLabel || (question.responseType === "matching"
         ? (fields.some(field => field.type === "sort") ? "Sürükle-bırak eşleştirme" : "Eşleştirme / sınıflandırma")
-        : fields.some(field => field.type === "radio" || field.type === "select")
+        : fields.some(field => field.type === "radio" || field.type === "select" || field.type === "checkboxes")
           ? "Seçim ve gerekçe"
           : "Yazılı yanıt");
       const diagramHTML = questionDiagramMarkup(question.diagram);

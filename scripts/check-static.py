@@ -144,10 +144,9 @@ for (const [activityId, questions] of Object.entries(window.THEME1_FORMS)) {
   }
 }
 const vocabulary = window.THEME1_FORMS['marti-a02'];
-for (const fieldName of ['key-word','context-meaning','dictionary-meaning','associations']) {
-  if (!vocabulary.some((question) => question.fields.some((field) => field.id === fieldName))) throw new Error(`Anahtar söz varlığı is missing ${fieldName}`);
-}
-if (!vocabulary.some((question) => question.id === 'word-relationships')) throw new Error('Anahtar söz varlığı word-selection/relationship work is missing');
+if (!vocabulary.some((question) => question.id === 'word-context-match' && question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort'))) throw new Error('Anahtar söz varlığı needs context matching');
+if (!vocabulary.some((question) => question.id === 'dictionary-meanings' && question.fields.filter((field) => field.type === 'select').length === 4)) throw new Error('Anahtar söz varlığı needs four dictionary-meaning choices');
+if (!vocabulary.some((question) => question.id === 'word-relationships' && question.fields.filter((field) => field.type === 'textarea').length >= 3)) throw new Error('Anahtar söz varlığı word-relationship work is missing');
 for (const section of ['serim','dugum','cozum']) {
   if (!window.THEME1_FORMS['marti-a04'].some((question) => question.id === section && question.fields.some((field) => field.type === 'textarea'))) throw new Error(`Olay örgüsü needs a separate written ${section} response`);
 }
@@ -293,6 +292,18 @@ for (const unitId of [1,3,5]) {{
   for (const [id, url] of expectedSources) if (!url || byActivityId.get(id)?.sourceUrl !== url) throw new Error(`QR source link missing or assigned to wrong activity: ${{id}}`);
   const geminiNotesPath = 'docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt';
   for (const id of ['marti-a08', 'marti-a09']) if (byActivityId.get(id)?.sourceNotesUrl !== geminiNotesPath) throw new Error(`Gemini analysis notes are not attached to ${{id}}`);
+  const vocabularyQuestions = context.window.THEME1_FORMS['marti-a02'];
+  const comprehensionQuestions = context.window.THEME1_FORMS['marti-a03'];
+  const plotQuestions = context.window.THEME1_FORMS['marti-a04'];
+  const viewpointQuestions = context.window.THEME1_FORMS['marti-a05'];
+  const solutionQuestions = context.window.THEME1_FORMS['marti-a06'];
+  if (!vocabularyQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !vocabularyQuestions.some((question) => question.fields.some((field) => field.type === 'select'))) throw new Error('The Jonathan vocabulary task needs word matching and dictionary choices');
+  if (!comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'checkboxes')) || !comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'radio')) || !comprehensionQuestions.some((question) => question.responseType === 'matching')) throw new Error('The Jonathan comprehension tasks need selection, matching, and written evidence');
+  if (!plotQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !plotQuestions.some((question) => question.fields.some((field) => field.type === 'radio')) || !plotQuestions.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('The Jonathan story-structure task needs sorting, judgement, and writing');
+  if (!viewpointQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !viewpointQuestions.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('The Jonathan perspective task needs matching and written inference');
+  if (!solutionQuestions.some((question) => question.fields.some((field) => field.type === 'select')) || !solutionQuestions.some((question) => question.fields.some((field) => field.type === 'textarea'))) throw new Error('The Jonathan problem-solving task needs a choice and a written rationale');
+  const emailQuestions = context.window.THEME1_FORMS['marti-a12'];
+  if (JSON.stringify(emailQuestions.map((question) => question.id)) !== JSON.stringify(['email-purpose','email-plan','email-write']) || !emailQuestions.find((question) => question.id === 'email-write')?.fields.some((field) => field.id === 'answer' && field.rows === 7)) throw new Error('The existing Martı email activity must remain intact');
   const semicolonQuestions = context.window.THEME1_FORMS['marti-a11'];
   const semicolonSort = semicolonQuestions.find((question) => question.id === 'sort-examples')?.fields.find((field) => field.type === 'sort');
   if (!semicolonSort || semicolonSort.categories.length !== 3 || semicolonSort.items.length !== 9 || semicolonSort.categories.some((category) => !category.label || !category.description)) throw new Error('The page-11 semicolon sort needs three clearly explained groups and nine examples');
@@ -494,7 +505,7 @@ def groq_prompt_test_source() -> str:
 const vm = require('node:vm');
 const sources = {json.dumps(sources, ensure_ascii=False)};
 const saved = {{
-  1: {{theme1PracticeFlow: {{stepIndex: 0, answers: {{'marti-a03::evidence-1': {{answer: 'Jonathan tests a new way of turning.'}}}}, feedback: {{}}}}}}
+  1: {{theme1PracticeFlow: {{stepIndex: 0, answers: {{'marti-a03::evidence-1': {{behaviors: ['Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi', 'Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi'], evidence: 'Jonathan tests a new way of turning.'}}}}, feedback: {{}}}}}}
 }};
 const storage = new Map([
   ['turkceRota2026', JSON.stringify(saved)],

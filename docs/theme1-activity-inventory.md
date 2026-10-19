@@ -25,6 +25,25 @@ Kaynaklar: öykü; öykü içindeki iki numaralı tahmin durağı; “Hayat Büy
 
 **Uygulamadaki 11. etkinlik:** Dokuz örnek, her biri kısa açıklaması ve örnek şeması olan üç sürükle-bırak kutusuna ayrılır. Tekrarlanan “kuralı ve yeni örneği yaz” istemi yerine öğrenci önce noktalama bulmacasında işaret seçip kısa gerekçe verir, ardından yönlendirmeli şemayla kendi cümlesini kurar; yazma çalışması korunur.
 
+### Martı etkinliklerinde uygulanan biçim çeşitliliği (1–10)
+
+Kaynak etkinliklerin konu ve becerileri korunurken yanıt biçimleri eşleştirme, sınıflandırma, seçim ve kısa yazma arasında dağıtılır. Bu tablo uygulamadaki etkileşimleri özetler; yukarıdaki ilk tablo kitaptaki etkinlik envanteridir.
+
+| Etkinlik | Uygulamadaki etkileşim | Korunan yazma / açıklama |
+|---|---|---|
+| 1 · Tahmin | İki durakta tahmini güncelleme, okuma sonu karşılaştırma | Tahmin ve metin ipucu |
+| 2 · Söz varlığı | 4 kelimeyi bağlam ipuçlarıyla eşleştirme; 4 sözlük anlamından seçim | İki kelime çifti arasındaki ilişki ve öyküdeki amaçla bağı |
+| 3 · Anlama | Davranış kanıtlarını çoklu seçimle işaretleme; yöntem/öncelik seçimi; olay-sonuç eşleştirme | Metin kanıtı, bakış açısı ve neden-sonuç için kısa açıklama |
+| 4 · Olay örgüsü | Olay kartlarını serim–düğüm–çözüme ve neden-sonuç kutularına ayırma | Üç bölüm özeti ve üç tutarlılık değerlendirmesi |
+| 5 · Bakış açısı | Güçlük seçimi; Jonathan/aile düşüncelerini eşleştirme | İki bakış açısından metin dayanaklı çıkarım |
+| 6 · Çözüm yolları | Üç farklı öneri üretme ve önerilerinden birini seçim kontrolüyle belirleme | Uygulanabilirlik gerekçesi |
+| 7 · Davranış | Öyküdeki sekiz davranışı iki gruba sürükleyerek sınıflandırma | Gerekçe, gerektiğinde kısa yanıt |
+| 8 · Video anahtar kelimeleri | Video konusu ve beş kelime için kısa not alanları | Kelimeler arasındaki ilişki ve ana düşünce bağlantısı; video bağlantısı etkinlikte görünür |
+| 9 · Video değerlendirmesi | Her ölçüt için “Evet / Kısmen / Hayır” seçimi | Görülen/duyulan ayrıntıyla gerekçe |
+| 10 · Deneyim ve konuşma | Deneyim türü ve konuşma amacı seçimi | İki deneyim notu ve yaklaşık bir dakikalık konuşma planı |
+
+`marti-a11` noktalı virgül çalışması değiştirilmemiştir; `marti-a12` e-posta etkinliği de korunmuştur. “Hayat Büyük Bir Okuldur” video notları kullanıcı tarafından sağlanan Gemini analizine dayanır; uygulama videoyu bağımsız olarak doğruladığını iddia etmez.
+
 ## 3–4. haftalar · 28 Eyl–9 Eki — Gençliğin Kıymeti ve Sen Sor O Yanıtlasın (PDF s. 30–50)
 
 Kaynaklar: deneme; “Bir İyilik Hikâyesi” video içeriği ve fotoğraflar; “Öğrenmenin Bitmeyen Yolculuğu”, “İyiliğin Zincirleme Etkisi” ve “Saygın Bir Birey Olmak” kısa metinleri; Yiğit Caner Aydın video söyleşisi; iki şiir; yazım ve noktalama cümleleri.
@@ -86,7 +105,7 @@ Kaynaklar: Kaoru İkeya öyküsü; “Osmanlı’da Astronomi ve Zaman Bilimi Ç
 
 ## Uygulamaya eklenen özgün çalışma paketi
 
-Tema 1 için **43 özgün etkinlik** üç haftalık pakette, seçilen haftanın okuma sayfasına gömülü ve numaralı sırayla sunulur: 1–2. haftalarda Martı dizisinin 12 etkinliği (iki numaralı tahmin durağı ve okuma sonu karşılaştırması); 3–4. haftalarda Gençliğin Kıymeti’nin 8 etkinliği, bir neden-sonuç metni çalışması ve Sen Sor O Yanıtlasın’ın 10 etkinliği; 5–6. haftalarda Adını Göklere Yazdıran Çocuk’un 8 etkinliği, üç üretim/konuşma atölyesi ve 8 soruluk tema sonu ölçmesi. Etkinlik biçimi, sayısı, kaynağı ve becerisi gösterilir. Yanıt türü kaynağa göre değişir: serim, düğüm ve çözüm gibi yazma görevleri ayrı metin alanlarında; çoktan seçmeli maddeler seçim kontrollerinde; sınıflandırma ve eşleştirme görevleri klavyeyle ya da dokunup seçerek kullanılabilen sürükle-bırak kartlarında yapılır. Her soru için ayrı **“Kontrol et”** düğmesi vardır; soru, yanıt alanı ve AI geri bildirimi farklı renklerle ayrılır. İlgili öykü/özgün kaynak metin Groq isteğine eklenir; uygulamada bulunmayan QR video veya şiir içeriği uydurulmaz. QR videosu/dinleme kaydı için etkinlik veya soru düzeyinde `sourceUrl` bağlantısı gösterilebilir; `sourceTranscript` dökümü ve/veya açık `answerKey` AI isteğine kaynak olarak eklenebilir. Ancak bağlantı tek başına Groq'a videoyu izletmez. Transkript veya cevap anahtarı sağlanmadıkça AI video ayrıntılarının doğruluğunu onaylamaz; yalnızca yanıtın istenen bileşenlerini ve açıklama tutarlılığını değerlendirir ve bu sınırı geri bildirimde açıkça belirtir. Olgusal kontrol için kaynak transkripti/anahtarının uygulamaya eklenmesi gerekir. Söz varlığı etkinliği dört sözcük için bağlam anlamı, sözlük anlamı ve çağrışımların yanı sıra sözcük seçimi ve ilişki kurmayı içerir. Ayrı oyun kartı kaldırılmıştır; eşleştirme ve sınıflandırmalar kaynaktaki görevin kendisine uygun etkileşimli çalışma araçlarıdır. İlerleme tarayıcıda saklanır.
+Tema 1 için **43 özgün etkinlik** üç haftalık pakette, seçilen haftanın okuma sayfasına gömülü ve numaralı sırayla sunulur: 1–2. haftalarda Martı dizisinin 12 etkinliği (iki numaralı tahmin durağı ve okuma sonu karşılaştırması); 3–4. haftalarda Gençliğin Kıymeti’nin 8 etkinliği, bir neden-sonuç metni çalışması ve Sen Sor O Yanıtlasın’ın 10 etkinliği; 5–6. haftalarda Adını Göklere Yazdıran Çocuk’un 8 etkinliği, üç üretim/konuşma atölyesi ve 8 soruluk tema sonu ölçmesi. Etkinlik biçimi, sayısı, kaynağı ve becerisi gösterilir. Yanıt türü kaynağa göre değişir: serim, düğüm ve çözüm gibi yazma görevleri ayrı metin alanlarında; çoktan seçmeli maddeler seçim kontrollerinde; sınıflandırma ve eşleştirme görevleri klavyeyle ya da dokunup seçerek kullanılabilen sürükle-bırak kartlarında yapılır. Her soru için ayrı **“Kontrol et”** düğmesi vardır; soru, yanıt alanı ve AI geri bildirimi farklı renklerle ayrılır. İlgili öykü/özgün kaynak metin Groq isteğine eklenir; uygulamada bulunmayan QR video veya şiir içeriği uydurulmaz. QR videosu/dinleme kaydı için etkinlik veya soru düzeyinde `sourceUrl` bağlantısı gösterilebilir; `sourceTranscript` dökümü ve/veya açık `answerKey` AI isteğine kaynak olarak eklenebilir. Ancak bağlantı tek başına Groq'a videoyu izletmez. Transkript veya cevap anahtarı sağlanmadıkça AI video ayrıntılarının doğruluğunu onaylamaz; yalnızca yanıtın istenen bileşenlerini ve açıklama tutarlılığını değerlendirir ve bu sınırı geri bildirimde açıkça belirtir. Olgusal kontrol için kaynak transkripti/anahtarının uygulamaya eklenmesi gerekir. Söz varlığı etkinliği dört sözcüğü bağlam ipuçlarıyla eşleştirir, her biri için sözlük anlamı seçtirir ve kelimeler arasında ilişki kurdurur. Ayrı oyun kartı kaldırılmıştır; eşleştirme ve sınıflandırmalar kaynaktaki görevin kendisine uygun etkileşimli çalışma araçlarıdır. İlerleme tarayıcıda saklanır.
 
 ### Tema 1 QR kaynakları — PDF’den çözümlenen bağlantılar
 
