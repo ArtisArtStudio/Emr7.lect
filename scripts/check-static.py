@@ -291,6 +291,8 @@ for (const unitId of [1,3,5]) {{
     ['adiny-a05', qr.aliKuscu], ['adiny-a06', qr.aliKuscu]
   ];
   for (const [id, url] of expectedSources) if (!url || byActivityId.get(id)?.sourceUrl !== url) throw new Error(`QR source link missing or assigned to wrong activity: ${{id}}`);
+  const geminiNotesPath = 'docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt';
+  for (const id of ['marti-a08', 'marti-a09']) if (byActivityId.get(id)?.sourceNotesUrl !== geminiNotesPath) throw new Error(`Gemini analysis notes are not attached to ${{id}}`);
   const reviewQRQuestion = context.window.THEME1_FORMS['adiny-review'].find((question) => question.id === 'review-4');
   if (!reviewQRQuestion || reviewQRQuestion.sourceUrl !== qr.aliKuscu) throw new Error('Ali Kuşçu QR link is missing from the relevant theme-review question');
   const selected = context.window.THEME1_PRACTICE.units.find((unit) => unit.weekId === unitId);
@@ -317,7 +319,7 @@ for (const unitId of [1,3,5]) {{
     if (activity.id === 'marti-a08') {{
       const html = element('activity-stage').innerHTML;
       if (!html.includes('href="https://example.test/hayat-buyuk"') || !html.includes('href="https://example.test/soru-videosu"')) throw new Error('QR video links were not rendered at activity and question level');
-      if (!html.includes('Groq videoyu açıp izleyemez')) throw new Error('QR activity does not explain that Groq cannot watch the video');
+      if (!html.includes('Groq QR bağlantısını açıp videoyu izleyemez/dinleyemez') || !html.includes('Gemini analiz notları')) throw new Error('QR activity does not identify the Gemini source notes and Groq video-access limit');
     }}
     if (activity.id === 'adiny-a03' && !element('activity-stage').innerHTML.includes('video içeriğinin doğru olduğu onayı değildir')) throw new Error('Mixed story/video comparison lacks an explicit verification limit');
     if (activity.id === 'adiny-review') {{
@@ -764,10 +766,21 @@ def main() -> int:
         if asset not in html:
             errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
+    video_analysis_path = ROOT / "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt"
+    if not video_analysis_path.is_file():
+        errors.append("Missing Gemini video analysis text used by the Hayat Büyük Bir Okuldur checks")
+    else:
+        video_analysis = video_analysis_path.read_text(encoding="utf-8")
+        if len(video_analysis) < 3000 or not all(section in video_analysis for section in ("1. VİDEONUN KONUSU", "2. SAHNE SAHNE AKIŞ", "5. KONUŞMA VE SES", "6. VİDEONUN ANLATMAK İSTEDİĞİ", "7. KANITLAR VE BELİRSİZLİKLER")):
+            errors.append("Gemini video analysis text is incomplete or missing its transcript/visual analysis sections")
+    practice_data = (ROOT / "theme1-practice.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice.js").is_file() else ""
+    expected_video_notes = 'sourceNotesUrl: "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt"'
+    if practice_data.count(expected_video_notes) != 2 or 'id: "marti-a08"' not in practice_data or 'id: "marti-a09"' not in practice_data:
+        errors.append("The Gemini source notes must be attached to both Hayat Büyük Bir Okuldur QR activities")
     for required_prompt in (
         "7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB",
-        "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "videoUnavailable",
-        "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
+        "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "sourceNotesUrl", "loadSourceNotes", "hasVideoAnalysis", "videoUnavailable",
+        "kullanıcı tarafından sağlanan Gemini analiz raporu", "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
         "data-check-question", "data-sort-target", "aria-keyshortcuts",
         "yanlış, ilgisiz veya eksik", "Harika",
     ):

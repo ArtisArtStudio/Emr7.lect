@@ -97,6 +97,8 @@ QR kodları `turkce7-1.pdf` içindeki ilgili sayfalardan yerel olarak çözümle
 | Yiğit Caner Aydın söyleşisi | 42 | `sport-a01`–`sport-a06`, `adiny-a03` | [Söyleşiyi aç](https://www.eba.gov.tr/c?q=UEX5afb21e6) |
 | Ali Kuşçu dinleme içeriği | 57 | `adiny-a05`, `adiny-a06`, `adiny-review` · 4. soru | [Dinlemeyi aç](https://www.eba.gov.tr/c?q=UEX3d0cd83c) |
 
+“Hayat Büyük Bir Okuldur” için kullanıcı tarafından paylaşılan Gemini analiz metni [`docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt`](video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt) dosyasında saklanır. `marti-a08` ve `marti-a09` Groq kontrolü sırasında bu dosyayı kaynak bağlamı olarak yükler. Metin, seçilmiş konuşma bölümleri içerdiği için tam transkript değildir; Groq videoyu bağımsız olarak izlemiş sayılmaz ve dosyadaki yorumları doğrudan gözlem gibi sunmaması için yönlendirilir.
+
 ## Yeni özgün çalışmalar için uygulama kararı
 
 1. Yeni set yalnızca Tema 1’in bu üç birimine eklenir; sonraki temalar bu aşamada üretilmez.

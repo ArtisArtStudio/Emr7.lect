@@ -130,6 +130,7 @@ window.THEME1_PRACTICE = {
               source: "Kitaptaki QR: ‘Hayat Büyük Bir Okuldur’ videosu",
               sourceUrl: window.THEME1_QR_SOURCES.hayatBuyuk,
               sourceLinkLabel: "‘Hayat Büyük Bir Okuldur’ videosunu aç",
+              sourceNotesUrl: "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt",
               skill: "Dinlediğini/izlediğini anlama, ana fikir, anahtar kelime",
               instruction: "Kitabınızdaki QR içeriğini izledikten sonra cevapla. Video uygulamaya gömülü değildir.",
               prompts: [
@@ -147,6 +148,7 @@ window.THEME1_PRACTICE = {
               source: "Kitaptaki QR: ‘Hayat Büyük Bir Okuldur’ videosu",
               sourceUrl: window.THEME1_QR_SOURCES.hayatBuyuk,
               sourceLinkLabel: "‘Hayat Büyük Bir Okuldur’ videosunu aç",
+              sourceNotesUrl: "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt",
               skill: "Medya okuryazarlığı, ölçüt kullanma, gerekçelendirme",
               instruction: "Her başlık için bir karar ver ve kararını duyduğun/gördüğün bir ayrıntıyla gerekçelendir.",
               prompts: [
