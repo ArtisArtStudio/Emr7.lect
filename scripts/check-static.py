@@ -360,9 +360,9 @@ for (const unitId of [1,3,5]) {{
     if (activity.id === 'marti-a08') {{
       const html = element('activity-stage').innerHTML;
       if (!html.includes('href="https://example.test/hayat-buyuk"') || !html.includes('href="https://example.test/soru-videosu"')) throw new Error('QR video links were not rendered at activity and question level');
-      if (!html.includes('Groq QR bağlantısını açıp videoyu izleyemez/dinleyemez') || !html.includes('Gemini analiz notları')) throw new Error('QR activity does not identify the Gemini source notes and Groq video-access limit');
+      if (!html.includes('Groq QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez') || !html.includes('Gemini analiz raporu')) throw new Error('QR activity does not identify the Gemini source notes and Groq video/audio access limit');
     }}
-    if (activity.id === 'adiny-a03' && !element('activity-stage').innerHTML.includes('video içeriğinin doğru olduğu onayı değildir')) throw new Error('Mixed story/video comparison lacks an explicit verification limit');
+    if (activity.id === 'adiny-a03' && !element('activity-stage').innerHTML.includes('video/dinleme içeriğinin doğru olduğu onayı değildir')) throw new Error('Mixed story/video comparison lacks an explicit verification limit');
     if (activity.id === 'adiny-review') {{
       const html = element('activity-stage').innerHTML;
       const start = html.indexOf('data-question-key="adiny-review::review-4"');
@@ -522,11 +522,18 @@ def groq_prompt_test_source() -> str:
             "theme1-practice-app.js",
         )
     ]
+    source_notes = {
+        path.relative_to(ROOT).as_posix(): path.read_text(encoding="utf-8")
+        for path in sorted((ROOT / "docs/video-analysis").glob("*.md"))
+    }
     return f"""
 const vm = require('node:vm');
 const sources = {json.dumps(sources, ensure_ascii=False)};
+const mockSourceNotes = {json.dumps(source_notes, ensure_ascii=False)};
 const saved = {{
-  1: {{theme1PracticeFlow: {{stepIndex: 0, answers: {{'marti-a03::evidence-1': {{behaviors: ['Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi', 'Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi'], evidence: 'Jonathan tests a new way of turning.'}}}}, feedback: {{}}}}}}
+  1: {{theme1PracticeFlow: {{stepIndex: 0, answers: {{'marti-a03::evidence-1': {{behaviors: ['Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi', 'Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi'], evidence: 'Jonathan tests a new way of turning.'}}}}, feedback: {{}}}}}},
+  3: {{theme1PracticeFlow: {{stepIndex: 3, answers: {{'genclik-a04::visual-link': {{photo: 'Sahil fotoğrafı.', video: 'Bir çocuk çöp topluyor.', link: 'İkisi de doğayı korumayı anlatıyor.'}}}}, feedback: {{}}}}}},
+  5: {{theme1PracticeFlow: {{stepIndex: 2, answers: {{'adiny-a03::compare-1': {{kaoru: 'Kaoru teleskop yaptı.', athlete: 'Sporcu okçulukta çalıştı.', comparison: 'İkisi de emek verdi.'}}, 'adiny-a05::note-1': {{answer: 'Semerkant'}}}}, feedback: {{}}}}}}
 }};
 const storage = new Map([
   ['turkceRota2026', JSON.stringify(saved)],
@@ -561,16 +568,24 @@ const element = (id) => {{
   }}
   return elements.get(id);
 }};
+const loadedNotes = [];
 const browserWindow = {{
-  location: {{search: '?unit=1'}}, scrollY: 0, scrollTo() {{}},
+  location: {{href: 'https://example.github.io/Emr7.lect/?unit=1', search: '?unit=1'}}, scrollY: 0, scrollTo() {{}},
   setTimeout() {{ return 1; }}, clearTimeout() {{}}
 }};
 const context = vm.createContext({{
   window: browserWindow,
   document: {{title: '', getElementById: element}},
   localStorage: {{getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key)}},
-  URLSearchParams, Date, console,
-  fetch: async (url, options) => {{
+  URL, URLSearchParams, Date, console,
+  fetch: async (url, options = {{}}) => {{
+    if (!options.body) {{
+      const sourcePath = new URL(String(url)).pathname.split('/').slice(-3).join('/');
+      const notes = mockSourceNotes[sourcePath];
+      if (!notes) throw new Error(`No mock Gemini report for ${{sourcePath}}`);
+      loadedNotes.push(sourcePath);
+      return {{ok: true, text: async () => notes}};
+    }}
     capturedRequest = {{url, body: JSON.parse(options.body)}};
     return {{ok: true, json: async () => ({{choices: [{{message: {{content: mockResponse}}}}]}})}};
   }}
@@ -602,7 +617,34 @@ setTimeout(() => {{
     button.listeners.click();
     setTimeout(() => {{
       if (button.card.dataset.checkState !== 'wrong' || button.pill.textContent !== '✕ Yanlış') throw new Error('A wrong AI result did not set the red status');
-      console.log('Question-level Groq context, no-hint correct status, yellow partial status, and red wrong status passed.');
+      context.window.renderTheme1PracticeFlow(3);
+      const kindnessButton = stage.checkButtons.find(item => item.dataset.checkQuestion === 'genclik-a04::visual-link');
+      if (!kindnessButton) throw new Error('Could not find the Bir İyilik Hikâyesi video question');
+      kindnessButton.listeners.click();
+      setTimeout(() => {{
+        const mediaSystem = capturedRequest.body.messages.find(message => message.role === 'system').content;
+        const mediaPrompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
+        if (!loadedNotes.includes('docs/video-analysis/bir-iyilik-hikayesi-gemini-analysis.md') || !mediaPrompt.includes('933 yuvalama sahası')) throw new Error('Bir İyilik Hikâyesi Gemini notes were not loaded into the Groq prompt');
+        if (!mediaSystem.includes('MEDYA KAYNAK SINIRI') || !mediaSystem.includes('bağımsız medya doğrulaması')) throw new Error('Groq was not told the video report is user-provided and not independently verified');
+        context.window.renderTheme1PracticeFlow(5);
+        const compareButton = stage.checkButtons.find(item => item.dataset.checkQuestion === 'adiny-a03::compare-1');
+        if (!compareButton) throw new Error('Could not find the Kaoru–Yiğit comparison question');
+        compareButton.listeners.click();
+        setTimeout(() => {{
+          const comparisonPrompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
+          if (!loadedNotes.includes('docs/video-analysis/yigit-caner-aydin-gemini-analysis.md') || !comparisonPrompt.includes('Bentenjima') || !comparisonPrompt.includes('2013 yılında üniversite öğrencisiyken')) throw new Error('The Kaoru story and user-provided Yiğit Caner Aydın report were not both sent as source context');
+          element('next-step').listeners.click();
+          element('next-step').listeners.click();
+          const listeningButton = stage.checkButtons.find(item => item.dataset.checkQuestion === 'adiny-a05::note-1');
+          if (!listeningButton) throw new Error('Could not find the Ali Kuşçu listening-note question');
+          listeningButton.listeners.click();
+          setTimeout(() => {{
+            const listeningPrompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
+            if (!loadedNotes.includes('docs/video-analysis/ali-kuscu-gemini-analysis.md') || !listeningPrompt.includes('Semerkant') || !listeningPrompt.includes('Kullanıcı tarafından sağlanan Gemini dinleme kaydı analiz raporu')) throw new Error('Ali Kuşçu audio analysis was not loaded or labeled as user-provided listening context');
+            console.log('Question-level feedback states, no hint on correct answers, and user-attributed Gemini video/audio source notes passed.');
+          }}, 0);
+        }}, 0);
+      }}, 0);
     }}, 0);
   }}, 0);
 }}, 0);
@@ -831,6 +873,8 @@ def main() -> int:
     for state in ("correct", "partial", "incomplete", "wrong", "unverified"):
         if f'data-check-state="{state}"' not in practice_css or f'data-state="{state}"' not in practice_css:
             errors.append(f"AI assessment needs matching card and feedback colors for {state}")
+    if ".form-fields > .form-field:only-child { grid-column: 1 / -1; }" not in practice_css:
+        errors.append("A lone writing field must span the full answer-card width")
     video_analysis_path = ROOT / "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt"
     if not video_analysis_path.is_file():
         errors.append("Missing Gemini video analysis text used by the Hayat Büyük Bir Okuldur checks")
@@ -839,13 +883,36 @@ def main() -> int:
         if len(video_analysis) < 3000 or not all(section in video_analysis for section in ("1. VİDEONUN KONUSU", "2. SAHNE SAHNE AKIŞ", "5. KONUŞMA VE SES", "6. VİDEONUN ANLATMAK İSTEDİĞİ", "7. KANITLAR VE BELİRSİZLİKLER")):
             errors.append("Gemini video analysis text is incomplete or missing its transcript/visual analysis sections")
     practice_data = (ROOT / "theme1-practice.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice.js").is_file() else ""
+    forms_data = (ROOT / "theme1-practice-forms.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-forms.js").is_file() else ""
     expected_video_notes = 'sourceNotesUrl: "docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt"'
     if practice_data.count(expected_video_notes) != 2 or 'id: "marti-a08"' not in practice_data or 'id: "marti-a09"' not in practice_data:
         errors.append("The Gemini source notes must be attached to both Hayat Büyük Bir Okuldur QR activities")
+    analysis_reports = {
+        "docs/video-analysis/bir-iyilik-hikayesi-gemini-analysis.md": (practice_data, 1),
+        "docs/video-analysis/yigit-caner-aydin-gemini-analysis.md": (practice_data, 7),
+        "docs/video-analysis/ali-kuscu-gemini-analysis.md": (practice_data, 2),
+    }
+    for relative, (data_source, expected_references) in analysis_reports.items():
+        report_path = ROOT / relative
+        if not report_path.is_file():
+            errors.append(f"Missing user-supplied Gemini source analysis: {relative}")
+            continue
+        report_text = report_path.read_text(encoding="utf-8")
+        if len(report_text) < 2500 or "kullanıcı tarafından sağlanan gemini analiz" not in report_text.lower() or "bağımsız" not in report_text:
+            errors.append(f"Gemini analysis report is incomplete or missing its source limitation: {relative}")
+        reference = f'sourceNotesUrl: "{relative}"'
+        count = data_source.count(reference)
+        if count != expected_references:
+            errors.append(f"Expected {expected_references} activity references to {relative}; found {count}")
+    ali_notes_reference = 'sourceNotesUrl: "docs/video-analysis/ali-kuscu-gemini-analysis.md"'
+    if forms_data.count(ali_notes_reference) != 1:
+        errors.append("The Ali Kuşçu review question must load its Gemini listening-analysis report")
+    if 'sourceLinkType: "audio"' not in practice_data or 'sourceLinkType: "audio"' not in forms_data:
+        errors.append("The Ali Kuşçu QR must remain visibly typed and labeled as an audio/listening source")
     for required_prompt in (
         "7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB",
-        "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "sourceNotesUrl", "loadSourceNotes", "hasVideoAnalysis", "videoUnavailable",
-        "kullanıcı tarafından sağlanan Gemini analiz raporu", "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
+        "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "sourceNotesUrl", "loadSourceNotes", "hasVideoAnalysis", "videoUnavailable", "videoContextText", "mediaLabel",
+        "MEDYA KAYNAK SINIRI", "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
         "data-check-question", "data-sort-target", "aria-keyshortcuts",
         "yanlış, ilgisiz veya eksik", "Harika", "DURUM: TAM DOĞRU",
         "hata/eksik yoksa hiçbir ipucu verme", "assessmentStateFromText", "data-result-pill",
@@ -1008,7 +1075,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
-                    elif "Question-level Groq context, no-hint correct status, yellow partial status, and red wrong status passed." not in result.stdout:
+                    elif "Question-level feedback states, no hint on correct answers, and user-attributed Gemini video/audio source notes passed." not in result.stdout:
                         errors.append("Groq prompt test did not report success")
 
             if not errors:
@@ -1039,7 +1106,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation and return, saved-progress migration, embedded typed Theme 1 packages, accessible sorting, strict per-question Groq context, no game card, Bayrağımız credit, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation and return, saved-progress migration, full-width single writing fields, embedded typed Theme 1 packages, accessible sorting, Groq assessment states and user-attributed Gemini video/audio notes, no game card, Bayrağımız credit, and the PDF reader are valid.")
     return 0
 
 

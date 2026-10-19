@@ -399,7 +399,7 @@
     const sourceModeNote = qrQuestions.length ? `<span>QR video/dinleme kaynağı</span>` : "";
     const activitySourceLink = sourceLinkMarkup(activity.sourceUrl, activity.sourceLinkLabel || "İlgili video", activity.sourceLinkType || "video");
     const questionLimitNote = qrQuestions.length
-      ? `<p class="source-limit-note" role="note"><strong>Yapay zekâ sınırı:</strong> Groq QR bağlantısını açıp videoyu izleyemez/dinleyemez. ${hasGeminiAnalysisNotes ? "Bu etkinlikte kullanıcı tarafından sağlanan Gemini analiz notları (görüntü sahneleri ve seçilmiş konuşma bölümleri) kaynak olarak gönderilir; konuşma dökümü kısmi/özet olabilir, yorumlar doğrudan gözlem değildir ve rapor bağımsız olarak doğrulanmış sayılmaz." : "Yalnızca uygulamada bu soru için sağlanan transkript veya cevap anahtarını kullanabilir."} Notlarda/transkriptte/anahtarda bulunmayan ayrıntıları doğrulanmış gibi sunma. Bu, video içeriğinin doğru olduğu onayı değildir ve Groq'un videoyu bağımsız izleyerek doğruladığı anlamına gelmez.</p>`
+      ? `<p class="source-limit-note" role="note"><strong>Yapay zekâ sınırı:</strong> Groq QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez. ${hasGeminiAnalysisNotes ? "Bu etkinlikte kullanıcı tarafından sağlanan Gemini analiz raporu (görüntü notları ve/veya seçilmiş, kısmi/özet konuşma bölümleri) kaynak olarak gönderilir; yorumlar doğrudan gözlem değildir ve rapor bağımsız olarak doğrulanmış sayılmaz." : "Yalnızca uygulamada bu soru için sağlanan transkript veya cevap anahtarını kullanabilir."} Notlarda/transkriptte/anahtarda bulunmayan ayrıntıları doğrulanmış gibi sunma. Bu, video/dinleme içeriğinin doğru olduğu onayı değildir ve Groq'un medyayı bağımsız biçimde izlediği/dinlediği anlamına gelmez.</p>`
       : "";
 
     stage.innerHTML = `<article class="activity-card" data-kind="${kind}">
@@ -580,9 +580,9 @@
     let pending = sourceNotesCache.get(url.href);
     if (!pending) {
       pending = fetch(url.href, { cache: "no-cache" }).then(async response => {
-        if (!response.ok) throw new Error(`Video analiz notları yüklenemedi (HTTP ${response.status}).`);
+        if (!response.ok) throw new Error(`Kaynak analiz notları yüklenemedi (HTTP ${response.status}).`);
         const text = (await response.text()).trim();
-        if (!text) throw new Error("Video analiz notu dosyası boş.");
+        if (!text) throw new Error("Kaynak analiz notu dosyası boş.");
         return text;
       }).catch(error => {
         sourceNotesCache.delete(url.href);
@@ -598,24 +598,26 @@
     const transcript = String(question.sourceTranscript || activity.sourceTranscript || "").trim();
     const analysisNotes = String(question.sourceNotes || activity.sourceNotes || providedNotes || "").trim();
     const hasVideoSource = mode === "qr" || Boolean(question.videoSource || activity.videoSource);
+    const isAudioSource = question.sourceLinkType === "audio" || activity.sourceLinkType === "audio";
+    const mediaLabel = isAudioSource ? "dinleme kaydı" : "video";
     const activityQuestionKey = activity.answerKey && typeof activity.answerKey === "object" ? activity.answerKey[question.id] : undefined;
     const hasExplicitAnswerKey = question.answerKey !== undefined || question.expectedAnswer !== undefined || activityQuestionKey !== undefined;
     const answerKeyAvailable = hasExplicitAnswerKey || (question.fields || []).some(field => field.expectedAssignments && Object.keys(field.expectedAssignments).length);
     const videoUnavailable = hasVideoSource && !transcript && !analysisNotes && !answerKeyAvailable;
     const videoContextText = [
       transcript ? `Konuşma dökümü:\n${transcript}` : "",
-      analysisNotes ? `Kullanıcı tarafından sağlanan Gemini video analiz raporu (görüntü ve ses notları):\n${analysisNotes}` : ""
+      analysisNotes ? `Kullanıcı tarafından sağlanan Gemini ${mediaLabel} analiz raporu (görüntü ve/veya ses notları):\n${analysisNotes}` : ""
     ].filter(Boolean).join("\n\n---\n\n");
     if (mode === "none") return { text: "", note: "Bu soru için ek kaynak metin kullanılmıyor.", videoUnavailable: false, hasVideoSource: false, hasVideoAnalysis: false, answerKeyAvailable };
     if (mode === "qr") return {
       text: videoContextText,
       note: analysisNotes
-        ? "Aşağıda kullanıcı tarafından sağlanan Gemini video analiz raporu vardır. Groq videoyu/bağlantıyı açıp izlemez; yalnızca bu raporu kaynak olarak kullanır. Konuşma alıntıları kısmi/özet olabilir. Doğrudan gözlemleri yorumlardan ayır, rapordaki belirsizliği koru ve raporda bulunmayan video ayrıntılarını doğrulanmış gibi sunma."
+        ? `Aşağıda kullanıcı tarafından sağlanan Gemini ${mediaLabel} analiz raporu vardır. Groq QR ${mediaLabel} açıp ${isAudioSource ? "dinlemez" : "izlemez"}; yalnızca bu raporu kaynak olarak kullanır. Konuşma notları kısmi/özet olabilir. Doğrudan gözlemleri yorumlardan ayır, rapordaki belirsizliği koru ve raporda bulunmayan ayrıntıları doğrulanmış gibi sunma.`
         : transcript
-          ? "QR video/dinleme kaynağının sağlanan konuşma dökümü aşağıdadır. Yalnızca dökümde doğrulanabilen bilgileri kontrol et; görüntü ayrıntısı dökümde yoksa uydurma."
+          ? "QR video/dinleme kaynağının sağlanan konuşma dökümü aşağıdadır. Yalnızca dökümde doğrulanabilen bilgileri kontrol et; görüntü veya ses ayrıntısı dökümde yoksa uydurma."
           : answerKeyAvailable
-            ? "Groq QR video/dinleme kaydını açıp izleyemez. Bu soruda ayrı bir değerlendirme anahtarı vardır; yalnızca o anahtara göre kontrol et ve bunu videoyu bağımsız izleyerek doğrulamış gibi sunma."
-            : "Kaynak, kitaptaki QR video/dinleme kaydıdır. Groq bağlantıyı açıp izleyemez; döküm veya cevap anahtarı verilmediği için video ayrıntılarının doğruluğunu doğrulayamaz.",
+            ? "Groq QR video/dinleme kaydını açıp izleyemez/dinleyemez. Bu soruda ayrı bir değerlendirme anahtarı vardır; yalnızca o anahtara göre kontrol et ve bunu medyayı bağımsız doğrulamış gibi sunma."
+            : "Kaynak, kitaptaki QR video/dinleme kaydıdır. Groq bağlantıyı açıp izleyemez/dinleyemez; döküm veya cevap anahtarı verilmediği için medya ayrıntılarının doğruluğunu doğrulayamaz.",
       videoUnavailable,
       hasVideoSource,
       hasVideoAnalysis: Boolean(analysisNotes),
@@ -649,7 +651,12 @@
       }
       text = text.replace(/\[\[PAUSE:\d+\]\]/g, "").slice(0, 18000);
       const baseNote = "İlgili ders kitabı öyküsü / okuma metni aşağıda bağlam olarak verilmiştir.";
-      return { text, note: [baseNote, question.sourceNote].filter(Boolean).join(" "), videoUnavailable, hasVideoSource, answerKeyAvailable };
+      const contextNotes = [baseNote, question.sourceNote].filter(Boolean);
+      if (hasVideoSource && videoContextText) {
+        text += `\n\n--- QR ${mediaLabel} için ek kaynak ---\n${videoContextText}`;
+        contextNotes.push(`Karşılaştırmadaki QR ${mediaLabel} için kullanıcı tarafından sağlanan analiz/döküm notları da aşağıdadır. Groq kaydı açıp izlemedi/dinlemedi; yalnızca bu notları kullanır ve raporun dışındaki ayrıntıları doğrulanmış gibi sunmaz.`);
+      }
+      return { text, note: contextNotes.join(" "), videoUnavailable, hasVideoSource, hasVideoAnalysis: Boolean(analysisNotes), answerKeyAvailable };
     }
     if (activity.sourceText) return { text: activity.sourceText, note: "Etkinlikte görünen özgün kısa kaynak metin.", videoUnavailable, hasVideoSource, answerKeyAvailable };
     return { text: "", note: "Bu etkinlikte öğrenci kendi gözlem, deneyim veya kaynak notunu kullanır.", videoUnavailable, hasVideoSource, answerKeyAvailable };
@@ -772,7 +779,7 @@
         "Öğrencinin yanıtında hata varsa önce hatayı ve nedenini göster, sonra cevabı söylemeden bir sonraki düşünme adımını ver. Yanıtın yerine yeni bir cevap yazma.",
         context.note,
         context.hasVideoAnalysis
-          ? "VIDEO KAYNAK SINIRI: Aşağıdaki içerik kullanıcı tarafından sağlanan Gemini analiz raporudur; sen videoyu/URL'yi açıp izlemedin. Rapordaki doğrudan gözlemleri yorumlardan ayır, konuşma alıntılarının kısmi/özet olduğunu unutma ve raporda bulunmayan kelime veya sahneleri doğrulanmış/yanlış diye sınıflandırma. Yalnızca raporda gerçekten bulunan kanıta göre değerlendir; belirsizliği geri bildirimde koru ve bağımsız video doğrulaması yaptığını söyleme."
+          ? "MEDYA KAYNAK SINIRI: Aşağıdaki içerik kullanıcı tarafından sağlanan Gemini video/dinleme analizi raporudur; sen videoyu/URL'yi açıp izlemedin veya dinleme kaydını dinlemedin. Rapordaki doğrudan gözlemleri yorumlardan ayır, konuşma notlarının kısmi/özet olabileceğini unutma ve raporda bulunmayan sözleri, sahneleri veya ayrıntıları doğrulanmış/yanlış diye sınıflandırma. Yalnızca raporda gerçekten bulunan kanıta göre değerlendir; belirsizliği geri bildirimde koru ve bağımsız medya doğrulaması yaptığını söyleme."
           : context.videoUnavailable
             ? "KAYNAK SINIRI: QR video/dinleme kaydına erişimin yok; URL verilse bile bağlantıyı açıp izleyemezsin. Transkript/cevap anahtarı olmayan video iddialarını doğru ya da yanlış olarak sınıflandırma. Yalnızca görevin istenen parçalarının bulunup bulunmadığını ve öğrencinin sunduğu açıklamanın tutarlılığını değerlendir; videodaki olgusal doğruluğun kontrol edilemediğini açıkça yaz. Karşılaştırmalı soruda yalnızca sana verilmiş öykü metnine dayalı kısmı doğrula; video tarafını doğrulanmamış olarak bırak."
             : context.hasVideoSource && context.answerKeyAvailable
@@ -788,7 +795,7 @@
         `Soru: ${question.prompt}`,
         `Öğrencinin yanıtı:\n${response}`,
         rubric,
-        context.hasVideoAnalysis ? "Video erişimi: Yalnızca kullanıcı tarafından sağlanan Gemini raporu verildi. Video/QR bağlantısı açılmadı; raporun dışındaki içerik doğrulanamaz." : context.videoUnavailable ? "Video erişimi: Model QR bağlantısını açıp izleyemez/dinleyemez. Transkript/cevap anahtarı yoksa video içeriği doğrulanamaz; bu sınırlamayı geri bildirimde açıkça belirt." : context.hasVideoSource && context.answerKeyAvailable ? "Video erişimi: Bağlantı izlenemez; yanıtı yalnızca sağlanan değerlendirme anahtarına göre denetle ve bunu açıkça söyle." : "Video/metin için sağlanan kaynak varsa yalnızca onu kullan.",
+        context.hasVideoAnalysis ? "Kaynak erişimi: Yalnızca kullanıcı tarafından sağlanan Gemini video/dinleme raporu verildi; QR bağlantısı model tarafından açılmadı, video izlenmedi ve ses kaydı dinlenmedi. Raporun dışındaki içerik doğrulanamaz." : context.videoUnavailable ? "Kaynak erişimi: Model QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez. Transkript/cevap anahtarı yoksa medya içeriği doğrulanamaz; bu sınırlamayı geri bildirimde açıkça belirt." : context.hasVideoSource && context.answerKeyAvailable ? "Kaynak erişimi: Bağlantı izlenemez/dinlenemez; yanıtı yalnızca sağlanan değerlendirme anahtarına göre denetle ve bunu açıkça söyle." : "Video/metin için sağlanan kaynak varsa yalnızca onu kullan.",
         context.text ? `\nİlgili kaynak metin:\n${context.text}` : `\nKaynak bilgisi: ${context.note}`,
         "Sıkı kontrol et: yanlış/ilgisiz cevabı doğruymuş gibi yorumlama, öğrencinin vermediği doğru davranışları onun cevabına ekleme ve doğru cevabı doğrudan yazma."
       ].join("\n");

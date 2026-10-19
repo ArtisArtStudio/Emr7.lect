@@ -328,6 +328,7 @@
   font-weight: 750;
 }
 #theme1Practice .form-field.full { grid-column: 1 / -1; }
+#theme1Practice .form-fields > .form-field:only-child { grid-column: 1 / -1; }
 #theme1Practice .answer-control {
   width: 100%;
   min-height: 40px;
