@@ -112,6 +112,23 @@
     return {};
   }
 
+  function questionDiagramMarkup(diagram) {
+    if (!diagram) return "";
+    const left = diagram.left || "1. grup";
+    const connector = diagram.connector || ";";
+    const right = diagram.right || "2. grup";
+    const accessibleLabel = `${left}; noktalı virgül; ${right}`;
+    return `<aside class="question-diagram" role="note">
+      <p class="question-diagram-title"><span aria-hidden="true">📐</span>${escapeHTML(diagram.title || "Mini şema")}</p>
+      <div class="diagram-flow" role="group" aria-label="${escapeHTML(accessibleLabel)}">
+        <span class="diagram-group">${escapeHTML(left)}</span>
+        <span class="diagram-connector" aria-label="noktalı virgül">${escapeHTML(connector)}</span>
+        <span class="diagram-group">${escapeHTML(right)}</span>
+      </div>
+      <p class="diagram-note">${escapeHTML(diagram.note || "")}</p>
+    </aside>`;
+  }
+
   function fieldHTML(field, value, qKey, unitId) {
     const fieldId = `${qKey}-${field.id}`;
     const label = escapeHTML(field.label || "Yanıt");
@@ -156,12 +173,20 @@
       const placed = item => validCategories.has(assignments[item.id]);
       const card = item => `<button type="button" class="sort-item" draggable="true" data-sort-item="${escapeHTML(item.id)}" aria-pressed="false">${escapeHTML(item.label)}</button>`;
       const bankItems = items.filter(item => !placed(item)).map(card).join("");
-      const categoriesHTML = categories.map(category => {
+      const categoriesHTML = categories.map((category, index) => {
         const inside = items.filter(item => assignments[item.id] === category.id).map(card).join("");
-        return `<section class="sort-category"><h4>${escapeHTML(category.label)}</h4><div class="sort-dropzone" data-sort-target="${escapeHTML(category.id)}" role="group" tabindex="0" aria-keyshortcuts="Enter Space" aria-roledescription="kart bırakma alanı" aria-label="${escapeHTML(category.label)} hedefi; seçili kartı buraya taşımak için Enter veya Boşluk tuşuna bas">${inside || `<span class="sort-placeholder">Kartı buraya bırak</span>`}</div></section>`;
+        const description = category.description ? `<p class="sort-category-description">${escapeHTML(category.description)}</p>` : "";
+        const icon = category.icon || ["🟦", "🟨", "🟩", "🟪"][index % 4];
+        const accessibleLabel = `${category.label}${category.description ? `. ${category.description}` : ""}`;
+        return `<section class="sort-category" data-category-tone="${index % 4}"><div class="sort-category-heading"><span class="sort-category-icon" aria-hidden="true">${escapeHTML(icon)}</span><div><h4>${escapeHTML(category.label)}</h4>${description}</div></div><div class="sort-dropzone" data-sort-target="${escapeHTML(category.id)}" role="group" tabindex="0" aria-keyshortcuts="Enter Space" aria-roledescription="kart bırakma alanı" aria-label="${escapeHTML(accessibleLabel)} Hedef alanı; seçili kartı buraya taşımak için Enter veya Boşluk tuşuna bas">${inside || `<span class="sort-placeholder">Kartı buraya bırak</span>`}</div></section>`;
       }).join("");
       const assignedCount = items.filter(placed).length;
-      return `<div class="form-field full sort-field"><span class="form-field-label">${label}</span><p class="sort-instructions">Kartı sürükleyebilirsin. Dokunmatik ekranda karta, sonra hedef gruba dokun; klavyede kartı Enter/Boşluk ile seç, hedef gruba odaklanıp Enter/Boşluk’a bas. Gerekirse kartı “Kartlar” alanına geri taşı.</p><div class="sort-widget" data-sort-widget="1" data-qkey="${escapeHTML(qKey)}" data-field-id="${escapeHTML(field.id)}" data-unit-id="${unitId}" data-assignments="${escapeHTML(JSON.stringify(assignments))}"><div class="sort-bank-wrap"><h4>Kartlar <span>${items.length - assignedCount} kaldı</span></h4><div class="sort-bank sort-dropzone" data-sort-target="bank" role="group" tabindex="0" aria-keyshortcuts="Enter Space" aria-roledescription="kart bırakma alanı" aria-label="Taşınmamış kartlar alanı; seçili kartı buraya geri taşımak için Enter veya Boşluk tuşuna bas">${bankItems || `<span class="sort-placeholder">Bütün kartlar gruplara yerleştirildi</span>`}</div></div><div class="sort-categories">${categoriesHTML}</div><p class="sort-status" data-sort-status aria-live="polite">${assignedCount} / ${items.length} kart yerleştirildi</p></div></div>`;
+      const guideSteps = Array.isArray(field.guide) && field.guide.length
+        ? field.guide
+        : ["Kartı oku", "Ölçütle karşılaştır", "Uyan gruba bırak"];
+      const guideHTML = `<div class="sort-visual-guide" role="note"><span class="sort-guide-icon" aria-hidden="true">🔎</span><div class="sort-guide-content"><span class="sort-guide-title">Mini şema</span><ol>${guideSteps.map((step, index) => `<li><span class="sort-guide-number">${index + 1}</span>${escapeHTML(step)}</li>`).join("")}</ol></div></div>`;
+      const instructions = field.instructions || "Kartı sürükleyebilirsin. Dokunmatik ekranda karta, sonra hedef gruba dokun; klavyede kartı Enter/Boşluk ile seç, hedef gruba odaklanıp Enter/Boşluk’a bas. Gerekirse kartı ‘Kartlar’ alanına geri taşı.";
+      return `<div class="form-field full sort-field"><span class="form-field-label">${label}</span><p class="sort-instructions">${escapeHTML(instructions)}</p>${guideHTML}<div class="sort-widget" data-sort-widget="1" data-qkey="${escapeHTML(qKey)}" data-field-id="${escapeHTML(field.id)}" data-unit-id="${unitId}" data-assignments="${escapeHTML(JSON.stringify(assignments))}"><div class="sort-bank-wrap"><h4><span aria-hidden="true">🗂️</span> Kartlar <span class="sort-bank-count">${items.length - assignedCount} kaldı</span></h4><div class="sort-bank sort-dropzone" data-sort-target="bank" role="group" tabindex="0" aria-keyshortcuts="Enter Space" aria-roledescription="kart bırakma alanı" aria-label="Taşınmamış kartlar alanı; seçili kartı buraya geri taşımak için Enter veya Boşluk tuşuna bas">${bankItems || `<span class="sort-placeholder">Bütün kartlar gruplara yerleştirildi</span>`}</div></div><div class="sort-categories">${categoriesHTML}</div><p class="sort-status" data-sort-status aria-live="polite">${assignedCount} / ${items.length} kart yerleştirildi</p></div></div>`;
     }
 
     const rows = Math.max(2, Math.min(9, Number(field.rows) || 3));
@@ -211,11 +236,68 @@
       const questions = questionList(step.activity);
       const hasAnswer = questions.some((question, questionIndex) => answered(question, currentAnswer(step.activity, question, questionIndex)));
       const label = `${step.activity.number}. ${step.activity.title}`;
-      return `<button type="button" class="step-dot${hasAnswer ? " is-answered" : ""}" data-step-index="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(label)}" title="${escapeHTML(label)}" ${index === stepIndex ? 'aria-current="step"' : ""}>${index + 1}</button>`;
+      const marker = hasAnswer ? "✓" : String(index + 1);
+      return `<button type="button" class="step-dot${hasAnswer ? " is-answered" : ""}" data-step-index="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(label)}${hasAnswer ? ", yanıt girildi" : ""}" title="${escapeHTML(label)}" ${index === stepIndex ? 'aria-current="step"' : ""}>${marker}</button>`;
     }).join("");
     stepTrack.querySelectorAll("[data-step-index]").forEach(button => {
       button.addEventListener("click", () => goToStep(Number(button.dataset.stepIndex)));
     });
+  }
+
+  function activityKind(activity, questions) {
+    if (questions.some(question => question.sourceMode === "qr" || question.videoSource) || activity.sourceUrl || activity.videoSource) return "media";
+    const fields = questions.flatMap(question => question.fields || []);
+    if (fields.some(field => field.type === "sort")) return "puzzle";
+    if (fields.some(field => field.type === "radio" || field.type === "select" || field.type === "checkboxes")) return "choice";
+    if (fields.some(field => ["textarea", "text", "number"].includes(field.type || "textarea"))) return "writing";
+    return "thinking";
+  }
+
+  function activityIcon(kind, activity) {
+    if (activity.id === "marti-a11") return "🕵️";
+    return ({ media: "🎬", puzzle: "🧩", choice: "🎯", writing: "✍️", thinking: "🧠" })[kind] || "✨";
+  }
+
+  function activityPath(activity, questions, kind) {
+    if (activity.id === "marti-a11") return [
+      { icon: "👀", label: "Açıklamaları oku" },
+      { icon: "🧩", label: "Cümleleri grupla" },
+      { icon: "✍️", label: "Kuralı uygula" }
+    ];
+    const fields = questions.flatMap(question => question.fields || []);
+    const hasSort = fields.some(field => field.type === "sort");
+    const hasChoice = fields.some(field => field.type === "radio" || field.type === "select" || field.type === "checkboxes");
+    const hasWriting = fields.some(field => ["textarea", "text", "number"].includes(field.type || "textarea"));
+    if (kind === "media") return [
+      { icon: "🎧", label: "Kaynağı incele" },
+      { icon: "🔎", label: "Kanıtı yakala" },
+      { icon: "💬", label: "Yorumunu paylaş" }
+    ];
+    if (hasSort) return [
+      { icon: "📖", label: "Ölçütü oku" },
+      { icon: "🧩", label: "Kartları yerleştir" },
+      { icon: "💡", label: hasWriting ? "Ölçütünü açıkla" : "Eşleştirmeyi kontrol et" }
+    ];
+    if (hasChoice && hasWriting) return [
+      { icon: "👀", label: "Soruyu incele" },
+      { icon: "🎯", label: "Seçimini yap" },
+      { icon: "✍️", label: "Nedenini açıkla" }
+    ];
+    if (hasWriting) return [
+      { icon: "💭", label: "Düşün" },
+      { icon: "🗺️", label: "Yanıtını planla" },
+      { icon: "✍️", label: "Kendi sözlerinle yaz" }
+    ];
+    return [
+      { icon: "📖", label: "Soruyu oku" },
+      { icon: "🧠", label: "Yanıtını düşün" },
+      { icon: "✓", label: "Kontrol et" }
+    ];
+  }
+
+  function activityPathMarkup(activity, questions, kind) {
+    const steps = activityPath(activity, questions, kind);
+    return `<nav class="quest-path" aria-label="Etkinlik adımları"><span class="quest-path-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol>${steps.map((step, index) => `<li><span class="quest-step-icon" aria-hidden="true">${escapeHTML(step.icon)}</span><span class="quest-step-number">${index + 1}</span><span>${escapeHTML(step.label)}</span></li>`).join("")}</ol></nav>`;
   }
 
   function renderStep() {
@@ -232,6 +314,9 @@
     previousButton.disabled = stepIndex === 0;
     nextButton.textContent = stepIndex === allSteps.length - 1 ? "Çalışmayı tamamla ✓" : "Sonraki etkinlik →";
 
+    const kind = activityKind(activity, questions);
+    const icon = activityIcon(kind, activity);
+    const questPathHTML = activityPathMarkup(activity, questions, kind);
     const questionHTML = questions.map((question, index) => {
       const qKey = questionKey(activity, question);
       const answers = currentAnswer(activity, question, index);
@@ -239,14 +324,16 @@
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
       const questionSourceLink = sourceLinkMarkup(question.sourceUrl, question.sourceLinkLabel || "İlgili QR kaydını aç");
-      const widgetName = question.responseType === "matching"
+      const widgetName = question.responseLabel || (question.responseType === "matching"
         ? (fields.some(field => field.type === "sort") ? "Sürükle-bırak eşleştirme" : "Eşleştirme / sınıflandırma")
         : fields.some(field => field.type === "radio" || field.type === "select")
           ? "Seçim ve gerekçe"
-          : "Yazılı yanıt";
-      return `<article class="question-card" data-question-key="${escapeHTML(qKey)}">
+          : "Yazılı yanıt");
+      const diagramHTML = questionDiagramMarkup(question.diagram);
+      return `<article class="question-card" data-question-key="${escapeHTML(qKey)}" data-question-tone="${index % 5}">
         <div class="question-heading"><span class="question-number">${index + 1}</span><div class="question-copy"><p class="question-prompt">${escapeHTML(question.prompt)}</p>${questionSourceLink ? `<div class="question-source-links">${questionSourceLink}</div>` : ""}</div></div>
-        <span class="response-type">${widgetName}</span>
+        ${diagramHTML}
+        <span class="response-type">${escapeHTML(widgetName)}</span>
         <div class="answer-box"><p class="answer-box-title">Yanıt alanı</p><div class="form-fields">${fieldHTMLContent}</div></div>
         <div class="question-actions"><button type="button" class="check-button" data-check-question="${escapeHTML(qKey)}">✦ Kontrol et</button><span class="question-save-status">Yanıt otomatik kaydedilir.</span></div>
         <div class="feedback-box" data-feedback-key="${escapeHTML(qKey)}" data-state="${escapeHTML(feedback?.state || "success")}" ${feedback?.text ? "" : "hidden"}>${escapeHTML(feedback?.text || "")}</div>
@@ -265,11 +352,14 @@
       ? `<p class="source-limit-note" role="note"><strong>Yapay zekâ sınırı:</strong> Groq QR bağlantısını açıp videoyu izleyemez/dinleyemez. ${hasGeminiAnalysisNotes ? "Bu etkinlikte kullanıcı tarafından sağlanan Gemini analiz notları (görüntü sahneleri ve seçilmiş konuşma bölümleri) kaynak olarak gönderilir; konuşma dökümü kısmi/özet olabilir, yorumlar doğrudan gözlem değildir ve rapor bağımsız olarak doğrulanmış sayılmaz." : "Yalnızca uygulamada bu soru için sağlanan transkript veya cevap anahtarını kullanabilir."} Notlarda/transkriptte/anahtarda bulunmayan ayrıntıları doğrulanmış gibi sunma. Bu, video içeriğinin doğru olduğu onayı değildir ve Groq'un videoyu bağımsız izleyerek doğruladığı anlamına gelmez.</p>`
       : "";
 
-    stage.innerHTML = `<article class="activity-card">
+    stage.innerHTML = `<article class="activity-card" data-kind="${kind}">
       <header class="activity-top">
-        <p class="activity-kicker">${escapeHTML(groupTitle)} · Etkinlik ${escapeHTML(activity.number)}</p>
-        <h2 class="activity-title">${escapeHTML(activity.title)}</h2>
+        <div class="activity-heading-row"><span class="activity-icon" aria-hidden="true">${icon}</span><div class="activity-title-copy">
+          <p class="activity-kicker">${escapeHTML(groupTitle)} · Etkinlik ${escapeHTML(activity.number)}</p>
+          <h2 class="activity-title">${escapeHTML(activity.title)}</h2>
+        </div></div>
         <p class="activity-instruction">${escapeHTML(activity.instruction || "Soruları sırayla yanıtla.")}</p>
+        ${questPathHTML}
       </header>
       ${sourceHTML}
       <div class="activity-meta"><span>${escapeHTML(activity.format || "Çalışma")}</span><span>${escapeHTML(activity.count || "")}</span><span>Kaynak: ${escapeHTML(activity.source || "Tema 1")}</span>${sourceModeNote}</div>
@@ -334,7 +424,7 @@
     const refreshStatus = () => {
       const placedCount = (field.items || []).filter(item => categories.has(assignments[item.id])).length;
       status.textContent = `${placedCount} / ${(field.items || []).length} kart yerleştirildi`;
-      const bankHeader = board.querySelector(".sort-bank-wrap h4 span");
+      const bankHeader = board.querySelector(".sort-bank-count");
       if (bankHeader) bankHeader.textContent = `${(field.items || []).length - placedCount} kaldı`;
     };
     const saveAssignments = () => {

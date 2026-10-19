@@ -293,6 +293,15 @@ for (const unitId of [1,3,5]) {{
   for (const [id, url] of expectedSources) if (!url || byActivityId.get(id)?.sourceUrl !== url) throw new Error(`QR source link missing or assigned to wrong activity: ${{id}}`);
   const geminiNotesPath = 'docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt';
   for (const id of ['marti-a08', 'marti-a09']) if (byActivityId.get(id)?.sourceNotesUrl !== geminiNotesPath) throw new Error(`Gemini analysis notes are not attached to ${{id}}`);
+  const semicolonQuestions = context.window.THEME1_FORMS['marti-a11'];
+  const semicolonSort = semicolonQuestions.find((question) => question.id === 'sort-examples')?.fields.find((field) => field.type === 'sort');
+  if (!semicolonSort || semicolonSort.categories.length !== 3 || semicolonSort.items.length !== 9 || semicolonSort.categories.some((category) => !category.label || !category.description)) throw new Error('The page-11 semicolon sort needs three clearly explained groups and nine examples');
+  const semicolonDistribution = semicolonSort.categories.map((category) => semicolonSort.items.filter((item) => semicolonSort.expectedAssignments?.[item.id] === category.id).length);
+  if (!semicolonSort.expectedAssignments || semicolonDistribution.some((count) => count !== 3)) throw new Error(`The page-11 semicolon examples are not evenly assigned to the three stated uses: ${{semicolonDistribution}}`);
+  if (semicolonQuestions.some((question) => /bu kullanım için kuralı ve yeni bir örneği yaz/i.test(question.prompt))) throw new Error('The page-11 semicolon exercise still uses the repeated rule-and-example prompt');
+  const semicolonPuzzle = semicolonQuestions.find((question) => question.id === 'punctuation-puzzle');
+  const semicolonWriting = semicolonQuestions.find((question) => question.id === 'write-your-own');
+  if (!semicolonPuzzle?.fields.some((field) => field.type === 'radio') || !semicolonPuzzle.fields.some((field) => field.type === 'textarea') || !semicolonWriting?.diagram || !semicolonWriting.fields.some((field) => field.type === 'textarea')) throw new Error('The page-11 semicolon activity needs varied selection, explanation, and guided writing');
   const reviewQRQuestion = context.window.THEME1_FORMS['adiny-review'].find((question) => question.id === 'review-4');
   if (!reviewQRQuestion || reviewQRQuestion.sourceUrl !== qr.aliKuscu) throw new Error('Ali Kuşçu QR link is missing from the relevant theme-review question');
   const selected = context.window.THEME1_PRACTICE.units.find((unit) => unit.weekId === unitId);
@@ -327,6 +336,11 @@ for (const unitId of [1,3,5]) {{
       const start = html.indexOf('data-question-key="adiny-review::review-4"');
       const end = html.indexOf('</article>', start);
       if (start < 0 || !html.slice(start, end).includes(`href="${{qr.aliKuscu}}"`)) throw new Error('The Ali Kuşçu QR link was not shown on its relevant review question');
+    }}
+    if (activity.id === 'marti-a11') {{
+      const html = element('activity-stage').innerHTML;
+      for (const phrase of ['sort-visual-guide', 'Virgüllü iki listeyi ayırır', 'Bağlantılı iki cümleyi ayırır', 'İçinde virgüllü liste olan iki cümleyi ayırır', 'question-diagram', 'Planla ve kendi cümleni yaz']) if (!html.includes(phrase)) throw new Error(`The page-11 redesign is missing ${{phrase}}`);
+      if (!html.includes('data-kind="puzzle"') || !html.includes('İşareti seç · gerekçeni yaz')) throw new Error('The page-11 activity is missing its interactive puzzle/choice flows');
     }}
     if (!element('activity-stage').innerHTML.includes('Yanıt alanı')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} is missing a response area`);
     if (index < activities.length - 1) element('next-step').listeners.click();
@@ -430,7 +444,7 @@ board = {
   },
   querySelector(selector) {
     if (selector === '[data-sort-status]' || selector === '.sort-status') return status;
-    if (selector === '.sort-bank-wrap h4 span') return bankCount;
+    if (selector === '.sort-bank-count') return bankCount;
     const targetMatch = selector.match(/^\[data-sort-target="([^"]+)"\]$/);
     if (targetMatch) return targets.get(targetMatch[1]);
     const itemMatch = selector.match(/^\[data-sort-item="([^"]+)"\]$/);

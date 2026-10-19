@@ -175,23 +175,23 @@ window.THEME1_PRACTICE = {
             {
               id: "marti-a11",
               number: "11",
-              title: "Noktalı virgülün işlevlerini ayırt et",
-              format: "Cümleleri gruplama, kural çıkarma, örnek yazma",
-              count: "9 cümle · 3 işlev · 3 kural · 3 yeni cümle",
+              title: "Noktalı virgül dedektifi: İşlevini bul, cümleni kur",
+              format: "Kartları sınıflandırma · noktalama seçimi · yönlendirmeli yazma",
+              count: "9 örnek · 3 işlev · 1 noktalama bulmacası · 1 özgün cümle",
               source: "Özgün örnek cümleler",
-              skill: "Noktalama, sınıflandırma, kuralı yeni örneğe aktarma",
-              instruction: "Dokuz cümleyi noktalı virgülün üç kullanımına göre üç gruba ayır. Her grup için kuralını yazıp bir yeni örnek cümle kur.",
+              skill: "Noktalama, cümle yapılarını ayırt etme, kuralı uygulama",
+              instruction: "Önce örneklerden noktalı virgülün görevini bul. Sonra bir cümlede doğru işareti seç, en sonda kendi örneğini kur.",
               prompts: [
                 "Atölyede resim, seramik, ebru; sahnede müzik, şiir ve dans çalışmaları vardı.",
                 "Kamp çantasına harita, pusula, yağmurluk; mutfak kutusuna tabak, bardak, kaşık kondu.",
                 "Araştırma için dergi, kitap, ansiklopedi; sunum için grafik, fotoğraf ve çizelge hazırlandı.",
-                "Zil çaldı, öğrenciler sınıfa geçti; öğretmen yoklamayı aldı, dersi başlattı.",
-                "Kütüphanede kaynakları taradık, not aldık; eve dönünce planı gözden geçirip düzenledik.",
-                "Önce soruyu okudum, anahtar sözcükleri çizdim; sonra kanıtı buldum, cevabımı yazdım.",
-                "Öğrencilerden Nehir, Mert, Ela; afişleri zamanında hazırladılar.",
-                "Antrenörler Arda, Defne, Selin; çalışma takvimini birlikte düzenlediler.",
-                "Doğa gözlem ekibinden Ege, Lara, Can; fotoğrafları ve notları sınıfa sundular.",
-                "Yanıtını ‘1–3, 4–6, 7–9’ biçiminde grupla; ardından her kullanım için bir kural ve örnek yaz."
+                "Zil çaldı; öğrenciler sınıfa geçti.",
+                "Önce kaynakları taradık; sonra kısa notlar aldık.",
+                "Güneş doğdu; yürüyüş ekibi yola çıktı.",
+                "Okul korosunda Ece, Mert ve Can şarkı söyledi; sahne ekibinde Duru, Alp ve Nehir dekorları yerleştirdi.",
+                "Sabah yazar, ressam ve müzisyenler geldi; öğleden sonra sporcular, öğretmenler ve öğrenciler atölyeye katıldı.",
+                "Sınıfımızda Defne, Asya ve Doruk afiş hazırladı; okul korosunda Ece, Mert ve Can prova yaptı.",
+                "Bir cümlede noktalı virgülün görevini seç, sonra iki virgüllü grup kullanarak kendi örneğini yaz."
               ]
             },
             {
@@ -282,7 +282,7 @@ window.THEME1_PRACTICE = {
               id: "sport-a08", number: "8", title: "Bir erişilebilirlik sorununa çözüm öner", format: "Hazırlıklı konuşma", count: "1 konuşma · 1 sorun · 3 çözüm", source: "Öğrencinin çevre gözlemi ve kısa araştırması", skill: "Problem tanımı, neden/etki, gerekçeli çözüm, sunum", instruction: "Okul veya mahallede özel gereksinimli bireylerin karşılaşabileceği bir engel seç. En uygulanabilir öneriyi özellikle vurgula.", prompts: ["Sorunun tanımı", "İki olası neden ve günlük yaşama iki etkisi", "Üç çözüm önerisi", "En uygulanabilir çözüm ve gerekçesi", "Konuşmanın başlangıç ve kapanış cümleleri"]
             },
             {
-              id: "sport-a09", number: "9", title: "Noktalı virgülün üç işlevini uygula", format: "İşlev eşleştirme ve özgün cümle yazma", count: "3 örnek · 3 yeni cümle", source: "Özgün örnek cümleler", skill: "Noktalı virgül, dil bilgisi ve yazma", instruction: "Her cümlenin kullanım işlevini belirt; ardından aynı üç işleve uygun yeni birer cümle yaz.", prompts: ["Okulda Ece, Mert ve Can şiir; Duru, Alp ve Nehir sunum hazırladı.", "Sabah araştırdık, kaynakları seçtik; öğleden sonra notları düzenleyip paylaştık.", "Doğa gözlem ekibinden Lara, Deniz, Ozan; fotoğrafları ve çizelgeleri sergilediler.", "Üç işlev için kendi cümlelerin"]
+              id: "sport-a09", number: "9", title: "Noktalı virgülün üç işlevini uygula", format: "İşlev eşleştirme ve özgün cümle yazma", count: "3 örnek · 3 yeni cümle", source: "Özgün örnek cümleler", skill: "Noktalı virgül, dil bilgisi ve yazma", instruction: "Üç cümleyi noktalı virgülün yaptığı işe uyan açıklamayla eşleştir. Sonra her işlev için kendi cümleni kur.", prompts: ["Kulüplerde resim, drama, ebru; okul etkinliğinde müzik, şiir ve tiyatro çalışmaları vardı.", "Sabah araştırdık, kaynakları seçtik; öğleden sonra notları düzenleyip paylaştık.", "Doğa gözlem ekibinden Lara, Deniz ve Ozan fotoğrafları seçti; okul takımından Ece, Can ve Mira çizelgeleri düzenledi.", "Üç işlev için kendi cümlelerin"]
             },
             {
               id: "sport-a10", number: "10", title: "Bir arkadaşın için gelecek mesleği yazısı oluştur", format: "Giriş–gelişme–sonuç yazısı", count: "1 metin · 3 bölüm", source: "Akran hakkındaki gözlem ve deneyim", skill: "Betimleme, kanıt, neden-sonuç ve yazılı anlatım", instruction: "Bir arkadaşının güçlü yönlerinden yola çıkarak ileride başarılı olabileceği bir alan hakkında yaz. Her bölümün görevini koru.", prompts: ["Giriş: kişiyi kısaca tanıt ve meslek tahminini belirt.", "Gelişme: gözlem/deneyimlerinden en az iki kanıtla tahminini destekle.", "Sonuç: bu alanda başarılı olabileceğine dair net bir yargı yaz."]

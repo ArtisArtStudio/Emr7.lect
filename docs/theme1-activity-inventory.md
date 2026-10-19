@@ -20,8 +20,10 @@ Kaynaklar: öykü; öykü içindeki iki numaralı tahmin durağı; “Hayat Büy
 | 8 | Video için 1 konu, 5 anahtar kelime ve kelimelerin içerikle ilişkisi | Video | Dinleme/izleme, ana fikir ve anahtar kelime |
 | 9 | Video başlığı, örneklerin yeterliliği ve akış hakkında 3 değerlendirme ölçütü | Video | Medya değerlendirme, gerekçelendirme |
 | 10 | 2 tür kişisel deneyim için not tablosu; amaç/tür belirleyip 1 konuşma yapma | Kişisel deneyim | Konuşma planlama ve sunma |
-| 11 | 9 cümleyi noktalı virgülün 3 kullanımına göre gruplama; 3 kural ve 3 yeni cümle yazma | Özgün örnek cümleler | Dil bilgisi, kural çıkarma, uygulama |
+| 11 | 9 cümleyi noktalı virgülün 3 kullanımına göre gruplama; her kullanımın kuralını açıklayıp yeni örnek cümle kurma | Özgün örnek cümleler | Dil bilgisi, kural çıkarma, uygulama |
 | 12 | Örnek e-postayı okuyup 1 yanıt e-postası yazma | Kısa e-posta | Amaç, gerekçe, hitap ve yazılı anlatım |
+
+**Uygulamadaki 11. etkinlik:** Dokuz örnek, her biri kısa açıklaması ve örnek şeması olan üç sürükle-bırak kutusuna ayrılır. Tekrarlanan “kuralı ve yeni örneği yaz” istemi yerine öğrenci önce noktalama bulmacasında işaret seçip kısa gerekçe verir, ardından yönlendirmeli şemayla kendi cümlesini kurar; yazma çalışması korunur.
 
 ## 3–4. haftalar · 28 Eyl–9 Eki — Gençliğin Kıymeti ve Sen Sor O Yanıtlasın (PDF s. 30–50)
 

@@ -3,17 +3,12 @@
   const text = (id, label, rows = 3) => field(id, label, "textarea", { rows });
   const select = (id, label, options) => field(id, label, "select", { options });
   const radio = (id, label, options) => field(id, label, "radio", { options });
-  const sort = (id, label, categories, items, expectedAssignments = null) => field(id, label, "sort", { categories, items, ...(expectedAssignments ? { expectedAssignments } : {}) });
+  const sort = (id, label, categories, items, expectedAssignments = null, extra = {}) => field(id, label, "sort", { categories, items, ...(expectedAssignments ? { expectedAssignments } : {}), ...extra });
   // extra may hold sourceUrl/sourceLinkLabel for learners and sourceTranscript/answerKey for grounded checking.
   const q = (id, prompt, fields, extra = {}) => ({ id, prompt, fields, ...extra });
   const opts = (...labels) => labels.map(label => ({ value: label, label }));
   const yesNo = opts("Evet", "Hayır", "Kararsızım");
   const df = opts("Doğru", "Yanlış");
-  const semicolonUses = opts(
-    "Virgülle ayrılmış tür veya takımları gruplama",
-    "Virgüllerle sıralanmış bağlı cümleleri ayırma",
-    "Ögeleri arasında virgül bulunan sıralı cümleleri ayırma"
-  );
 
   window.THEME1_FORMS = {
     "marti-a01": [
@@ -120,31 +115,50 @@
       ])
     ],
     "marti-a11": [
-      q("sort-examples", "Dokuz cümleyi noktalı virgülün kullanımına göre uygun gruplara sürükle.", [
-        sort("semicolon-examples", "Cümle kartları", semicolonUses.map((label, index) => ({ id: `use-${index + 1}`, label })), [
+      q("sort-examples", "Noktalı virgül dedektifi: Kutulardaki açıklamaları oku, sonra dokuz cümleyi uygun kutuya taşı.", [
+        sort("semicolon-examples", "Noktalı virgül burada hangi işi yapıyor?", [
+          { id: "use-1", icon: "📋", label: "Virgüllü iki listeyi ayırır", description: "İki ayrı liste vardır; her listede sözcükler virgülle sıralanır. Örnek: kalem, defter; elma, su." },
+          { id: "use-2", icon: "🔗", label: "Bağlantılı iki cümleyi ayırır", description: "Anlamca bağlı iki kısa cümle vardır; virgüllü liste yoktur. Örnek: Zil çaldı; ders başladı." },
+          { id: "use-3", icon: "🧩", label: "İçinde virgüllü liste olan iki cümleyi ayırır", description: "İki cümlenin içinde de virgülle sıralanan kişiler ya da şeyler vardır. Örnek: Ece, Mert ve Can geldi; Duru, Alp ve Nehir görev aldı." }
+        ], [
           { id: "example-1", label: "Atölyede resim, seramik, ebru; sahnede müzik, şiir ve dans çalışmaları vardı." },
           { id: "example-2", label: "Kamp çantasına harita, pusula, yağmurluk; mutfak kutusuna tabak, bardak, kaşık kondu." },
           { id: "example-3", label: "Araştırma için dergi, kitap, ansiklopedi; sunum için grafik, fotoğraf ve çizelge hazırlandı." },
-          { id: "example-4", label: "Zil çaldı, öğrenciler sınıfa geçti; öğretmen yoklamayı aldı, dersi başlattı." },
-          { id: "example-5", label: "Kütüphanede kaynakları taradık, not aldık; eve dönünce planı gözden geçirip düzenledik." },
-          { id: "example-6", label: "Önce soruyu okudum, anahtar sözcükleri çizdim; sonra kanıtı buldum, cevabımı yazdım." },
+          { id: "example-4", label: "Zil çaldı; öğrenciler sınıfa geçti." },
+          { id: "example-5", label: "Önce kaynakları taradık; sonra kısa notlar aldık." },
+          { id: "example-6", label: "Güneş doğdu; yürüyüş ekibi yola çıktı." },
           { id: "example-7", label: "Okul korosunda Ece, Mert ve Can şarkı söyledi; sahne ekibinde Duru, Alp ve Nehir dekorları yerleştirdi." },
-          { id: "example-8", label: "İlk bölümde soruyu okuduk, ipuçlarını belirledik; sonraki bölümde kanıtları bulduk, cevapları yazdık." },
-          { id: "example-9", label: "Sunum için çizelge, fotoğraf, harita; sergi için afiş, maket, açıklama kartı hazırladık." }
+          { id: "example-8", label: "Sabah yazar, ressam ve müzisyenler geldi; öğleden sonra sporcular, öğretmenler ve öğrenciler atölyeye katıldı." },
+          { id: "example-9", label: "Sınıfımızda Defne, Asya ve Doruk afiş hazırladı; okul korosunda Ece, Mert ve Can prova yaptı." }
         ], {
           "example-1": "use-1", "example-2": "use-1", "example-3": "use-1",
           "example-4": "use-2", "example-5": "use-2", "example-6": "use-2",
-          "example-7": "use-3", "example-8": "use-2", "example-9": "use-1"
+          "example-7": "use-3", "example-8": "use-3", "example-9": "use-3"
+        }, {
+          instructions: "Her kartta noktalı virgülün soluna ve sağına bak. İki tarafta ne olduğunu bul, sonra kartı açıklaması uyan kutuya sürükle. Dokunmatik ekranda karta, ardından kutuya dokun.",
+          guide: ["Cümleyi oku", "; işaretinin iki yanına bak", "Uyan açıklamaya taşı"]
         })
-      ], { responseType: "matching", rubric: "Cümleleri virgülle ayrılmış listeleri ayırma ya da virgüllü ögeleri bulunan sıralı cümleleri ayırma işlevlerine göre değerlendir. Her eşleştirmeyi kaynak cümle yapısına göre kontrol et; yalnızca yanlış kartların adını ve ipucunu ver, doğru grubu açıklama." }),
-      ...[
-        ["lists", "Virgülle ayrılmış sözcük grupları"],
-        ["sentences", "Virgüllerle sıralanmış bağlı cümleler"],
-        ["subjects", "Ögeleri arasında virgül bulunan sıralı cümleler"]
-      ].map(([id, label]) => q(`rule-${id}`, `Bu kullanım için kuralı ve yeni bir örneği yaz: ${label.toLowerCase()}.`, [
-        text("rule", "Kuralı kendi sözlerinle", 2),
-        text("example", "Yeni örnek cümlem", 2)
-      ]))
+      ], { responseType: "matching", rubric: "Dokuz örneği üç kullanım grubuna göre denetle; her grupta üç örnek bulunmalı. Yanlış kartların adını ve cümlede bakması gereken ipucunu belirt, doğru kutuyu doğrudan söyleme." }),
+      q("punctuation-puzzle", "Noktalama bulmacası: Boşluğa hangi işaret gelmeli? ‘Çantama kalem, defter, kitap ___ atıştırmalık kutusuna elma, su, sandviç koydum.’", [
+        radio("mark", "Doğru işareti seç", opts("Virgül (,)", "Noktalı virgül (;)", "Nokta (.)")),
+        text("clue", "İpucu: İşaretin iki yanında neler sıralanmış? Seçimini kısaca açıkla.", 2)
+      ], { responseLabel: "İşareti seç · gerekçeni yaz", rubric: "Seçilen işaretin iki ayrı, kendi içinde virgüllü listeyi ayırıp ayırmadığını ve açıklamanın bu yapıya uyup uymadığını kontrol et. Yanlışsa doğru işareti söyleme; cümlenin iki tarafındaki listelere yeniden bakmasını iste." }),
+      q("write-your-own", "Şimdi kendi örneğini kur! İki farklı grup seç. Her grupta en az iki öğeyi virgülle sırala; iki grubu anlamlı tek bir cümlede noktalı virgülle ayır. Önce alanları doldur, sonra cümleni yaz.", [
+        select("topic", "Hangi iki grubu kullanacaksın?", opts("Okul çantası ve beslenme çantası", "Atölye ve sahne etkinlikleri", "Sunum araçları ve sergi ürünleri", "Kendi seçtiğim iki grup")),
+        text("first-group", "1. grup: En az iki öğe yaz; aralarına virgül koy.", 2),
+        text("second-group", "2. grup: En az iki öğe yaz; aralarına virgül koy.", 2),
+        text("sentence", "İki grubu tek ve anlamlı bir cümlede birleştir.", 3)
+      ], {
+        responseLabel: "Planla ve kendi cümleni yaz",
+        diagram: {
+          title: "Cümle kurma şeması",
+          left: "1. grup: sözcük, sözcük, sözcük",
+          connector: ";",
+          right: "2. grup: sözcük, sözcük, sözcük",
+          note: "Her grubun içinde virgül, iki grubun arasında noktalı virgül kullan."
+        },
+        rubric: "Kendi örneğini oluşturup oluşturmadığını kontrol et: iki ayrı grupta en az ikişer öge bulunmalı, grup içindeki ögeler virgülle ayrılmalı, gruplar arasında noktalı virgül olmalı ve cümle anlamlı olmalı. Eksik ölçütü söyle; öğrenci yerine örnek cümle yazma."
+      })
     ],
 
     "marti-a12": [
@@ -374,13 +388,20 @@
       ])
     ],
     "sport-a09": [
-      q("semicolon-sort", "Üç cümleyi noktalı virgülün kullanım işlevleriyle eşleştir.", [
-        sort("examples", "Cümle kartları", semicolonUses.map((label, index) => ({ id: `use-${index + 1}`, label })), [
-          { id: "semicolon-1", label: "Okulda Ece, Mert ve Can şiir; Duru, Alp ve Nehir sunum hazırladı." },
+      q("semicolon-sort", "Üç cümleyi oku. Noktalı virgülün yaptığı işe uyan açıklamanın altına taşı.", [
+        sort("examples", "Noktalı virgülün görevi", [
+          { id: "use-1", icon: "📋", label: "Virgüllü iki listeyi ayırır", description: "İki ayrı virgüllü sözcük grubu vardır." },
+          { id: "use-2", icon: "🔗", label: "Bağlantılı iki cümleyi ayırır", description: "Anlamca bağlı iki cümle yan yana gelir." },
+          { id: "use-3", icon: "🧩", label: "İçinde virgüllü liste olan iki cümleyi ayırır", description: "İki cümlenin içinde virgülle sıralanan kişiler ya da şeyler bulunur." }
+        ], [
+          { id: "semicolon-1", label: "Kulüplerde resim, drama, ebru; okul etkinliğinde müzik, şiir ve tiyatro çalışmaları vardı." },
           { id: "semicolon-2", label: "Sabah araştırdık, kaynakları seçtik; öğleden sonra notları düzenleyip paylaştık." },
           { id: "semicolon-3", label: "Doğa gözlem ekibinden Lara, Deniz ve Ozan fotoğrafları seçti; okul takımından Ece, Can ve Mira çizelgeleri düzenledi." }
-        ], { "semicolon-1": "use-1", "semicolon-2": "use-2", "semicolon-3": "use-3" })
-      ], { responseType: "matching", rubric: "Noktalı virgülün cümle içindeki göreviyle eşleştirmeleri karşılaştır. Cümledeki virgül gruplarına bak. Yanlış eşleştirme varsa kartın adını söyle; doğru işlevi doğrudan açıklama." }),
+        ], { "semicolon-1": "use-1", "semicolon-2": "use-2", "semicolon-3": "use-3" }, {
+          instructions: "Her cümlede noktalı virgülün iki yanına bak. Cümlede sözcük listesi mi, bağlantılı işler mi var? Uyan açıklamanın altına taşı.",
+          guide: ["Cümleyi oku", "; işaretinin iki yanına bak", "Uyan açıklamaya taşı"]
+        })
+      ], { responseType: "matching", rubric: "Noktalı virgülün cümle içindeki görevini kontrol et. Cümledeki virgül gruplarına ve iki tarafta neler bulunduğuna bak. Yanlış eşleştirme varsa kartın adını söyle; doğru işlevi doğrudan açıklama." }),
       ...[
         ["lists", "Virgülle ayrılmış kişi/tür adlarını iki grupta ayırma"],
         ["sentences", "Virgüllerle sıralanmış bağlı cümleleri ayırma"],
