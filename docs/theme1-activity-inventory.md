@@ -86,6 +86,17 @@ Kaynaklar: Kaoru İkeya öyküsü; “Osmanlı’da Astronomi ve Zaman Bilimi Ç
 
 Tema 1 için **43 özgün etkinlik** üç haftalık pakette, seçilen haftanın okuma sayfasına gömülü ve numaralı sırayla sunulur: 1–2. haftalarda Martı dizisinin 12 etkinliği (iki numaralı tahmin durağı ve okuma sonu karşılaştırması); 3–4. haftalarda Gençliğin Kıymeti’nin 8 etkinliği, bir neden-sonuç metni çalışması ve Sen Sor O Yanıtlasın’ın 10 etkinliği; 5–6. haftalarda Adını Göklere Yazdıran Çocuk’un 8 etkinliği, üç üretim/konuşma atölyesi ve 8 soruluk tema sonu ölçmesi. Etkinlik biçimi, sayısı, kaynağı ve becerisi gösterilir. Yanıt türü kaynağa göre değişir: serim, düğüm ve çözüm gibi yazma görevleri ayrı metin alanlarında; çoktan seçmeli maddeler seçim kontrollerinde; sınıflandırma ve eşleştirme görevleri klavyeyle ya da dokunup seçerek kullanılabilen sürükle-bırak kartlarında yapılır. Her soru için ayrı **“Kontrol et”** düğmesi vardır; soru, yanıt alanı ve AI geri bildirimi farklı renklerle ayrılır. İlgili öykü/özgün kaynak metin Groq isteğine eklenir; uygulamada bulunmayan QR video veya şiir içeriği uydurulmaz. QR videosu/dinleme kaydı için etkinlik veya soru düzeyinde `sourceUrl` bağlantısı gösterilebilir; `sourceTranscript` dökümü ve/veya açık `answerKey` AI isteğine kaynak olarak eklenebilir. Ancak bağlantı tek başına Groq'a videoyu izletmez. Transkript veya cevap anahtarı sağlanmadıkça AI video ayrıntılarının doğruluğunu onaylamaz; yalnızca yanıtın istenen bileşenlerini ve açıklama tutarlılığını değerlendirir ve bu sınırı geri bildirimde açıkça belirtir. Olgusal kontrol için kaynak transkripti/anahtarının uygulamaya eklenmesi gerekir. Söz varlığı etkinliği dört sözcük için bağlam anlamı, sözlük anlamı ve çağrışımların yanı sıra sözcük seçimi ve ilişki kurmayı içerir. Ayrı oyun kartı kaldırılmıştır; eşleştirme ve sınıflandırmalar kaynaktaki görevin kendisine uygun etkileşimli çalışma araçlarıdır. İlerleme tarayıcıda saklanır.
 
+### Tema 1 QR kaynakları — PDF’den çözümlenen bağlantılar
+
+QR kodları `turkce7-1.pdf` içindeki ilgili sayfalardan yerel olarak çözümlendi ve PDF’deki tıklanabilir EBA hedefleriyle eşleştirildi. Uygulamada bu bağlantılar etkinlik ya da ilgili soru başında açılır.
+
+| Kaynak | PDF sayfası | Uygulamadaki etkinlikler | QR bağlantısı |
+|---|---:|---|---|
+| “Hayat Büyük Bir Okuldur” | 22 | `marti-a08`, `marti-a09` | [Videoyu aç](https://www.eba.gov.tr/c?q=UEX7a3e23fb) |
+| “Bir İyilik Hikâyesi” | 33 | `genclik-a04` | [Videoyu aç](https://www.eba.gov.tr/c?q=UEXff7ff4bd) |
+| Yiğit Caner Aydın söyleşisi | 42 | `sport-a01`–`sport-a06`, `adiny-a03` | [Söyleşiyi aç](https://www.eba.gov.tr/c?q=UEX5afb21e6) |
+| Ali Kuşçu dinleme içeriği | 57 | `adiny-a05`, `adiny-a06`, `adiny-review` · 4. soru | [Dinlemeyi aç](https://www.eba.gov.tr/c?q=UEX3d0cd83c) |
+
 ## Yeni özgün çalışmalar için uygulama kararı
 
 1. Yeni set yalnızca Tema 1’in bu üç birimine eklenir; sonraki temalar bu aşamada üretilmez.

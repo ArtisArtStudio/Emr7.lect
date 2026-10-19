@@ -274,6 +274,25 @@ for (const unitId of [1,3,5]) {{
     URL, URLSearchParams, Date, console
   }});
   for (const source of sources) vm.runInContext(source, context);
+  const qr = context.window.THEME1_QR_SOURCES;
+  const decodedQRs = {{
+    hayatBuyuk: 'https://www.eba.gov.tr/c?q=UEX7a3e23fb',
+    birIyilikHikayesi: 'https://www.eba.gov.tr/c?q=UEXff7ff4bd',
+    yigitCanerAydin: 'https://www.eba.gov.tr/c?q=UEX5afb21e6',
+    aliKuscu: 'https://www.eba.gov.tr/c?q=UEX3d0cd83c'
+  }};
+  for (const [key, url] of Object.entries(decodedQRs)) if (qr[key] !== url) throw new Error(`Decoded QR destination changed or is missing: ${{key}}`);
+  const allActivities = context.window.THEME1_PRACTICE.units.flatMap((unit) => unit.groups.flatMap((group) => group.activities));
+  const byActivityId = new Map(allActivities.map((activity) => [activity.id, activity]));
+  const expectedSources = [
+    ['marti-a08', qr.hayatBuyuk], ['marti-a09', qr.hayatBuyuk],
+    ['genclik-a04', qr.birIyilikHikayesi],
+    ...['sport-a01','sport-a02','sport-a03','sport-a04','sport-a05','sport-a06','adiny-a03'].map((id) => [id, qr.yigitCanerAydin]),
+    ['adiny-a05', qr.aliKuscu], ['adiny-a06', qr.aliKuscu]
+  ];
+  for (const [id, url] of expectedSources) if (!url || byActivityId.get(id)?.sourceUrl !== url) throw new Error(`QR source link missing or assigned to wrong activity: ${{id}}`);
+  const reviewQRQuestion = context.window.THEME1_FORMS['adiny-review'].find((question) => question.id === 'review-4');
+  if (!reviewQRQuestion || reviewQRQuestion.sourceUrl !== qr.aliKuscu) throw new Error('Ali Kuşçu QR link is missing from the relevant theme-review question');
   const selected = context.window.THEME1_PRACTICE.units.find((unit) => unit.weekId === unitId);
   const activities = selected.groups.flatMap((group) => group.activities);
   const qrActivity = activities.find((item) => item.id === 'marti-a08');
@@ -292,12 +311,21 @@ for (const unitId of [1,3,5]) {{
     const expectedSorts = context.window.THEME1_FORMS[activity.id].flatMap((question) => question.fields).filter((field) => field.type === 'sort').length;
     const actualSorts = (element('activity-stage').innerHTML.match(/data-sort-widget=/g) || []).length;
     if (actualSorts !== expectedSorts) throw new Error(`Unit ${{unitId}} activity ${{activity.id}}: expected ${{expectedSorts}} sorting widgets, got ${{actualSorts}}`);
+    const renderedHTML = element('activity-stage').innerHTML;
+    if (activity.sourceUrl && !renderedHTML.includes(`href="${{activity.sourceUrl}}"`)) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} source link was not rendered`);
+    for (const question of context.window.THEME1_FORMS[activity.id]) if (question.sourceUrl && !renderedHTML.includes(`href="${{question.sourceUrl}}"`)) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} question ${{question.id}} source link was not rendered`);
     if (activity.id === 'marti-a08') {{
       const html = element('activity-stage').innerHTML;
       if (!html.includes('href="https://example.test/hayat-buyuk"') || !html.includes('href="https://example.test/soru-videosu"')) throw new Error('QR video links were not rendered at activity and question level');
       if (!html.includes('Groq videoyu açıp izleyemez')) throw new Error('QR activity does not explain that Groq cannot watch the video');
     }}
     if (activity.id === 'adiny-a03' && !element('activity-stage').innerHTML.includes('video içeriğinin doğru olduğu onayı değildir')) throw new Error('Mixed story/video comparison lacks an explicit verification limit');
+    if (activity.id === 'adiny-review') {{
+      const html = element('activity-stage').innerHTML;
+      const start = html.indexOf('data-question-key="adiny-review::review-4"');
+      const end = html.indexOf('</article>', start);
+      if (start < 0 || !html.slice(start, end).includes(`href="${{qr.aliKuscu}}"`)) throw new Error('The Ali Kuşçu QR link was not shown on its relevant review question');
+    }}
     if (!element('activity-stage').innerHTML.includes('Yanıt alanı')) throw new Error(`Unit ${{unitId}} activity ${{activity.id}} is missing a response area`);
     if (index < activities.length - 1) element('next-step').listeners.click();
   }}

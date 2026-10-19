@@ -538,7 +538,7 @@
         text("timeline", "Zaman sırasını gösteren bilgi", 2),
         text("achievement", "Önemli buluş / çalışması", 2),
         text("message", "Ana mesaj", 2)
-      ], { sourceMode: "qr" }),
+      ], { sourceMode: "qr", sourceUrl: window.THEME1_QR_SOURCES.aliKuscu, sourceLinkLabel: "Ali Kuşçu dinleme kaydını aç" }),
       q("review-5", "5. ‘Planlı çalışmanın öğrenmeye katkısı’ üzerine örnek ve gerekçe içeren kısa bir konuşma planla.", [
         text("claim", "Ana düşüncem", 2),
         text("example", "Örneğim", 3),
