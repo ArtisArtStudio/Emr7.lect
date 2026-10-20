@@ -7,8 +7,8 @@
   'use strict';
 
   const STORAGE_KEY = 'emr7lect.socialStudies.v1';
-  const EBA_URL = 'https://www.eba.gov.tr/';
-  const MEBI_URL = 'https://mebi.eba.gov.tr/';
+  const EBA_URL = 'https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&okulTuru=6&sinif=15&genelMudurluk=33&ders=17&program=1131&kazanimlar=310150';
+  const MEBI_URL = 'https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce';
   const PROVIDERS = ['eba', 'tonguc', 'mebi'];
 
   const UNITS = [
@@ -33,7 +33,7 @@
     return { id, date, unitId, unit: unit.title, unitLabel: unit.label, topic, focus, tasks, activity: activityData, source };
   };
 
-  // Her satır ham haftadır: konu, tarih ve ilerleme başka haftayla birleştirilmez.
+  // Her satır ayrı haftadır: konu, tarih ve ilerleme başka haftayla birleştirilmez.
   // Takvim mevcut uygulamadaki 2026–2027 haftalık tarihleriyle aynı tutulmuştur.
   const WEEKS = [
     week(1, '14–18 Eyl', 'together', 'Gruplarda ve sosyal hayatta iletişim', 'Birlikte yaşama kültüründe saygı, yardımlaşma ve sorumluluğun yerini örneklerle açıkla.', [
@@ -419,6 +419,64 @@
     ], 'Kitaptaki araştırma raporu, ürün oluşturma ve paylaşma adımlarından esinlenir.')),
   ];
 
+  const LESSON_CONTENT = window.SOCIAL_STUDIES_CONTENT || { lessons: {}, checks: {} };
+
+  function makeChoiceField(question, index) {
+    const options = question.options.map((label, optionIndex) => ({
+      id: `option-${optionIndex + 1}`,
+      label,
+    }));
+    return {
+      id: `self-check-${index + 1}`,
+      label: question.prompt,
+      kind: 'choice',
+      options,
+      answer: options[question.correct]?.id || '',
+      explanation: question.explanation || '',
+      hint: question.hint || '',
+    };
+  }
+
+  function transferFields(transfer) {
+    return (Array.isArray(transfer.fields) ? transfer.fields : []).map((field, index) => response(
+      `transfer-${index + 1}`,
+      field[0],
+      field[1],
+      'textarea',
+      8,
+    ));
+  }
+
+  for (const item of WEEKS) {
+    const content = LESSON_CONTENT.lessons?.[item.id] || {};
+    const quiz = LESSON_CONTENT.checks?.[item.id] || [];
+    item.summary = content.summary || item.focus;
+    item.summaryPoints = Array.isArray(content.points) ? content.points : [];
+    item.keyTerms = Array.isArray(content.terms) ? content.terms : [];
+    const transfer = content.transfer || {};
+    const bookActivity = { ...item.activity, id: 'book' };
+    item.activities = [
+      {
+        id: 'self-check',
+        sourceStyle: 'Seçmeli sorular · anında öz değerlendirme',
+        title: 'Kısa sınama: konuyu anladım mı?',
+        prompt: 'Her soruda en uygun seçeneği işaretle ve “Kontrol et” düğmesiyle geri bildirim al.',
+        fields: quiz.map(makeChoiceField),
+        hint: 'Yanlış seçimde ipucunu oku; konu özetine dönüp yeniden dene.',
+      },
+      bookActivity,
+      {
+        id: 'apply',
+        sourceStyle: transfer.format || 'Uygulama · kısa yanıt · öz değerlendirme',
+        title: transfer.title || 'Öğrendiklerimi uyguluyorum',
+        prompt: transfer.prompt || `${item.topic} konusunu bir örnekle açıkla.`,
+        scenario: transfer.scenario || '',
+        fields: transferFields(transfer),
+        hint: transfer.hint || 'Yanıtını konu özeti ve kullandığın kaynakla karşılaştır.',
+      },
+    ];
+  }
+
   const WEEK_BY_ID = new Map(WEEKS.map((item) => [item.id, item]));
 
   function escapeHTML(value) {
@@ -428,40 +486,61 @@
   }
 
   function emptyProgress() {
-    return { version: 1, selectedWeek: 1, weeks: {} };
+    return { version: 2, selectedWeek: 1, weeks: {} };
+  }
+
+  function isRecord(value) {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
   }
 
   function normalizeProgress(input) {
-    const source = input && typeof input === 'object' && !Array.isArray(input) ? input : {};
-    const rawWeeks = source.weeks && typeof source.weeks === 'object' && !Array.isArray(source.weeks) ? source.weeks : {};
+    const source = isRecord(input) ? input : {};
+    const rawWeeks = isRecord(source.weeks) ? source.weeks : {};
     const normalizedWeeks = {};
     for (const item of WEEKS) {
-      const saved = rawWeeks[String(item.id)] && typeof rawWeeks[String(item.id)] === 'object'
-        ? rawWeeks[String(item.id)]
-        : {};
-      const responses = saved.responses && typeof saved.responses === 'object' && !Array.isArray(saved.responses)
-        ? saved.responses
-        : {};
+      const saved = isRecord(rawWeeks[String(item.id)]) ? rawWeeks[String(item.id)] : {};
+      const rawResponses = isRecord(saved.responses) ? saved.responses : {};
+      const rawChoiceChecks = isRecord(saved.choiceChecks) ? saved.choiceChecks : {};
       const cleanResponses = {};
-      for (const field of item.activity.fields) {
-        const value = responses[field.id];
-        if (field.kind === 'checklist') {
-          const checks = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
-          cleanResponses[field.id] = Object.fromEntries(field.options.map((option) => [option.id, checks[option.id] === true]));
-        } else {
-          cleanResponses[field.id] = typeof value === 'string' ? value.slice(0, 5000) : '';
+      const choiceChecks = {};
+      for (const activityItem of item.activities) {
+        const nestedResponses = isRecord(rawResponses[activityItem.id]);
+        // v1 backups stored the single activity's fields directly in responses.
+        const sourceResponses = nestedResponses
+          ? rawResponses[activityItem.id]
+          : activityItem.id === 'book' ? rawResponses : {};
+        const rawChecksForActivity = isRecord(rawChoiceChecks[activityItem.id])
+          ? rawChoiceChecks[activityItem.id]
+          : {};
+        cleanResponses[activityItem.id] = {};
+        choiceChecks[activityItem.id] = {};
+        for (const field of activityItem.fields) {
+          const value = sourceResponses[field.id];
+          if (field.kind === 'checklist') {
+            const checks = isRecord(value) ? value : {};
+            cleanResponses[activityItem.id][field.id] = Object.fromEntries(
+              field.options.map((option) => [option.id, checks[option.id] === true]),
+            );
+          } else if (field.kind === 'choice') {
+            const allowed = field.options.some((option) => option.id === value);
+            cleanResponses[activityItem.id][field.id] = allowed ? value : '';
+            choiceChecks[activityItem.id][field.id] = rawChecksForActivity[field.id] === true;
+          } else {
+            cleanResponses[activityItem.id][field.id] = typeof value === 'string' ? value.slice(0, 5000) : '';
+          }
         }
       }
-      const rawPlatforms = saved.platforms && typeof saved.platforms === 'object' ? saved.platforms : {};
+      const rawPlatforms = isRecord(saved.platforms) ? saved.platforms : {};
       normalizedWeeks[String(item.id)] = {
         tasks: item.tasks.map((_, index) => Array.isArray(saved.tasks) && saved.tasks[index] === true),
         responses: cleanResponses,
+        choiceChecks,
         platforms: Object.fromEntries(PROVIDERS.map((provider) => [provider, rawPlatforms[provider] === true])),
       };
     }
     const selectedWeek = Number(source.selectedWeek);
     return {
-      version: 1,
+      version: 2,
       selectedWeek: WEEK_BY_ID.has(selectedWeek) ? selectedWeek : 1,
       weeks: normalizedWeeks,
     };
@@ -485,7 +564,8 @@
       const item = WEEK_BY_ID.get(Number(weekId));
       progress.weeks[key] = {
         tasks: item ? item.tasks.map(() => false) : [],
-        responses: {},
+        responses: item ? Object.fromEntries(item.activities.map((activityItem) => [activityItem.id, {}])) : {},
+        choiceChecks: item ? Object.fromEntries(item.activities.map((activityItem) => [activityItem.id, {}])) : {},
         platforms: Object.fromEntries(PROVIDERS.map((provider) => [provider, false])),
       };
     }
@@ -504,16 +584,29 @@
     return [...new Set(String(value || '').split(/[,،;\n]+/).map((word) => word.trim()).filter(Boolean))].length;
   }
 
-  function isActivityComplete(item, saved) {
+  function responsesFor(saved, activityItem) {
+    if (!isRecord(saved?.responses)) return {};
+    if (isRecord(saved.responses[activityItem.id])) return saved.responses[activityItem.id];
+    // Accept an un-normalized v1 record passed directly to the public completion helper.
+    return activityItem.id === 'book' ? saved.responses : {};
+  }
+
+  function isActivityComplete(item, saved, onlyActivity = null) {
     if (!item || !saved) return false;
-    const responses = saved.responses || {};
-    return item.activity.fields.every((field) => {
-      const value = responses[field.id];
-      if (field.kind === 'checklist') {
-        return field.options.every((option) => value && value[option.id] === true);
-      }
-      if (field.kind === 'words') return wordCount(value) >= 3;
-      return typeof value === 'string' && value.trim().length >= field.minChars;
+    const activityItems = onlyActivity ? [onlyActivity] : item.activities;
+    if (!Array.isArray(activityItems) || !activityItems.length) return false;
+    return activityItems.every((activityItem) => {
+      const responses = responsesFor(saved, activityItem);
+      const checkedChoices = isRecord(saved.choiceChecks?.[activityItem.id]) ? saved.choiceChecks[activityItem.id] : {};
+      return activityItem.fields.length > 0 && activityItem.fields.every((field) => {
+        const value = responses[field.id];
+        if (field.kind === 'checklist') {
+          return field.options.every((option) => value && value[option.id] === true);
+        }
+        if (field.kind === 'words') return wordCount(value) >= 3;
+        if (field.kind === 'choice') return value === field.answer && checkedChoices[field.id] === true;
+        return typeof value === 'string' && value.trim().length >= field.minChars;
+      });
     });
   }
 
@@ -530,21 +623,33 @@
     };
   }
 
-  function fieldHTML(item, field, saved) {
-    const value = saved.responses[field.id];
-    const fieldId = `social-field-${item.id}-${field.id}`;
+  function choiceFeedbackHTML(field, value, isChecked) {
+    if (!isChecked) return '';
+    const correct = value === field.answer;
+    return `<div class="social-choice-feedback${correct ? ' is-correct' : ' is-retry'}" role="status" aria-live="polite"><b>${correct ? 'Doğru!' : 'Bir daha düşün.'}</b> ${escapeHTML(correct ? field.explanation : field.hint)}</div>`;
+  }
+
+  function fieldHTML(item, activityItem, field, saved, fieldIndex) {
+    const responses = responsesFor(saved, activityItem);
+    const value = responses[field.id];
+    const fieldId = `social-field-${item.id}-${activityItem.id}-${field.id}`;
+    const activityData = `data-social-activity="${escapeHTML(activityItem.id)}"`;
+    if (field.kind === 'choice') {
+      const checked = saved.choiceChecks?.[activityItem.id]?.[field.id] === true;
+      return `<fieldset class="social-choice-question"><legend><span class="social-question-no">Soru ${fieldIndex + 1}</span>${escapeHTML(field.label)}</legend><div class="social-choice-options">${field.options.map((option) => `<label class="social-choice-option"><input type="radio" name="social-choice-${item.id}-${activityItem.id}-${field.id}" data-social-response="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}" value="${escapeHTML(option.id)}" ${value === option.id ? 'checked' : ''}><span>${escapeHTML(option.label)}</span></label>`).join('')}</div><button type="button" class="social-choice-check" data-social-check-choice="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}">Seçimimi kontrol et</button><div class="social-choice-feedback-slot" id="social-choice-feedback-${item.id}-${activityItem.id}-${field.id}">${choiceFeedbackHTML(field, value, checked)}</div></fieldset>`;
+    }
     if (field.kind === 'checklist') {
       const checks = value || {};
-      return `<fieldset class="social-checklist-field"><legend>${escapeHTML(field.label)}</legend><div class="social-checklist-options">${field.options.map((option) => `<label class="social-check-option"><input type="checkbox" data-social-check="${escapeHTML(field.id)}" data-social-option="${escapeHTML(option.id)}" data-social-week="${item.id}" ${checks[option.id] ? 'checked' : ''}><span>${escapeHTML(option.label)}</span></label>`).join('')}</div></fieldset>`;
+      return `<fieldset class="social-checklist-field"><legend>${escapeHTML(field.label)}</legend><div class="social-checklist-options">${field.options.map((option) => `<label class="social-check-option"><input type="checkbox" data-social-check="${escapeHTML(field.id)}" ${activityData} data-social-option="${escapeHTML(option.id)}" data-social-week="${item.id}" ${checks[option.id] ? 'checked' : ''}><span>${escapeHTML(option.label)}</span></label>`).join('')}</div></fieldset>`;
     }
     if (field.kind === 'words') {
       const terms = String(value || '').split(/[,،;\n]+/).map((term) => term.trim()).filter(Boolean);
-      return `<div class="social-field"><label for="${fieldId}">${escapeHTML(field.label)}</label><input id="${fieldId}" type="text" data-social-response="${escapeHTML(field.id)}" data-social-week="${item.id}" value="${escapeHTML(value || '')}" placeholder="${escapeHTML(field.placeholder)}" autocomplete="off"><div class="social-word-preview" id="social-word-preview-${item.id}-${escapeHTML(field.id)}" aria-live="polite">${terms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div><small>En az üç farklı sözcük yaz; sözcükleri virgülle ayır.</small></div>`;
+      return `<div class="social-field"><label for="${fieldId}">${escapeHTML(field.label)}</label><input id="${fieldId}" type="text" data-social-response="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}" value="${escapeHTML(value || '')}" placeholder="${escapeHTML(field.placeholder)}" autocomplete="off"><div class="social-word-preview" id="social-word-preview-${item.id}-${activityItem.id}-${escapeHTML(field.id)}" aria-live="polite">${terms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div><small>En az üç farklı sözcük yaz; sözcükleri virgülle ayır.</small></div>`;
     }
     if (field.kind === 'text') {
-      return `<div class="social-field"><label for="${fieldId}">${escapeHTML(field.label)}</label><input id="${fieldId}" type="text" data-social-response="${escapeHTML(field.id)}" data-social-week="${item.id}" value="${escapeHTML(value || '')}" placeholder="${escapeHTML(field.placeholder)}" autocomplete="off"></div>`;
+      return `<div class="social-field"><label for="${fieldId}">${escapeHTML(field.label)}</label><input id="${fieldId}" type="text" data-social-response="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}" value="${escapeHTML(value || '')}" placeholder="${escapeHTML(field.placeholder)}" autocomplete="off"></div>`;
     }
-    return `<div class="social-field"><label for="${fieldId}">${escapeHTML(field.label)}</label><textarea id="${fieldId}" data-social-response="${escapeHTML(field.id)}" data-social-week="${item.id}" rows="3" placeholder="${escapeHTML(field.placeholder)}">${escapeHTML(value || '')}</textarea></div>`;
+    return `<div class="social-field"><label for="${fieldId}">${escapeHTML(field.label)}</label><textarea id="${fieldId}" data-social-response="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}" rows="3" placeholder="${escapeHTML(field.placeholder)}">${escapeHTML(value || '')}</textarea></div>`;
   }
 
   function renderWeekList() {
@@ -559,6 +664,41 @@
         return `<button type="button" class="social-week-button${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}" data-social-select="${item.id}" ${active ? 'aria-current="page"' : ''}><span class="social-week-no">${item.id}.</span><span class="social-week-meta"><span class="social-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="social-week-topic">${escapeHTML(item.topic)}</span></span><span class="social-week-status" id="social-week-status-${item.id}" aria-label="${complete ? 'Hafta tamamlandı' : 'Hafta tamamlanmadı'}">${complete ? '✓' : ''}</span></button>`;
       }).join('')}</div></details>`;
     }).join('');
+  }
+
+  let activeActivityWeekId = null;
+  let activeActivityIndex = 0;
+
+  function renderActivityFlow(item, saved) {
+    if (activeActivityWeekId !== item.id) {
+      activeActivityWeekId = item.id;
+      activeActivityIndex = 0;
+    }
+    const activities = item.activities;
+    activeActivityIndex = Math.max(0, Math.min(activeActivityIndex, activities.length - 1));
+    const activeActivity = activities[activeActivityIndex];
+    const completeCount = activities.filter((activityItem) => isActivityComplete(item, saved, activityItem)).length;
+    const currentComplete = isActivityComplete(item, saved, activeActivity);
+    const currentStatus = currentComplete ? 'Tamamlandı' : 'Devam ediyor';
+    return `<section class="card social-practice-flow" aria-labelledby="socialPracticeTitle">
+      <div class="social-practice-heading"><div><div class="tag">ÖĞRENME · UYGULAMA · ÖZ DEĞERLENDİRME</div><h3 id="socialPracticeTitle">Bu haftanın etkinlikleri</h3><p>Önce kısa sınama, ardından kitapta görülen biçimlerden esinlenen özgün çalışma ve konuya özel uygulama.</p></div><strong class="social-practice-count" id="socialActivityCompleteCount">${completeCount}/${activities.length} etkinlik tamamlandı</strong></div>
+      <div class="social-practice-progress" id="socialActivityProgress" role="progressbar" aria-label="Haftalık etkinliklerin tamamlanma durumu" aria-valuemin="0" aria-valuemax="${activities.length}" aria-valuenow="${completeCount}"><span id="socialActivityProgressBar" style="width:${Math.round((completeCount / activities.length) * 100)}%"></span></div>
+      <nav class="social-practice-track" aria-label="Bu haftanın etkinlik adımları">${activities.map((activityItem, index) => {
+        const complete = isActivityComplete(item, saved, activityItem);
+        const active = index === activeActivityIndex;
+        const questionCount = activityItem.fields.length;
+        const stepDetail = activityItem.id === 'self-check' ? `${questionCount} soru` : `${questionCount} yanıt alanı`;
+        return `<button type="button" class="social-practice-step${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}" data-social-activity-select="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(activityItem.title)}${complete ? ', tamamlandı' : ''}" ${active ? 'aria-current="step"' : ''}><span class="social-practice-step-no">${index + 1}</span><span class="social-practice-step-copy"><b>${escapeHTML(activityItem.title)}</b><small>${stepDetail}</small></span><span class="social-practice-step-status" id="social-activity-step-status-${item.id}-${activityItem.id}" aria-label="${complete ? 'Tamamlandı' : 'Devam ediyor'}">${complete ? '✓' : ''}</span></button>`;
+      }).join('')}</nav>
+      <article class="social-activity-step" id="socialActivityStep" aria-labelledby="socialActivityTitle-${item.id}">
+        <header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${activities.length}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p></div><span class="social-activity-state${currentComplete ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${currentStatus}</span></header>
+        ${activeActivity.scenario ? `<blockquote class="social-case-stem"><b>Örnek durum</b><span>${escapeHTML(activeActivity.scenario)}</span></blockquote>` : ''}
+        <p class="social-style-note"><b>Etkinlik biçimi:</b> ${escapeHTML(activeActivity.sourceStyle)} <span>${escapeHTML(activeActivity.hint)}</span></p>
+        <div class="social-activity-fields">${activeActivity.fields.map((field, index) => fieldHTML(item, activeActivity, field, saved, index)).join('')}</div>
+        <p class="social-answer-note">Açık yanıtlar otomatik puanlanmaz; yanıtını konu özetiyle, kitaptaki bilgiyle veya öğretmeninin yönlendirmesiyle karşılaştır.</p>
+        <div class="social-activity-controls"><button type="button" class="social-activity-nav" data-social-activity-move="-1" ${activeActivityIndex === 0 ? 'disabled' : ''}>← Önceki etkinlik</button><span>${activeActivityIndex + 1} / ${activities.length}</span><button type="button" class="social-activity-nav" data-social-activity-move="1" ${activeActivityIndex === activities.length - 1 ? 'disabled' : ''}>Sonraki etkinlik →</button></div>
+      </article>
+    </section>`;
   }
 
   function renderSelectedWeek() {
@@ -576,23 +716,28 @@
     const saved = ensureWeekProgress(item.id);
     const links = getProviderLinks(item);
     const done = isWeekComplete(item, saved);
-    const dateLabel = `${item.date} 2026–2027 · ${item.id}. ham hafta`;
+    const dateLabel = `${item.date} 2026–2027 · ${item.id}. hafta`;
     content.innerHTML = `
       <header class="social-week-heading card">
         <div><div class="social-eyebrow">${escapeHTML(item.unitLabel)} · ${escapeHTML(item.unit)}</div><p class="social-date">${escapeHTML(dateLabel)}</p><h2 id="socialWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p class="social-focus">${escapeHTML(item.focus)}</p></div>
         <button class="social-print print" type="button" data-social-print>Yazdır / PDF</button>
       </header>
+      <section class="card social-topic-summary" aria-labelledby="socialSummaryTitle">
+        <div class="social-summary-heading"><div><div class="tag">KONU ANLATIMI</div><h3 id="socialSummaryTitle">Haftanın kısa konu özeti</h3></div></div>
+        <p class="social-summary-text">${escapeHTML(item.summary)}</p>
+        <div class="social-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul class="social-summary-points">${item.summaryPoints.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div><div class="social-key-terms"><h4>Anahtar kavramlar</h4><div>${item.keyTerms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div></div></div>
+      </section>
+      ${renderActivityFlow(item, saved)}
       <div class="social-grid-two">
         <section class="card social-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(item.source)}</small></section>
         <section class="card social-mini-plan"><h3>Öğrenci için mini plan</h3><p>Görevleri tamamladıkça işaretle. Yanıtlar bu tarayıcıda saklanır.</p><div class="social-task-list">${item.tasks.map((task, index) => `<label class="social-task"><input type="checkbox" data-social-task="${index}" data-social-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section>
       </div>
-      <section class="card social-schedule" aria-labelledby="socialScheduleTitle"><div class="social-card-heading"><div><h3 id="socialScheduleTitle">${item.id}. ham hafta · çalışma çizelgesi</h3><p>Haftalar ayrı tutulur. Uygulama çalışmaları tamamlanınca ilk kutu otomatik işaretlenir; dış platformları bitirince ilgili kutuyu sen işaretle.</p></div></div><div class="social-table-wrap"><table class="social-study-table"><caption class="visually-hidden">${item.id}. hafta için Sosyal Bilgiler çalışma çizelgesi</caption><thead><tr><th scope="col">Bizim etkinlikler</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>
-        <td><label class="social-provider-check"><input type="checkbox" data-social-our="true" data-social-week="${item.id}" disabled ${done ? 'checked' : ''}><span>Uygulamadaki çalışmalar</span></label><span class="social-auto-status${done ? ' is-done' : ''}" id="social-our-status-${item.id}" role="status" aria-live="polite">${done ? 'Tamamlandı · otomatik' : 'Mini planı ve bu haftanın etkinliğini tamamla.'}</span></td>
-        <td><a class="social-provider-link" href="${escapeHTML(links.eba)}" target="_blank" rel="noopener noreferrer">EBA Sosyal Bilgiler ↗</a><small class="social-provider-note">7. sınıf ve bu haftanın konusunu seç.</small><label class="social-provider-check"><input type="checkbox" data-social-provider="eba" data-social-week="${item.id}" ${saved.platforms.eba ? 'checked' : ''}><span>EBA çalışmam bitti</span></label></td>
+      <section class="card social-schedule" aria-labelledby="socialScheduleTitle"><div class="social-card-heading"><div><h3 id="socialScheduleTitle">Haftalık çalışma çizelgesi</h3><p>Haftalar tarih, konu ve ilerleme takibinde ayrı kalır. Uygulamadaki mini plan ve tüm etkinlikler tamamlanınca ilk kutu otomatik işaretlenir; EBA, Tonguç ve MEBİ çalışmalarını bitirince ilgili kutuyu sen işaretle.</p></div></div><div class="social-table-wrap"><table class="social-study-table"><caption class="visually-hidden">${item.id}. hafta için Sosyal Bilgiler çalışma çizelgesi</caption><thead><tr><th scope="col">Uygulamadaki çalışmalar</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>
+        <td><label class="social-provider-check"><input type="checkbox" data-social-our="true" data-social-week="${item.id}" disabled ${done ? 'checked' : ''}><span>Mini plan ve 3 etkinlik</span></label><span class="social-auto-status${done ? ' is-done' : ''}" id="social-our-status-${item.id}" role="status" aria-live="polite">${done ? 'Tamamlandı · otomatik' : 'Mini planı ve üç etkinliği tamamla.'}</span></td>
+        <td><a class="social-provider-link" href="${escapeHTML(links.eba)}" target="_blank" rel="noopener noreferrer">EBA Sosyal Bilgiler ↗</a><small class="social-provider-note">7. sınıf Sosyal Bilgiler ders alanı.</small><label class="social-provider-check"><input type="checkbox" data-social-provider="eba" data-social-week="${item.id}" ${saved.platforms.eba ? 'checked' : ''}><span>EBA çalışmam bitti</span></label></td>
         <td><a class="social-provider-link" href="${escapeHTML(links.tonguc)}" target="_blank" rel="noopener noreferrer">Tonguç konu araması ↗</a><small class="social-provider-note">${escapeHTML(item.topic)} için YouTube araması</small><label class="social-provider-check"><input type="checkbox" data-social-provider="tonguc" data-social-week="${item.id}" ${saved.platforms.tonguc ? 'checked' : ''}><span>Tonguç çalışmam bitti</span></label></td>
-        <td><a class="social-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ çalışmaları ↗</a><small class="social-provider-note">Sosyal Bilgiler 7 ve bu haftanın konusunu seç.</small><label class="social-provider-check"><input type="checkbox" data-social-provider="mebi" data-social-week="${item.id}" ${saved.platforms.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
+        <td><a class="social-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ çalışmaları ↗</a><small class="social-provider-note">MEBİ Sosyal Bilgiler öğrenci bölümü.</small><label class="social-provider-check"><input type="checkbox" data-social-provider="mebi" data-social-week="${item.id}" ${saved.platforms.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
       </tr></tbody></table></div></section>
-      <section class="card social-activity-card"><div class="social-activity-heading"><div><div class="tag">KİTAPTAKİ ETKİNLİK BİÇİMİNDEN ESİNLENEN ÖZGÜN ÇALIŞMA</div><h3>${escapeHTML(item.activity.title)}</h3><p>${escapeHTML(item.activity.prompt)}</p></div><span class="social-activity-state${done ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${done ? 'Tamamlandı' : 'Devam ediyor'}</span></div><p class="social-style-note"><b>Etkinlik biçimi:</b> ${escapeHTML(item.activity.sourceStyle)} <span>${escapeHTML(item.activity.hint)}</span></p><div class="social-activity-fields">${item.activity.fields.map((field) => fieldHTML(item, field, saved)).join('')}</div></section>
       <p class="social-plan-source">${escapeHTML(item.source)} Haftalık dağılım ev çalışması için öneridir; sınıfta işlenen sıra ve öğretmen planı önceliklidir. Etkinlik yönergeleri özgündür; kitaptaki soru ve metinler kopyalanmamıştır.</p>`;
   }
 
@@ -620,29 +765,57 @@
         groupCount.textContent = `${members.filter((entry) => isWeekComplete(entry)).length}/${members.length}`;
       }
     }
+
     const selected = WEEK_BY_ID.get(progress.selectedWeek);
-    if (selected) {
-      const saved = ensureWeekProgress(selected.id);
-      const complete = isWeekComplete(selected, saved);
-      const checkbox = document.querySelector(`[data-social-our="true"][data-social-week="${selected.id}"]`);
-      const status = document.getElementById(`social-our-status-${selected.id}`);
-      const activityStatus = document.getElementById(`socialActivityState-${selected.id}`);
-      if (checkbox) checkbox.checked = complete;
-      if (status) {
-        status.textContent = complete ? 'Tamamlandı · otomatik' : 'Mini planı ve bu haftanın etkinliğini tamamla.';
-        status.classList.toggle('is-done', complete);
-      }
-      if (activityStatus) {
-        activityStatus.textContent = complete ? 'Tamamlandı' : 'Devam ediyor';
-        activityStatus.classList.toggle('is-done', complete);
-      }
+    if (!selected) return;
+    const saved = ensureWeekProgress(selected.id);
+    const complete = isWeekComplete(selected, saved);
+    const checkbox = document.querySelector(`[data-social-our="true"][data-social-week="${selected.id}"]`);
+    const scheduleStatus = document.getElementById(`social-our-status-${selected.id}`);
+    if (checkbox) checkbox.checked = complete;
+    if (scheduleStatus) {
+      scheduleStatus.textContent = complete ? 'Tamamlandı · otomatik' : 'Mini planı ve üç etkinliği tamamla.';
+      scheduleStatus.classList.toggle('is-done', complete);
     }
+
+    const activities = selected.activities;
+    const completeActivities = activities.filter((activityItem) => isActivityComplete(selected, saved, activityItem)).length;
+    const progressMeter = document.getElementById('socialActivityProgress');
+    const progressMeterBar = document.getElementById('socialActivityProgressBar');
+    const completeCount = document.getElementById('socialActivityCompleteCount');
+    if (progressMeter) progressMeter.setAttribute('aria-valuenow', String(completeActivities));
+    if (progressMeterBar) progressMeterBar.style.width = `${Math.round((completeActivities / activities.length) * 100)}%`;
+    if (completeCount) completeCount.textContent = `${completeActivities}/${activities.length} etkinlik tamamlandı`;
+
+    const currentActivity = activities[activeActivityIndex] || activities[0];
+    const currentComplete = isActivityComplete(selected, saved, currentActivity);
+    const activityStatus = document.getElementById(`socialActivityState-${selected.id}`);
+    if (activityStatus) {
+      activityStatus.textContent = currentComplete ? 'Tamamlandı' : 'Devam ediyor';
+      activityStatus.classList.toggle('is-done', currentComplete);
+    }
+    activities.forEach((activityItem, index) => {
+      const activityComplete = isActivityComplete(selected, saved, activityItem);
+      const button = document.querySelector(`#socialWeekContent [data-social-activity-select="${index}"]`);
+      if (button) {
+        button.classList.toggle('is-current', index === activeActivityIndex);
+        button.classList.toggle('is-complete', activityComplete);
+        if (index === activeActivityIndex) button.setAttribute('aria-current', 'step');
+        else button.removeAttribute('aria-current');
+      }
+      const stepStatus = document.getElementById(`social-activity-step-status-${selected.id}-${activityItem.id}`);
+      if (stepStatus) {
+        stepStatus.textContent = activityComplete ? '✓' : '';
+        stepStatus.setAttribute('aria-label', activityComplete ? 'Tamamlandı' : 'Devam ediyor');
+      }
+    });
   }
 
   function updateWordPreview(input) {
     const weekId = Number(input.dataset.socialWeek);
+    const activityId = input.dataset.socialActivity;
     const fieldId = input.dataset.socialResponse;
-    const preview = document.getElementById(`social-word-preview-${weekId}-${fieldId}`);
+    const preview = document.getElementById(`social-word-preview-${weekId}-${activityId}-${fieldId}`);
     if (!preview) return;
     const words = [...new Set(String(input.value || '').split(/[,،;\n]+/).map((word) => word.trim()).filter(Boolean))];
     preview.innerHTML = words.map((word) => `<span>${escapeHTML(word)}</span>`).join('');
@@ -660,22 +833,75 @@
         const nextWeek = Number(selectButton.dataset.socialSelect);
         if (!WEEK_BY_ID.has(nextWeek)) return;
         progress.selectedWeek = nextWeek;
+        activeActivityWeekId = nextWeek;
+        activeActivityIndex = 0;
         persist();
         render();
         document.getElementById('socialWeekTitle')?.focus({ preventScroll: true });
         return;
       }
+
+      const activitySelect = event.target.closest('[data-social-activity-select]');
+      if (activitySelect) {
+        const selected = WEEK_BY_ID.get(progress.selectedWeek);
+        const nextIndex = Number(activitySelect.dataset.socialActivitySelect);
+        if (!selected || !Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= selected.activities.length) return;
+        activeActivityWeekId = selected.id;
+        activeActivityIndex = nextIndex;
+        renderSelectedWeek();
+        refreshProgressUI();
+        document.getElementById(`socialActivityTitle-${selected.id}`)?.focus({ preventScroll: true });
+        return;
+      }
+
+      const moveButton = event.target.closest('[data-social-activity-move]');
+      if (moveButton) {
+        const selected = WEEK_BY_ID.get(progress.selectedWeek);
+        const nextIndex = activeActivityIndex + Number(moveButton.dataset.socialActivityMove);
+        if (!selected || !Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= selected.activities.length) return;
+        activeActivityWeekId = selected.id;
+        activeActivityIndex = nextIndex;
+        renderSelectedWeek();
+        refreshProgressUI();
+        document.getElementById(`socialActivityTitle-${selected.id}`)?.focus({ preventScroll: true });
+        return;
+      }
+
+      const checkButton = event.target.closest('[data-social-check-choice]');
+      if (checkButton) {
+        const weekId = Number(checkButton.dataset.socialWeek);
+        const item = WEEK_BY_ID.get(weekId);
+        const activityItem = item?.activities.find((candidate) => candidate.id === checkButton.dataset.socialActivity);
+        const field = activityItem?.fields.find((candidate) => candidate.id === checkButton.dataset.socialCheckChoice);
+        if (!item || !activityItem || !field || field.kind !== 'choice') return;
+        const saved = ensureWeekProgress(weekId);
+        const responses = responsesFor(saved, activityItem);
+        const value = responses[field.id];
+        const feedback = document.getElementById(`social-choice-feedback-${item.id}-${activityItem.id}-${field.id}`);
+        if (!field.options.some((option) => option.id === value)) {
+          if (feedback) feedback.innerHTML = '<div class="social-choice-feedback is-reminder" role="status" aria-live="polite">Önce bir seçenek işaretle.</div>';
+          return;
+        }
+        saved.choiceChecks[activityItem.id][field.id] = true;
+        persist();
+        if (feedback) feedback.innerHTML = choiceFeedbackHTML(field, value, true);
+        refreshProgressUI();
+        return;
+      }
+
       if (event.target.closest('[data-social-print]')) window.print();
     });
 
     root.addEventListener('input', (event) => {
       const input = event.target.closest('[data-social-response]');
-      if (!input) return;
+      if (!input || input.type === 'radio') return;
       const weekId = Number(input.dataset.socialWeek);
       const item = WEEK_BY_ID.get(weekId);
-      const field = item?.activity.fields.find((candidate) => candidate.id === input.dataset.socialResponse);
-      if (!field) return;
-      ensureWeekProgress(weekId).responses[field.id] = input.value;
+      const activityItem = item?.activities.find((candidate) => candidate.id === input.dataset.socialActivity);
+      const field = activityItem?.fields.find((candidate) => candidate.id === input.dataset.socialResponse);
+      if (!item || !activityItem || !field || field.kind === 'choice') return;
+      const saved = ensureWeekProgress(weekId);
+      saved.responses[activityItem.id][field.id] = input.value;
       persist();
       if (field.kind === 'words') updateWordPreview(input);
       refreshProgressUI();
@@ -687,14 +913,26 @@
       const item = WEEK_BY_ID.get(weekId);
       if (!item) return;
       const saved = ensureWeekProgress(weekId);
-      if (input.dataset.socialTask !== undefined) {
+      if (input.dataset.socialResponse && input.type === 'radio') {
+        const activityItem = item.activities.find((candidate) => candidate.id === input.dataset.socialActivity);
+        const field = activityItem?.fields.find((candidate) => candidate.id === input.dataset.socialResponse);
+        if (!activityItem || !field || field.kind !== 'choice' || !field.options.some((option) => option.id === input.value)) return;
+        saved.responses[activityItem.id][field.id] = input.value;
+        delete saved.choiceChecks[activityItem.id][field.id];
+        const feedback = document.getElementById(`social-choice-feedback-${item.id}-${activityItem.id}-${field.id}`);
+        if (feedback) feedback.innerHTML = '';
+      } else if (input.dataset.socialTask !== undefined) {
         const index = Number(input.dataset.socialTask);
-        if (Number.isInteger(index) && index >= 0 && index < item.tasks.length) saved.tasks[index] = input.checked;
+        if (!Number.isInteger(index) || index < 0 || index >= item.tasks.length) return;
+        saved.tasks[index] = input.checked;
       } else if (input.dataset.socialCheck) {
-        const field = item.activity.fields.find((candidate) => candidate.id === input.dataset.socialCheck);
+        const activityItem = item.activities.find((candidate) => candidate.id === input.dataset.socialActivity);
+        const field = activityItem?.fields.find((candidate) => candidate.id === input.dataset.socialCheck);
         if (!field || field.kind !== 'checklist' || !field.options.some((option) => option.id === input.dataset.socialOption)) return;
-        if (!saved.responses[field.id]) saved.responses[field.id] = {};
-        saved.responses[field.id][input.dataset.socialOption] = input.checked;
+        if (!saved.responses[activityItem.id][field.id]) {
+          saved.responses[activityItem.id][field.id] = Object.fromEntries(field.options.map((option) => [option.id, false]));
+        }
+        saved.responses[activityItem.id][field.id][input.dataset.socialOption] = input.checked;
       } else if (input.dataset.socialProvider && PROVIDERS.includes(input.dataset.socialProvider)) {
         saved.platforms[input.dataset.socialProvider] = input.checked;
       } else {

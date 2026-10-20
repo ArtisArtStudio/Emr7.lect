@@ -188,14 +188,14 @@ for (const required of ['1. HAFTA · 14–18 Eyl 2026–2027','2. HAFTA · 21–
   if (!initialScheduleMarkup.includes(required)) throw new Error(`The study schedule is missing a required week, topic, provider, or link: ${required}`);
 }
 const youtubeLinks = [...initialScheduleMarkup.matchAll(/href="(https:\/\/www\.youtube\.com\/results\?search_query=[^"]+)"/g)].map((match) => new URL(match[1]));
-if (youtubeLinks.length !== 2 || !youtubeLinks[0].searchParams.get('search_query').includes('Tonguç 7. sınıf Türkçe Tahmin, motivasyon') || !youtubeLinks[1].searchParams.get('search_query').includes('Tonguç 7. sınıf Türkçe Metni anlama')) throw new Error('Tonguç links must search YouTube with the matching raw week topic');
+if (youtubeLinks.length !== 2 || !youtubeLinks[0].searchParams.get('search_query').includes('Tonguç 7. sınıf Türkçe Tahmin, motivasyon') || !youtubeLinks[1].searchParams.get('search_query').includes('Tonguç 7. sınıf Türkçe Metni anlama')) throw new Error('Tonguç links must search YouTube with the matching week topic');
 if (!/data-study-provider="our"[^>]*disabled/.test(initialScheduleMarkup) || /data-study-provider="eba"[^>]*disabled/.test(initialScheduleMarkup)) throw new Error('Our work must be read-only/automatic while external provider checkboxes remain manual');
 if (isOurStudyScheduleComplete(1, 1) || isOurStudyScheduleComplete(1, 2)) throw new Error('Our activity tracker was completed before the learner finished the in-app work');
 const ebaWeek1 = externalScheduleInputs.find((input) => input.dataset.studyProvider === 'eba' && input.dataset.scheduleWeek === '1');
 const tongucWeek2 = externalScheduleInputs.find((input) => input.dataset.studyProvider === 'tonguc' && input.dataset.scheduleWeek === '2');
 ebaWeek1.checked = true; ebaWeek1.listeners.change();
 tongucWeek2.checked = true; tongucWeek2.listeners.change();
-if (!data[1].studySchedule['1'].eba || !data[1].studySchedule['2'].tonguc || data[1].studySchedule['2'].eba) throw new Error('External provider checks are not persisted separately for each raw week');
+if (!data[1].studySchedule['1'].eba || !data[1].studySchedule['2'].tonguc || data[1].studySchedule['2'].eba) throw new Error('External provider checks are not persisted separately for each week');
 const unit1 = window.THEME1_PRACTICE.units.find((unit) => Number(unit.weekId) === 1);
 const feedback = {};
 for (const activity of unit1.groups.flatMap((group) => group.activities)) {
@@ -208,11 +208,11 @@ renderStudySchedule(studyGroup);
 if (!ownScheduleInputs.every((input) => input.checked)) throw new Error('Completed in-app activities did not auto-check the corresponding weekly rows');
 const firstQuestion = window.THEME1_FORMS[unit1.groups[0].activities[0].id][0];
 feedback[`${unit1.groups[0].activities[0].id}::${firstQuestion.id}`].state = 'partial';
-if (isOurStudyScheduleComplete(1, 1) || !isOurStudyScheduleComplete(1, 2)) throw new Error('Automatic completion must follow the practice unit belonging to each raw week');
+if (isOurStudyScheduleComplete(1, 1) || !isOurStudyScheduleComplete(1, 2)) throw new Error('Automatic completion must follow the practice unit belonging to each week');
 renderStudySchedule(studyGroup);
-if (ownScheduleInputs[0].checked || !ownScheduleInputs[1].checked) throw new Error('The automatic checkbox did not refresh independently for each raw week');
+if (ownScheduleInputs[0].checked || !ownScheduleInputs[1].checked) throw new Error('The automatic checkbox did not refresh independently for each week');
 if (!data[1].studySchedule['1'].eba || !data[1].studySchedule['2'].tonguc) throw new Error('Re-rendering the weekly chart lost separate external-platform progress');
-console.log('Raw-week study schedules, YouTube topic links, manual per-week platform checks, and automatic in-app completion passed.');
+console.log('Per-week study schedules, YouTube topic links, manual platform checks, and automatic in-app completion passed.');
 """
     escape_function = html[escape_start:escape_end]
     schedule_code = html[schedule_start:schedule_end]
@@ -1164,7 +1164,7 @@ def main() -> int:
         'id="activity-stage"', 'id="previous-step"', 'id="next-step"',
         'id="weeklyStudySchedule"', 'id="studyScheduleRows"',
         'id="socialWorkspace"', 'id="socialWeekList"', 'id="socialWeekContent"',
-        'id="socialProgressBar"', 'social-studies.js', 'social-studies.css',
+        'id="socialProgressBar"', 'social-studies-content.js', 'social-studies.js', 'social-studies.css',
         'theme1-practice-forms.js', 'theme1-practice-app.js', 'theme1-practice.css',
     ):
         if marker not in html:
@@ -1173,12 +1173,12 @@ def main() -> int:
         errors.append("The focused-week selection, return, or embedded package flow is not wired")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v="):
         if asset not in html:
             errors.append(f"Client assets need a cache-busting version: {asset}")
     for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SOCIAL_STUDIES?.resetProgress()", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
         if required not in html:
-            errors.append(f"Per-raw-week study tracking or its saved-progress migration is missing: {required}")
+            errors.append(f"Per-week study tracking or its saved-progress migration is missing: {required}")
     if "--ink:#102238" not in html or "--muted:#46576b" not in html:
         errors.append("The weekly reader text and muted text colors must use the darker contrast palette")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
@@ -1268,7 +1268,7 @@ def main() -> int:
         errors.append("Node.js is required to check JavaScript syntax and week grouping")
     else:
         js_files = []
-        for relative in ("book-texts.js", "social-studies.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
+        for relative in ("book-texts.js", "social-studies-content.js", "social-studies.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
             asset = ROOT / relative
             if not asset.is_file():
                 errors.append(f"Missing JavaScript asset: {relative}")
@@ -1328,7 +1328,7 @@ def main() -> int:
                     errors.append("Theme navigation test did not report success")
                 elif "Theme 1 practice inventory, typed forms, embedded package selection, and game-card removal passed." not in result.stdout:
                     errors.append("Theme 1 embedded practice test did not report success")
-                elif "Raw-week study schedules, YouTube topic links, manual per-week platform checks, and automatic in-app completion passed." not in result.stdout:
+                elif "Per-week study schedules, YouTube topic links, manual platform checks, and automatic in-app completion passed." not in result.stdout:
                     errors.append("Weekly study schedule test did not report success")
 
             if not errors:
@@ -1340,7 +1340,7 @@ def main() -> int:
                 )
                 if social_test.returncode:
                     errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
-                elif "Social Studies raw-week plan, PDF-aligned activity formats, completion rules, links, and subject-isolated backup passed." not in social_test.stdout:
+                elif "Social Studies summaries, three-step activities, PDF-aligned formats, migration, completion rules, exact links, and isolated backups passed." not in social_test.stdout:
                     errors.append("Social Studies workspace test did not report success")
 
             if not errors:
@@ -1470,7 +1470,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, darker text contrast, raw-week study tracking, the 37-week Social Studies plan and PDF-aligned activities, per-field safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and three-step activities, PDF-aligned formats, safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 

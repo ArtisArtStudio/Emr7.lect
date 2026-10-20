@@ -93,7 +93,7 @@
 .schedule-auto-status.is-done{color:#17613b;font-weight:800}
 @media(max-width:520px){.week-study-schedule{padding:16px}.schedule-week{padding:13px}.schedule-week-title{font-size:16px}.study-schedule-table{min-width:700px}}
 @media print{.schedule-week{break-inside:avoid}.schedule-table-wrap{overflow:visible}.study-schedule-table{min-width:0}.schedule-link{color:#111}}
-</style><link rel="stylesheet" href="theme1-practice.css?v=9"><link rel="stylesheet" href="social-studies.css?v=1"></head><body><div class="app">
+</style><link rel="stylesheet" href="theme1-practice.css?v=9"><link rel="stylesheet" href="social-studies.css?v=2"></head><body><div class="app">
 <header class="top"><div class="brand"><span>7</span>7. Sınıf Öğrenme Rotası</div><div class="topright"><button class="print" id="exportBtn">İlerlemeyi yedekle</button><button class="print" id="importBtn">Yedekten yükle</button><input id="importFile" type="file" accept="application/json" hidden><span id="saved">İlerleme bu tarayıcıya kaydedilir</span><span class="pill">2026—27</span></div></header>
 <nav class="subject-nav" id="subjectNav" aria-label="Ders seçimi">
   <button type="button" class="subject-btn active" data-subject="turkce" aria-current="page"><span class="subject-icon">Aa</span><span>Türkçe</span><small>Aktif</small></button>
@@ -110,7 +110,7 @@
     <div class="social-hero-actions"><div class="social-progress" id="socialProgressTrack" role="progressbar" aria-label="Sosyal Bilgiler haftalık ilerlemesi" aria-valuemin="0" aria-valuemax="37" aria-valuenow="0"><div class="social-progress-value" id="socialProgressBar"></div></div><span class="social-progress-count" id="socialProgressCount">0 / 37 hafta tamamlandı</span><a class="social-source-link" href="./docs/social-studies-activity-inventory.md" target="_blank" rel="noopener">Kitap ve etkinlik eşleştirmesi</a><button class="print social-back" type="button" id="socialBackToTurkish">Türkçe alanına dön</button></div>
   </header>
   <div class="social-layout">
-    <aside class="panel social-week-navigation" aria-label="Sosyal Bilgiler haftaları"><h2>Öğrenme alanları ve haftalar</h2><p class="social-nav-note">Her ham hafta kendi tarihi, konusu ve ilerlemesiyle ayrı tutulur.</p><div class="social-week-list" id="socialWeekList"></div></aside>
+    <aside class="panel social-week-navigation" aria-label="Sosyal Bilgiler haftaları"><h2>Öğrenme alanları ve haftalar</h2><p class="social-nav-note">Haftalar tarih, konu ve ilerleme takibinde ayrı tutulur.</p><div class="social-week-list" id="socialWeekList"></div></aside>
     <div class="social-week-main">
       <section class="card social-week-prompt" id="socialWeekPrompt"><div class="tag">HAFTA SEÇİMİ</div><h2>Çalışmak istediğin haftayı seç</h2><p>Soldaki öğrenme alanlarından bir hafta seç. Mini plan ve etkinlik yanıtların bu tarayıcıya otomatik kaydedilir.</p></section>
       <main class="social-week-content" id="socialWeekContent" aria-live="polite"></main>
@@ -149,7 +149,7 @@
 
 <div class="banner"><b>Plan notu:</b> Bu, MEB’in taslak haftalık planına dayalı ev takip aracıdır; sınıfta işlenen sıra ve sınav kapsamı öğretmen tarafından değiştirilebilir. En son işlenen metni oğlunuzun kitabından veya öğretmenden teyit edin. PDF için “Yazdır / PDF” düğmesini kullanabilirsiniz.</div></div></main></div>
 <div class="footer">Türkçe alanı MEB 2026–2027 taslak çerçeve planını temel alır. Sosyal Bilgiler alanı MEB 2026 7. sınıf ders kitabındaki üç öğrenme alanına dayalı özgün ev çalışması önerisidir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Matematik, Fen Bilimleri ve Din Kültürü alanları aşamalı olarak eklenecektir.</div></div></div>
-<script src="book-texts.js"></script><script src="social-studies.js?v=1"></script><script src="theme1-practice.js?v=9"></script><script src="theme1-practice-forms.js?v=11"></script><script src="theme1-practice-app.js?v=16"></script><script>
+<script src="book-texts.js"></script><script src="social-studies-content.js?v=1"></script><script src="social-studies.js?v=2"></script><script src="theme1-practice.js?v=9"></script><script src="theme1-practice-forms.js?v=11"></script><script src="theme1-practice-app.js?v=16"></script><script>
 const BOOK_TEXTS=window.BOOK_TEXTS;
 const BOOK_MAP={1:["Martı Jonathan Livingston", "marti"],2:["Martı Jonathan Livingston", "marti"],3:["Gençliğin Kıymeti", "gencligin"],4:["Sen Sor O Yanıtlasın · Gençliğin Kıymeti", "gencligin"],5:["Adını Göklere Yazdıran Çocuk", "adini"],6:["Adını Göklere Yazdıran Çocuk", "adini"],7:["Bayrağımızın Altında", "bayrak"],12:["Mustafa Kemal’in Kağnısı", "kagni"],13:["Eskici", "eskici"],14:["Ya Hayır Söyle…", "hayir"],15:["Ya Hayır Söyle…", "hayir"],17:["Öğüt", "ogut"],8:["Mustafa 1881–1920: Tarihe Atılan İmza", "mustafa"]};
 const BOOK_CREDITS={"marti":"Richard Bach · Çeviri: Kader Ay ve Aslı Tümerkan · PDF’de kısaltılmıştır.","gencligin":"Şevket Rado · PDF’de kısaltılmıştır.","adini":"Vehbi Belgil · Hazırlayanlar: Alemdar Yalçın ve Gıyasettin Aytaş · PDF’de kısaltılmıştır.","bayrak":"Halide Edip Adıvar · Bursa, 11 Ekim · (Kısaltılmıştır.)","mustafa":"Metin Özdamarlar · PDF’de kısaltılmıştır.","kagni":"Fazıl Hüsnü Dağlarca · Hazırlayanlar: Abdullah Özkan ve Refik Durbaş.","eskici":"Refik Halid Karay · PDF’de kısaltılmıştır.","hayir":"Nezihe Araz · PDF’de kısaltılmıştır.","ogut":"Karacaoğlan"};

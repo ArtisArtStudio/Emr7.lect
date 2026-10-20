@@ -1,6 +1,6 @@
 # 7. Sınıf Öğrenme Rotası
 
-Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 7 için ders kitabına dayalı, 37 ham haftaya ayrılmış çalışma planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
+Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 7 için ders kitabına dayalı, 37 ayrı haftalık konu planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
 
 **Yayımlanan uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
 
@@ -8,8 +8,9 @@ Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
 - MEB 2026 7. sınıf Sosyal Bilgiler ders kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı 37 haftalık ayrı rota.
-- Sosyal Bilgiler etkinlikleri, PDF’de görülen yapboz, beyin yazımı, proje kontrol listesi, kelime bulutu, kaynak/tablo inceleme, harita/GZFT, soru–cevap, haber metni ve neden–sonuç gibi biçimlerden esinlenen özgün görevlerdir; kitap metinleri/kaynak soruları kopyalanmaz.
-- Aynı metin veya konunun art arda işlendiği Türkçe haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir. Sosyal Bilgiler ham haftaları ise birbirinden ayrı tutulur.
+- Sosyal Bilgilerde her hafta konu özeti, anahtar kavramlar ve üç adımlı bir öğrenme akışı vardır: kısa sınama, PDF’de gözlenen etkinlik türlerinden esinlenen özgün çalışma ve konuya özel uygulama/öz değerlendirme. Etkinliklerde yapboz, arkası-yarın tahmini, davranış sınıflandırma, beyin yazımı, proje kontrol listesi, kelime bulutu, kaynak/harita inceleme, GZFT, soru kartı, kısa haber ve neden–sonuç gibi çeşitler bulunur; kitap metinleri/kaynak soruları kopyalanmaz.
+- Aynı metin veya konunun art arda işlendiği Türkçe haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir. Sosyal Bilgiler haftaları ise tarih, konu ve ilerleme takibinde birbirinden ayrı tutulur.
+- EBA ve MEBİ çizelge bağlantıları kullanıcı tarafından sağlanan 7. sınıf Sosyal Bilgiler adreslerine gider; Tonguç araması her haftanın konusunu içerir.
 - Tema bazında gruplanmış haftalık rota ve PDF’deki kaynak metinleri paragraf/dize düzeniyle sunan okuyucu.
 - Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; seçilen haftanın numaralı paketi aynı okuma sayfasında sırayla açılır.
 - Kaynak görevine uygun yazılı yanıt, seçim ve erişilebilir sürükle-bırak / dokunarak eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
@@ -43,7 +44,7 @@ Depo ve uygulama herkese açıktır; mevcut GitHub Pages yayını şu adrestedir
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
-Ana dosyalar `index.html`, `book-texts.js`, `social-studies.js`, `social-studies.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler alanı ayrı bir istemci modülünde çalışır ve Türkçe ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince diğer tema/haftalar gizlenir ve hafta listesine dönüş kontrolü sunulur. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
+Ana dosyalar `index.html`, `book-texts.js`, `social-studies-content.js`, `social-studies.js`, `social-studies.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler alanı ayrı bir istemci modülünde çalışır ve Türkçe ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince diğer tema/haftalar gizlenir ve hafta listesine dönüş kontrolü sunulur. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
 
 ## Kontroller
 
@@ -52,7 +53,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 ham haftayı ve etkinlik tamamlama kurallarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 haftanın konu özetlerini, üç adımlı etkinliklerini, ilerleme/yedek geçişini ve bağlantılarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 
