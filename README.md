@@ -1,24 +1,27 @@
 # 7. Sınıf Öğrenme Rotası
 
-Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 7 için ders kitabına dayalı, 37 ayrı haftalık konu planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
+Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler ve Fen Bilimleri 7 için iki ayrı 37 haftalık, ders kitabı temelli konu planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
 
 **Yayımlanan uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
 
 ## Neler var?
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
-- MEB 2026 7. sınıf Sosyal Bilgiler ders kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı 37 haftalık ayrı rota.
+- MEB 2026 7. sınıf Sosyal Bilgiler kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı 37 haftalık ayrı rota.
+- Google Drive’dan incelenen MEB 7. sınıf Fen Bilimleri **1. Kitap** içindeki **Uzay Çağı**, **Kuvvet ve Enerjiyi Keşfedelim** ve **Vücudumuzdaki Sistemler** üniteleri için 37 haftalık öneri. Konu/sayfa eşleştirmesi [`docs/science-week-topic-map.md`](docs/science-week-topic-map.md), kitaptaki etkinlik biçimleriyle özgün görevlerin eşleştirmesi [`docs/science-activity-inventory.md`](docs/science-activity-inventory.md) içindedir; yıllık dağılım öneridir, öğretmen planı önceliklidir.
 - Sosyal Bilgilerde her hafta konu özeti, anahtar kavramlar ve konuya göre değişen etkinlik akışı vardır. İlk iki iletişim haftası özgün okumalar, sohbet, trafik örneği, gözlem/merak, araştırma sorusu ve kaynak incelemesiyle ilerler. 3–12. haftalar ben dili ve empati sınıflandırması, “arkası yarın” tahmini, fırsat eşitliği için beyin yazımı, erişilebilirlik eşleştirmesi, proje taslağı/kontrol listesi, kelime bulutu, ulusal bayram/anma günü kartları, Millî Mücadele kaynak incelemesi, dayanışma örneği karşılaştırması ve öğrenme alanı tekrarıyla yenilendi. 13–18. haftalar da Evimiz Dünya için kelime bulutu ve küreselleşme tanımı, etki örnekleri/tablosu, kaynak-iddia değerlendirme, bölgesel/küresel ölçek sınıflandırması, paydaş-çözüm haritası, komşularla iş birliği ve Türkiye’nin katkısını kaynakla değerlendirme etkinlikleriyle yenilendi; 19. hafta ve sonrası değiştirilmedi. Sürükle-bırak etkinlikleri dokunmatik ve klavyeyle de kullanılabilir; seçim, çoklu seçim, açık yanıt ve kontrol listeleri konuya göre karıştırılır. Ders kitabı metinleri, görselleri veya soruları kopyalanmaz.
-- Açık uçlu Sosyal Bilgiler yanıtlarında isteğe bağlı **✦ Kontrol et** düğmesi ortak Türkçe/Groq ayarlarını ve seçili modeli kullanır. Değerlendirme güvenli durum/ipuçları kodlarıyla sunulur; seçmeli ve sınıflandırmalı alanlar uygulama içinde yerel olarak kontrol edilir. Yanıtlar Groq’a doğrudan gönderilir; API anahtarı yalnızca kullanıcının cihazında ayarlanır ve tarayıcı/ağ incelemesinde görülebileceği uyarısı korunur.
+- Fen Bilimleri alanında her hafta özgün konu özeti, Türkçe etiketli SVG şeması, yerel çoktan seçmeli kontrol, kitaptaki model/gözlem/rapor biçimlerinden esinlenen yeni açık yanıt etkinliği, üç maddelik mini plan ve haftalık EBA/Tonguç/MEBİ takip çizelgesi bulunur. Ders kitabının metinleri, soruları veya şekilleri kopyalanmamıştır; kitabın hak bildirimi nedeniyle görseller için özgün şemalar çizilmiştir.
+- Fen ve Sosyal Bilgiler farklı vurgu renkleri kullanır; Fen mavi-camgöbeği, Sosyal Bilgiler yeşil vurguludur.
+- Açık uçlu Sosyal Bilgiler ve Fen Bilimleri yanıtlarında isteğe bağlı **✦ Kontrol et** düğmesi aynı ortak Groq ayarlarını ve seçili modeli kullanır. Değerlendirme güvenli durum/ipuçları kodlarıyla sunulur; seçmeli ve sınıflandırmalı alanlar uygulama içinde yerel olarak kontrol edilir. Yanıtlar Groq’a doğrudan gönderilir; API anahtarı yalnızca kullanıcının cihazında ayarlanır ve tarayıcı/ağ incelemesinde görülebileceği uyarısı korunur.
 - Aynı metin veya konunun art arda işlendiği Türkçe haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir. Sosyal Bilgiler haftaları ise tarih, konu ve ilerleme takibinde birbirinden ayrı tutulur.
 - EBA ve MEBİ çizelge bağlantıları kullanıcı tarafından sağlanan 7. sınıf Sosyal Bilgiler adreslerine gider; Tonguç araması her haftanın konusunu içerir.
 - Tema bazında gruplanmış haftalık rota ve PDF’deki kaynak metinleri paragraf/dize düzeniyle sunan okuyucu.
 - Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; seçilen haftanın numaralı paketi aynı okuma sayfasında sırayla açılır.
 - Kaynak görevine uygun yazılı yanıt, seçim ve erişilebilir sürükle-bırak / dokunarak eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
-- Türkçe ve Sosyal Bilgiler ilerlemesini ayrı tarayıcı alanlarında saklama; ikisini birlikte JSON yedeğine alıp geri yükleme. Sosyal Bilgilerde mini plan ve o haftanın tüm etkinlikleri tamamlanınca uygulama kutusu otomatik işaretlenir; seçimli, çoklu seçimli ve sınıflandırma yanıtları doğru kontrol edilmelidir. EBA/Tonguç/MEBİ kutuları öğrenci tarafından işaretlenir. Etkinlik akışları yenilenirken artık kullanılmayan yanıtlar ve AI geri bildirimleri de JSON yedeğinde korunur.
+- Türkçe, Sosyal Bilgiler ve Fen Bilimleri ilerlemesini birbirinden ayrı tarayıcı alanlarında saklama; üçünü birlikte JSON yedeğine alıp geri yükleme. Sosyal Bilgilerde mini plan ve o haftanın tüm etkinlikleri tamamlanınca uygulama kutusu otomatik işaretlenir; seçimli, çoklu seçimli ve sınıflandırma yanıtları doğru kontrol edilmelidir. EBA/Tonguç/MEBİ kutuları öğrenci tarafından işaretlenir. Etkinlik akışları yenilenirken artık kullanılmayan yanıtlar ve AI geri bildirimleri de JSON yedeğinde korunur.
 - İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; her iki ayar da ders seçicisinin altındaki ortak dişli panelinden yönetilir. Anahtarlar ders alanlarına kopyalanmaz; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
 - Kullanıcının bildirdiği 2026 birinci dönem tarihleri içinde Türkçe 10 Kasım (9–13 Kas haftası) ve Sosyal Bilgiler 6 Kasım (2–6 Kas haftası) için haftalık listede kırmızı sınav etiketi ve seçilen haftanın başında kırmızı tarih kartı gösterilir. Ortak ders araçlarındaki **Deneme Sınavları** bağlantısı `https://mebi.eba.gov.tr/student/exam/midterm` adresini açar.
-- Ders arayüzü, erişilebilirlik, ortak ders akışı ve gelecek dersler (özellikle Fen Bilimleri) için tasarım kuralları [`docs/subject-ui-style-guide.md`](docs/subject-ui-style-guide.md) içinde kayıtlıdır; kurs rengi yalnızca hafif sayfa tonunda ve aktif durumlarda kullanılır.
+- Ders arayüzü, erişilebilirlik, ortak ders akışı ve kurs vurguları [`docs/subject-ui-style-guide.md`](docs/subject-ui-style-guide.md) içinde kayıtlıdır; Fen ile Sosyal renkleri özellikle ayrıdır ve vurgu yalnızca hafif sayfa tonunda/aktif durumlarda kullanılır.
 
 ## Yerelde çalıştırma
 
@@ -47,7 +50,7 @@ Depo ve uygulama herkese açıktır; mevcut GitHub Pages yayını şu adrestedir
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
-Ana dosyalar `index.html`, `book-texts.js`, `social-studies-content.js`, `social-studies.js`, `social-studies.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler alanı ayrı bir istemci modülünde çalışır ve Türkçe ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince çalışma içeriği değişirken masaüstünde sol hafta listesi sabit kalır, dar ekranda liste içeriğin üstünde normal sayfa akışında yer alır. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Gelecek derslerin aynı navigasyon, ilerleme, “Kontrol et” ve yedek akışını uygulaması için `docs/subject-ui-style-guide.md` takip edilir. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
+Ana dosyalar `index.html`, `book-texts.js`, `social-studies-content.js`, `social-studies.js`, `social-studies.css`, `science-content.js`, `science.js`, `science.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler ve Fen Bilimleri alanları ayrı istemci modüllerinde, ayrı ilerleme anahtarlarıyla çalışır; Türkçe veya birbirlerinin ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince çalışma içeriği değişirken masaüstünde sol hafta listesi sabit kalır, dar ekranda liste içeriğin üstünde normal sayfa akışında yer alır. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Gelecek derslerin aynı navigasyon, ilerleme, “Kontrol et” ve yedek akışını uygulaması için `docs/subject-ui-style-guide.md` takip edilir. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
 
 ## Kontroller
 
@@ -56,7 +59,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel yolları, JavaScript sözdizimini, sınav haftası notlarını, ortak ders araçlarını ve masaüstü/mobil hafta navigasyonu akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 haftanın konu özetlerini, ilk iletişim konusunun değişken etkinlik ve okuma akışını, kalan haftaların etkinliklerini, ilerleme/yedek geçişini ve bağlantılarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, sınav haftası notlarını, ortak ders araçlarını ve masaüstü/mobil navigasyonu; 43 Türkçe etkinliğini; Sosyal Bilgiler ile Fen Bilimlerindeki 37 haftalık konu verilerini, Fen kitap/sayfa eşleştirmesini ve özgün etkinliklerini; ayrı ilerleme/yedek geçişlerini ve bağlantıları; gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler. Bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

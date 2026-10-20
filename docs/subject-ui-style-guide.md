@@ -22,7 +22,7 @@ The current page selects a small per-course accent with `body[data-subject]`. Us
 | --- | --- | --- | --- |
 | `turkce` | Türkçe | `#245cdb` | `#f5f7fc` |
 | `matematik` | Matematik | `#7056c9` | `#f8f6fc` |
-| `fen` | Fen Bilimleri | `#36865b` | `#f4f9f5` |
+| `fen` | Fen Bilimleri | `#176f93` | `#f3f9fc` |
 | `sosyal` | Sosyal Bilgiler | `#287b68` | `#f3f9f6` |
 | `ingilizce` | İngilizce | `#c76a33` | `#fbf7f3` |
 | `din` | Din Kültürü ve Ahlak Bilgisi | `#a27a22` | `#faf8f0` |
@@ -50,7 +50,13 @@ Keep study cards neutral white (`#fff`) and long reading/topic-summary panels wa
 
 Show first-term exam notices only in courses explicitly requested for them. Map each date to the course week that actually contains it, verify the week/date mapping before changing the data, and show the same `1. sınav (date)` text in that week's navigation entry and a prominent red notice at the top of its selected-week header. Other courses should not inherit exam notices by accident.
 
-## Adding a future course (especially Fen Bilimleri)
+## Fen Bilimleri source and content notes
+
+- The current Fen area follows the user's four-part **MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap (2026)**. Its three units are mapped to the existing 37 school-calendar weeks as 12 / 7 / 18 weeks; this is a suggested home-study sequence, not an official weekly pacing document. The book/topic/page map is in `docs/science-week-topic-map.md`.
+- Original science activities are mapped to the book's observed formats (models, comparisons, observations, reports, posters, concept maps, and self-checks) in `docs/science-activity-inventory.md`. Do not copy the book's wording, questions, or figures; its copyright page restricts reproducing these. Use the original Turkish-labeled SVG schematics in `science.js` instead.
+- Health topics are for school science study, not diagnosis or individualized treatment. Keep health suggestions general, evidence-aware, and directed to a trusted adult/health professional when personal advice is needed.
+
+## Adding a future course
 
 - Add its subject identity and accent/wash to `index.html`; use the same top-level course selector and shared tools.
 - Build the desktop sidebar + reader and mobile stacked layout described above; keep week selection available during study.

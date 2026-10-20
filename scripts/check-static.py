@@ -1180,16 +1180,22 @@ def main() -> int:
         errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science.js?v="):
         if asset not in html:
             errors.append(f"Client assets need a cache-busting version: {asset}")
-    for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SOCIAL_STUDIES?.resetProgress()", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
+    for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "science.hidden=!isScience", "window.SCIENCE?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "science:window.SCIENCE?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SCIENCE?.importProgress(obj.science)", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
         if required not in html:
             errors.append(f"Per-week study tracking or its saved-progress migration is missing: {required}")
     if "--ink:#102238" not in html or "--muted:#46576b" not in html:
         errors.append("The weekly reader text and muted text colors must use the darker contrast palette")
     if html.count('id="apiSettings"') != 1 or 'body[data-subject="fen"]' not in html or 'body[data-subject="sosyal"]' not in html:
         errors.append("Shared AI settings and the reusable per-course palette must be defined once at the course-navigation level")
+    fen_accent = re.search(r'body\[data-subject="fen"\]\{--subject-accent:([^;]+)', html)
+    social_accent = re.search(r'body\[data-subject="sosyal"\]\{--subject-accent:([^;]+)', html)
+    if not fen_accent or not social_accent or fen_accent.group(1) == social_accent.group(1):
+        errors.append("Fen Bilimleri and Social Studies need visibly distinct course accent colors")
+    if 'id="scienceWorkspace"' not in html or 'id="scienceWeekList"' not in html or 'id="scienceWeekContent"' not in html:
+        errors.append("Fen Bilimleri needs its own weekly course workspace, navigation, and reader")
     style_guide = ROOT / "docs" / "subject-ui-style-guide.md"
     if not style_guide.is_file() or "Fen Bilimleri" not in style_guide.read_text(encoding="utf-8"):
         errors.append("The reusable subject UI guide for future courses is missing")
@@ -1289,7 +1295,7 @@ def main() -> int:
         errors.append("Node.js is required to check JavaScript syntax and week grouping")
     else:
         js_files = []
-        for relative in ("book-texts.js", "social-studies-content.js", "social-studies.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
+        for relative in ("book-texts.js", "social-studies-content.js", "social-studies.js", "science-content.js", "science.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
             asset = ROOT / relative
             if not asset.is_file():
                 errors.append(f"Missing JavaScript asset: {relative}")
@@ -1363,6 +1369,18 @@ def main() -> int:
                     errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
                 elif "Social Studies summaries, Week 8 exam notice, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
                     errors.append("Social Studies workspace test did not report success")
+
+            if not errors:
+                science_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-science.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if science_test.returncode:
+                    errors.append(f"Fen Bilimleri workspace test failed:\n{science_test.stderr.strip()}")
+                elif "Fen Bilimleri 37-week book map, calendar alignment, original topic/activity data, accessible rendering, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
+                    errors.append("Fen Bilimleri workspace test did not report success")
 
             if not errors:
                 try:
@@ -1491,7 +1509,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, PDF-aligned formats, safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, the date-aligned 37-week textbook-mapped Fen curriculum and original activities, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 
