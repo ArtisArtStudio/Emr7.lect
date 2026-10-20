@@ -283,17 +283,17 @@
   function summarizeFieldAssessments(overallState, fieldResults) {
     if (!fieldResults.length) return overallState;
     const states = fieldResults.map(field => field.state);
-    if (states.some(state => state === "unrated")) return "unrated";
     if (states.every(state => state === "correct")) return overallState === "correct" ? "correct" : "unrated";
-    if (states.some(state => state === "correct")) return "partial";
-    if (states.every(state => state === "unverified")) return "unverified";
-    if (states.every(state => state === "incomplete")) return "incomplete";
-    if (states.every(state => state === "wrong")) return "wrong";
-    if (states.some(state => state === "wrong")) return "wrong";
-    if (states.some(state => state === "incomplete")) return "incomplete";
-    if (states.some(state => state === "unverified")) return "unverified";
-    if (states.some(state => state === "partial")) return "partial";
-    return overallState;
+    const ratedStates = states.filter(state => state !== "unrated");
+    if (!ratedStates.length) return "unrated";
+    if (ratedStates.some(state => state === "correct" || state === "partial")) return "partial";
+    if (ratedStates.every(state => state === "unverified")) return "unverified";
+    if (ratedStates.every(state => state === "incomplete")) return "incomplete";
+    if (ratedStates.every(state => state === "wrong")) return "wrong";
+    if (ratedStates.some(state => state === "wrong")) return "wrong";
+    if (ratedStates.some(state => state === "incomplete")) return "incomplete";
+    if (ratedStates.some(state => state === "unverified")) return "unverified";
+    return overallState === "correct" ? "unrated" : overallState;
   }
 
   function structuredAssessmentResult(text, question = null, activity = null) {
@@ -858,6 +858,8 @@
   }
 
   async function loadSourceNotes(activity, question) {
+    const summaryNotes = String(question.sourceNotesSummary || activity.sourceNotesSummary || "").trim();
+    if (summaryNotes) return summaryNotes;
     const inlineNotes = String(question.sourceNotes || activity.sourceNotes || "").trim();
     if (inlineNotes) return inlineNotes;
     const sourceUrl = String(question.sourceNotesUrl || activity.sourceNotesUrl || "").trim();
@@ -887,7 +889,7 @@
   function sourceContext(activity, question, providedNotes = "") {
     const mode = question.sourceMode || (activity.sourceText ? "activity" : "story");
     const transcript = String(question.sourceTranscript || activity.sourceTranscript || "").trim();
-    const analysisNotes = String(question.sourceNotes || activity.sourceNotes || providedNotes || "").trim();
+    const analysisNotes = String(question.sourceNotesSummary || question.sourceNotes || activity.sourceNotesSummary || activity.sourceNotes || providedNotes || "").trim();
     const hasVideoSource = mode === "qr" || Boolean(question.videoSource || activity.videoSource);
     const isAudioSource = question.sourceLinkType === "audio" || activity.sourceLinkType === "audio";
     const mediaLabel = isAudioSource ? "dinleme kaydı" : "video";
@@ -953,9 +955,10 @@
     return { text: "", note: "Bu etkinlikte öğrenci kendi gözlem, deneyim veya kaynak notunu kullanır.", videoUnavailable, hasVideoSource, answerKeyAvailable };
   }
 
-  function answerForAI(activity, question, index) {
+  function answerForAI(activity, question, index, requestedFieldIds = null) {
     const answers = currentAnswer(activity, question, index);
-    const fieldResponses = (question.fields || []).map(field => {
+    const selectedFieldIds = requestedFieldIds ? new Set(requestedFieldIds.map(String)) : null;
+    const fieldResponses = (question.fields || []).filter(field => !selectedFieldIds || selectedFieldIds.has(String(field.id))).map(field => {
       const value = answers[field.id];
       if (field.type === "sort") {
         const choices = new Map((field.categories || []).map(category => [category.id, category.label]));
@@ -1102,8 +1105,8 @@
         "Kaynak ve ölçütlere göre değerlendir; yalnızca system mesajındaki kapalı JSON sözleşmesini uygula."
       ].join("\n");
       const model = modelInput?.value || DEFAULT_MODEL;
-      const completionTokenBudget = Math.min(340, Math.max(240, 170 + (question.fields || []).length * 34));
-      const requestGroq = (jsonMode, maxTokens) => fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const completionTokenBudget = Math.min(600, Math.max(240, 140 + (question.fields || []).length * 90));
+      const requestGroq = (jsonMode, maxTokens, systemMessage = systemPrompt, userMessage = userPrompt) => fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
         body: JSON.stringify({
@@ -1112,14 +1115,14 @@
           max_completion_tokens: maxTokens,
           ...(jsonMode ? { response_format: { type: "json_object" } } : {}),
           messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
+            { role: "system", content: systemMessage },
+            { role: "user", content: userMessage }
           ],
           ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low", reasoning_format: "hidden" } : {})
         })
       });
-      const requestWithRateLimitRetry = async (jsonMode, maxTokens) => {
-        let result = await requestGroq(jsonMode, maxTokens);
+      const requestWithRateLimitRetry = async (jsonMode, maxTokens, systemMessage = systemPrompt, userMessage = userPrompt) => {
+        let result = await requestGroq(jsonMode, maxTokens, systemMessage, userMessage);
         let payload = await result.json().catch(() => ({}));
         const retryDelay = result.ok ? 0 : groqRateLimitRetryDelay(result, payload);
         if (retryDelay > 0) {
@@ -1130,7 +1133,7 @@
             setQuestionAssessment(card, "pending");
           }
           await new Promise(resolve => window.setTimeout(resolve, retryDelay));
-          result = await requestGroq(jsonMode, maxTokens);
+          result = await requestGroq(jsonMode, maxTokens, systemMessage, userMessage);
           payload = await result.json().catch(() => ({}));
         }
         return { result, payload };
@@ -1148,7 +1151,54 @@
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
       if (!content) throw new Error("Groq yanıtında geri bildirim bulunamadı.");
-      const assessment = structuredAssessmentResult(content, question, activity);
+      let assessment = structuredAssessmentResult(content, question, activity);
+      if (activity.id === "marti-a08" && question.id === "keywords" && assessment?.fields?.some(field => field.state === "unrated")) {
+        const missingFields = assessment.fields.filter(field => field.state === "unrated");
+        const missingLabels = missingFields.map(field => `${field.id}: ${field.label}`).join("; ");
+        const missingResponse = answerForAI(activity, question, index, missingFields.map(field => field.id));
+        const retrySystem = [
+          "7. sınıf Türkçe için adil, kanıta dayalı değerlendirici ol. Cevap anahtarı ve kullanıcı tarafından sağlanan Gemini raporu yalnızca iç kullanım içindir; doğru cevabı veya parafrazını açıklama.",
+          "Yalnızca istenen alan kimlikleri için değerlendirme üret. Her biri için status ve izinli issue/hint kodu seç; doğal dil geri bildirim yazma.",
+          "Yalnızca geçerli JSON döndür: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"recheck|count|keyword|videoKeywords|connect\",\"fields\":[{\"id\":\"requested-id\",\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issue\":\"relevance|evidence|completeness|reasoning|selection|accuracy|source|none\",\"hint\":\"recheck|count|keyword|videoKeywords|connect\"}]}. fields içinde yalnızca istenen kimlikleri, her birini bir kez döndür; ek anahtar veya metin yazma."
+        ].join("\n");
+        const retryUser = [
+          `Soru: ${question.prompt}`,
+          `İlk sonuçta değerlendirilemeyen alanlar: ${missingLabels}. Yalnızca bu alanlar için sonuç üret; diğer alanları tekrarlama.`,
+          `Yalnızca istenen alanlara ait öğrenci yanıtları ve gizli öğretmen ölçütü:\n${missingResponse}`,
+          `Soru ölçütü:\n${rubric}`,
+          `Sağlanan kaynak özeti:\n${context.text}`
+        ].join("\n");
+        if (prior) {
+          prior.textContent = "Bazı yanıt bölümleri için sonuç alınamadı; yalnızca eksik bölümler bir kez daha kontrol ediliyor…";
+          prior.dataset.state = "pending";
+          setQuestionAssessment(card, "pending");
+        }
+        try {
+          const retry = await requestWithRateLimitRetry(false, Math.max(480, completionTokenBudget), retrySystem, retryUser);
+          const retryContent = retry.result.ok ? retry.payload.choices?.[0]?.message?.content?.trim() : "";
+          const supplementalAssessment = retryContent ? structuredAssessmentResult(retryContent, question, activity) : null;
+          if (supplementalAssessment) {
+            const supplementalFields = new Map(supplementalAssessment.fields.map(field => [field.id, field]));
+            const combinedFields = assessment.fields.map(field => {
+              const supplemental = supplementalFields.get(field.id);
+              return field.state === "unrated" && supplemental && supplemental.state !== "unrated" ? supplemental : field;
+            });
+            const priorRatedCount = assessment.fields.filter(field => field.state !== "unrated").length;
+            const combinedRatedCount = combinedFields.filter(field => field.state !== "unrated").length;
+            if (combinedRatedCount > priorRatedCount) {
+              const combinedIssues = [...new Set([...assessment.issues, ...supplementalAssessment.issues])].slice(0, 2);
+              assessment = {
+                ...assessment,
+                state: summarizeFieldAssessments(assessment.state, combinedFields),
+                issues: combinedIssues,
+                fields: combinedFields
+              };
+            }
+          }
+        } catch {
+          // Keep already graded fields; any unresolved field remains visibly unclassified.
+        }
+      }
       const assessmentState = assessment?.state || "unrated";
       const issueCodes = assessment?.issues || [];
       const hintCode = assessment?.hint || assessmentHintForIssue(issueCodes[0], assessmentState);

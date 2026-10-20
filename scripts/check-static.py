@@ -305,7 +305,7 @@ for (const unitId of [1,3,5]) {{
   const hayatTopicQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'topic');
   if (!hayatTopicQuestion?.answerKey?.mainIdea?.includes('Öğrenmenin yaşı yoktur') || !hayatTopicQuestion.rubric.includes('hayat çok zordur') || !hayatTopicQuestion.fields[0].label.includes('ana fikri')) throw new Error('The Hayat video question needs its correct main-idea label, answer key, and unrelated-answer rejection criterion');
   const keywordQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'keywords');
-  if (!keywordQuestion || keywordQuestion.fields.map((field) => field.id).join(',') !== 'word-1,word-2,word-3,word-4,word-5' || !keywordQuestion.rubric.includes('birbirinden bağımsız değerlendir')) throw new Error('The five video keyword entries must be graded independently');
+  if (!keywordQuestion || keywordQuestion.fields.map((field) => field.id).join(',') !== 'word-1,word-2,word-3,word-4,word-5' || !keywordQuestion.rubric.includes('birbirinden bağımsız değerlendir') || !keywordQuestion.sourceNotesSummary?.includes('kullanıcı tarafından sağlanan Gemini')) throw new Error('The five video keyword entries need independent grading and a compact, attributed source summary');
   const solutionQuestions = context.window.THEME1_FORMS['marti-a06'];
   if (!vocabularyQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !vocabularyQuestions.some((question) => question.fields.some((field) => field.type === 'select'))) throw new Error('The Jonathan vocabulary task needs word matching and dictionary choices');
   if (!comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'checkboxes')) || !comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'radio')) || !comprehensionQuestions.some((question) => question.responseType === 'matching')) throw new Error('The Jonathan comprehension tasks need selection, matching, and written evidence');
@@ -566,6 +566,7 @@ let mockRateLimitOnce = false;
 let rateLimitResponseCount = 0;
 let mockJSONValidationOnce = false;
 let jsonValidationResponseCount = 0;
+let mockResponseQueue = null;
 const sentGroqBodies = [];
 const responseFor = (status, issues, hint, fields, extra = {}) => JSON.stringify({status, issues, hint, fields, ...extra});
 let mockResponse = responseFor('correct', [], 'recheck', [
@@ -663,7 +664,8 @@ const context = vm.createContext({
       };
     }
     capturedRequest = {url, body: requestBody};
-    return {ok: true, json: async () => ({choices: [{message: {content: mockResponse}}]})};
+    const content = mockResponseQueue?.length ? mockResponseQueue.shift() : mockResponse;
+    return {ok: true, json: async () => ({choices: [{message: {content}}]})};
   }
 });
 for (const source of sources) vm.runInContext(source, context);
@@ -691,7 +693,7 @@ async function run() {
   const strictPromptChecks = ['GİZLİ CEVAP KORUMASI', 'Yalnızca geçerli bir JSON nesnesi', 'status', 'Doğru cevabı', 'issues=[]'].map((phrase) => system.includes(phrase));
   if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require a closed, non-disclosing JSON response: ${JSON.stringify(strictPromptChecks)}`);
   if (capturedRequest.body.response_format?.type !== 'json_object') throw new Error('Groq assessment request does not enforce JSON mode');
-  if (capturedRequest.body.max_completion_tokens !== 240) throw new Error('Groq output-token budget is not scaled to the number of answer fields');
+  if (capturedRequest.body.max_completion_tokens !== 320) throw new Error('Groq output-token budget is not scaled to the number of answer fields');
   if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
   if (storyButton.card.dataset.checkState !== 'correct' || storyButton.pill.textContent !== '✓ Tam doğru') throw new Error('A fully correct AI result did not set the green status');
   if (!storyButton.feedback.textContent.includes('DURUM: TAM DOĞRU') || storyButton.feedback.textContent.includes('İPUCU') || storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A fully correct response shows a hint or leaked model text');
@@ -753,13 +755,33 @@ async function run() {
   mockJSONValidationOnce = true;
   await check(keywordsButton);
   const keywordRequestAttempts = sentGroqBodies.slice(firstKeywordRequest);
-  if (jsonValidationResponseCount !== previousJSONValidationResponses + 1 || keywordRequestAttempts.length !== 2 || keywordRequestAttempts[0].response_format?.type !== 'json_object' || keywordRequestAttempts[1].response_format || keywordRequestAttempts[1].max_completion_tokens < 480) throw new Error('A Groq JSON-validation failure was not retried once with the safe fallback format');
+  if (jsonValidationResponseCount !== previousJSONValidationResponses + 1 || keywordRequestAttempts.length !== 2 || keywordRequestAttempts[0].response_format?.type !== 'json_object' || keywordRequestAttempts[0].max_completion_tokens !== 590 || keywordRequestAttempts[1].response_format || keywordRequestAttempts[1].max_completion_tokens < 480) throw new Error('A Groq JSON-validation failure was not retried once with the safe fallback format and field-sized token budget');
   prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!prompt.includes('kısa iç kullanım özeti') || !prompt.includes('satranç') || prompt.length > 5000) throw new Error('The five-keyword prompt did not use its compact, attributed Gemini source summary');
   const keywordFeedback = keywordsButton.feedback.textContent;
   if (!prompt.includes('alan kimliği: word-1') || !prompt.includes('alan kimliği: word-5')) throw new Error('The five keyword inputs were not identified separately in the assessment prompt');
   for (const marker of ['Anahtar kelime 1 ve ana düşünceyle bağı: TAM DOĞRU', 'Anahtar kelime 2 ve ana düşünceyle bağı: YANLIŞ', 'Anahtar kelime 3 ve ana düşünceyle bağı: EKSİK', 'Anahtar kelime 4 ve ana düşünceyle bağı: KISMEN DOĞRU', 'Anahtar kelime 5 ve ana düşünceyle bağı: TAM DOĞRU']) if (!keywordFeedback.includes(marker)) throw new Error(`Per-field video keyword feedback is missing ${marker}`);
   if (!keywordFeedback.includes('YANIT BÖLÜMLERİ:') || keywordFeedback.includes('ALAN ALAN')) throw new Error('Multi-answer feedback uses a confusing field-by-field heading');
   if (keywordsButton.card.dataset.checkState !== 'partial' || keywordFeedback.includes('SECRET_FIVE_KEYWORDS_2P') || !keywordFeedback.includes('Her kelimeyi videoda görülen ya da duyulan somut bir örnekle ilişkilendir')) throw new Error('Per-field keyword feedback lacks safe, tailored hints or exposed free model text');
+  const firstThreeFieldsOnly = responseFor('partial', ['relevance'], 'keyword', [
+    {id: 'word-1', status: 'partial', issue: 'relevance', hint: 'keyword'},
+    {id: 'word-2', status: 'partial', issue: 'relevance', hint: 'keyword'},
+    {id: 'word-3', status: 'partial', issue: 'relevance', hint: 'keyword'}
+  ]);
+  const missingFieldRetryStart = sentGroqBodies.length;
+  mockResponseQueue = [firstThreeFieldsOnly, responseFor('partial', ['accuracy'], 'keyword', [
+    {id: 'word-4', status: 'wrong', issue: 'relevance', hint: 'keyword'},
+    {id: 'word-5', status: 'incomplete', issue: 'completeness', hint: 'count'}
+  ])];
+  await check(keywordsButton);
+  const missingFieldRetryBodies = sentGroqBodies.slice(missingFieldRetryStart);
+  const rescuedKeywordFeedback = keywordsButton.feedback.textContent;
+  const missingFieldRetryPrompt = missingFieldRetryBodies[1]?.messages[1]?.content || '';
+  if (missingFieldRetryBodies.length !== 2 || missingFieldRetryBodies[1].response_format || missingFieldRetryBodies[1].max_completion_tokens < 480 || !missingFieldRetryPrompt.includes('alan kimliği: word-4') || !missingFieldRetryPrompt.includes('alan kimliği: word-5') || missingFieldRetryPrompt.includes('alan kimliği: word-1') || missingFieldRetryPrompt.includes('alan kimliği: word-3')) throw new Error('The app did not retry only the missing keyword fields with a sufficiently sized output budget');
+  if (!rescuedKeywordFeedback.includes('Anahtar kelime 4 ve ana düşünceyle bağı: YANLIŞ') || !rescuedKeywordFeedback.includes('Anahtar kelime 5 ve ana düşünceyle bağı: EKSİK') || rescuedKeywordFeedback.includes('SONUÇ SINIFLANDIRILAMADI')) throw new Error('The targeted retry did not restore field-level results or preserve the partial overall state');
+  mockResponseQueue = [firstThreeFieldsOnly, responseFor('partial', ['relevance'], 'keyword', [])];
+  await check(keywordsButton);
+  if (keywordsButton.card.dataset.checkState !== 'partial' || keywordsButton.feedback.textContent.includes('SONUÇ SINIFLANDIRILAMADI')) throw new Error('Unrated trailing fields incorrectly erased the overall partial result');
   mockResponse = responseFor('correct', [], 'recheck', [], {leakedAnswer: 'SECRET_UNRATED_8B'});
   await check(keywordsButton);
   if (keywordsButton.card.dataset.checkState !== 'unrated' || keywordsButton.feedback.textContent.includes('SECRET_UNRATED_8B') || keywordsButton.pill.textContent.includes('Tam doğru')) throw new Error('A response omitting the per-field results was incorrectly accepted as fully correct');
@@ -1109,7 +1131,7 @@ def main() -> int:
         "flow.celebratedActivities.includes(activity.id)", 'assessmentState === "correct"',
         "function isThemeFullyCorrect()", "function isFinalThemeUnit()", "flow.themeCelebrated", "launchConfetti(true)",
         "function groqRateLimitRetryDelay(response, payload)", "max_completion_tokens: maxTokens",
-        "const completionTokenBudget = Math.min(340", "Groq geçici hız sınırına ulaştı",
+        "const completionTokenBudget = Math.min(600", "Groq geçici hız sınırına ulaştı",
         "requestWithRateLimitRetry(false, Math.max(480, completionTokenBudget))", "failed to validate json|failed_generation",
     )
     for requirement in app_runtime_requirements:

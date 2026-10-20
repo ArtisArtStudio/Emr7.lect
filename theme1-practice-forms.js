@@ -227,6 +227,7 @@
         ...[1, 2, 3, 4, 5].map(number => text(`word-${number}`, `Anahtar kelime ${number} ve ana düşünceyle bağı`, 2))
       ], {
         sourceMode: "qr",
+        sourceNotesSummary: "Bu, docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt dosyasındaki kullanıcı tarafından sağlanan Gemini raporunun bu soruya yönelik kısa iç kullanım özetidir; bağımsız video doğrulaması değildir ve konuşma dökümü bazı bölümlerde kısmi/özet olabilir. Raporda sınıfta okuma-yazma, satranç, metal işleme, resim yapma ve öğrencinin öğretmene bilgisayarda yardım etme örnekleri aktarılır. Raporun yorumuna göre bu farklı etkinlikler öğrenmenin sınıf dışındaki yaşam alanlarında da sürmesi fikrini destekler.",
         rubric: "word-1, word-2, word-3, word-4 ve word-5 alanlarını birbirinden bağımsız değerlendir. Her alanda kelimenin Gemini raporundaki içeriğe uygun bir anahtar kavram olup olmadığını ve öğrencinin bu kelimeyi ana düşünceyle ilişkilendiren kısa not yazıp yazmadığını ayrı kontrol et. Uygun kelime + eksik ilişki kısmen doğru; ilgisiz kelime yanlış; boş alan eksiktir. Beş alanın hiçbirini tek bir genel ‘dayanak ekle’ yorumuna indirgeme; alanlara göre farklı, cevabı açığa çıkarmayan ipucu kodları seç.",
         answerKey: {
           evaluation: "Beş farklı alanın her birinde ilgili kelime ve ana düşünceyle kısa bağlantı bulunmalı. Belirli tek bir zorunlu kelime listesi yoktur; kabul edilebilir kelimeler kullanıcı tarafından sağlanan Gemini raporundaki öğrenme temasına uygun olmalıdır."
