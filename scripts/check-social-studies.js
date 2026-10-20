@@ -42,6 +42,7 @@ assert.deepEqual(
   Object.fromEntries(social.units.map((unit) => [unit.id, social.weeks.filter((week) => week.unitId === unit.id).length])),
   { together: 12, world: 6, heritage: 17, review: 2 },
 );
+assert.ok(social.weeks.some((week) => week.topic === 'Büyük deniz seyahatleri ve Osmanlı ekonomisi'), 'The third learning area should include the textbook topic on sea routes and Ottoman economic effects.');
 assert.ok(social.weeks.every((week) => week.date && week.topic && week.focus && week.tasks.length === 3 && week.activity.fields.length));
 assert.ok(social.weeks.every((week) => week.source.includes('MEB 7. Sınıf') || week.unitId === 'review'));
 
@@ -99,7 +100,7 @@ social.resetProgress();
 assert.equal(social.exportProgress().selectedWeek, 1);
 
 const sourceStyles = new Set(social.weeks.map((week) => week.activity.sourceStyle));
-for (const sourceStyle of ['Yapboz parçaları', 'Beyin yazımı', 'Proje taslağı ve kontrol listesi', 'Kelime bulutu', 'Harita inceleme', 'GZFT analizi', 'Soru–cevap', 'Kısa haber metni', 'Neden–sonuç tablosu']) {
+for (const sourceStyle of ['Yapboz parçaları', 'Beyin yazımı', 'Proje taslağı ve kontrol listesi', 'Kelime bulutu', 'Harita inceleme', 'Harita inceleme ve neden–sonuç tablosu', 'GZFT analizi', 'Soru–cevap', 'Kısa haber metni', 'Neden–sonuç tablosu']) {
   assert.ok(sourceStyles.has(sourceStyle), `The PDF-aligned activity pattern is missing: ${sourceStyle}`);
 }
 

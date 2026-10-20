@@ -293,7 +293,17 @@
       response('compare', 'Ortak yön / fark', 'Harita veya metinden dayanak ekle…', 'textarea', 8),
     ], 'Kitaptaki dönem haritaları, politikalar ve kaynak yorumlama biçimlerinden esinlenir.')),
 
-    week(26, '5–9 Nis', 'heritage', 'Rönesans ve Osmanlı Devleti’ne yansımaları', 'Avrupa’daki bilimsel ve teknik gelişmelerle Osmanlı’daki yenilik arayışı arasındaki ilişkiyi açıkla.', [
+    week(26, '5–9 Nis', 'heritage', 'Büyük deniz seyahatleri ve Osmanlı ekonomisi', 'Harita ve metinlerden yararlanarak deniz yollarındaki değişimin ticaret güzergâhları ve Osmanlı ekonomisi üzerindeki etkisini değerlendir.', [
+      'Kitaptaki büyük deniz seyahatleri bölümünü ve ilgili harita/görseli incele.',
+      'Değişen güzergâhların hangi ticaret bağlantılarını etkilediğini not et.',
+      'Osmanlı ekonomisine etkisi hakkındaki çıkarımını bir kaynak ipucuyla destekle.',
+    ], activity('Harita inceleme ve neden–sonuç tablosu', 'Deniz yollarındaki değişimin etkisi', 'Kaynakta gösterilen güzergâh değişimini ticaretle ilişkilendir; ekonomik etki hakkındaki görüşünü bir kanıt ve gerekçeyle açıkla.', [
+      response('route', 'Haritada fark ettiğim güzergâh değişimi', 'Bir rota, liman veya bağlantı…', 'textarea', 8),
+      response('trade', 'Ticaret üzerindeki olası sonuç', 'Kaynağa dayanarak ne değişmiş olabilir?', 'textarea', 8),
+      response('ottoman', 'Osmanlı ekonomisine etkisi', 'Kitaptaki soru/kanıttan hareketle çıkarımını gerekçelendir…', 'textarea', 8),
+    ], 'Kitabın büyük deniz seyahatlerinin Osmanlı ekonomisine etkisini kaynak bilgisiyle değerlendirme sorusundan esinlenir.')),
+
+    week(27, '12–16 Nis', 'heritage', 'Rönesans ve Osmanlı Devleti’ne yansımaları', 'Avrupa’daki bilimsel ve teknik gelişmelerle Osmanlı’daki yenilik arayışı arasındaki ilişkiyi açıkla.', [
       'Kitaptaki Rönesans ve Osmanlı üzerindeki etkiler bölümünü oku.',
       'Bilim, teknik veya sanat alanından bir değişim seç.',
       'Seçtiğin değişim hakkında bir soru üretip kendi cümlenle yanıtla.',
@@ -302,25 +312,15 @@
       response('answer', 'Kendi cümlelerimle yanıt', 'Kitaptaki bilgiden bir dayanak kullan…', 'textarea', 14),
     ], 'Kitapta Rönesans’ın Osmanlı üzerindeki etkileri için soru hazırlayıp cevaplama örneği var.')),
 
-    week(27, '12–16 Nis', 'heritage', 'Reform hareketi: nedenler ve değişim', 'Reform hareketlerinin ortaya çıkışını ve Avrupa’daki etkilerini kaynak bilgisine dayanarak neden–sonuçla açıkla.', [
+    week(28, '19–23 Nis', 'heritage', 'Reform: Avrupa’da düşünce ve inanç alanındaki değişim', 'Reform hareketlerinin neden ve sonuçlarını Avrupa ve Osmanlı üzerindeki etkileriyle ilişkilendir.', [
       'Kitaptaki Reform nedenlerini ve gelişmelerini gözden geçir.',
-      'İki neden ile iki sonucu ayırt et.',
-      'Sonuçlardan birini Avrupa’daki düşünce veya yönetim değişimiyle ilişkilendir.',
-    ], activity('Neden–sonuç tablosu', 'Reform hareketinin izleri', 'Kitapta anlatılan neden ve sonuçları tabloya yerleştir; aralarındaki ilişkiyi kendi cümlenle kur.', [
-      response('causes', 'Nedenler', 'Dönemin düşünce, kilise veya toplumsal koşullarından…', 'textarea', 8),
-      response('results', 'Sonuçlar', 'İnanç, eğitim, bilim veya yönetimdeki değişimlerden…', 'textarea', 8),
-      response('connection', 'Neden–sonuç bağlantısı', 'Bir neden belirli bir sonucu nasıl etkiledi?', 'textarea', 8),
-    ], 'Kitaptaki Reform konusu için neden–sonuç ilişkisi kurma çalışmasına dayanır.')),
-
-    week(28, '19–23 Nis', 'heritage', 'Reform’un Avrupa ve Osmanlı üzerindeki etkileri', 'Tarihî gelişmenin farklı toplumlar üzerindeki sonuçlarını karşılaştır; kısa ve kanıta dayalı haber yaz.', [
-      'Kitaptaki Reform’un Avrupa’daki sonuçlarını oku.',
-      'Osmanlı üzerindeki etkiler hakkındaki bölümü karşılaştır.',
-      'Bir sonucu başlık ve kısa haber metniyle anlat.',
-    ], activity('Kısa haber metni', 'Tarihî gelişmeyi haberleştir', 'Reform dönemindeki bir gelişmeyi, zamanını, nedenini ve dikkat çekici sonucunu içeren özgün bir haber taslağıyla anlat.', [
+      'Avrupa’daki sonuçlardan biriyle Osmanlı üzerindeki etkiler hakkındaki bilgiyi karşılaştır.',
+      'Bir sonucu zaman, neden ve etkisiyle kısa bir haber taslağında anlat.',
+    ], activity('Kısa haber metni', 'Reform dönemini haberleştir', 'Reform dönemindeki bir gelişmeyi, zamanını, nedenini ve dikkat çekici sonucunu içeren özgün bir haber taslağıyla anlat.', [
       response('headline', 'Kısa başlık', 'Haberi özetleyen bir başlık…', 'text'),
-      response('event', 'Ne zaman ve ne oldu?', 'Olayı bir-iki cümleyle anlat…', 'textarea', 8),
-      response('effect', 'Neden önemliydi?', 'Avrupa veya Osmanlı açısından etkisini belirt…', 'textarea', 8),
-    ], 'Kitaptaki Reform’un Avrupa’daki etkileri için haber metni yazma biçiminden esinlenir.')),
+      response('event', 'Ne zaman ve ne oldu?', 'Olayı kendi cümlelerinle anlat…', 'textarea', 8),
+      response('effect', 'Avrupa / Osmanlı açısından etkisi', 'En az bir sonucu kaynak bilgisiyle ilişkilendir…', 'textarea', 8),
+    ], 'Kitaptaki Reform’un Avrupa’daki etkilerini haber metniyle anlatma etkinliğinden esinlenir.')),
 
     week(29, '26–30 Nis', 'heritage', 'Aydınlanma Çağı: akıl, bilim ve sonuçları', 'Aydınlanma düşüncesindeki akıl, gözlem ve deney vurgusunu sonuçlarıyla ilişkilendir.', [
       'Kitaptaki Aydınlanma Çağı açıklamasını oku.',
