@@ -49,9 +49,13 @@ def grouping_test_source(html: str) -> str:
     practice_renderer_start = html.find("function renderTheme1Practice(w){")
     practice_renderer_end = html.find("\nfunction renderList()", practice_renderer_start)
     renderer_start = html.find("function renderList(){")
-    renderer_end = html.find("\nfunction render(){", renderer_start)
-    if min(groups_start, groups_end, migration_start, migration_end, practice_renderer_start, practice_renderer_end, renderer_start, renderer_end) < 0:
-        raise ValueError("Could not find the week-grouping or theme-practice code to test")
+    renderer_end = html.find("\nfunction buildSafeQuizFeedback", renderer_start)
+    escape_start = html.find("function escapeQuizFeedbackHTML(text){")
+    escape_end = html.find("\n", escape_start)
+    schedule_start = html.find("const EBA_STUDY_URL=")
+    schedule_end = html.find("\nfunction render(){", schedule_start)
+    if min(groups_start, groups_end, migration_start, migration_end, practice_renderer_start, practice_renderer_end, renderer_start, renderer_end, escape_start, escape_end, schedule_start, schedule_end) < 0:
+        raise ValueError("Could not find the week-grouping, theme-practice, or study-schedule code to test")
 
     grouping = html[groups_start:groups_end]
     migration = html[migration_start:migration_end]
@@ -60,8 +64,9 @@ def grouping_test_source(html: str) -> str:
     practice_renderer = html[practice_renderer_start:practice_renderer_end]
     renderer = html[renderer_start:renderer_end]
     harness = r"""
+const quizStub = Array.from({length: 5}, (_, index) => [`Soru ${index + 1}`, [], 0, '']);
 const BOOK_QUIZZES = {
-  marti: Array(5), gencligin: Array(5), adini: Array(5), hayir: Array(5)
+  marti: quizStub, gencligin: quizStub, adini: quizStub, hayir: quizStub
 };
 """
     # The preceding grouping snippet declares weeks, specific, and groupTaskOrigins.
@@ -83,8 +88,8 @@ if (!byId.get(3)[3].includes('Sen Sor O Yanıtlasın')) throw new Error('The mer
 if (specific[1].tasks.length !== 4 || specific[5].tasks.length !== 8) throw new Error('Merged task lists are not correct');
 
 const oldProgress = {
-  1: { done: [true,false,true,false], answers: {0:1}, aiAnswer: '' },
-  2: { done: [false,true,false,true], answers: {1:0}, aiAnswer: 'week 2 answer' },
+  1: { done: [true,false,true,false], answers: {0:1}, aiAnswer: '', studySchedule: {1: {eba: true}} },
+  2: { done: [false,true,false,true], answers: {1:0}, aiAnswer: 'week 2 answer', studySchedule: {2: {tonguc: true}} },
   5: { done: [true,false,false,false], answers: {0:0}, phaserGame: {} },
   6: { done: [false,true,false,true], answers: {1:2,5:1}, extraQuiz: [['new question']], phaserGame: {gate:2} }
 };
@@ -92,6 +97,7 @@ const migrated = mergeGroupedProgress(oldProgress);
 if (!equal(migrated[1].done, [true,true,true,true])) throw new Error('Progress from weeks 1–2 was not combined');
 if (migrated[1].answers[0] !== 1 || migrated[1].answers[1] !== 0) throw new Error('Quiz answers from weeks 1–2 were not preserved');
 if (migrated[1].aiAnswer !== 'week 2 answer') throw new Error('A written answer from week 2 was lost');
+if (!equal(migrated[1].studySchedule, {1:{eba:true},2:{tonguc:true}})) throw new Error('External platform checks from merged weeks were not preserved separately');
 if (!equal(migrated[5].done, [true,false,false,false,false,true,false,true])) throw new Error('Progress from weeks 5–6 was not mapped to merged tasks');
 if (!migrated[5].extraQuiz || migrated[5].answers[5] !== 1) throw new Error('Generated quiz data from week 6 was not preserved');
 if (migrated[5].phaserGame.gate !== 2) throw new Error('Mini-game progress from week 6 was not preserved');
@@ -103,17 +109,23 @@ let data = {};
 let renderedPracticeUnit = null;
 function store() {}
 class ThemeNode {
-  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.dataset = {}; this.className = ''; this.textContent = ''; this.open = false; this.hidden = false; this.innerHTML = ''; }
+  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.dataset = {}; this.className = ''; this.textContent = ''; this.open = false; this.hidden = false; this.innerHTML = ''; this.checked = false; this.classList = {toggle() {}}; }
   append(...children) { this.children.push(...children); }
   replaceChildren() { this.children = []; this.innerHTML = ''; }
   addEventListener(name, callback) { this.listeners[name] = callback; }
   setAttribute(name, value) { this.attributes[name] = value; }
+  querySelectorAll() { return []; }
 }
 const themeRoot = new ThemeNode('div');
 const themePracticeCard = new ThemeNode('section');
+const scheduleRows = new ThemeNode('div');
+const makeScheduleInput = (provider, weekId) => { const input = new ThemeNode('input'); input.dataset = {studyProvider: provider, scheduleWeek: String(weekId)}; return input; };
+const ownScheduleInputs = [makeScheduleInput('our', 1), makeScheduleInput('our', 2)];
+const externalScheduleInputs = ['eba','tonguc','mebi'].flatMap(provider => [makeScheduleInput(provider, 1), makeScheduleInput(provider, 2)]);
+scheduleRows.querySelectorAll = (selector) => selector === 'input[data-study-provider="our"]' ? ownScheduleInputs : selector.includes(':not(') ? externalScheduleInputs : [];
 window.renderTheme1PracticeFlow = (unitId) => { renderedPracticeUnit = Number(unitId); };
 global.document = {
-  getElementById: (id) => ({weeklist: themeRoot, theme1Practice: themePracticeCard}[id]),
+  getElementById: (id) => ({weeklist: themeRoot, theme1Practice: themePracticeCard, studyScheduleRows: scheduleRows}[id]),
   createElement: (tag) => new ThemeNode(tag)
 };
 renderList();
@@ -167,8 +179,44 @@ if (themePracticeCard.hidden || renderedPracticeUnit !== 1) throw new Error('The
 renderTheme1Practice(weeks.find((week) => week[0] === 7));
 if (!themePracticeCard.hidden || renderedPracticeUnit !== 1) throw new Error('Theme 1 practice appeared for another theme or changed the previous unit');
 console.log('Theme 1 practice inventory, typed forms, embedded package selection, and game-card removal passed.');
+
+const studyGroup = weeks.find((week) => week[0] === 1);
+renderStudySchedule(studyGroup);
+const initialScheduleMarkup = scheduleRows.innerHTML;
+if ((initialScheduleMarkup.match(/class="schedule-week"/g) || []).length !== 2) throw new Error('The merged 1–2 week study page must render two independent weekly trackers');
+for (const required of ['1. HAFTA · 14–18 Eyl 2026–2027','2. HAFTA · 21–25 Eyl 2026–2027','Tahmin, motivasyon, çalışkanlık ve söz varlığı','Metni anlama, kahramanın hedefi ve çaba','Bizim etkinlikler','EBA','Tonguç','MEBİ',EBA_STUDY_URL.replace(/&/g,'&amp;'),MEBI_STUDY_URL]) {
+  if (!initialScheduleMarkup.includes(required)) throw new Error(`The study schedule is missing a required week, topic, provider, or link: ${required}`);
+}
+const youtubeLinks = [...initialScheduleMarkup.matchAll(/href="(https:\/\/www\.youtube\.com\/results\?search_query=[^"]+)"/g)].map((match) => new URL(match[1]));
+if (youtubeLinks.length !== 2 || !youtubeLinks[0].searchParams.get('search_query').includes('Tonguç 7. sınıf Türkçe Tahmin, motivasyon') || !youtubeLinks[1].searchParams.get('search_query').includes('Tonguç 7. sınıf Türkçe Metni anlama')) throw new Error('Tonguç links must search YouTube with the matching raw week topic');
+if (!/data-study-provider="our"[^>]*disabled/.test(initialScheduleMarkup) || /data-study-provider="eba"[^>]*disabled/.test(initialScheduleMarkup)) throw new Error('Our work must be read-only/automatic while external provider checkboxes remain manual');
+if (isOurStudyScheduleComplete(1, 1) || isOurStudyScheduleComplete(1, 2)) throw new Error('Our activity tracker was completed before the learner finished the in-app work');
+const ebaWeek1 = externalScheduleInputs.find((input) => input.dataset.studyProvider === 'eba' && input.dataset.scheduleWeek === '1');
+const tongucWeek2 = externalScheduleInputs.find((input) => input.dataset.studyProvider === 'tonguc' && input.dataset.scheduleWeek === '2');
+ebaWeek1.checked = true; ebaWeek1.listeners.change();
+tongucWeek2.checked = true; tongucWeek2.listeners.change();
+if (!data[1].studySchedule['1'].eba || !data[1].studySchedule['2'].tonguc || data[1].studySchedule['2'].eba) throw new Error('External provider checks are not persisted separately for each raw week');
+const unit1 = window.THEME1_PRACTICE.units.find((unit) => Number(unit.weekId) === 1);
+const feedback = {};
+for (const activity of unit1.groups.flatMap((group) => group.activities)) {
+  for (const question of window.THEME1_FORMS[activity.id]) feedback[`${activity.id}::${question.id}`] = {state: 'correct', text: 'DURUM: TAM DOĞRU'};
+}
+const allQuizAnswers = Object.fromEntries(studyQuizItems(1).map((_, index) => [index, 0]));
+data[1] = {...data[1], done: Array(specific[1].tasks.length).fill(true), answers: allQuizAnswers, theme1PracticeFlow: {feedback}};
+if (!isOurStudyScheduleComplete(1, 1) || !isOurStudyScheduleComplete(1, 2)) throw new Error('The automatic tracker did not recognize completed mini-plan, quiz, and Theme 1 practice progress');
+renderStudySchedule(studyGroup);
+if (!ownScheduleInputs.every((input) => input.checked)) throw new Error('Completed in-app activities did not auto-check the corresponding weekly rows');
+const firstQuestion = window.THEME1_FORMS[unit1.groups[0].activities[0].id][0];
+feedback[`${unit1.groups[0].activities[0].id}::${firstQuestion.id}`].state = 'partial';
+if (isOurStudyScheduleComplete(1, 1) || !isOurStudyScheduleComplete(1, 2)) throw new Error('Automatic completion must follow the practice unit belonging to each raw week');
+renderStudySchedule(studyGroup);
+if (ownScheduleInputs[0].checked || !ownScheduleInputs[1].checked) throw new Error('The automatic checkbox did not refresh independently for each raw week');
+if (!data[1].studySchedule['1'].eba || !data[1].studySchedule['2'].tonguc) throw new Error('Re-rendering the weekly chart lost separate external-platform progress');
+console.log('Raw-week study schedules, YouTube topic links, manual per-week platform checks, and automatic in-app completion passed.');
 """
-    return "global.window = {};\n" + grouping + "\n" + migration + "\n" + practice_data + "\n" + practice_forms + "\n" + practice_renderer + "\n" + renderer + "\n" + harness
+    escape_function = html[escape_start:escape_end]
+    schedule_code = html[schedule_start:schedule_end]
+    return "global.window = {};\n" + grouping + "\n" + migration + "\n" + practice_data + "\n" + practice_forms + "\n" + practice_renderer + "\n" + escape_function + "\n" + schedule_code + "\n" + renderer + "\n" + harness
 
 
 
@@ -1114,6 +1162,7 @@ def main() -> int:
         'id="weekSelectionPrompt"', 'id="weekContent"', 'id="readerLayout"',
         'id="backToWeeks"', 'id="theme1Practice"', 'id="step-track"',
         'id="activity-stage"', 'id="previous-step"', 'id="next-step"',
+        'id="weeklyStudySchedule"', 'id="studyScheduleRows"',
         'theme1-practice-forms.js', 'theme1-practice-app.js', 'theme1-practice.css',
     ):
         if marker not in html:
@@ -1125,8 +1174,15 @@ def main() -> int:
     for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v="):
         if asset not in html:
             errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
+    for required in ("function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
+        if required not in html:
+            errors.append(f"Per-raw-week study tracking or its saved-progress migration is missing: {required}")
+    if "--ink:#102238" not in html or "--muted:#46576b" not in html:
+        errors.append("The weekly reader text and muted text colors must use the darker contrast palette")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
     practice_css = (ROOT / "theme1-practice.css").read_text(encoding="utf-8") if (ROOT / "theme1-practice.css").is_file() else ""
+    if "--practice-ink: #102238" not in practice_css or "--practice-muted: #46576b" not in practice_css:
+        errors.append("Embedded practice text must use the darker high-contrast palette")
     app_runtime_requirements = (
         "function launchConfetti(finalCelebration = false)", "prefers-reduced-motion: reduce",
         "particleCount = finalCelebration ? 220 : 72", "celebrateActivityIfCompleted(activity)",
@@ -1270,6 +1326,8 @@ def main() -> int:
                     errors.append("Theme navigation test did not report success")
                 elif "Theme 1 practice inventory, typed forms, embedded package selection, and game-card removal passed." not in result.stdout:
                     errors.append("Theme 1 embedded practice test did not report success")
+                elif "Raw-week study schedules, YouTube topic links, manual per-week platform checks, and automatic in-app completion passed." not in result.stdout:
+                    errors.append("Weekly study schedule test did not report success")
 
             if not errors:
                 try:
@@ -1398,7 +1456,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, high-contrast reading, per-field safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, user-attributed Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, darker text contrast, per-week study tracking, per-field safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 
