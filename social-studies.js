@@ -58,18 +58,18 @@
     ], 'Kitaptaki iletişim ve empati örnek olaylarından esinlenen özgün bir durum çalışması.')),
 
     week(3, '28 Eyl–2 Eki', 'together', 'Empati, ben dili ve farklılıklara saygı', 'Duyguyu suçlamadan anlatan ben dili cümleleri kur; farklı düşüncelere saygılı yaklaş.', [
-      'Seni rahatsız eden bir durumu kişiyi etiketlemeden tarif et.',
-      'Duygunu “Ben … hissediyorum; çünkü …” biçiminde ifade et.',
-      'Farklı bir görüşe yanıt verirken kullanabileceğin nazik bir cümle seç.',
+      'Empati örneğini oku; gözlemlediğin davranış ile duyguya ilişkin tahminini birbirinden ayır.',
+      'İfade kartlarını ben dili, suçlayıcı sen dili ve saygılı soru/öneri olarak sınıflandır.',
+      'Suçlayıcı bir cümleyi ben diliyle yeniden yaz ve empatiyle aynı fikirde olmanın farkını açıkla.',
     ], activity('Cümle dönüştürme', 'Ben diliyle yeniden kur', 'Suçlayıcı ifadeleri duygu ve ihtiyacı anlatan, saygılı ben dili cümlelerine dönüştür.', [
       response('rewrite1', 'Durum 1 için yeni cümle', 'Bir davranışı tarif et; kişiliği yargılama…'),
       response('rewrite2', 'Durum 2 için yeni cümle', 'Duygunu ve beklentini açıkla…'),
     ], 'Kitapta ben dili örnekleri ve iletişim durumları üzerinde duruluyor.')),
 
     week(4, '5–9 Eki', 'together', 'Gruplarda anlaşmazlıkları yapıcı çözme', 'Ortak bir çözüm ararken dinleme, sıra alma ve uzlaşma yollarını kullan.', [
-      'Küçük bir anlaşmazlık örneğinde tarafların ihtiyacını belirle.',
-      'İki taraf için de uygulanabilir bir çözüm düşün.',
-      'Çözümün adil olup olmadığını bir gerekçeyle kontrol et.',
+      'Yarım bırakılmış grup durumunda iki olası devam yolu ve sonuçlarını tahmin et.',
+      'Davranış kartlarını yapıcı veya gerilimi artıran biçimde sınıflandır; seçtiğin birini gerekçelendir.',
+      'Tarafların ihtiyaçlarını gözeten, adil ve uygulanabilir bir ortak çözüm tasarla.',
     ], activity('Kontrol listesi', 'Yapıcı iletişim kontrolü', 'Bir grup kararını vermeden önce aşağıdaki iletişim adımlarını uygula.', [
       checklistField('steps', 'Tamamladığın adımlar', [
         { id: 'listen', label: 'Her kişinin görüşünü sözünü kesmeden dinledim.' },
@@ -81,9 +81,9 @@
     ], 'Kitabın iletişim becerileri ve günlük yaşam örnekleriyle uyumlu öz kontrol.')),
 
     week(5, '12–16 Eki', 'together', 'Özel gereksinimli bireyler için fırsat eşitliği', 'Erişimi zorlaştıran engelleri fark et ve eşit katılımı destekleyen fikirler üret.', [
-      'Okulda veya çevrende katılımı zorlaştırabilecek bir düzenleme fark et.',
-      'Sorunu kişiye değil çevredeki engele bağlayan bir cümle kur.',
-      'Herkesin katılımını artırabilecek bir fikir hazırla.',
+      'Fırsat eşitliğini anlatan özgün durumu oku; engelin kişiden mi, çevre/süreçten mi kaynaklandığını incele.',
+      'Kartları çevresel engel veya katılımı destekleyen düzenleme olarak sınıflandır.',
+      'Beyin yazımıyla üç fikir üret; birini ilgili kişilerin görüşü ve ilk deneme adımıyla geliştir.',
     ], activity('Beyin yazımı', 'Fırsat eşitliği için fikir üret', 'Özel gereksinimli bireylerin okul ve toplum etkinliklerine eşit katılımı için birbirinden farklı fikirler yaz.', [
       response('idea1', 'Fikir 1', 'Mekân, iletişim veya etkinlik düzeniyle ilgili…', 'textarea', 8),
       response('idea2', 'Fikir 2', 'Bir arkadaşının fikrini geliştir…', 'textarea', 8),
@@ -91,9 +91,9 @@
     ], 'Kitaptaki “Fırsat Eşitliği İçin Fikir Üretiyoruz” beyin yazımı biçiminden esinlenir.')),
 
     week(6, '19–23 Eki', 'together', 'Erişilebilir çevre ve eşit katılım', 'Fırsat eşitliğinin yalnızca niyetle değil, erişilebilir düzenlemelerle desteklendiğini açıkla.', [
-      'Bir etkinliğe katılmayı zorlaştırabilecek iki çevresel engel düşün.',
-      'Engellerden biri için uygulanabilir bir düzenleme öner.',
-      'Önerinin kimlerin katılımını kolaylaştıracağını belirt.',
+      'Fiziksel erişim, bilgiye erişim ve iletişim/katılım düzenlemelerini eşleştir.',
+      'Okul sergisi örneğinde katılımı artıracak düzenlemeleri seç ve birini gerekçelendir.',
+      'Okul veya mahalleden bir alanı kontrol listesiyle inceleyip geliştirilecek bir nokta öner.',
     ], activity('Sorun–çözüm tablosu', 'Engeli ve çözümü eşleştir', 'Bir çevresel engeli, çözüm fikrini ve çözümün sağlayacağı katkıyı eşleştir.', [
       response('barrier', 'Gözlenen veya düşünülen engel', 'Örn. bilgiye erişim, fiziksel ortam…', 'textarea', 8),
       response('solution', 'Eşit katılım için düzenleme', 'Kim, neyi değiştirebilir?', 'textarea', 8),
@@ -101,9 +101,9 @@
     ], 'Kitaptaki fırsat eşitliği ve proje hazırlığı etkinliklerine dayalı özgün tablo.')),
 
     week(7, '26–30 Eki', 'together', 'Engelsiz yaşam için küçük bir proje', 'Fırsat eşitliğini destekleyen bir fikri hedef, görev ve kontrol adımlarıyla planla.', [
-      'Projenin çözmesini istediğin ihtiyacı bir cümleyle yaz.',
-      'Bir kişiyle görevleri ve gerekli malzemeleri konuş.',
-      'Proje önerini kontrol listesine göre gözden geçir.',
+      'Eşit katılımla ilgili bir ihtiyacı gözlem veya görüşe dayandırarak tanımla.',
+      'Proje hedefini, ilk adımı, sorumluları ve beklenen değişimi planla.',
+      'Proje adımlarını planla/uygula/gözden geçir olarak sırala ve taslağı kontrol et.',
     ], activity('Proje taslağı ve kontrol listesi', 'Engelsiz yaşam proje kartı', 'Okulda ya da mahallede erişimi ve katılımı artıracak küçük, uygulanabilir bir proje taslağı hazırla.', [
       response('need', 'İhtiyaç / hedef', 'Hangi katılım engelini azaltmak istiyorsun?', 'textarea', 8),
       response('action', 'Yapılacak iş ve sorumlular', 'İlk adımı ve kimlerin katkı sunacağını yaz…', 'textarea', 8),
@@ -115,18 +115,18 @@
     ], 'Kitaptaki Engelsiz Yaşam proje taslağı ve kontrol listesi biçiminden esinlenir.')),
 
     week(8, '2–6 Kas', 'together', 'Millî mesele ve ortak değerler', 'Toplumun tamamını ilgilendiren konularda ortak değer, dayanışma ve sorumluluğun anlamını açıkla.', [
-      '“Millî mesele” kavramını kendi cümlenle anlat.',
-      'Birlik ve dayanışmanın önemli olduğu bir ortak yaşam örneği düşün.',
-      'Önemli bulduğun üç anahtar sözcüğü etkinliğe ekle.',
+      'Ortak değerler üzerine en az üç sözcüklü kelime bulutu oluştur ve birini günlük örnekle açıkla.',
+      'Değer kavramlarını somut günlük katkı davranışlarından ayır.',
+      'Verilen ortak yaşam durumlarından birini seçip farklı ve sorumlu katkı fikirleri üret.',
     ], activity('Kelime bulutu', 'Ortak değerler kelime bulutu', 'Millî meselelerde toplumu bir arada tutan kavramları düşün; en az üç anahtar sözcük ekle.', [
       wordField('words', 'Anahtar sözcükler', 'Örn. dayanışma, sorumluluk, bağımsızlık…'),
       response('meaning', 'Seçtiğin bir sözcüğün önemi', 'Bu sözcük birlik ve beraberliğe nasıl katkı sağlar?', 'textarea', 8),
     ], 'Kitapta millî birlik ve beraberlik için kelime bulutu etkinliği kullanılıyor.')),
 
     week(9, '9–13 Kas', 'together', 'Millî günler, bayrak ve ortak hafıza', 'Ulusal bayramların ve anma günlerinin toplumdaki ortak anlamını gerekçelendir.', [
-      'Bir ulusal bayram ile bir anma gününü birbirinden ayır.',
-      'Bayrak ve ortak törenlerin toplumsal anlamını düşün.',
-      'Bir tarihî günün neden birlikte hatırlandığını anlat.',
+      'Ulusal bayram ve anma günü kartlarını sınıflandır; bir tarihin anlamını kaynaktan doğrula.',
+      'Bayrağın ortak sembol olarak anlamı üzerine tahminlerini yaz ve güvenilir kaynakla kontrol et.',
+      'Ortak hafıza örneğine özgün slogan ve gerekçe yaz; farklı katılım biçimlerini değerlendir.',
     ], activity('Beyin fırtınası', 'Ortak günler neden önemlidir?', 'Bayram, anma ve ortak sembollerin toplumsal birlik duygusuna katkısı hakkında fikir üret.', [
       response('idea1', 'İlk düşüncem', 'Bir toplumsal katkı yaz…', 'textarea', 8),
       response('idea2', 'Başka bir bakış açısı', 'Bir kişinin ya da grubun deneyimini düşün…', 'textarea', 8),
@@ -134,9 +134,9 @@
     ], 'Kitaptaki ulusal bayramlar ve bayrakla ilgili beyin fırtınası biçiminden esinlenir.')),
 
     week(10, '23–27 Kas', 'together', 'Millî Mücadele’de birlik ve dayanışma', 'Tarihî kaynaklardan hareketle ortak amaç ve dayanışmanın mücadeleye katkısını çıkar.', [
-      'Millî Mücadele dönemine ait bir kitap kaynağı, görsel veya sınıf notu incele.',
-      'Kaynakta dayanışmayı gösteren bir kanıt belirle.',
-      'Kanıtın ortak amaca katkısını kendi cümlenle açıkla.',
+      'Özgün Millî Mücadele açıklamasını oku; tarihî bilgi ile çıkarımı ayır.',
+      'Katkı kartlarını maddi destek, ulaşım/haberleşme veya örgütlenme olarak sınıflandır.',
+      'Ders kitabındaki bir tarihî kaynağı kanıt/çıkarım tablosuyla incele.',
     ], activity('Kaynak inceleme ve tablo', 'Kanıttan çıkarıma', 'Bir tarihî kaynak ya da sınıf notundan hareketle kanıtı ve bu kanıttan çıkardığın sonucu tabloya yaz.', [
       response('source', 'İncelediğim kaynak', 'Kaynağın türü ve konusu…', 'text'),
       response('evidence', 'Kaynakta gördüğüm kanıt', 'Bir olay, davranış veya bilgi…', 'textarea', 8),
@@ -144,9 +144,9 @@
     ], 'Kitaptaki yazılı/görsel/dijital kaynağı inceleyip tablo doldurma biçiminden esinlenir.')),
 
     week(11, '30 Kas–4 Ara', 'together', 'Millî konularda toplumsal dayanışma', 'Afet, bilim, sanat ve spor örneklerinde ortak çaba ile toplumsal katkı arasındaki ilişkiyi karşılaştır.', [
-      'Kitapta veya güvenilir bir sınıf kaynağında verilen güncel örneklerden ikisini incele.',
-      'Örneklerde kimlerin nasıl katkı verdiğini belirle.',
-      'Ortak çabanın toplum için önemini karşılaştırmalı anlat.',
+      'Afet, bilim/sağlık, kültür/sanat ve spor alanlarından dört örneği aynı ölçütle karşılaştır.',
+      'Katkı kartlarını en çok ilişkili olduğu toplumsal alana göre sınıflandır.',
+      'Ders kitabı veya onaylı kaynaktan örnek seçip kısa dayanışma raporu hazırla.',
     ], activity('Karşılaştırma tablosu', 'Farklı alanlarda ortak çaba', 'İki farklı toplumsal örneği katkı ve ortak yarar bakımından karşılaştır.', [
       response('example1', 'Örnek 1 ve katkı', 'Bir afet, bilim, sanat ya da spor örneği…', 'textarea', 8),
       response('example2', 'Örnek 2 ve katkı', 'Başka bir alandan örnek…', 'textarea', 8),
@@ -154,9 +154,9 @@
     ], 'Kitaptaki farklı alanlardan millî mesele örneklerini inceleme yaklaşımına dayanır.')),
 
     week(12, '7–11 Ara', 'together', 'Birlikte Yaşamak · öğrenme alanı tekrarı', 'İletişim, fırsat eşitliği ve millî meseleler arasında bağlantı kur; öğrenmeni öz değerlendir.', [
-      'Üç konu başlığından her biri için bir anahtar kavram seç.',
-      'Seçtiğin kavramları bir günlük yaşam örneğiyle ilişkilendir.',
-      'Birlikte Yaşamak öğrenme alanında en çok geliştiğin noktayı anlat.',
+      'İletişim, fırsat eşitliği ve dayanışma kartlarını ilgili konu başlığıyla eşleştir.',
+      'Tekrar sorularında çoktan seçmeli ve çoklu seçim yanıtlarını kontrol et.',
+      'Açıklamalı kavram haritası ve öz değerlendirmeyle sonraki çalışma adımını belirle.',
     ], activity('Kavram haritası', 'Birlikte yaşama kavram haritası', 'Üç konu başlığını örneklerle birbirine bağlayan kısa bir kavram haritası taslağı oluştur.', [
       response('communication', 'İletişim → birlikte yaşama', 'İletişim hangi davranışla güçlenir?', 'textarea', 8),
       response('equality', 'Fırsat eşitliği → katılım', 'Eşit katılımı hangi düzenleme destekler?', 'textarea', 8),
@@ -450,14 +450,16 @@
   for (const item of WEEKS) {
     const content = LESSON_CONTENT.lessons?.[item.id] || {};
     const quiz = LESSON_CONTENT.checks?.[item.id] || [];
+    const customActivities = LESSON_CONTENT.activities?.[item.id];
     item.summary = content.summary || item.focus;
-    item.summaryTitle = content.summaryTitle || 'Haftanın konu özeti';
+    item.summaryTitle = content.summaryTitle || (item.id >= 3 && item.id <= 12 ? `${item.topic} · konu anlatımı` : 'Haftanın konu özeti');
     item.summaryPoints = Array.isArray(content.points) ? content.points : [];
     item.keyTerms = Array.isArray(content.terms) ? content.terms : [];
-    item.flowDescription = content.flowDescription || 'Kısa sınama, kitaba dayalı özgün çalışma ve konuya özel uygulama adımlarını sırayla tamamla.';
+    item.flowDescription = content.flowDescription || (item.id >= 3 && item.id <= 12 && Array.isArray(customActivities)
+      ? `Konu anlatımını oku; ardından ${customActivities.map((activityItem) => activityItem.title).join(' → ')} etkinliklerini sırayla tamamla.`
+      : 'Kısa sınama, kitaba dayalı özgün çalışma ve konuya özel uygulama adımlarını sırayla tamamla.');
     const transfer = content.transfer || {};
     const bookActivity = { ...item.activity, id: 'book' };
-    const customActivities = LESSON_CONTENT.activities?.[item.id];
     if (Array.isArray(customActivities) && customActivities.length) {
       item.activities = customActivities.map((activityItem) => ({
         ...activityItem,
@@ -562,6 +564,18 @@
             const allowed = field.options.some((option) => option.id === value);
             cleanResponses[activityItem.id][field.id] = allowed ? value : '';
             choiceChecks[activityItem.id][field.id] = rawChecksForActivity[field.id] === true;
+          } else if (field.kind === 'multi') {
+            const allowed = new Set(field.options.map((option) => option.id));
+            const selected = Array.isArray(value) ? new Set(value.filter((optionId) => allowed.has(optionId))) : new Set();
+            cleanResponses[activityItem.id][field.id] = field.options.filter((option) => selected.has(option.id)).map((option) => option.id);
+            choiceChecks[activityItem.id][field.id] = rawChecksForActivity[field.id] === true;
+          } else if (field.kind === 'sort') {
+            const assignments = isRecord(value) ? value : {};
+            const allowed = new Set(field.categories.map((category) => category.id));
+            cleanResponses[activityItem.id][field.id] = Object.fromEntries(
+              field.items.map((sortItem) => [sortItem.id, allowed.has(assignments[sortItem.id]) ? assignments[sortItem.id] : '']),
+            );
+            choiceChecks[activityItem.id][field.id] = rawChecksForActivity[field.id] === true;
           } else {
             cleanResponses[activityItem.id][field.id] = typeof value === 'string' ? value.slice(0, 5000) : '';
           }
@@ -632,6 +646,23 @@
     return activityItem.id === 'book' ? saved.responses : {};
   }
 
+  function isFieldAnswerCorrect(field, value) {
+    if (field.kind === 'choice') return value === field.answer;
+    if (field.kind === 'multi') {
+      if (!Array.isArray(value) || !Array.isArray(field.answer)) return false;
+      const actual = new Set(value);
+      const expected = new Set(field.answer);
+      return actual.size === expected.size && [...expected].every((optionId) => actual.has(optionId));
+    }
+    if (field.kind === 'sort') {
+      if (!isRecord(value) || !field.items?.length || !isRecord(field.expectedAssignments)) return false;
+      const validCategories = new Set(field.categories.map((category) => category.id));
+      return field.items.every((sortItem) => validCategories.has(value[sortItem.id])
+        && value[sortItem.id] === field.expectedAssignments[sortItem.id]);
+    }
+    return false;
+  }
+
   function isActivityComplete(item, saved, onlyActivity = null) {
     if (!item || !saved) return false;
     const activityItems = onlyActivity ? [onlyActivity] : item.activities;
@@ -645,7 +676,9 @@
           return field.options.every((option) => value && value[option.id] === true);
         }
         if (field.kind === 'words') return wordCount(value) >= 3;
-        if (field.kind === 'choice') return value === field.answer && checkedChoices[field.id] === true;
+        if (['choice', 'multi', 'sort'].includes(field.kind)) {
+          return isFieldAnswerCorrect(field, value) && checkedChoices[field.id] === true;
+        }
         return typeof value === 'string' && value.trim().length >= field.minChars;
       });
     });
@@ -666,8 +699,38 @@
 
   function choiceFeedbackHTML(field, value, isChecked) {
     if (!isChecked) return '';
-    const correct = value === field.answer;
+    const correct = isFieldAnswerCorrect(field, value);
     return `<div class="social-choice-feedback${correct ? ' is-correct' : ' is-retry'}" role="status" aria-live="polite"><b>${correct ? 'Doğru!' : 'Bir daha düşün.'}</b> ${escapeHTML(correct ? field.explanation : field.hint)}</div>`;
+  }
+
+  function sortFieldHTML(item, activityItem, field, saved, fieldIndex, showQuestionNumber) {
+    const rawAssignments = responsesFor(saved, activityItem)[field.id];
+    const assignments = isRecord(rawAssignments) ? rawAssignments : {};
+    const categories = Array.isArray(field.categories) ? field.categories : [];
+    const items = Array.isArray(field.items) ? field.items : [];
+    const validCategories = new Set(categories.map((category) => category.id));
+    const isPlaced = (sortItem) => validCategories.has(assignments[sortItem.id]);
+    const widgetId = `social-sort-${item.id}-${activityItem.id}-${field.id}`;
+    const card = (sortItem) => `<button type="button" class="social-sort-card" draggable="true" data-social-sort-item="${escapeHTML(sortItem.id)}" aria-pressed="false">${escapeHTML(sortItem.label)}</button>`;
+    const bankCards = items.filter((sortItem) => !isPlaced(sortItem)).map(card).join('');
+    const bankTargetId = `${widgetId}-target-bank`;
+    const bankHTML = `<section class="social-sort-bank-wrap" aria-labelledby="${widgetId}-bank-heading"><h4 id="${widgetId}-bank-heading">Kartlar <span class="social-sort-count">${items.filter((sortItem) => !isPlaced(sortItem)).length} kaldı</span></h4><div class="social-sort-dropzone social-sort-bank" id="${bankTargetId}" data-social-sort-target="bank" role="group" tabindex="0" aria-keyshortcuts="Enter Space" aria-roledescription="kart bırakma alanı" aria-label="Taşınmamış kartlar alanı; seçili kartı buraya geri taşımak için Enter veya Boşluk tuşuna bas">${bankCards || '<span class="social-sort-placeholder">Bütün kartlar gruplara yerleştirildi</span>'}</div></section>`;
+    const categoriesHTML = categories.map((category, index) => {
+      const inside = items.filter((sortItem) => assignments[sortItem.id] === category.id).map(card).join('');
+      const description = category.description ? `<p class="social-sort-category-description">${escapeHTML(category.description)}</p>` : '';
+      const icon = category.icon || ['🟦', '🟨', '🟩', '🟪'][index % 4];
+      const headingId = `${widgetId}-category-heading-${index}`;
+      const targetId = `${widgetId}-target-${category.id}`;
+      const accessibleLabel = `${category.label}${category.description ? `. ${category.description}` : ''}`;
+      return `<section class="social-sort-category" data-category-tone="${index % 4}"><div class="social-sort-category-heading"><span aria-hidden="true">${escapeHTML(icon)}</span><div><h4 id="${headingId}">${escapeHTML(category.label)}</h4>${description}</div></div><div class="social-sort-dropzone" id="${targetId}" data-social-sort-target="${escapeHTML(category.id)}" role="group" tabindex="0" aria-keyshortcuts="Enter Space" aria-roledescription="kart bırakma alanı" aria-labelledby="${headingId}" aria-label="${escapeHTML(accessibleLabel)}. Seçili kartı buraya taşımak için Enter veya Boşluk tuşuna bas">${inside || '<span class="social-sort-placeholder">Kartı buraya bırak veya seçili kartı buraya taşı</span>'}</div></section>`;
+    }).join('');
+    const assignedCount = items.filter(isPlaced).length;
+    const checked = saved.choiceChecks?.[activityItem.id]?.[field.id] === true;
+    const instructionsId = `${widgetId}-instructions`;
+    const guide = Array.isArray(field.guide) && field.guide.length
+      ? `<div class="social-sort-guide" role="note"><b>Mini şema</b><ol>${field.guide.map((step) => `<li>${escapeHTML(step)}</li>`).join('')}</ol></div>`
+      : '';
+    return `<fieldset class="social-sort-field"><legend>${showQuestionNumber ? `<span class="social-question-no">Soru ${fieldIndex + 1}</span>` : ''}${escapeHTML(field.label)}</legend><p class="social-sort-instructions" id="${instructionsId}">${escapeHTML(field.instructions || 'Kartı sürükle; dokunmatik ekranda karta, sonra hedefe dokun. Klavyede kartı Enter/Boşluk ile seç ve hedef gruba odaklanıp Enter/Boşluk ile yerleştir.')}</p>${guide}<div class="social-sort-widget" id="${widgetId}" data-social-sort-widget="true" data-social-week="${item.id}" data-social-activity="${escapeHTML(activityItem.id)}" data-social-field="${escapeHTML(field.id)}" data-assignments="${escapeHTML(JSON.stringify(assignments))}" aria-describedby="${instructionsId}">${bankHTML}<div class="social-sort-categories">${categoriesHTML}</div><p class="social-sort-status" data-social-sort-status role="status" aria-live="polite">${assignedCount} / ${items.length} kart yerleştirildi</p></div><button type="button" class="social-choice-check" data-social-check-choice="${escapeHTML(field.id)}" data-social-kind="sort" data-social-activity="${escapeHTML(activityItem.id)}" data-social-week="${item.id}">Eşleştirmemi kontrol et</button><div class="social-choice-feedback-slot" id="social-choice-feedback-${item.id}-${activityItem.id}-${field.id}">${choiceFeedbackHTML(field, assignments, checked)}</div></fieldset>`;
   }
 
   function fieldHTML(item, activityItem, field, saved, fieldIndex, showQuestionNumber = true) {
@@ -675,9 +738,14 @@
     const value = responses[field.id];
     const fieldId = `social-field-${item.id}-${activityItem.id}-${field.id}`;
     const activityData = `data-social-activity="${escapeHTML(activityItem.id)}"`;
-    if (field.kind === 'choice') {
+    if (field.kind === 'sort') return sortFieldHTML(item, activityItem, field, saved, fieldIndex, showQuestionNumber);
+    if (field.kind === 'choice' || field.kind === 'multi') {
       const checked = saved.choiceChecks?.[activityItem.id]?.[field.id] === true;
-      return `<fieldset class="social-choice-question"><legend>${showQuestionNumber ? `<span class="social-question-no">Soru ${fieldIndex + 1}</span>` : ''}${escapeHTML(field.label)}</legend><div class="social-choice-options">${field.options.map((option) => `<label class="social-choice-option"><input type="radio" name="social-choice-${item.id}-${activityItem.id}-${field.id}" data-social-response="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}" value="${escapeHTML(option.id)}" ${value === option.id ? 'checked' : ''}><span>${escapeHTML(option.label)}</span></label>`).join('')}</div><button type="button" class="social-choice-check" data-social-check-choice="${escapeHTML(field.id)}" ${activityData} data-social-week="${item.id}">Seçimimi kontrol et</button><div class="social-choice-feedback-slot" id="social-choice-feedback-${item.id}-${activityItem.id}-${field.id}">${choiceFeedbackHTML(field, value, checked)}</div></fieldset>`;
+      const isMulti = field.kind === 'multi';
+      const selected = Array.isArray(value) ? value : [];
+      const options = field.options.map((option) => `<label class="social-choice-option"><input type="${isMulti ? 'checkbox' : 'radio'}" name="social-${isMulti ? 'multi' : 'choice'}-${item.id}-${activityItem.id}-${field.id}" data-social-response="${escapeHTML(field.id)}" ${isMulti ? `data-social-multi="${escapeHTML(field.id)}" data-social-option="${escapeHTML(option.id)}"` : ''} ${activityData} data-social-week="${item.id}" value="${escapeHTML(option.id)}" ${isMulti ? (selected.includes(option.id) ? 'checked' : '') : (value === option.id ? 'checked' : '')}><span>${escapeHTML(option.label)}</span></label>`).join('');
+      const checkLabel = isMulti ? 'Seçimlerimi kontrol et' : 'Seçimimi kontrol et';
+      return `<fieldset class="social-choice-question"><legend>${showQuestionNumber ? `<span class="social-question-no">Soru ${fieldIndex + 1}</span>` : ''}${escapeHTML(field.label)}</legend><div class="social-choice-options">${options}</div><button type="button" class="social-choice-check" data-social-check-choice="${escapeHTML(field.id)}" data-social-kind="${field.kind}" ${activityData} data-social-week="${item.id}">${checkLabel}</button><div class="social-choice-feedback-slot" id="social-choice-feedback-${item.id}-${activityItem.id}-${field.id}">${choiceFeedbackHTML(field, value, checked)}</div></fieldset>`;
     }
     if (field.kind === 'checklist') {
       const checks = value || {};
@@ -879,6 +947,40 @@
     preview.innerHTML = words.map((word) => `<span>${escapeHTML(word)}</span>`).join('');
   }
 
+  let selectedSocialSortCard = null;
+
+  function socialSortContext(widget) {
+    if (!widget) return null;
+    const weekId = Number(widget.dataset.socialWeek);
+    const item = WEEK_BY_ID.get(weekId);
+    const activityItem = item?.activities.find((candidate) => candidate.id === widget.dataset.socialActivity);
+    const field = activityItem?.fields.find((candidate) => candidate.id === widget.dataset.socialField);
+    return item && activityItem && field?.kind === 'sort'
+      ? { widget, weekId, item, activityItem, field }
+      : null;
+  }
+
+  function moveSocialSortCard(widget, itemId, targetId) {
+    const context = socialSortContext(widget);
+    if (!context || !context.field.items.some((sortItem) => sortItem.id === itemId)) return false;
+    const targetIsBank = targetId === 'bank';
+    if (!targetIsBank && !context.field.categories.some((category) => category.id === targetId)) return false;
+    const saved = ensureWeekProgress(context.weekId);
+    const previous = saved.responses[context.activityItem.id][context.field.id];
+    const assignments = isRecord(previous) ? { ...previous } : {};
+    if (targetIsBank) delete assignments[itemId];
+    else assignments[itemId] = targetId;
+    saved.responses[context.activityItem.id][context.field.id] = assignments;
+    delete saved.choiceChecks[context.activityItem.id][context.field.id];
+    selectedSocialSortCard = null;
+    persist();
+    renderSelectedWeek();
+    refreshProgressUI();
+    const focusId = `social-sort-${context.weekId}-${context.activityItem.id}-${context.field.id}-target-${targetIsBank ? 'bank' : targetId}`;
+    document.getElementById(focusId)?.focus({ preventScroll: true });
+    return true;
+  }
+
   function bindEvents() {
     if (initialized) return;
     const root = document.getElementById('socialWorkspace');
@@ -931,13 +1033,20 @@
         const item = WEEK_BY_ID.get(weekId);
         const activityItem = item?.activities.find((candidate) => candidate.id === checkButton.dataset.socialActivity);
         const field = activityItem?.fields.find((candidate) => candidate.id === checkButton.dataset.socialCheckChoice);
-        if (!item || !activityItem || !field || field.kind !== 'choice') return;
+        if (!item || !activityItem || !field || !['choice', 'multi', 'sort'].includes(field.kind)) return;
         const saved = ensureWeekProgress(weekId);
-        const responses = responsesFor(saved, activityItem);
-        const value = responses[field.id];
+        const value = responsesFor(saved, activityItem)[field.id];
         const feedback = document.getElementById(`social-choice-feedback-${item.id}-${activityItem.id}-${field.id}`);
-        if (!field.options.some((option) => option.id === value)) {
-          if (feedback) feedback.innerHTML = '<div class="social-choice-feedback is-reminder" role="status" aria-live="polite">Önce bir seçenek işaretle.</div>';
+        const hasResponse = field.kind === 'choice'
+          ? field.options.some((option) => option.id === value)
+          : field.kind === 'multi'
+            ? Array.isArray(value) && value.length > 0
+            : isRecord(value) && field.items.every((sortItem) => field.categories.some((category) => category.id === value[sortItem.id]));
+        if (!hasResponse) {
+          const reminder = field.kind === 'sort'
+            ? 'Önce tüm kartları bir gruba yerleştir.'
+            : field.kind === 'multi' ? 'Önce en az bir seçenek işaretle.' : 'Önce bir seçenek işaretle.';
+          if (feedback) feedback.innerHTML = `<div class="social-choice-feedback is-reminder" role="status" aria-live="polite">${escapeHTML(reminder)}</div>`;
           return;
         }
         saved.choiceChecks[activityItem.id][field.id] = true;
@@ -947,17 +1056,128 @@
         return;
       }
 
+      const sortCard = event.target.closest('[data-social-sort-item]');
+      if (sortCard) {
+        const widget = sortCard.closest('[data-social-sort-widget]');
+        const context = socialSortContext(widget);
+        if (!context) return;
+        const itemId = sortCard.dataset.socialSortItem;
+        const sameCard = selectedSocialSortCard
+          && selectedSocialSortCard.weekId === context.weekId
+          && selectedSocialSortCard.activityId === context.activityItem.id
+          && selectedSocialSortCard.fieldId === context.field.id
+          && selectedSocialSortCard.itemId === itemId;
+        selectedSocialSortCard = sameCard ? null : {
+          weekId: context.weekId,
+          activityId: context.activityItem.id,
+          fieldId: context.field.id,
+          itemId,
+        };
+        root.querySelectorAll('[data-social-sort-item]').forEach((card) => {
+          const active = selectedSocialSortCard?.itemId === card.dataset.socialSortItem;
+          card.classList.toggle('is-selected', active);
+          card.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        const status = widget.querySelector('[data-social-sort-status]');
+        if (status) {
+          const sortItem = context.field.items.find((candidate) => candidate.id === itemId);
+          status.textContent = sameCard ? 'Kart seçimi kaldırıldı.' : `“${sortItem?.label || 'Kart'}” seçildi. Şimdi bir hedef grubu seç veya kartı sürükle.`;
+        }
+        return;
+      }
+
+      const sortTarget = event.target.closest('[data-social-sort-target]');
+      if (sortTarget) {
+        const widget = sortTarget.closest('[data-social-sort-widget]');
+        const context = socialSortContext(widget);
+        const matchesSelection = context && selectedSocialSortCard
+          && selectedSocialSortCard.weekId === context.weekId
+          && selectedSocialSortCard.activityId === context.activityItem.id
+          && selectedSocialSortCard.fieldId === context.field.id;
+        if (matchesSelection) moveSocialSortCard(widget, selectedSocialSortCard.itemId, sortTarget.dataset.socialSortTarget);
+        else {
+          const status = widget?.querySelector('[data-social-sort-status]');
+          if (status) status.textContent = 'Önce bir kart seç, sonra hedef gruba tıkla.';
+        }
+        return;
+      }
+
       if (event.target.closest('[data-social-print]')) window.print();
+    });
+
+    root.addEventListener('dragstart', (event) => {
+      const card = event.target.closest('[data-social-sort-item]');
+      if (!card) return;
+      const widget = card.closest('[data-social-sort-widget]');
+      const context = socialSortContext(widget);
+      if (!context) return;
+      selectedSocialSortCard = {
+        weekId: context.weekId,
+        activityId: context.activityItem.id,
+        fieldId: context.field.id,
+        itemId: card.dataset.socialSortItem,
+      };
+      if (event.dataTransfer) {
+        event.dataTransfer.setData('text/plain', card.dataset.socialSortItem);
+        event.dataTransfer.effectAllowed = 'move';
+      }
+      card.classList.add('is-dragging');
+    });
+
+    root.addEventListener('dragend', (event) => {
+      const card = event.target.closest('[data-social-sort-item]');
+      card?.classList.remove('is-dragging');
+    });
+
+    root.addEventListener('dragover', (event) => {
+      const target = event.target.closest('[data-social-sort-target]');
+      if (!target) return;
+      event.preventDefault();
+      target.classList.add('drag-over');
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+    });
+
+    root.addEventListener('dragleave', (event) => {
+      const target = event.target.closest('[data-social-sort-target]');
+      if (!target || (event.relatedTarget && target.contains(event.relatedTarget))) return;
+      target.classList.remove('drag-over');
+    });
+
+    root.addEventListener('drop', (event) => {
+      const target = event.target.closest('[data-social-sort-target]');
+      if (!target) return;
+      event.preventDefault();
+      target.classList.remove('drag-over');
+      const widget = target.closest('[data-social-sort-widget]');
+      const itemId = event.dataTransfer?.getData('text/plain') || selectedSocialSortCard?.itemId;
+      if (itemId) moveSocialSortCard(widget, itemId, target.dataset.socialSortTarget);
+    });
+
+    root.addEventListener('keydown', (event) => {
+      const target = event.target.closest('[data-social-sort-target]');
+      if (!target || !['Enter', ' ', 'Spacebar'].includes(event.key)) return;
+      event.preventDefault();
+      const widget = target.closest('[data-social-sort-widget]');
+      const context = socialSortContext(widget);
+      const matchesSelection = context && selectedSocialSortCard
+        && selectedSocialSortCard.weekId === context.weekId
+        && selectedSocialSortCard.activityId === context.activityItem.id
+        && selectedSocialSortCard.fieldId === context.field.id;
+      if (matchesSelection) moveSocialSortCard(widget, selectedSocialSortCard.itemId, target.dataset.socialSortTarget);
+      else {
+        const status = widget?.querySelector('[data-social-sort-status]');
+        if (status) status.textContent = 'Önce bir kart seç, sonra hedef gruba odaklanıp Enter veya Boşluk tuşuna bas.';
+      }
     });
 
     root.addEventListener('input', (event) => {
       const input = event.target.closest('[data-social-response]');
-      if (!input || input.type === 'radio') return;
+      if (!input || input.type === 'radio' || input.type === 'checkbox') return;
       const weekId = Number(input.dataset.socialWeek);
       const item = WEEK_BY_ID.get(weekId);
       const activityItem = item?.activities.find((candidate) => candidate.id === input.dataset.socialActivity);
       const field = activityItem?.fields.find((candidate) => candidate.id === input.dataset.socialResponse);
-      if (!item || !activityItem || !field || field.kind === 'choice') return;
+      if (!item || !activityItem || !field || ['choice', 'multi', 'sort', 'checklist'].includes(field.kind)) return;
       const saved = ensureWeekProgress(weekId);
       saved.responses[activityItem.id][field.id] = input.value;
       persist();
@@ -971,7 +1191,18 @@
       const item = WEEK_BY_ID.get(weekId);
       if (!item) return;
       const saved = ensureWeekProgress(weekId);
-      if (input.dataset.socialResponse && input.type === 'radio') {
+      if (input.dataset.socialMulti && input.type === 'checkbox') {
+        const activityItem = item.activities.find((candidate) => candidate.id === input.dataset.socialActivity);
+        const field = activityItem?.fields.find((candidate) => candidate.id === input.dataset.socialMulti);
+        if (!activityItem || !field || field.kind !== 'multi' || !field.options.some((option) => option.id === input.dataset.socialOption)) return;
+        const selected = new Set(Array.isArray(saved.responses[activityItem.id][field.id]) ? saved.responses[activityItem.id][field.id] : []);
+        if (input.checked) selected.add(input.dataset.socialOption);
+        else selected.delete(input.dataset.socialOption);
+        saved.responses[activityItem.id][field.id] = field.options.filter((option) => selected.has(option.id)).map((option) => option.id);
+        delete saved.choiceChecks[activityItem.id][field.id];
+        const feedback = document.getElementById(`social-choice-feedback-${item.id}-${activityItem.id}-${field.id}`);
+        if (feedback) feedback.innerHTML = '';
+      } else if (input.dataset.socialResponse && input.type === 'radio') {
         const activityItem = item.activities.find((candidate) => candidate.id === input.dataset.socialActivity);
         const field = activityItem?.fields.find((candidate) => candidate.id === input.dataset.socialResponse);
         if (!activityItem || !field || field.kind !== 'choice' || !field.options.some((option) => option.id === input.value)) return;

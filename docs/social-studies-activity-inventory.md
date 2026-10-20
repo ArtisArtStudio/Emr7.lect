@@ -26,9 +26,9 @@ Etkinlik çeşitleri yalnızca genel tür adlarından çıkarılmadı; ilgili sa
 | PDF / basılı sayfa | PDF'de görülen çalışma ve düşünme adımları | Uygulamadaki karşılığı |
 |---|---|---|
 | `-1`, s. 12 | Birlikte yaşama unsurlarını yapboz parçalarına yerleştirme ve parçaları örneklerle açıklama | Bu genel giriş etkinliği, ilk iletişim haftasının özel sırasına eklenmedi; 1. hafta kullanıcı tarafından tarif edilen iletişim okuması, etmenler ve araştırma adımlarıyla başlar. Bu satır PDF’deki envanteri gösterir; ilk iki haftada aynı sayfanın bire bir karşılığı olarak sunulmaz. |
-| `-1`, s. 25–28 | Günlük yaşam çatışma senaryosu; olası devamı tahmin etme (“arkası yarın”); olumlu ve iletişimi zorlaştıran davranışları sınıflandırma; uzlaşma/iletişim üzerine çıkarım. Bir örnekte QR sesinin devamıyla tahminin karşılaştırılması | İlk iki hafta, kullanıcının istediği akışa göre yeniden kuruldu: 1. hafta özgün sohbet/ trafik okuması/ dört örnek olay/ merak ve araştırma; 2. hafta iletişim süreci ve türleri. Kitabın QR sesi yeniden yayımlanmaz veya taklit edilmez |
-| `-1`, s. 37–39 | Fikirleri sırayla yazıp geliştirme; proje taslağı, hedef ve kontrol listesi; hazırlanan ürünü gözden geçirme | 5–7. haftalar: beyin yazımı, erişilebilirlik için sorun–çözüm tablosu, küçük proje kartı ve kontrol listesi |
-| `-2`, s. 40–47 | Millî birlik için kelime bulutu; ulusal bayramlar/anma günleri için beyin fırtınası; yazılı, görsel veya dijital kaynaktan kanıt seçip tabloya aktarma | 8–12. haftalar: kavram bulutu, gerekçeli fikir, kaynak–kanıt–çıkarım notu, örnek karşılaştırma ve öğrenme alanı kavram haritası |
+| `-1`, s. 25–28 | Günlük yaşam çatışma senaryosu; olası devamı tahmin etme (“arkası yarın”); olumlu ve iletişimi zorlaştıran davranışları sınıflandırma; uzlaşma/iletişim üzerine çıkarım. Bir örnekte QR sesinin devamıyla tahminin karşılaştırılması | 4. hafta: özgün, yarım bırakılmış grup durumu üzerinden olası devamı tahmin etme; davranışları yapıcı/gerilimi artıran olarak sınıflandırma; ihtiyaçları gözeten uzlaşma planı. QR sesinin içeriği yeniden yayımlanmaz veya taklit edilmez |
+| `-1`, s. 37–39 | Fikirleri sırayla yazıp geliştirme; proje taslağı, hedef ve kontrol listesi; hazırlanan ürünü gözden geçirme | 5–7. haftalar: fırsat eşitliği için beyin yazımı; çevresel engel/düzenleme sınıflandırması; küçük proje hedefi, aşamaları ve kontrol listesi |
+| `-2`, s. 40–47 | Millî birlik için kelime bulutu; ulusal bayramlar/anma günleri için beyin fırtınası; yazılı, görsel veya dijital kaynaktan kanıt seçip tabloya aktarma | 8–12. haftalar: ortak değerler kelime bulutu ve fikir üretme; bayram/anma günü sınıflandırma; Millî Mücadele katkılarını türlerine ayırma; kaynak kanıtı/çıkarımı, örnek karşılaştırma ve açıklamalı kavram haritası |
 | `-2`, s. 58–59 çevresi | Evimiz Dünya konusuna geçiş; küreselleşmeyi günlük örnek ve görsellerle düşünme | 13–18. haftalar: kendi tanımını sözlük tanımıyla karşılaştırma, küresel etki tablosu, sorunları etki ölçeğine göre sınıflandırma ve paydaş/çözüm haritası |
 | `-3`, s. 86–91 | Malazgirt öncesi/sonrası harita karşılaştırması; Osmanlı Beyliği'nin kuruluş konumunu GZFT başlıklarında inceleme; merak sorusu üretme, soru kartı ve kaynaklardan araştırma raporu | 19–23. haftalar: harita gözlemi, kanıtlı GZFT, kavram–örnek tablosu, zaman çizelgesi, dönem ve kaynak karşılaştırması |
 | `-3`, s. 102–103 çevresi | İstanbul'un fethi, hazırlıkları ve sonuçları hakkında metin/kanıt çalışması; tarihî gelişmeyi kısa haber veya manşetle anlatmaya uygun biçimler | 24–26. haftalar: neden–hazırlık–sonuç tablosu, özgün manşet, dönem/harita karşılaştırması ve deniz yolları–Osmanlı ekonomisi için kanıta dayalı yorum |
@@ -52,15 +52,30 @@ Her hafta öğrenciye dönük konu anlatımı/özeti, hatırlatma noktaları ve 
 
 2. hafta iletişim süreci ve sözlü, yazılı, sözsüz iletişim yollarını açıklayan daha geniş bir özgün metinle devam eder. Ardından altı günlük yaşam örneğinde tür sınıflandırma, aynı amacı farklı yollarla ifade etme ve farklı grup durumlarında uygun iletişim yolunu gerekçelendirme etkinlikleri gelir. Metinler, sohbetler, olaylar ve sorular özgün yazılmıştır; ders kitabındaki metin veya soru ifadeleri kopyalanmaz.
 
-### Kalan haftalar
+### Yenilenen haftalar: 3–12
 
-3–37. haftalarda mevcut üç parçalı akış korunur:
+İlk öğrenme alanında 2. haftadan sonraki tüm haftalar, ders kitabında görülen çalışma akışlarına göre yeniden düzenlendi. Her haftada konu özeti ve üç mini-plan görevi, ardından konuya uygun değişken sayıda etkinlik bulunur:
 
-1. **Kısa sınama:** Konuya özgü iki çoktan seçmeli soru; seçim kontrol edilince doğru/yeniden deneme geri bildirimi ve ipucu gösterilir.
-2. **Kitapta görülen biçimden esinlenen özgün çalışma:** Örneğin örnek olay, sınıflandırma, beyin yazımı, proje taslağı, kontrol listesi, kelime bulutu, kaynak/harita tablosu, GZFT, soru kartı, haber veya neden–sonuç çalışması.
-3. **Uygulama ve öz değerlendirme:** Haftanın konusuna göre senaryo, kaynak/kanıt, etki, karşılaştırma, araştırma veya paylaşım üzerine açık yanıtlar.
+| Hafta | Yenilenen özgün etkinlik akışı |
+|---:|---|
+| 3 | Empati durumunu okuma ve duygu çıkarımı → ben dili/suçlayıcı dil/saygılı soruları erişilebilir sürükle-bırakla sınıflandırma → cümle dönüştürme, çoklu seçim ve yansıtma |
+| 4 | “Arkası yarın” biçiminde devamı tahmin etme → yapıcı ve çatışmayı artıran davranışları sınıflandırma → iki tarafın ihtiyacını gözeten çözüm |
+| 5 | Fırsat eşitliği üzerine özgün okuma → çevresel engel ve destekleyici düzenlemeyi sürükle-bırakla ayırma → kitapta görülen beyin yazımıyla fikir üretme/geliştirme |
+| 6 | Fiziksel erişim, bilgiye erişim ve katılımı destekleyen düzenlemeleri eşleştirme → etkinlik planını değerlendirme → erişilebilirlik gözlem kontrol listesi |
+| 7 | İhtiyaç, hedef, görev ve etki ölçütü içeren proje taslağı → proje adımlarını sürükle-bırakla sıralama → proje kontrol listesi ve geliştirme adımı |
+| 8 | Ortak değerler kelime bulutu → kavramları somut katkı davranışlarından ayırma → ortak mesele için farklı fikirler üretme |
+| 9 | Ulusal bayram/anma günü tarih kartlarını sınıflandırma → bayrak üzerine beyin fırtınası ve kaynak doğrulama → ortak hafıza durumu, slogan ve gerekçe |
+| 10 | Millî Mücadele ve ortak katkılar üzerine özgün açıklama → katkı türlerini sürükle-bırakla sınıflandırma → ders kitabındaki tarihî kaynak için kanıt/çıkarım tablosu |
+| 11 | Afet, bilim/sağlık, kültür/sanat ve spor örneklerini karşılaştırma → katkıları alanlarına göre sınıflandırma → onaylı kaynağa dayalı mini rapor |
+| 12 | Birlikte Yaşamak konularına kavram eşleştirme → çoktan seçmeli/çoklu seçim tekrar turu → açıklamalı kavram haritası ve öz değerlendirme |
 
-Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu mini plan ve o haftanın tüm etkinlik yanıtları tamamlanınca otomatik işaretlenir; seçimli sorular doğru yanıtlanmalı ve geri bildirimi kontrol edilmelidir. Açık uçlu yanıtlar otomatik puanlanmaz. EBA, Tonguç ve MEBİ kutuları öğrenci tarafından elle işaretlenir. Tonguç araması haftanın konusunu içerir.
+Sürükle-bırak kartları dokunmatik ekranda karta ve hedefe sırayla dokunarak veya klavyede Enter/Boşluk ile de taşınabilir. Her sınıflandırma, eşleştirme ve seçimli soruda geri bildirim kontrolü bulunur. Sürükleme etkinliğinin doğru tamamlanması için tüm kartlar yerleştirilmeli, cevap kontrol edilmeli ve sınıflandırma doğru olmalıdır. Çoklu seçimde de doğru seçeneklerin tamamı seçilmelidir.
+
+### 13. haftadan sonraki mevcut akış
+
+13–37. haftaların etkinlik içerikleri ve sırası bu taleple değiştirilmedi. Bu haftalar kendi konu, kaynak ve transfer çalışmalarını korur; yeni sürükle-bırak uygulamaları ilk öğrenme alanındaki 3–12. haftalarla sınırlıdır.
+
+Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu mini plan ve o haftanın tüm etkinlik yanıtları tamamlanınca otomatik işaretlenir; seçimli/çoklu seçimli/sürükle-bırak sorular kontrol edilip doğru tamamlanmalıdır. Açık uçlu yanıtlar otomatik puanlanmaz. EBA, Tonguç ve MEBİ kutuları öğrenci tarafından elle işaretlenir. Tonguç araması haftanın konusunu içerir.
 
 ## Çizelge bağlantıları
 
@@ -69,4 +84,4 @@ Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu
 - EBA 7. sınıf Sosyal Bilgiler: <https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&okulTuru=6&sinif=15&genelMudurluk=33&ders=17&program=1131&kazanimlar=310150>
 - MEBİ öğrenci bölümü: <https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce>
 
-Sosyal Bilgiler ilerlemesi Türkçe ilerlemesinden ayrı bir tarayıcı anahtarında saklanır; ana uygulamanın JSON yedeğine alınır ve yedekten geri yüklenir. İlk iki haftanın etkinlik akışı genişletilirken önceki JSON/yerel ilerleme kayıtları silinmez: yeni etkinlik yanıtları ve seçim kontrolleri kendi alanlarında saklanır, artık kullanılmayan eski yanıtlar da yedek verisinde `legacyResponses` / `legacyChoiceChecks` altında korunur. Mini-plan kutuları, diğer haftaların etkinlik verileri, platform ilerlemesi ve seçili hafta korunur. API anahtarları bu yedeğe veya bu özellikteki dosyalara eklenmez.
+Sosyal Bilgiler ilerlemesi Türkçe ilerlemesinden ayrı bir tarayıcı anahtarında saklanır; ana uygulamanın JSON yedeğine alınır ve yedekten geri yüklenir. Etkinlik akışları yenilenirken önceki JSON/yerel ilerleme kayıtları silinmez: yeni etkinlik yanıtları ve seçim kontrolleri kendi alanlarında saklanır, artık kullanılmayan eski etkinlik yanıtları da yedek verisinde `legacyResponses` / `legacyChoiceChecks` altında korunur. Mini-plan kutuları, diğer haftaların etkinlik verileri, platform ilerlemesi ve seçili hafta korunur. API anahtarları bu yedeğe veya bu özellikteki dosyalara eklenmez.
