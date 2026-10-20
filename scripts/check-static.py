@@ -300,6 +300,10 @@ for (const unitId of [1,3,5]) {{
   const comprehensionQuestions = context.window.THEME1_FORMS['marti-a03'];
   const plotQuestions = context.window.THEME1_FORMS['marti-a04'];
   const viewpointQuestions = context.window.THEME1_FORMS['marti-a05'];
+  const foodPressureQuestion = viewpointQuestions.find((question) => question.id === 'problem');
+  if (!foodPressureQuestion?.answerKey?.effect?.includes('avlanmaya') || !foodPressureQuestion.rubric.includes('doğru kabul et')) throw new Error('The Martı hardship evaluator must accept the text-supported hunger/food-search answer');
+  const hayatTopicQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'topic');
+  if (!hayatTopicQuestion?.answerKey?.mainIdea?.includes('Öğrenmenin yaşı yoktur') || !hayatTopicQuestion.rubric.includes('hayat çok zordur')) throw new Error('The Hayat Büyük Bir Okuldur assessment needs its main idea and an explicit unrelated-answer rejection criterion');
   const solutionQuestions = context.window.THEME1_FORMS['marti-a06'];
   if (!vocabularyQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !vocabularyQuestions.some((question) => question.fields.some((field) => field.type === 'select'))) throw new Error('The Jonathan vocabulary task needs word matching and dictionary choices');
   if (!comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'checkboxes')) || !comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'radio')) || !comprehensionQuestions.some((question) => question.responseType === 'matching')) throw new Error('The Jonathan comprehension tasks need selection, matching, and written evidence');
@@ -360,9 +364,8 @@ for (const unitId of [1,3,5]) {{
     if (activity.id === 'marti-a08') {{
       const html = element('activity-stage').innerHTML;
       if (!html.includes('href="https://example.test/hayat-buyuk"') || !html.includes('href="https://example.test/soru-videosu"')) throw new Error('QR video links were not rendered at activity and question level');
-      if (!html.includes('Groq QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez') || !html.includes('Gemini analiz raporu')) throw new Error('QR activity does not identify the Gemini source notes and Groq video/audio access limit');
+      if (html.includes('source-limit-note') || html.includes('Yapay zekâ sınırı')) throw new Error('The user-facing pre-video AI warning card should be removed');
     }}
-    if (activity.id === 'adiny-a03' && !element('activity-stage').innerHTML.includes('video/dinleme içeriğinin doğru olduğu onayı değildir')) throw new Error('Mixed story/video comparison lacks an explicit verification limit');
     if (activity.id === 'adiny-review') {{
       const html = element('activity-stage').innerHTML;
       const start = html.indexOf('data-question-key="adiny-review::review-4"');
@@ -524,131 +527,190 @@ def groq_prompt_test_source() -> str:
     ]
     source_notes = {
         path.relative_to(ROOT).as_posix(): path.read_text(encoding="utf-8")
-        for path in sorted((ROOT / "docs/video-analysis").glob("*.md"))
+        for path in sorted((ROOT / "docs/video-analysis").iterdir())
+        if path.is_file()
     }
-    return f"""
+    template = r"""
 const vm = require('node:vm');
-const sources = {json.dumps(sources, ensure_ascii=False)};
-const mockSourceNotes = {json.dumps(source_notes, ensure_ascii=False)};
-const saved = {{
-  1: {{theme1PracticeFlow: {{stepIndex: 0, answers: {{'marti-a03::evidence-1': {{behaviors: ['Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi', 'Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi'], evidence: 'Jonathan tests a new way of turning.'}}}}, feedback: {{}}}}}},
-  3: {{theme1PracticeFlow: {{stepIndex: 3, answers: {{'genclik-a04::visual-link': {{photo: 'Sahil fotoğrafı.', video: 'Bir çocuk çöp topluyor.', link: 'İkisi de doğayı korumayı anlatıyor.'}}}}, feedback: {{}}}}}},
-  5: {{theme1PracticeFlow: {{stepIndex: 2, answers: {{'adiny-a03::compare-1': {{kaoru: 'Kaoru teleskop yaptı.', athlete: 'Sporcu okçulukta çalıştı.', comparison: 'İkisi de emek verdi.'}}, 'adiny-a05::note-1': {{answer: 'Semerkant'}}}}, feedback: {{}}}}}}
-}};
+const sources = __SOURCES__;
+const mockSourceNotes = __NOTES__;
+const saved = {
+  1: {theme1PracticeFlow: {
+    stepIndex: 0,
+    answers: {
+      'marti-a03::evidence-1': {behaviors: ['Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi', 'Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi'], evidence: 'Jonathan tests a new way of turning.'},
+      'marti-a05::problem': {challenge: 'Aç kalma ve yiyecek arama baskısı', effect: 'Ailesi yiyecek bulamamasından endişelenir; Jonathan başını itaatkâr biçimde eğer ve bir süre avlanmaya çalışır.'},
+      'marti-a08::topic': {answer: 'Hayat çok zordur.'}
+    },
+    feedback: {'marti-a08::topic': {state: 'wrong', text: 'SECRET_LEGACY_ANSWER_9Z'}}
+  }},
+  3: {theme1PracticeFlow: {stepIndex: 3, answers: {'genclik-a04::visual-link': {photo: 'Sahil fotoğrafı.', video: 'Bir çocuk çöp topluyor.', link: 'İkisi de doğayı korumayı anlatıyor.'}}, feedback: {}}},
+  5: {theme1PracticeFlow: {stepIndex: 2, answers: {'adiny-a03::compare-1': {kaoru: 'Kaoru teleskop yaptı.', athlete: 'Sporcu okçulukta çalıştı.', comparison: 'İkisi de emek verdi.'}, 'adiny-a05::note-1': {answer: 'Semerkant'}}, feedback: {}}}
+};
 const storage = new Map([
   ['turkceRota2026', JSON.stringify(saved)],
   ['turkceGroqKey2026', 'unit-test-key']
 ]);
 const elements = new Map();
 let capturedRequest = null;
-let mockResponse = 'DURUM: TAM DOĞRU | İPUCU: Başka bir örnek ara.';
-const element = (id) => {{
-  if (!elements.has(id)) {{
-    const item = {{
-      id, innerHTML: '', textContent: '', dataset: {{}}, value: '', checked: false,
-      disabled: false, hidden: false, attributes: {{}}, listeners: {{}}, style: {{}},
-      setAttribute(name, value) {{ this.attributes[name] = value; }},
-      addEventListener(name, callback) {{ this.listeners[name] = callback; }},
-      getBoundingClientRect() {{ return {{top: 0}}; }}
-    }};
-    item.querySelectorAll = (selector) => {{
-      if (id === 'activity-stage' && selector === '[data-check-question]') {{
+let mockResponse = JSON.stringify({status: 'correct', issues: [], hint: 'recheck', leakedAnswer: 'SECRET_MODEL_ANSWER_7Q'});
+const element = (id) => {
+  if (!elements.has(id)) {
+    const item = {
+      id, innerHTML: '', textContent: '', dataset: {}, value: '', checked: false,
+      disabled: false, hidden: false, attributes: {}, listeners: {}, style: {},
+      setAttribute(name, value) { this.attributes[name] = value; },
+      addEventListener(name, callback) { this.listeners[name] = callback; },
+      getBoundingClientRect() { return {top: 0}; }
+    };
+    item.querySelectorAll = (selector) => {
+      if (id === 'activity-stage' && selector === '[data-check-question]') {
         const matches = [...item.innerHTML.matchAll(/data-check-question="([^"]+)"/g)];
-        item.checkButtons = matches.map((match) => {{
-          const feedback = {{dataset: {{}}, hidden: true, textContent: ''}};
-          const pill = {{dataset: {{}}, hidden: true, textContent: ''}};
-          const card = {{dataset: {{}}, querySelector: (name) => name === '.feedback-box' ? feedback : name === '[data-result-pill]' ? pill : null}};
-          return {{dataset: {{checkQuestion: match[1]}}, disabled: false, textContent: '', listeners: {{}}, closest: () => card, addEventListener(name, callback) {{ this.listeners[name] = callback; }}, card, feedback, pill}};
-        }});
+        item.checkButtons = matches.map((match) => {
+          const feedback = {dataset: {}, hidden: true, textContent: ''};
+          const pill = {dataset: {}, hidden: true, textContent: ''};
+          const card = {dataset: {}, querySelector: (name) => name === '.feedback-box' ? feedback : name === '[data-result-pill]' ? pill : null};
+          return {dataset: {checkQuestion: match[1]}, disabled: false, textContent: '', listeners: {}, closest: () => card, addEventListener(name, callback) { this.listeners[name] = callback; }, card, feedback, pill};
+        });
         return item.checkButtons;
-      }}
+      }
       return [];
-    }};
+    };
     elements.set(id, item);
-  }}
+  }
   return elements.get(id);
-}};
+};
 const loadedNotes = [];
-const browserWindow = {{
-  location: {{href: 'https://example.github.io/Emr7.lect/?unit=1', search: '?unit=1'}}, scrollY: 0, scrollTo() {{}},
-  setTimeout() {{ return 1; }}, clearTimeout() {{}}
-}};
-const context = vm.createContext({{
+const browserWindow = {
+  location: {href: 'https://example.github.io/Emr7.lect/?unit=1', search: '?unit=1'}, scrollY: 0, scrollTo() {},
+  setTimeout() { return 1; }, clearTimeout() {}
+};
+const context = vm.createContext({
   window: browserWindow,
-  document: {{title: '', getElementById: element}},
-  localStorage: {{getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key)}},
+  document: {title: '', getElementById: element},
+  localStorage: {getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key)},
   URL, URLSearchParams, Date, console,
-  fetch: async (url, options = {{}}) => {{
-    if (!options.body) {{
+  fetch: async (url, options = {}) => {
+    if (!options.body) {
       const sourcePath = new URL(String(url)).pathname.split('/').slice(-3).join('/');
       const notes = mockSourceNotes[sourcePath];
-      if (!notes) throw new Error(`No mock Gemini report for ${{sourcePath}}`);
+      if (!notes) throw new Error(`No mock Gemini report for ${sourcePath}`);
       loadedNotes.push(sourcePath);
-      return {{ok: true, text: async () => notes}};
-    }}
-    capturedRequest = {{url, body: JSON.parse(options.body)}};
-    return {{ok: true, json: async () => ({{choices: [{{message: {{content: mockResponse}}}}]}})}};
-  }}
-}});
+      return {ok: true, text: async () => notes};
+    }
+    capturedRequest = {url, body: JSON.parse(options.body)};
+    return {ok: true, json: async () => ({choices: [{message: {content: mockResponse}}]})};
+  }
+});
 for (const source of sources) vm.runInContext(source, context);
 element('apiKey').value = 'unit-test-key';
 context.window.renderTheme1PracticeFlow(1);
-element('next-step').listeners.click();
-element('next-step').listeners.click();
 const stage = element('activity-stage');
-const button = stage.checkButtons.find(item => item.dataset.checkQuestion === 'marti-a03::evidence-1');
-if (!button) throw new Error('Could not find the story question check button');
-button.listeners.click();
-setTimeout(() => {{
-  if (!capturedRequest) throw new Error('Kontrol et did not send a Groq request');
-  const system = capturedRequest.body.messages.find(message => message.role === 'system').content;
-  const prompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
-  if (!system.includes('7. sınıf Türkçe') || !system.includes('Tema 1 · Hayat Boyu Gelişim') || !system.includes('Maarif/MEB')) throw new Error('Groq system message omitted grade, theme, or Maarif/MEB context');
-  const strictPromptChecks = ['yanlış, ilgisiz veya eksik', 'Harika', 'doğru yanıtı', 'hata/eksik yoksa hiçbir ipucu verme', 'DURUM: TAM DOĞRU'].map((phrase) => system.includes(phrase));
-  if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require strict labels and no hints for a fully correct response: ${{JSON.stringify(strictPromptChecks)}}`);
-  if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
-  if (button.card.dataset.checkState !== 'correct' || button.pill.textContent !== '✓ Tam doğru') throw new Error('A fully correct AI result did not turn the question card and status badge green/correct');
-  if (!button.feedback.textContent.includes('DURUM: TAM DOĞRU') || button.feedback.textContent.includes('İPUCU') || button.feedback.textContent.includes('başka bir örnek')) throw new Error('A fully correct response still displays an AI hint');
-  mockResponse = 'DURUM: KISMEN DOĞRU';
+const next = () => element('next-step').listeners.click();
+const advance = (count) => { for (let index = 0; index < count; index += 1) next(); };
+const findButton = (key) => stage.checkButtons.find((item) => item.dataset.checkQuestion === key);
+const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+async function check(button) {
+  if (!button) throw new Error('Could not find the requested question check button');
   button.listeners.click();
-  setTimeout(() => {{
-    if (button.card.dataset.checkState !== 'partial' || button.pill.textContent !== '◐ Kısmen doğru') throw new Error('A partially correct AI result did not set the yellow status');
-    mockResponse = 'DURUM: YANLIŞ';
-    button.listeners.click();
-    setTimeout(() => {{
-      if (button.card.dataset.checkState !== 'wrong' || button.pill.textContent !== '✕ Yanlış') throw new Error('A wrong AI result did not set the red status');
-      context.window.renderTheme1PracticeFlow(3);
-      const kindnessButton = stage.checkButtons.find(item => item.dataset.checkQuestion === 'genclik-a04::visual-link');
-      if (!kindnessButton) throw new Error('Could not find the Bir İyilik Hikâyesi video question');
-      kindnessButton.listeners.click();
-      setTimeout(() => {{
-        const mediaSystem = capturedRequest.body.messages.find(message => message.role === 'system').content;
-        const mediaPrompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
-        if (!loadedNotes.includes('docs/video-analysis/bir-iyilik-hikayesi-gemini-analysis.md') || !mediaPrompt.includes('933 yuvalama sahası')) throw new Error('Bir İyilik Hikâyesi Gemini notes were not loaded into the Groq prompt');
-        if (!mediaSystem.includes('MEDYA KAYNAK SINIRI') || !mediaSystem.includes('bağımsız medya doğrulaması')) throw new Error('Groq was not told the video report is user-provided and not independently verified');
-        context.window.renderTheme1PracticeFlow(5);
-        const compareButton = stage.checkButtons.find(item => item.dataset.checkQuestion === 'adiny-a03::compare-1');
-        if (!compareButton) throw new Error('Could not find the Kaoru–Yiğit comparison question');
-        compareButton.listeners.click();
-        setTimeout(() => {{
-          const comparisonPrompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
-          if (!loadedNotes.includes('docs/video-analysis/yigit-caner-aydin-gemini-analysis.md') || !comparisonPrompt.includes('Bentenjima') || !comparisonPrompt.includes('2013 yılında üniversite öğrencisiyken')) throw new Error('The Kaoru story and user-provided Yiğit Caner Aydın report were not both sent as source context');
-          element('next-step').listeners.click();
-          element('next-step').listeners.click();
-          const listeningButton = stage.checkButtons.find(item => item.dataset.checkQuestion === 'adiny-a05::note-1');
-          if (!listeningButton) throw new Error('Could not find the Ali Kuşçu listening-note question');
-          listeningButton.listeners.click();
-          setTimeout(() => {{
-            const listeningPrompt = capturedRequest.body.messages.find(message => message.role === 'user').content;
-            if (!loadedNotes.includes('docs/video-analysis/ali-kuscu-gemini-analysis.md') || !listeningPrompt.includes('Semerkant') || !listeningPrompt.includes('Kullanıcı tarafından sağlanan Gemini dinleme kaydı analiz raporu')) throw new Error('Ali Kuşçu audio analysis was not loaded or labeled as user-provided listening context');
-            console.log('Question-level feedback states, no hint on correct answers, and user-attributed Gemini video/audio source notes passed.');
-          }}, 0);
-        }}, 0);
-      }}, 0);
-    }}, 0);
-  }}, 0);
-}}, 0);
+  await tick();
+  await tick();
+}
+async function run() {
+  advance(2);
+  const storyButton = findButton('marti-a03::evidence-1');
+  await check(storyButton);
+  if (!capturedRequest) throw new Error('Kontrol et did not send a Groq request');
+  const system = capturedRequest.body.messages.find((message) => message.role === 'system').content;
+  let prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!system.includes('7. sınıf Türkçe') || !system.includes('Tema 1 · Hayat Boyu Gelişim') || !system.includes('Maarif/MEB')) throw new Error('Groq system message omitted grade, theme, or Maarif/MEB context');
+  const strictPromptChecks = ['GİZLİ CEVAP KORUMASI', 'Yalnızca geçerli bir JSON nesnesi', 'status', 'Doğru cevabı', 'issues=[]'].map((phrase) => system.includes(phrase));
+  if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require a closed, non-disclosing JSON response: ${JSON.stringify(strictPromptChecks)}`);
+  if (capturedRequest.body.response_format?.type !== 'json_object') throw new Error('Groq assessment request does not enforce JSON mode');
+  if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
+  if (storyButton.card.dataset.checkState !== 'correct' || storyButton.pill.textContent !== '✓ Tam doğru') throw new Error('A fully correct AI result did not set the green status');
+  if (!storyButton.feedback.textContent.includes('DURUM: TAM DOĞRU') || storyButton.feedback.textContent.includes('İPUCU') || storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A fully correct response shows a hint or leaked model text');
+  mockResponse = JSON.stringify({status: 'partial', issues: ['evidence'], hint: 'reread', leakedAnswer: 'SECRET_PARTIAL_4F'});
+  await check(storyButton);
+  if (storyButton.card.dataset.checkState !== 'partial' || storyButton.pill.textContent !== '◐ Kısmen doğru') throw new Error('A partially correct AI result did not set the yellow status');
+  if (storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A partially correct response exposed an extra model answer field');
+  mockResponse = JSON.stringify({status: 'wrong', issues: ['relevance'], hint: 'reread', fullAnswer: 'SECRET_WRONG_5Q'});
+  await check(storyButton);
+  if (storyButton.card.dataset.checkState !== 'wrong' || storyButton.pill.textContent !== '✕ Yanlış') throw new Error('A wrong AI result did not set the red status');
+  if (storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A wrong response exposed an extra model answer field');
+
+  advance(2);
+  mockResponse = JSON.stringify({status: 'correct', issues: [], hint: 'recheck', leakedAnswer: 'SECRET_FOOD_6T'});
+  const foodButton = findButton('marti-a05::problem');
+  await check(foodButton);
+  prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!prompt.includes('Aç kalma ve yiyecek arama baskısı') || !prompt.includes('Jonathan başını itaatkâr biçimde eğer') || !prompt.includes('doğru kabul et')) throw new Error('The Martı hunger/food-search evidence and fair grading rule were omitted from the Groq prompt');
+  if (foodButton.card.dataset.checkState !== 'correct' || foodButton.feedback.textContent.includes('SECRET_')) throw new Error('The text-supported Martı hardship answer was rejected or model text leaked');
+
+  advance(3);
+  if (stage.innerHTML.includes('SECRET_LEGACY_ANSWER_9Z')) throw new Error('Previously saved free-form AI feedback still exposes an answer after migration');
+  mockResponse = JSON.stringify({status: 'wrong', issues: ['relevance'], hint: 'reread', answer: 'Öğrenmenin yaşı yoktur; insanlar farklı yaşlarda öğrenir.'});
+  const hayatButton = findButton('marti-a08::topic');
+  await check(hayatButton);
+  const mediaSystem = capturedRequest.body.messages.find((message) => message.role === 'system').content;
+  prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!loadedNotes.includes('docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt') || !prompt.includes('Hayat çok zordur') || !prompt.includes('Öğrenmenin yaşı yoktur')) throw new Error('The Hayat video notes, student response, or private main-idea key were omitted from the Groq prompt');
+  if (!mediaSystem.includes('MEDYA KAYNAĞI (iç değerlendirme)') || !mediaSystem.includes('bağımsız medya doğrulaması')) throw new Error('Groq was not told the user-provided video report is not independent verification');
+  if (hayatButton.card.dataset.checkState !== 'wrong' || hayatButton.feedback.textContent.includes('Öğrenmenin yaşı yoktur') || hayatButton.feedback.textContent.includes('SECRET_')) throw new Error('The wrong Hayat answer received feedback that leaked the correct main idea');
+  if (stage.innerHTML.includes('source-limit-note') || stage.innerHTML.includes('Yapay zekâ sınırı')) throw new Error('The removed user-facing AI warning card still appears before a video activity');
+
+  context.window.renderTheme1PracticeFlow(3);
+  mockResponse = JSON.stringify({status: 'correct', issues: [], hint: 'recheck'});
+  const kindnessButton = findButton('genclik-a04::visual-link');
+  await check(kindnessButton);
+  const kindnessSystem = capturedRequest.body.messages.find((message) => message.role === 'system').content;
+  const kindnessPrompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!loadedNotes.includes('docs/video-analysis/bir-iyilik-hikayesi-gemini-analysis.md') || !kindnessPrompt.includes('933 yuvalama sahası')) throw new Error('Bir İyilik Hikâyesi Gemini notes were not loaded into the Groq prompt');
+  if (!kindnessSystem.includes('MEDYA KAYNAĞI (iç değerlendirme)') || !kindnessSystem.includes('bağımsız medya doğrulaması')) throw new Error('The internal media source-limit instruction is missing');
+
+  context.window.renderTheme1PracticeFlow(5);
+  const compareButton = findButton('adiny-a03::compare-1');
+  await check(compareButton);
+  const comparisonPrompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!loadedNotes.includes('docs/video-analysis/yigit-caner-aydin-gemini-analysis.md') || !comparisonPrompt.includes('Bentenjima') || !comparisonPrompt.includes('2013 yılında üniversite öğrencisiyken')) throw new Error('The Kaoru story and user-provided Yiğit Caner Aydın report were not both sent as source context');
+  advance(2);
+  const listeningButton = findButton('adiny-a05::note-1');
+  mockResponse = JSON.stringify({status: 'unverified', issues: ['source'], hint: 'reread'});
+  await check(listeningButton);
+  const listeningPrompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  if (!loadedNotes.includes('docs/video-analysis/ali-kuscu-gemini-analysis.md') || !listeningPrompt.includes('Semerkant') || !listeningPrompt.includes('Kullanıcı tarafından sağlanan Gemini dinleme kaydı analiz raporu')) throw new Error('Ali Kuşçu audio analysis was not loaded or labeled as user-provided listening context');
+  console.log('Question-level states, safe feedback filtering, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
+}
+run().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
 """
+    return template.replace("__SOURCES__", json.dumps(sources, ensure_ascii=False)).replace(
+        "__NOTES__", json.dumps(source_notes, ensure_ascii=False)
+    )
+
+def quiz_feedback_test_source(html: str) -> str:
+    start = html.find("function buildSafeQuizFeedback(")
+    end = html.find("function render(){", start)
+    if start < 0 or end < 0:
+        raise ValueError("The safe end-of-week quiz feedback formatter is missing")
+    helper_source = html[start:end]
+    template = r"""
+const vm = require('node:vm');
+const context = vm.createContext({console});
+const helpers = __HELPERS__;
+const checks = `
+  const wrong = buildSafeQuizFeedback(0, 3, {issues: ['accuracy', 'SECRET_ISSUE'], hint: 'reread', answer: 'SECRET_ANSWER'});
+  if (!wrong.includes('DURUM: YANLIŞ · 0/3') || wrong.includes('SECRET_')) throw new Error('Wrong quiz feedback leaked free model text or lost the local score');
+  const partial = buildSafeQuizFeedback(2, 3, {issues: ['evidence'], hint: 'compare', correctAnswer: 'LEAKED_ANSWER'});
+  if (!partial.includes('DURUM: KISMEN DOĞRU') || !partial.includes('İPUCU:') || partial.includes('LEAKED_ANSWER')) throw new Error('Partial quiz feedback was not safely rendered');
+  const correct = buildSafeQuizFeedback(3, 3, {issues: ['evidence'], hint: 'evidence', answer: 'SECRET_ANSWER'});
+  if (!correct.includes('DURUM: TAM DOĞRU') || correct.includes('İPUCU') || correct.includes('SECRET_')) throw new Error('A fully correct quiz result should have no hint or model prose');
+  if (escapeQuizFeedbackHTML('<script>unsafe</script>').includes('<script>')) throw new Error('Saved quiz feedback is not escaped before insertion into HTML');
+  console.log('End-of-week quiz feedback is score-grounded and safe from free-text answer leaks.');
+`;
+vm.runInContext(helpers, context);
+vm.runInContext(checks, context);
+"""
+    return template.replace("__HELPERS__", json.dumps(helper_source, ensure_ascii=False))
 
 
 def text_reader_test_source(html: str) -> str:
@@ -739,8 +801,24 @@ def text_reader_test_source(html: str) -> str:
     for key, text in texts.items():
         if any(fragment in text.casefold() for fragment in activity_fragments):
             raise ValueError(f"A workbook instruction was mixed into the {key} story")
-    if not re.search(r"#bookText\s*\{[^}]*font-size:\s*17px", html):
-        raise ValueError("The reading text font was not increased to 17px")
+    if not re.search(r"#bookText\s*\{[^}]*font-size:\s*18px", html):
+        raise ValueError("The reading text font was not increased to 18px")
+    if "background:#fffdf6" not in html or "#bookText{font-size:18px;line-height:1.78;color:#26231f}" not in html:
+        raise ValueError("The reader needs a warm neutral background and high-contrast charcoal text")
+    foreground = re.search(r"#bookText\s*\{[^}]*color:(#[0-9a-fA-F]{6})", html)
+    reader_box = re.search(r'<div id="bookText"[^>]*style="([^"]+)"', html)
+    background = re.search(r"background:(#[0-9a-fA-F]{6})", reader_box.group(1) if reader_box else "")
+    def luminance(color: str) -> float:
+        channels = [int(color[index:index + 2], 16) / 255 for index in (1, 3, 5)]
+        linear = [channel / 12.92 if channel <= 0.04045 else ((channel + 0.055) / 1.055) ** 2.4 for channel in channels]
+        return sum(weight * channel for weight, channel in zip((0.2126, 0.7152, 0.0722), linear))
+    if not foreground or not background:
+        raise ValueError("The reader text/background colors could not be measured")
+    contrast = (luminance(background.group(1)) + 0.05) / (luminance(foreground.group(1)) + 0.05)
+    if contrast < 7:
+        raise ValueError(f"The reader's text contrast ratio is too low: {contrast:.2f}:1")
+    if "#bookText{font-size:16px" in html:
+        raise ValueError("The mobile reading text font is too small")
 
     reader_start = html.find("function renderBookText(bm){")
     reader_end = html.find("\nasync function speakEleven", reader_start)
@@ -909,13 +987,15 @@ def main() -> int:
         errors.append("The Ali Kuşçu review question must load its Gemini listening-analysis report")
     if 'sourceLinkType: "audio"' not in practice_data or 'sourceLinkType: "audio"' not in forms_data:
         errors.append("The Ali Kuşçu QR must remain visibly typed and labeled as an audio/listening source")
+    if "quizFeedbackVersion===2" not in html or "response_format:{type:'json_object'}" not in html or "buildSafeQuizFeedback(score,q.length,codes)" not in html:
+        errors.append("The end-of-week Groq quiz must hide legacy free text and render only safe JSON-coded feedback")
     for required_prompt in (
         "7. sınıf Türkçe", "Tema 1 · Hayat Boyu Gelişim", "Maarif/MEB",
         "sourceContext", "sourceLinkMarkup", "sourceUrl", "sourceTranscript", "sourceNotesUrl", "loadSourceNotes", "hasVideoAnalysis", "videoUnavailable", "videoContextText", "mediaLabel",
-        "MEDYA KAYNAK SINIRI", "bağlantıyı açıp izleyemez", "doğru ya da yanlış olarak sınıflandırma",
+        "MEDYA KAYNAĞI (iç değerlendirme)", "bağlantı", "doğru/yanlış", "GİZLİ CEVAP KORUMASI",
+        "response_format: { type: \"json_object\" }", "structuredAssessmentResult", "assessmentIssueMessages", "assessmentHintMessages",
         "data-check-question", "data-sort-target", "aria-keyshortcuts",
-        "yanlış, ilgisiz veya eksik", "Harika", "DURUM: TAM DOĞRU",
-        "hata/eksik yoksa hiçbir ipucu verme", "assessmentStateFromText", "data-result-pill",
+        "Metinle desteklenen doğru bir açıklamayı", "öğrenciye aktarılmamalıdır", "JSON nesnesi", "data-result-pill",
     ):
         if required_prompt not in app_js:
             errors.append(f"Groq evaluation context or strict per-question checking is missing: {required_prompt}")
@@ -1075,8 +1155,27 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
-                    elif "Question-level feedback states, no hint on correct answers, and user-attributed Gemini video/audio source notes passed." not in result.stdout:
+                    elif "Question-level states, safe feedback filtering, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
                         errors.append("Groq prompt test did not report success")
+
+            if not errors:
+                try:
+                    quiz_test = quiz_feedback_test_source(html)
+                except ValueError as exc:
+                    errors.append(str(exc))
+                else:
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", encoding="utf-8", suffix=".js"
+                    ) as temp:
+                        temp.write(quiz_test)
+                        temp.flush()
+                        result = subprocess.run(
+                            [node, temp.name], capture_output=True, text=True, check=False
+                        )
+                    if result.returncode:
+                        errors.append(f"End-of-week quiz feedback test failed:\\n{result.stderr.strip()}")
+                    elif "End-of-week quiz feedback is score-grounded and safe from free-text answer leaks." not in result.stdout:
+                        errors.append("End-of-week quiz feedback test did not report success")
 
             if not errors:
                 try:

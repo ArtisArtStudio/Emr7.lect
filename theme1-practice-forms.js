@@ -156,7 +156,15 @@
       q("problem", "Jonathan'ın karşılaştığı zorluklardan birini seç. Sonra bu durumun onu nasıl etkilediğini kısaca açıkla.", [
         select("challenge", "Hangi güçlüğü ele alıyorsun?", opts("Aç kalma ve yiyecek arama baskısı", "Uçuş denemelerinde başarısız olma", "Ailesinin kaygısı ile kendi isteğinin farklı olması")),
         text("effect", "Bu güçlük Jonathan'ı nasıl etkiliyor?", 2)
-      ], { sourceStage: "full", rubric: "Seçilen güçlüğü öyküdeki durumla karşılaştır ve açıklamanın etkisini kontrol et. Yanlış/eksikse ilgili olayı işaret et, yanıtı öğrenci yerine yazma." }),
+      ], {
+        sourceStage: "full",
+        rubric: "Seçilen güçlüğün metinde gerçekten bulunup bulunmadığını ve öğrencinin etkisini doğru bağlayıp bağlamadığını ayrı değerlendir. 'Aç kalma ve yiyecek arama baskısı' metinle uyumludur: yaklaşan kışta balık/yiyecek bulmanın zorlaşacağına dair aile kaygısı anlatılır; Jonathan başını itaatkâr biçimde eğer ve bir süre avlanmaya çalışır. Bu seçimi yapıp bu olayları etkisiyle ilişkilendiren yanıtı doğru kabul et. Doğru cevabı geri bildirimde yazma; yalnızca güvenli değerlendirme kodu seç.",
+        answerKey: {
+          challenge: "Aç kalma ve yiyecek arama baskısı metinde desteklenir.",
+          effect: "Ailesinin kış ve yiyecek bulma kaygısı ile Jonathan'ın itaatkâr biçimde başını eğip kısa süre avlanmaya çalışması kabul edilebilir dayanaklardır."
+        }
+      }),
+
       q("viewpoint-match", "Kısa düşünceleri kimin bakış açısıyla söylendiğine göre eşleştir.", [
         sort("perspectives", "Jonathan mı, ailesi mi?", [
           { id: "jonathan", icon: "🪽", label: "Jonathan'ın bakış açısı", description: "Uçmayı öğrenmek ve yeni denemeler yapmak onun için önemli." },
@@ -208,7 +216,13 @@
     ],
 
     "marti-a08": [
-      q("topic", "Kitaptaki QR içeriği ‘Hayat Büyük Bir Okuldur’ videosunu izledikten sonra konusunu tek cümleyle yaz.", [text("answer", "Videonun konusu", 2)], { sourceMode: "qr" }),
+      q("topic", "Kitaptaki QR içeriği ‘Hayat Büyük Bir Okuldur’ videosunu izledikten sonra ana fikrini tek cümleyle yaz.", [text("answer", "Videonun konusu", 2)], {
+        sourceMode: "qr",
+        rubric: "Bu video sorusunda yalnızca kullanıcı tarafından sağlanan Gemini raporundaki ana iletiyi temel al. Raporda farklı yaş ve alanlarda öğrenme örnekleri aktarılır. Öğrenmenin yaşla sınırlı olmadığı ve yaşam boyunca sürdüğü biçimindeki tek cümlelik açıklamaları kabul et; 'hayat çok zordur' gibi öğrenme ile ilgisiz bir cümleyi doğru sayma. Medya raporunu bağımsız olarak doğrulanmış kabul etme ve doğru cevabı geri bildirimde yazma.",
+        answerKey: {
+          mainIdea: "Öğrenmenin yaşı yoktur; insanlar farklı yaşlarda ve yaşamın farklı alanlarında öğrenmeye devam eder. Bu değerlendirme kullanıcı tarafından sağlanan Gemini raporuna dayanır; bağımsız video doğrulaması değildir."
+        }
+      }),
       q("keywords", "Videodan beş anahtar kelime seç. Her birinin ana düşünceyle bağını kısa notla belirt.", [
         ...[1, 2, 3, 4, 5].map(number => text(`word-${number}`, `Anahtar kelime ${number} ve ana düşünceyle bağı`, 2))
       ], { sourceMode: "qr" }),

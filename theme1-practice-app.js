@@ -204,7 +204,50 @@
     unrated: "? Sonuç sınıflandırılamadı"
   });
 
+  const assessmentIssueMessages = Object.freeze({
+    relevance: "Yanıtın sorunun odağını tam karşılamıyor.",
+    evidence: "Yanıtındaki dayanak güçlendirilmeli.",
+    completeness: "İstenen parçalardan en az biri eksik.",
+    reasoning: "Seçim ile açıklama arasındaki bağlantıyı netleştir.",
+    selection: "Seçim veya eşleştirmelerden biri yeniden gözden geçirilmeli.",
+    accuracy: "Yanıtın bir bölümü sağlanan kaynakla uyuşmuyor.",
+    source: "Bu ayrıntı sağlanan kaynakta doğrulanamıyor."
+  });
+
+  const assessmentHintMessages = Object.freeze({
+    reread: "Kaynağın ilgili bölümünü yeniden oku ve yanıtını oradaki ipucuyla karşılaştır.",
+    count: "Soruda istenen parçaları tek tek kontrol et; her birine yanıt verdiğinden emin ol.",
+    evidence: "Yanıtına kaynaktan bir dayanak ekle.",
+    explain: "Seçiminin gerekçesini kendi sözlerinle açıkla.",
+    match: "Her seçimi veya eşleştirmeyi verilen ölçütle yeniden karşılaştır.",
+    recheck: "Soruyu ve yanıtını bir kez daha karşılaştırıp cevabını kendi sözlerinle gözden geçir."
+  });
+
+  function structuredAssessmentResult(text) {
+    let source = String(text || "").trim();
+    const fenced = source.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    if (fenced) source = fenced[1].trim();
+    const firstBrace = source.indexOf("{");
+    const lastBrace = source.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) source = source.slice(firstBrace, lastBrace + 1);
+
+    let result;
+    try { result = JSON.parse(source); } catch { return null; }
+    if (!result || typeof result !== "object" || Array.isArray(result)) return null;
+
+    const status = String(result.status || "").trim().toLowerCase();
+    const statusMap = { correct: "correct", partial: "partial", wrong: "wrong", incomplete: "incomplete", unverified: "unverified" };
+    if (!Object.hasOwn(statusMap, status)) return null;
+    const issues = Array.isArray(result.issues)
+      ? [...new Set(result.issues.map(value => String(value).trim()).filter(code => Object.hasOwn(assessmentIssueMessages, code)))].slice(0, 2)
+      : [];
+    const hint = Object.hasOwn(assessmentHintMessages, result.hint) ? result.hint : (status === "incomplete" ? "count" : "reread");
+    return { state: statusMap[status], issues, hint };
+  }
+
   function assessmentStateFromText(text) {
+    const structured = structuredAssessmentResult(text);
+    if (structured) return structured.state;
     const content = String(text || "");
     const match = content.match(/DURUM\s*:\s*([^\r\n]+)/i);
     const status = (match?.[1] || "").trim().toLocaleLowerCase("tr-TR");
@@ -226,12 +269,33 @@
     return assessmentStateFromText(feedback.text);
   }
 
-  function assessmentFeedbackText(text, state) {
+  function assessmentFeedbackText(text, state, issues = [], hint = "recheck") {
     if (state === "correct") return "DURUM: TAM DOĞRU\nYanıtın istenen ölçütleri karşılıyor.";
-    if (state === "unrated" && !/DURUM\s*:/i.test(String(text || ""))) {
-      return "Geri bildirimin durumu sınıflandırılamadı. Yeniden kontrol et.";
-    }
-    return String(text || "");
+    if (state === "system" || state === "pending") return String(text || "");
+
+    const stateLabels = {
+      partial: "KISMEN DOĞRU",
+      incomplete: "YANIT EKSİK",
+      wrong: "YANLIŞ",
+      unverified: "İÇERİK DOĞRULANAMADI",
+      unrated: "SONUÇ SINIFLANDIRILAMADI"
+    };
+    const defaultIssues = {
+      partial: "Yanıtın bazı ölçütleri karşılıyor; en az bir nokta gözden geçirilmeli.",
+      incomplete: "İstenen yanıt parçalarının bir bölümü eksik.",
+      wrong: "Yanıtın soru ve sağlanan kaynakla uyuşmuyor.",
+      unverified: "Yanıtın bu bölümü sağlanan kaynakla doğrulanamıyor.",
+      unrated: "Geri bildirim güvenli biçimde sınıflandırılamadı."
+    };
+    const safeIssues = Array.isArray(issues)
+      ? [...new Set(issues.filter(code => Object.hasOwn(assessmentIssueMessages, code)))].slice(0, 2)
+      : [];
+    const issueText = safeIssues.length
+      ? safeIssues.map(code => assessmentIssueMessages[code]).join(" ")
+      : (defaultIssues[state] || defaultIssues.unrated);
+    const defaultHint = state === "incomplete" ? "count" : (state === "unverified" ? "reread" : "recheck");
+    const hintText = Object.hasOwn(assessmentHintMessages, hint) ? assessmentHintMessages[hint] : assessmentHintMessages[defaultHint];
+    return `DURUM: ${stateLabels[state] || stateLabels.unrated}\nHATA/EKSİK: ${issueText}\nİPUCU: ${hintText}`;
   }
 
   function savedFeedback(activity, question) {
@@ -368,7 +432,7 @@
       const answers = currentAnswer(activity, question, index);
       const feedback = savedFeedback(activity, question);
       const feedbackState = storedAssessmentState(feedback);
-      const feedbackText = assessmentFeedbackText(feedback?.text, feedbackState);
+      const feedbackText = assessmentFeedbackText(feedback?.text, feedbackState, feedback?.issues, feedback?.hint);
       const resultLabel = assessmentLabels[feedbackState] || "";
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
@@ -395,12 +459,8 @@
       : "";
     const readerHTML = readerLinksFor(activity);
     const qrQuestions = questions.filter(question => question.sourceMode === "qr" || question.videoSource || activity.videoSource);
-    const hasGeminiAnalysisNotes = qrQuestions.some(question => question.sourceNotes || question.sourceNotesUrl || activity.sourceNotes || activity.sourceNotesUrl);
     const sourceModeNote = qrQuestions.length ? `<span>QR video/dinleme kaynağı</span>` : "";
     const activitySourceLink = sourceLinkMarkup(activity.sourceUrl, activity.sourceLinkLabel || "İlgili video", activity.sourceLinkType || "video");
-    const questionLimitNote = qrQuestions.length
-      ? `<p class="source-limit-note" role="note"><strong>Yapay zekâ sınırı:</strong> Groq QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez. ${hasGeminiAnalysisNotes ? "Bu etkinlikte kullanıcı tarafından sağlanan Gemini analiz raporu (görüntü notları ve/veya seçilmiş, kısmi/özet konuşma bölümleri) kaynak olarak gönderilir; yorumlar doğrudan gözlem değildir ve rapor bağımsız olarak doğrulanmış sayılmaz." : "Yalnızca uygulamada bu soru için sağlanan transkript veya cevap anahtarını kullanabilir."} Notlarda/transkriptte/anahtarda bulunmayan ayrıntıları doğrulanmış gibi sunma. Bu, video/dinleme içeriğinin doğru olduğu onayı değildir ve Groq'un medyayı bağımsız biçimde izlediği/dinlediği anlamına gelmez.</p>`
-      : "";
 
     stage.innerHTML = `<article class="activity-card" data-kind="${kind}">
       <header class="activity-top">
@@ -414,7 +474,6 @@
       ${sourceHTML}
       <div class="activity-meta"><span>${escapeHTML(activity.format || "Çalışma")}</span><span>${escapeHTML(activity.count || "")}</span><span>Kaynak: ${escapeHTML(activity.source || "Tema 1")}</span>${sourceModeNote}</div>
       ${readerHTML || activitySourceLink ? `<div class="reader-links">${readerHTML}${activitySourceLink}</div>` : ""}
-      ${questionLimitNote}
       <div class="question-list">${questionHTML}</div>
     </article>`;
 
@@ -706,12 +765,12 @@
     }
   }
 
-  function showFeedback(card, text, state) {
+  function showFeedback(card, text, state, issues = [], hint = "recheck") {
     const feedback = card?.querySelector(".feedback-box");
     if (!feedback) return;
     const finalState = Object.hasOwn(assessmentLabels, state) ? state : "system";
     setQuestionAssessment(card, finalState);
-    feedback.textContent = assessmentFeedbackText(text, finalState);
+    feedback.textContent = assessmentFeedbackText(text, finalState, issues, hint);
     feedback.dataset.state = finalState;
     feedback.hidden = false;
   }
@@ -768,24 +827,22 @@
       context = sourceContext(activity, question, providedNotes);
       rubric = question.rubric ? `\nSoruya özel öğretmen ölçütü: ${question.rubric}` : "";
       systemPrompt = [
-        "Sen 7. sınıf Türkçe dersi için adil ama ölçütleri sıkı uygulayan bir öğretmensin.",
-        "Bağlam: 7. sınıf Türkçe, Tema 1 · Hayat Boyu Gelişim. Maarif/MEB yönelimine ve yaş düzeyine uygun, açık ve kanıta dayalı değerlendir.",
-        "Öğrencinin yazdığı yanıtı aynen incele. Yanıtta bulunmayan bir sözü, davranışı, alıntıyı veya kanıtı asla varmış gibi gösterme. Kaynak metinde olmayan ayrıntı uydurma.",
-        "Her zaman soruya uygunluğu, istenen sayıdaki öğeyi kapsama ve gerekçe/kanıtın yeterliliğini kontrol et. Olgusal doğruluğu yalnızca sana gerçekten sağlanan kaynakla karşılaştır; seçim/eşleştirmelerde her kartı ayrı kontrol et.",
-        "Yanıt yanlış, ilgisiz veya eksikse bunu nazik ama doğrudan söyle. O durumda ‘Harika’, ‘çok iyi’, ‘doğru’ gibi övgü kullanma. Yanlış olan kısmı/karşılanmayan ölçütü belirt; ardından doğru yanıtı, doğru seçeneği, örnek yanıtı veya metinden doğru alıntıyı VERME. Öğrenciyi tek bir somut ipucu ya da metne geri götüren soru ile yönlendir.",
-        "Yanıt tüm doğrulanabilir ölçütleri karşılıyor ve hata/eksik yoksa hiçbir ipucu verme; ‘İPUCU’ başlığı, yönlendirici soru, yeni örnek ya da bir sonraki adım ekleme. Yalnızca ‘DURUM: TAM DOĞRU’ ve kısa bir ölçüt teyidi yaz.",
-        "Çıktı biçimi: önce tek satırda ‘DURUM: TAM DOĞRU’, ‘DURUM: KISMEN DOĞRU’, ‘DURUM: YANLIŞ’, ‘DURUM: EKSİK’ veya ‘DURUM: DOĞRULANAMADI’ etiketlerinden birini aynen kullan. Kısmen doğru/yanlış/eksik yanıtta ardından ‘HATA/EKSİK:’ ve tek bir ‘İPUCU:’ satırı ver; cevabı asla yazma.",
-        "Sınıflandırma: tüm doğrulanabilir ölçütler karşılanmışsa TAM DOĞRU; bir kısmı karşılanmış ama bir ölçüt eksik/yanlışsa KISMEN DOĞRU; yanıt ilgisiz ya da temel yanıt yanlışsa YANLIŞ; hiç/çok az yanıt varsa EKSİK. QR video içeriği doğrulanamıyorsa ve yanıtın video iddiası içeriyorsa DOĞRULANAMADI de; doğrulanmamış videoya ‘Tam doğru’ deme. Açık anahtar kullanıldıysa sonucu yalnızca ‘sağlanan anahtara göre’ nitele.",
-        "Öğrencinin yanıtında hata varsa önce hatayı ve nedenini göster, sonra cevabı söylemeden bir sonraki düşünme adımını ver. Yanıtın yerine yeni bir cevap yazma.",
+        "Sen 7. sınıf Türkçe dersi için adil, kanıta dayalı ve ölçütleri tutarlı uygulayan bir değerlendiricisin. Bağlam: Tema 1 · Hayat Boyu Gelişim; Maarif/MEB yönelimi.",
+        "Öğrencinin gerçek yanıtını soruyla, sağlanan kaynakla ve öğretmen değerlendirme anahtarıyla karşılaştır. Anahtar ve kaynaklar yalnızca iç değerlendirme içindir; öğrenciye aktarılmamalıdır.",
+        "Metinle desteklenen doğru bir açıklamayı, sözcükleri farklı diye reddetme. Özellikle ilgili olay kaynak metinde açıkça varsa ‘metinde yok’ deme. Seçim/eşleştirmelerde her parçayı ayrı; yazılı yanıtta soruya uygunluk, doğruluk, kapsam ve dayanağı ayrı değerlendir.",
+        "Tam doğru: tüm doğrulanabilir ölçütler karşılanır. Kısmen doğru: anlamlı/doğru bir bölüm vardır ama ölçütlerden biri eksik veya hatalıdır. Yanlış: temel yanıt ilgisiz ya da kaynakla çelişir. Eksik: istenen yanıt parçalarından biri veya birkaçı yoktur. Doğrulanamadı: yanıtın olgusal iddiası verilen kaynak/anahtarla denetlenemiyordur.",
+        "GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, kaynakta cevabı belirten cümleyi, örnek yanıtı veya bunların eş anlamlı/parafraz edilmiş biçimini hiçbir koşulda yazma. Yanlış/eksik yanıtta cevabın ne olduğunu açıklama. Sadece aşağıdaki kapalı kodlardan seçim yap; uygulama öğrenciye gösterilecek güvenli mesajı kendisi oluşturur.",
+        "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Biçim: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck\"}. status tek bir izinli değerdir; issues alanında yalnızca izinli kodlar bulunur (en çok iki tane); hint yalnızca izinli bir koddur. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
+        "Tüm ölçütler karşılanmışsa status=correct, issues=[] ve hint=recheck döndür. Kısmi/yanlış/eksik durumda yalnızca sorunu genel olarak sınıflandıran issue kodları ve güvenli yönlendirme kodu seç. Kaynakta bulunmayan veya sağlanan notlarla/anahtarla doğrulanamayan medya iddiasında status=unverified ve issues=[\"source\"] seç.",
         context.note,
         context.hasVideoAnalysis
-          ? "MEDYA KAYNAK SINIRI: Aşağıdaki içerik kullanıcı tarafından sağlanan Gemini video/dinleme analizi raporudur; sen videoyu/URL'yi açıp izlemedin veya dinleme kaydını dinlemedin. Rapordaki doğrudan gözlemleri yorumlardan ayır, konuşma notlarının kısmi/özet olabileceğini unutma ve raporda bulunmayan sözleri, sahneleri veya ayrıntıları doğrulanmış/yanlış diye sınıflandırma. Yalnızca raporda gerçekten bulunan kanıta göre değerlendir; belirsizliği geri bildirimde koru ve bağımsız medya doğrulaması yaptığını söyleme."
+          ? "MEDYA KAYNAĞI (iç değerlendirme): Rapor kullanıcı tarafından sağlanan Gemini analizidir; modeli videoyu/URL'yi açmadı ve dinleme kaydını dinlemedi. Görüntü notlarını doğrudan gözlem, yorumları yorum olarak ayır; konuşma bölümleri kısmi/özet olabilir. Rapor dışındaki ayrıntıları bağımsız doğrulanmış sayma ve bağımsız medya doğrulaması yaptığını iddia etme."
           : context.videoUnavailable
-            ? "KAYNAK SINIRI: QR video/dinleme kaydına erişimin yok; URL verilse bile bağlantıyı açıp izleyemezsin. Transkript/cevap anahtarı olmayan video iddialarını doğru ya da yanlış olarak sınıflandırma. Yalnızca görevin istenen parçalarının bulunup bulunmadığını ve öğrencinin sunduğu açıklamanın tutarlılığını değerlendir; videodaki olgusal doğruluğun kontrol edilemediğini açıkça yaz. Karşılaştırmalı soruda yalnızca sana verilmiş öykü metnine dayalı kısmı doğrula; video tarafını doğrulanmamış olarak bırak."
+            ? "MEDYA KAYNAĞI (iç değerlendirme): QR bağlantısı açılamaz/izlenemez/dinlenemez. Transkript veya değerlendirme anahtarı yoksa videoya dair olgusal iddialar doğrulanamaz; bunları doğru/yanlış diye sınıflandırma, status=unverified kullan."
             : context.hasVideoSource && context.answerKeyAvailable
-              ? "QR video bağlantısını açıp izleyemezsin. Bu soruda sana açık bir değerlendirme anahtarı verildi; yalnızca yanıtı bu anahtara göre karşılaştır. Sonucun anahtar-temelli olduğunu, videoyu bağımsız izleyerek doğrulamadığını belirt ve anahtar dışında video ayrıntısı hakkında hüküm verme."
-              : context.text ? "Kaynak metin aşağıdadır; değerlendirmeyi bu metne dayandır. Doğru cevabı öğrenciye doğrudan verme." : "Sağlanmış kaynak yoksa kesin bilgi iddiasında bulunma. Eksik kaynak hakkında uydurma; öğrencinin notunu değerlendiremediğinde bunu açıkça söyle.",
-        "Tam doğru yanıtta yalnızca DURUM ve kısa ÖLÇÜT teyidi ver; HATA/EKSİK veya İPUCU başlığı açma. Diğer sınıflandırmalarda Türkçe, kısa ve ölçüt temelli kal; öğrenciye doğru cevabı tamamlatacak tek ipucu ver. Gereksiz övgü/teselli kullanma."
+              ? "MEDYA KAYNAĞI (iç değerlendirme): QR bağlantısı açılamaz/izlenemez/dinlenemez. Sağlanan anahtarı yalnızca değerlendirme için kullan; bu, videonun bağımsız olarak doğrulandığı anlamına gelmez."
+              : context.text ? "Kaynak metin aşağıdadır; olgusal değerlendirmeyi bu metne dayandır." : "Kaynak yoksa kesin bilgi iddiasını doğrulanmış sayma; kaynak gerektiren bölüm için status=unverified seç.",
+        "Bu değerlendirme JSON'u yalnızca makine tarafından işlenir. Kullanıcıya gösterilecek hiçbir doğal dil cümlesi veya cevap üretme."
       ].join("\n");
       userPrompt = [
         "Ders: Türkçe · 7. sınıf",
@@ -795,9 +852,9 @@
         `Soru: ${question.prompt}`,
         `Öğrencinin yanıtı:\n${response}`,
         rubric,
-        context.hasVideoAnalysis ? "Kaynak erişimi: Yalnızca kullanıcı tarafından sağlanan Gemini video/dinleme raporu verildi; QR bağlantısı model tarafından açılmadı, video izlenmedi ve ses kaydı dinlenmedi. Raporun dışındaki içerik doğrulanamaz." : context.videoUnavailable ? "Kaynak erişimi: Model QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez. Transkript/cevap anahtarı yoksa medya içeriği doğrulanamaz; bu sınırlamayı geri bildirimde açıkça belirt." : context.hasVideoSource && context.answerKeyAvailable ? "Kaynak erişimi: Bağlantı izlenemez/dinlenemez; yanıtı yalnızca sağlanan değerlendirme anahtarına göre denetle ve bunu açıkça söyle." : "Video/metin için sağlanan kaynak varsa yalnızca onu kullan.",
+        context.hasVideoAnalysis ? "Kaynak erişimi (iç kullanım): Yalnızca kullanıcı tarafından sağlanan Gemini video/dinleme raporu verildi; QR bağlantısı model tarafından açılmadı, video izlenmedi ve ses kaydı dinlenmedi. Raporun dışındaki içerik doğrulanamaz." : context.videoUnavailable ? "Kaynak erişimi (iç kullanım): Model QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez. Transkript/cevap anahtarı yoksa medya içeriği doğrulanamaz; olgusal video iddiası için status=unverified seç." : context.hasVideoSource && context.answerKeyAvailable ? "Kaynak erişimi (iç kullanım): Bağlantı izlenemez/dinlenemez; yanıtı yalnızca sağlanan değerlendirme anahtarına göre denetle, bağımsız video doğrulaması yapıldığını varsayma." : "Video/metin için sağlanan kaynak varsa yalnızca onu kullan.",
         context.text ? `\nİlgili kaynak metin:\n${context.text}` : `\nKaynak bilgisi: ${context.note}`,
-        "Sıkı kontrol et: yanlış/ilgisiz cevabı doğruymuş gibi yorumlama, öğrencinin vermediği doğru davranışları onun cevabına ekleme ve doğru cevabı doğrudan yazma."
+        "Sıkı kontrol et: yanlış/ilgisiz cevabı doğruymuş gibi yorumlama, öğrencinin vermediği davranışları ona atfetme. Yanıt olarak yalnızca system mesajındaki kapalı JSON kod sözleşmesine uy; hiçbir açıklama veya cevap yazma."
       ].join("\n");
       const model = modelInput?.value || DEFAULT_MODEL;
       const result = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -806,7 +863,8 @@
         body: JSON.stringify({
           model,
           temperature: 0.1,
-          max_completion_tokens: 450,
+          max_completion_tokens: 250,
+          response_format: { type: "json_object" },
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
@@ -818,11 +876,20 @@
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
       if (!content) throw new Error("Groq yanıtında geri bildirim bulunamadı.");
-      const assessmentState = assessmentStateFromText(content);
-      const learnerFeedback = assessmentFeedbackText(content, assessmentState);
-      flowState(activeUnit.weekId).feedback[qKey] = { state: assessmentState, text: learnerFeedback, checkedAt: new Date().toISOString() };
+      const assessment = structuredAssessmentResult(content);
+      const assessmentState = assessment?.state || "unrated";
+      const issueCodes = assessment?.issues || [];
+      const hintCode = assessment?.hint || (assessmentState === "incomplete" ? "count" : "reread");
+      const learnerFeedback = assessmentFeedbackText("", assessmentState, issueCodes, hintCode);
+      flowState(activeUnit.weekId).feedback[qKey] = {
+        state: assessmentState,
+        text: learnerFeedback,
+        issues: issueCodes,
+        hint: hintCode,
+        checkedAt: new Date().toISOString()
+      };
       persist();
-      showFeedback(card, learnerFeedback, assessmentState);
+      showFeedback(card, learnerFeedback, assessmentState, issueCodes, hintCode);
     } catch (error) {
       const message = String(error?.message || error || "Bilinmeyen hata");
       const friendly = /failed to fetch|networkerror|load failed/i.test(message)

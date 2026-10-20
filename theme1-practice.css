@@ -215,18 +215,6 @@
   font-size: 10px;
   line-height: 1.4;
 }
-#theme1Practice .source-limit-note {
-  margin: 10px clamp(12px, 2.5vw, 21px) 0;
-  padding: 10px 12px;
-  border: 1px solid #e6d6a8;
-  border-left: 4px solid #c1953d;
-  border-radius: 8px;
-  color: #66521f;
-  background: #fff9e9;
-  font-size: 12px;
-  line-height: 1.6;
-}
-#theme1Practice .source-limit-note strong { color: #5b4716; }
 #theme1Practice .reader-links {
   display: flex;
   gap: 7px;
@@ -848,8 +836,7 @@
   color: var(--activity-accent);
   background: var(--activity-soft);
 }
-#theme1Practice .activity-source,
-#theme1Practice .source-limit-note {
+#theme1Practice .activity-source {
   margin-right: clamp(14px, 3vw, 26px);
   margin-left: clamp(14px, 3vw, 26px);
   padding: 14px 16px;
@@ -860,10 +847,6 @@
 #theme1Practice .activity-source {
   border-left-color: #5980d6;
   background: #f4f7ff;
-}
-#theme1Practice .source-limit-note {
-  font-size: 14px;
-  background: #fff9e9;
 }
 #theme1Practice .reader-links {
   gap: 9px;
