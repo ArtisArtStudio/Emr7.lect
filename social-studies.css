@@ -108,6 +108,8 @@
 .social-summary-heading .tag{color:#304c78}
 .social-topic-summary h3{margin:4px 0 0;color:#102238;font-size:20px}
 .social-summary-text{max-width:980px;margin:0;color:#263f53;font-size:15px;line-height:1.75}
+.social-summary-text p{margin:0}
+.social-summary-text p+p{margin-top:12px}
 .social-summary-bottom{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(180px,1fr);gap:20px;padding-top:11px;border-top:1px solid #dbe5ec}
 .social-summary-bottom h4,.social-key-terms h4{margin:0 0 8px;color:#24435a;font-size:12px;font-weight:850}
 .social-summary-points{display:grid;gap:6px;margin:0;padding-left:20px;color:#334b60;font-size:12px;line-height:1.55}
@@ -121,8 +123,8 @@
 .social-practice-count{flex:none;padding:7px 10px;border:1px solid #c9dce5;border-radius:99px;background:#f0f7f8;color:#1e5266;font-size:11px;font-weight:850}
 .social-practice-progress{height:7px;overflow:hidden;border-radius:99px;background:#e5ebf0}
 .social-practice-progress span{display:block;width:0;height:100%;border-radius:inherit;background:#257b69;transition:width .2s ease}
-.social-practice-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.social-practice-step{display:grid;grid-template-columns:32px minmax(0,1fr) 20px;align-items:center;gap:8px;min-width:0;padding:10px;border:1px solid #d5e0e8;border-radius:12px;background:#fbfcfd;text-align:left;color:#1c3449;cursor:pointer}
+.social-practice-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(185px,1fr);gap:8px;overflow-x:auto;padding:1px 1px 7px;scroll-snap-type:x mandatory;overscroll-behavior-inline:contain}
+.social-practice-step{display:grid;grid-template-columns:32px minmax(0,1fr) 20px;align-items:center;gap:8px;min-width:0;min-height:66px;padding:10px;border:1px solid #d5e0e8;border-radius:12px;background:#fbfcfd;text-align:left;color:#1c3449;cursor:pointer;scroll-snap-align:start}
 .social-practice-step:hover{background:#f0f6f8}
 .social-practice-step:focus-visible,.social-activity-nav:focus-visible,.social-choice-check:focus-visible,.social-choice-option:focus-within{outline:3px solid #22729455;outline-offset:2px}
 .social-practice-step.is-current{border-color:#70a8b6;background:#eaf5f6}
@@ -139,6 +141,34 @@
 .social-activity-heading h4{margin:5px 0 8px;color:#102238;font-size:19px;line-height:1.3}
 .social-case-stem{display:grid;gap:5px;margin:0;padding:12px 14px;border-left:4px solid #4c8496;border-radius:8px;background:#eff6f8;color:#253f54;font-size:13px;line-height:1.6}
 .social-case-stem b{color:#1d5367;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.social-activity-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:-6px;color:#4b6478;font-size:10px;font-weight:750}
+.social-activity-meta span{padding:5px 8px;border:1px solid #d7e2e9;border-radius:99px;background:#f7fafb}
+.social-reading-source,.social-dialogue{display:grid;gap:12px;padding:15px;border:1px solid #d4e2e9;border-radius:13px;background:linear-gradient(135deg,#f4fafb,#fff)}
+.social-research-links{display:flex;flex-wrap:wrap;gap:8px}
+.social-source-provider-link{display:inline-flex;align-items:center;padding:8px 11px;border:1px solid #c8dce5;border-radius:10px;background:#f1f8fa;color:#174d6b;font-size:12px;font-weight:850;text-decoration:none}
+.social-source-provider-link:hover{background:#e2f1f4;text-decoration:underline}
+.social-source-provider-link:focus-visible{outline:3px solid #20678055;outline-offset:3px}
+.social-reading-heading{display:grid;gap:3px}
+.social-reading-heading>span{color:#28647b;font-size:9px;font-weight:950;letter-spacing:.11em}
+.social-reading-heading h5{margin:0;color:#18364c;font-size:15px;line-height:1.35}
+.social-reading-heading small{color:#586e80;font-size:10px;line-height:1.45}
+.social-reading-text{max-width:940px;color:#263f53;font-size:14px;line-height:1.8}
+.social-reading-text p{margin:0}
+.social-reading-text p+p{margin-top:12px}
+.social-dialogue ol{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.social-dialogue li{display:grid;gap:3px;max-width:88%;padding:9px 12px;border:1px solid #d4e2e9;border-radius:12px;background:#fff;color:#243e52;font-size:13px;line-height:1.55}
+.social-dialogue li:nth-child(even){justify-self:end;border-color:#c5e1d4;background:#f0faf4}
+.social-dialogue li b{color:#2b6073;font-size:10px;letter-spacing:.02em}
+.social-case-study-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.social-case-study{min-width:0;padding:12px;border:1px solid #d8e2e9;border-radius:11px;background:#fbfcfd}
+.social-case-study>span{display:block;margin-bottom:5px;color:#1c5368;font-size:11px;font-weight:900}
+.social-case-study p{margin:0;color:#2d4559;font-size:12px;line-height:1.65}
+.social-question-list{display:grid;gap:11px}
+.social-question-card{display:grid;gap:12px;padding:14px;border:1px solid #d7e1e9;border-radius:13px;background:#fff}
+.social-question-heading{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:start;gap:10px}
+.social-question-number{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#e5f0f3;color:#20586d;font-size:11px;font-weight:950}
+.social-question-heading p{margin:1px 0 0;color:#1d3549;font-size:13px;font-weight:780;line-height:1.6}
+.social-question-card .social-activity-fields{gap:11px}
 .social-choice-question{grid-column:1/-1;min-width:0;margin:0;padding:14px;border:1px solid #d5e0e8;border-radius:12px;background:#fbfcfd}
 .social-choice-question legend{max-width:100%;padding:0 5px;color:#1d3549;font-size:13px;font-weight:800;line-height:1.55}
 .social-question-no{display:block;margin-bottom:3px;color:#486378;font-size:10px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
@@ -158,5 +188,5 @@
 .social-activity-controls>span{color:#46576b;font-size:12px;font-weight:850}
 .social-activity-nav:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:900px){.social-layout{grid-template-columns:1fr}.social-week-navigation{position:static;max-height:470px}.social-week-list{grid-template-columns:repeat(2,minmax(0,1fr))}.social-week-button{grid-template-columns:32px minmax(0,1fr) 18px}}
-@media(max-width:620px){.social-week-list{grid-template-columns:1fr}.social-grid-two{grid-template-columns:1fr}.social-week-heading{display:grid}.social-activity-heading{display:grid}.social-activity-fields{grid-template-columns:1fr}.social-field:has(textarea),.social-field:has(.social-word-preview),.social-checklist-field,.social-choice-question{grid-column:auto}.social-hero:after{right:-35px}.social-week-navigation{max-height:420px}.social-study-table{min-width:700px}.social-summary-heading,.social-practice-heading{display:grid}.social-summary-bottom{grid-template-columns:1fr}.social-practice-track{grid-template-columns:1fr}.social-practice-step{min-height:56px}.social-activity-step{padding:13px}.social-activity-controls{align-items:stretch;flex-wrap:wrap}.social-activity-nav{flex:1}.social-activity-controls>span{order:-1;width:100%;text-align:center}.social-choice-options{grid-template-columns:1fr}}
+@media(max-width:620px){.social-week-list{grid-template-columns:1fr}.social-grid-two{grid-template-columns:1fr}.social-week-heading{display:grid}.social-activity-heading{display:grid}.social-activity-fields{grid-template-columns:1fr}.social-field:has(textarea),.social-field:has(.social-word-preview),.social-checklist-field,.social-choice-question{grid-column:auto}.social-hero:after{right:-35px}.social-week-navigation{max-height:420px}.social-study-table{min-width:700px}.social-summary-heading,.social-practice-heading{display:grid}.social-summary-bottom{grid-template-columns:1fr}.social-practice-track{grid-auto-columns:minmax(205px,82%)}.social-practice-step{min-height:56px}.social-case-study-list{grid-template-columns:1fr}.social-dialogue li{max-width:96%}.social-activity-step{padding:13px}.social-activity-controls{align-items:stretch;flex-wrap:wrap}.social-activity-nav{flex:1}.social-activity-controls>span{order:-1;width:100%;text-align:center}.social-choice-options{grid-template-columns:1fr}}
 @media print{.social-hero,.social-week-navigation,.social-back,.social-print,.social-provider-link,.subject-nav,.top,.social-practice-track,.social-activity-controls,.social-choice-check{display:none!important}.social-layout{display:block}.social-week-content{display:grid!important}.social-week-heading,.social-focus-card,.social-mini-plan,.social-schedule,.social-topic-summary,.social-practice-flow,.social-activity-step{break-inside:avoid}.social-study-table{min-width:0}.social-table-wrap{overflow:visible}.social-plan-source{margin-top:10px}}

@@ -8,13 +8,13 @@ Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
 - MEB 2026 7. sınıf Sosyal Bilgiler ders kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı 37 haftalık ayrı rota.
-- Sosyal Bilgilerde her hafta konu özeti, anahtar kavramlar ve üç adımlı bir öğrenme akışı vardır: kısa sınama, PDF’de gözlenen etkinlik türlerinden esinlenen özgün çalışma ve konuya özel uygulama/öz değerlendirme. Etkinliklerde yapboz, arkası-yarın tahmini, davranış sınıflandırma, beyin yazımı, proje kontrol listesi, kelime bulutu, kaynak/harita inceleme, GZFT, soru kartı, kısa haber ve neden–sonuç gibi çeşitler bulunur; kitap metinleri/kaynak soruları kopyalanmaz.
+- Sosyal Bilgilerde her hafta konu özeti, anahtar kavramlar ve konuya göre değişen etkinlik akışı vardır. İlk iletişim konusu iki haftaya yayılır: uzun özgün açıklama ve iletişimi etkileyen etmenler; cep telefonu sohbeti; trafikte iletişim dili ve üç soru; dört örnek olaydan gözlem/merak listesi; öğrencinin kendi araştırma soruları; yazılı, görsel ve dijital kaynaklardan yapılandırılmış araştırma. İkinci hafta iletişim süreci ve sözlü, yazılı, sözsüz iletişim türleriyle devam eder. Diğer haftalarda cümle dönüştürme, sınıflandırma tablosu, beyin yazımı, proje kontrol listesi, kelime bulutu, kaynak/harita inceleme, GZFT, soru kartı, kısa haber ve neden–sonuç gibi farklı biçimler kullanılır; kitap metinleri/kaynak soruları kopyalanmaz.
 - Aynı metin veya konunun art arda işlendiği Türkçe haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir. Sosyal Bilgiler haftaları ise tarih, konu ve ilerleme takibinde birbirinden ayrı tutulur.
 - EBA ve MEBİ çizelge bağlantıları kullanıcı tarafından sağlanan 7. sınıf Sosyal Bilgiler adreslerine gider; Tonguç araması her haftanın konusunu içerir.
 - Tema bazında gruplanmış haftalık rota ve PDF’deki kaynak metinleri paragraf/dize düzeniyle sunan okuyucu.
 - Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; seçilen haftanın numaralı paketi aynı okuma sayfasında sırayla açılır.
 - Kaynak görevine uygun yazılı yanıt, seçim ve erişilebilir sürükle-bırak / dokunarak eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
-- Türkçe ve Sosyal Bilgiler ilerlemesini ayrı tarayıcı alanlarında saklama; ikisini birlikte JSON yedeğine alıp geri yükleme. Sosyal Bilgilerde mini plan ve etkinlik tamamlanınca uygulama kutusu otomatik işaretlenir; EBA/Tonguç/MEBİ kutuları öğrenci tarafından işaretlenir.
+- Türkçe ve Sosyal Bilgiler ilerlemesini ayrı tarayıcı alanlarında saklama; ikisini birlikte JSON yedeğine alıp geri yükleme. Sosyal Bilgilerde mini plan ve o haftanın tüm etkinlikleri tamamlanınca uygulama kutusu otomatik işaretlenir; EBA/Tonguç/MEBİ kutuları öğrenci tarafından işaretlenir. İlk iki haftanın yeni etkinlik dizisi, eski yerel/JSON yedek kayıtlarını kaybetmeden sürüm geçişi yapar.
 - İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
 
 ## Yerelde çalıştırma
@@ -53,7 +53,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 haftanın konu özetlerini, üç adımlı etkinliklerini, ilerleme/yedek geçişini ve bağlantılarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 haftanın konu özetlerini, ilk iletişim konusunun değişken etkinlik ve okuma akışını, kalan haftaların etkinliklerini, ilerleme/yedek geçişini ve bağlantılarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

@@ -53,11 +53,25 @@ assert.ok(social.weeks.every((week) => week.summary.length > 100 && week.summary
 assert.ok(social.weeks.every((week) => week.source.includes('MEB 7. Sınıf') || week.unitId === 'review'));
 
 for (const week of social.weeks) {
-  assert.equal(week.activities.length, 3, `Week ${week.id} should have a three-part learning/application/reflection flow.`);
-  assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', 'book', 'apply']);
+  assert.ok(week.activities.length >= 3, `Week ${week.id} should have a complete activity flow.`);
+  if (week.id === 1) {
+    assert.deepEqual(week.activities.map((activity) => activity.id), [
+      'communication-importance', 'phone-conversation', 'traffic-communication',
+      'four-communication-cases', 'learner-generated-questions', 'communication-source-research',
+    ], 'The first communication week should follow the requested textbook-like sequence.');
+  } else if (week.id === 2) {
+    assert.deepEqual(week.activities.map((activity) => activity.id), [
+      'communication-process-and-types', 'classify-communication-types',
+      'same-message-three-ways', 'choose-communication-channel',
+    ], 'Week two should continue into communication and communication types.');
+  } else {
+    assert.equal(week.activities.length, 3, `Week ${week.id} should retain the existing three-step flow outside the first communication topic.`);
+    assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', 'book', 'apply']);
+  }
+
   const ids = new Set();
   for (const activity of week.activities) {
-    assert.ok(activity.sourceStyle && activity.title && activity.prompt && activity.fields.length >= 2, `Week ${week.id} is missing a substantial activity step.`);
+    assert.ok(activity.sourceStyle && activity.title && activity.prompt && activity.fields.length >= 1, `Week ${week.id} is missing a substantial activity step.`);
     const fieldIds = activity.fields.map((field) => field.id);
     assert.equal(new Set(fieldIds).size, fieldIds.length, `Week ${week.id}, ${activity.id} has duplicate field IDs.`);
     for (const field of activity.fields) {
@@ -71,11 +85,36 @@ for (const week of social.weeks) {
         assert.ok(field.explanation && field.hint, `Week ${week.id} needs useful right/wrong feedback.`);
       }
     }
+    if (Array.isArray(activity.questions)) {
+      assert.ok(activity.questions.length > 0, `${activity.id} should contain question cards.`);
+      for (const question of activity.questions) {
+        assert.ok(question.id && question.prompt && question.fields.length > 0, `${activity.id} has a missing question prompt or response field.`);
+      }
+    }
   }
-  assert.equal(week.activities[0].fields.length, 2, `Week ${week.id} should include two topic-specific self-check questions.`);
-  assert.ok(week.activities[0].fields.every((field) => field.kind === 'choice'));
-  assert.ok(week.activities[1].fields.length >= 2, `Week ${week.id} must keep its PDF-aligned core activity.`);
-  assert.equal(week.activities[2].fields.length, 2, `Week ${week.id} needs two application/reflection responses.`);
+
+  if (week.id === 1) {
+    const [reading, phone, traffic, cases, learnerQuestions, research] = week.activities;
+    assert.ok(reading.sourceText.split(/\s+/).length > 180, 'Week-one explanatory reading should be substantial.');
+    assert.ok(reading.questions.some((question) => question.id === 'communication-factors'), 'Week one should ask learners to identify factors that affect communication.');
+    assert.equal(phone.dialogue.length, 8, 'The original cellphone conversation should be visible.');
+    assert.equal(phone.questions.length, 3, 'The cellphone conversation should have three topic questions.');
+    assert.ok(traffic.sourceText.includes('Trafik ışıkları') && traffic.questions.length === 3, 'The traffic communication reading should include exactly three questions.');
+    assert.equal(cases.caseStudies.length, 4, 'The observation activity should show four original cases.');
+    assert.ok(cases.questions.some((question) => question.id === 'observations') && cases.questions.some((question) => question.id === 'wonders'));
+    assert.equal(learnerQuestions.questions.length, 3, 'Learners should create their own research questions.');
+    const researchText = [research.prompt, ...research.questions.map((question) => question.prompt)].join(' ').toLocaleLowerCase('tr-TR');
+    for (const term of ['ben dili', 'empati', 'farklılıklara saygı', 'etkin dinleme', 'beden dili', 'sen dili']) {
+      assert.ok(researchText.includes(term), `The research activity should include ${term}.`);
+    }
+    assert.ok(research.questions.some((question) => question.id === 'research-source-record'), 'The research activity should provide a source-record structure.');
+  }
+  if (week.id === 2) {
+    assert.ok(week.activities[0].sourceText.split(/\s+/).length > 180, 'Week-two communication-types explanation should be substantial.');
+    assert.ok(week.activities[0].sourceText.includes('Sözlü iletişim') && week.activities[0].sourceText.includes('Yazılı iletişim') && week.activities[0].sourceText.includes('Sözsüz iletişim'));
+    assert.equal(week.activities[1].questions.length, 6, 'Week two should have six varied examples to classify.');
+    assert.ok(week.activities[2].questions.some((question) => question.id === 'nonverbal-version'));
+  }
 
   const responses = Object.fromEntries(week.activities.map((activity) => [activity.id, Object.fromEntries(activity.fields.map((field) => {
     if (field.kind === 'checklist') return [field.id, Object.fromEntries(field.options.map((option) => [option.id, true]))];
@@ -87,16 +126,22 @@ for (const week of social.weeks) {
   const completeRecord = { tasks: week.tasks.map(() => true), responses, choiceChecks };
   assert.equal(social.isActivityComplete(week, completeRecord), true, `Week ${week.id} should complete with all responses and checked self-assessments.`);
   assert.equal(social.isWeekComplete(week, completeRecord), true, `Week ${week.id} should auto-complete after tasks and activities.`);
-  assert.equal(social.isActivityComplete(week, { ...completeRecord, choiceChecks: {} }), false, `Week ${week.id} must require the student to check self-assessment feedback.`);
-  const wrongResponses = structuredClone(responses);
-  const firstChoice = week.activities[0].fields[0];
-  wrongResponses['self-check'][firstChoice.id] = firstChoice.options.find((option) => option.id !== firstChoice.answer).id;
-  assert.equal(social.isActivityComplete(week, { ...completeRecord, responses: wrongResponses }), false, `Week ${week.id} must not complete while a self-check answer is wrong.`);
+  const firstChoiceActivity = week.activities.find((activity) => activity.fields.some((field) => field.kind === 'choice'));
+  if (firstChoiceActivity) {
+    const unchecked = structuredClone(choiceChecks);
+    unchecked[firstChoiceActivity.id] = {};
+    assert.equal(social.isActivityComplete(week, { ...completeRecord, choiceChecks: unchecked }), false, `Week ${week.id} must require the student to check self-assessment feedback.`);
+    const wrongResponses = structuredClone(responses);
+    const firstChoice = firstChoiceActivity.fields.find((field) => field.kind === 'choice');
+    wrongResponses[firstChoiceActivity.id][firstChoice.id] = firstChoice.options.find((option) => option.id !== firstChoice.answer).id;
+    assert.equal(social.isActivityComplete(week, { ...completeRecord, responses: wrongResponses }), false, `Week ${week.id} must not complete while a self-check answer is wrong.`);
+  }
   assert.equal(social.isWeekComplete(week, { ...completeRecord, tasks: week.tasks.map(() => false) }), false, `Week ${week.id} must require all mini-plan tasks.`);
   const incompleteResponses = structuredClone(responses);
-  const requiredField = week.activities[1].fields.find((field) => field.kind !== 'checklist');
-  if (requiredField) incompleteResponses.book[requiredField.id] = '';
-  else if (week.activities[1].fields[0]?.kind === 'checklist') incompleteResponses.book[week.activities[1].fields[0].id] = {};
+  const requiredActivity = week.activities.find((activity) => activity.fields.some((field) => !['checklist', 'choice'].includes(field.kind)));
+  const requiredField = requiredActivity?.fields.find((field) => !['checklist', 'choice'].includes(field.kind));
+  assert.ok(requiredField, `Week ${week.id} should require at least one open response.`);
+  incompleteResponses[requiredActivity.id][requiredField.id] = '';
   assert.equal(social.isActivityComplete(week, { responses: incompleteResponses, choiceChecks }), false, `Week ${week.id} must require its activity responses.`);
 
   const links = social.getProviderLinks(week);
@@ -105,38 +150,57 @@ for (const week of social.weeks) {
   assert.equal(links.eba, 'https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&okulTuru=6&sinif=15&genelMudurluk=33&ders=17&program=1131&kazanimlar=310150');
   assert.equal(links.mebi, 'https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce');
 }
-
 const week1 = social.weeks[0];
 const imported = social.normalizeProgress({
   version: 1,
   selectedWeek: 7,
   weeks: { '1': { tasks: [true], responses: { respect: '<script>not markup</script>' }, platforms: { eba: true } } },
 });
-assert.equal(imported.version, 2);
+assert.equal(imported.version, 3);
 assert.equal(imported.selectedWeek, 7);
 assert.equal(imported.weeks['1'].tasks.length, week1.tasks.length);
 assert.equal(imported.weeks['1'].tasks[0], true);
 assert.equal(imported.weeks['1'].tasks[1], false);
-assert.equal(imported.weeks['1'].responses.book.respect, '<script>not markup</script>', 'v1 activity responses should migrate into the book activity without loss.');
-assert.equal(imported.weeks['1'].responses['self-check']['self-check-1'], '');
-assert.equal(imported.weeks['1'].choiceChecks['self-check']['self-check-1'], false);
+assert.equal(imported.weeks['1'].legacyResponses.book.respect, '<script>not markup</script>', 'v1 responses should remain available in the legacy backup record after the first-topic flow expands.');
+assert.equal(imported.weeks['1'].responses['communication-importance'].contributions, '');
 assert.equal(imported.weeks['1'].platforms.eba, true);
 assert.equal(imported.weeks['1'].platforms.tonguc, false);
+
+const priorVersionTwo = social.normalizeProgress({
+  version: 2,
+  selectedWeek: 1,
+  weeks: { '1': {
+    tasks: [true, false, true],
+    responses: {
+      'self-check': { 'self-check-1': 'option-2' },
+      book: { respect: 'Eski kitap yanıtı', help: 'Eski yardım yanıtı' },
+      apply: { 'transfer-1': 'Eski uygulama yanıtı' },
+    },
+    choiceChecks: { 'self-check': { 'self-check-1': true } },
+    platforms: { mebi: true },
+  } },
+});
+assert.equal(priorVersionTwo.weeks['1'].legacyResponses['self-check']['self-check-1'], 'option-2');
+assert.equal(priorVersionTwo.weeks['1'].legacyResponses.book.respect, 'Eski kitap yanıtı');
+assert.equal(priorVersionTwo.weeks['1'].legacyResponses.apply['transfer-1'], 'Eski uygulama yanıtı');
+assert.equal(priorVersionTwo.weeks['1'].legacyChoiceChecks['self-check']['self-check-1'], true);
+assert.deepEqual(priorVersionTwo.weeks['1'].tasks, [true, false, true]);
+assert.equal(priorVersionTwo.weeks['1'].platforms.mebi, true);
 
 social.importProgress(imported);
 const exported = social.exportProgress();
 assert.equal(exported.selectedWeek, 7);
 assert.equal(exported.weeks['1'].platforms.eba, true);
-assert.equal(exported.weeks['1'].responses.book.respect, '<script>not markup</script>');
+assert.equal(exported.weeks['1'].legacyResponses.book.respect, '<script>not markup</script>');
 assert.ok(storage.has('emr7lect.socialStudies.v1'), 'Progress should persist in its subject-specific localStorage key.');
 social.resetProgress();
 assert.equal(social.exportProgress().selectedWeek, 1);
 
-const sourceStyles = new Set(social.weeks.map((week) => week.activities[1].sourceStyle));
-for (const sourceStyle of ['Yapboz parçaları', 'Örnek olay inceleme', 'Cümle dönüştürme', 'Beyin yazımı', 'Proje taslağı ve kontrol listesi', 'Kelime bulutu', 'Kaynak inceleme ve tablo', 'Harita inceleme', 'Harita inceleme ve neden–sonuç tablosu', 'GZFT analizi', 'Soru–cevap', 'Kısa haber metni', 'Neden–sonuç tablosu']) {
+const sourceStyles = new Set(social.weeks.slice(2).map((week) => week.activities[1].sourceStyle));
+for (const sourceStyle of ['Cümle dönüştürme', 'Beyin yazımı', 'Proje taslağı ve kontrol listesi', 'Kelime bulutu', 'Kaynak inceleme ve tablo', 'Harita inceleme', 'Harita inceleme ve neden–sonuç tablosu', 'GZFT analizi', 'Soru–cevap', 'Kısa haber metni', 'Neden–sonuç tablosu']) {
   assert.ok(sourceStyles.has(sourceStyle), `The PDF-aligned activity pattern is missing: ${sourceStyle}`);
 }
-assert.ok(social.weeks[1].activities[2].scenario.includes('İki öğrenci'), 'The activity flow should include an original predict-the-continuation case.');
+assert.ok(social.weeks[1].activities[2].scenario.includes('Proje grubunun'), 'Week two should use an original communication-types transfer situation.');
 assert.ok(social.weeks[10].activities[1].sourceStyle.includes('Karşılaştırma'), 'PDF-inspired source comparison should remain available.');
 
 for (const id of ['socialWorkspace', 'socialWeekList', 'socialWeekPrompt', 'socialWeekContent', 'socialProgressBar', 'socialProgressTrack', 'socialProgressCount']) {
@@ -146,20 +210,63 @@ social.resetProgress();
 const root = mockElements.socialWorkspace;
 assert.ok(root.listeners.click && root.listeners.input && root.listeners.change, 'Social activity interactions should be delegated from the workspace.');
 assert.equal((mockElements.socialWeekList.innerHTML.match(/data-social-select=/g) || []).length, 37, 'The UI should render every week separately.');
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Gruplarda ve sosyal hayatta iletişim'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Gruplarda ve sosyal hayatta iletişimin önemi'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('14–18 Eyl 2026–2027 · 1. hafta'));
 assert.ok(!mockElements.socialWeekContent.innerHTML.includes('ham hafta'), 'The user interface must not call a week a “ham hafta”.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Haftalık çalışma çizelgesi'));
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Haftanın kısa konu özeti'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Konu anlatımı · iletişim neden önemlidir?'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Anahtar kavramlar'));
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="0"') && mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="2"'));
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Seçimimi kontrol et'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="0"') && mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="5"'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Metinde iletişimi etkileyen hangi etmenler sıralanıyor?'));
+assert.ok(!mockElements.socialWeekContent.innerHTML.includes('Önce kısa sınama'), 'The first communication week must not be forced into the generic three-step template.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler') && mockElements.socialWeekContent.innerHTML.includes('MEBİ çalışmaları'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&amp;okulTuru=6&amp;sinif=15&amp;genelMudurluk=33&amp;ders=17&amp;program=1131&amp;kazanimlar=310150'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce'));
 assert.equal(mockElements.socialWeekPrompt.hidden, true);
 assert.equal(mockElements.socialWeekContent.hidden, false);
 assert.equal(mockElements.socialProgressCount.textContent, '0 / 37 hafta tamamlandı');
+
+const phoneStepButton = { dataset: { socialActivitySelect: '1' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? phoneStepButton : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Cep telefonu sohbetindeki mesajları incele'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Zeynep') && mockElements.socialWeekContent.innerHTML.includes('Kerem'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Tamamdır.'));
+const phoneInput = {
+  dataset: { socialWeek: '1', socialActivity: 'phone-conversation', socialResponse: 'ambiguous-message' },
+  value: 'Kerem kısa yanıtı yalnızca gördüğünü belirtmek için kullandı; Zeynep bunu görevi kabul etti sanabilir.',
+  type: 'textarea',
+  closest(selector) { return selector === '[data-social-response]' ? this : null; },
+};
+root.listeners.input({ target: phoneInput });
+assert.equal(social.exportProgress().weeks['1'].responses['phone-conversation']['ambiguous-message'], phoneInput.value);
+
+const casesStepButton = { dataset: { socialActivitySelect: '3' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? casesStepButton : null } });
+assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-case-study"/g) || []).length, 4, 'The four original cases should render as separate stimuli.');
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Gözlemlerim') && mockElements.socialWeekContent.innerHTML.includes('Merak ettiklerim'));
+const researchStepButton = { dataset: { socialActivitySelect: '5' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? researchStepButton : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Ben dili') && mockElements.socialWeekContent.innerHTML.includes('Beden dili'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler ↗') && mockElements.socialWeekContent.innerHTML.includes('MEBİ öğrenci bölümü ↗'));
+
+const week2Button = { dataset: { socialSelect: '2' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week2Button : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Konu anlatımı · iletişim süreci ve türleri'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Sözlü iletişim') && mockElements.socialWeekContent.innerHTML.includes('Sözsüz iletişim'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="3"'));
+const classifyStepButton = { dataset: { socialActivitySelect: '1' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? classifyStepButton : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Seçimimi kontrol et'));
+const customRadio = {
+  dataset: { socialWeek: '2', socialActivity: 'classify-communication-types', socialResponse: 'type-choice-1' },
+  type: 'radio',
+  value: 'spoken',
+};
+root.listeners.change({ target: customRadio });
+assert.equal(social.exportProgress().weeks['2'].responses['classify-communication-types']['type-choice-1'], 'spoken');
+const customCheckButton = { dataset: { socialWeek: '2', socialActivity: 'classify-communication-types', socialCheckChoice: 'type-choice-1' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-check-choice]' ? customCheckButton : null } });
+assert.equal(social.exportProgress().weeks['2'].choiceChecks['classify-communication-types']['type-choice-1'], true);
 
 const week20Button = { dataset: { socialSelect: '20' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week20Button : null } });
@@ -197,4 +304,4 @@ const activityStepButton = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? activityStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT’yi gerekçeyle dold'), 'The student should be able to navigate to the transfer/reflection step.');
 
-console.log('Social Studies summaries, three-step activities, PDF-aligned formats, migration, completion rules, exact links, and isolated backups passed.');
+console.log('Social Studies summaries, variable textbook-aligned flows, first-topic reading and activity sequence, progress migration, completion rules, exact links, and backups passed.');

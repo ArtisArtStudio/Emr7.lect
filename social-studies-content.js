@@ -3,20 +3,37 @@
   'use strict';
 
   const check = (prompt, options, correct, explanation, hint) => ({ prompt, options, correct, explanation, hint });
-  const lesson = (summary, points, terms, transfer) => ({ summary, points, terms, transfer });
+  const lesson = (summary, points, terms, transfer, extras = {}) => ({ summary, points, terms, transfer, ...extras });
+  const textField = (id, label, placeholder, minChars = 12, kind = 'textarea') => ({ id, label, placeholder, minChars, kind });
+  const question = (id, prompt, fields) => ({ id, prompt, fields });
+  const communicationChoice = (id, answer, explanation, hint) => ({
+    id,
+    label: 'İletişim türünü seç.',
+    kind: 'choice',
+    options: [
+      { id: 'spoken', label: 'Sözlü iletişim' },
+      { id: 'written', label: 'Yazılı iletişim' },
+      { id: 'nonverbal', label: 'Sözsüz iletişim' },
+    ],
+    answer,
+    explanation,
+    hint,
+  });
 
   const lessons = {
     1: lesson(
-      'İnsanlar aile, sınıf, takım ve başka gruplarda birlikte yaşar. Herkesin görüşüne saygı göstermek, görevleri paylaşmak ve verilen sorumluluğu yerine getirmek grubu güçlendirir. İletişim yalnızca konuşmak değil, karşılıklı anlamaya çalışmaktır.',
-      ['Grup üyelerinin farklı görev ve düşünceleri olabilir.', 'Saygı ve yardımlaşma, ortak yaşamı kolaylaştırır.', 'Sorumluluk, kişinin üstlendiği işi takip etmesidir.'],
-      ['grup', 'iletişim', 'sorumluluk'],
-      { title: 'Birlikte yaşamadan bir örnek', format: 'Örnek olay · davranış ve gerekçe', prompt: 'Aile, sınıf veya takım yaşamından kısa bir durum seç. Bir davranışın gruba nasıl katkı sağladığını açıkla.', fields: [['Durum / örneğim', 'Kimler vardı, ne oldu?'], ['Katkı ve gerekçem', 'Hangi davranış birlikte yaşamayı kolaylaştırdı?']], hint: 'Davranışı ve sonucunu birbirine bağla.' }
+      'İnsanlar ailede, sınıfta, takımda ve başka gruplarda ortak işler yaparken birbirleriyle iletişim kurar. İletişim, yalnızca konuşanın söz söylemesi değildir: iletinin anlaşılması, dinleyenin ne anladığını göstermesi ve gerekirse açıklama yapılması da sürecin parçasıdır. Bu nedenle dikkatle dinlemek, uygun sorular sormak ve düşünceyi açık, saygılı biçimde ifade etmek önem taşır.\n\nEtkili iletişim grup üyelerinin görevleri paylaşmasına, ortak karar vermesine ve sorunları büyümeden ele almasına yardım eder. Herkesin aynı düşünmesi gerekmez; farklı görüşlerin güvenle dile getirilebilmesi gruba yeni fikirler kazandırır. İletinin açıklığı, sözcük ve ses tonu, yüz ifadesi ve beden duruşu, dinleyenin dikkati, ortamın koşulları, seçilen iletişim aracı ve geri bildirim iletişimi etkileyebilir. Bu unsurları fark etmek yanlış anlamayı azaltır ve birlikte yaşamayı güçlendirir.',
+      ['İletişim, iletinin karşılıklı anlaşılmasını ve gerektiğinde açıklığa kavuşturulmasını da kapsar.', 'Açık anlatım, dikkatli dinleme, saygı ve geri bildirim ortak çalışmayı destekler.', 'Söz, beden dili, ortam ve kullanılan araç iletinin nasıl anlaşılacağını etkileyebilir.'],
+      ['grup', 'iletişim', 'etkili iletişim', 'geri bildirim'],
+      { title: 'Birlikte yaşamadan bir örnek', format: 'Örnek olay · davranış ve gerekçe', prompt: 'Aile, sınıf veya takım yaşamından kısa bir durum seç. Bir davranışın gruba nasıl katkı sağladığını açıkla.', fields: [['Durum / örneğim', 'Kimler vardı, ne oldu?'], ['Katkı ve gerekçem', 'Hangi davranış birlikte yaşamayı kolaylaştırdı?']], hint: 'Davranışı ve sonucunu birbirine bağla.' },
+      { summaryTitle: 'Konu anlatımı · iletişim neden önemlidir?', flowDescription: 'Özgün okuma → sohbet ve trafik dilini inceleme → örnek olaylardan soru üretme → kaynak araştırması.' }
     ),
     2: lesson(
-      'Etkili iletişimde kişi karşısındakini dikkatle dinler, ne anladığını kontrol eder ve düşüncesini açık, nazik bir dille söyler. Söz kesmek veya hemen yargılamak yanlış anlaşılmayı artırabilir. Açık uçlu bir soru, konuşmayı sürdürmeye ve ihtiyacı anlamaya yardım eder.',
-      ['Dinlerken söz kesmeden karşı tarafa zaman tanı.', 'Anladığını kendi sözlerinle özetleyip doğrula.', 'Yanıt vermeden önce merak ettiğin noktayı sor.'],
-      ['aktif dinleme', 'açık soru', 'geri bildirim'],
-      { title: 'Arkası yarın: olası devamı düşün', format: 'Örnek olay · tahmin · davranış sınıflandırma', scenario: 'İki öğrenci ortak bir çevre projesi için sunum biçimini seçemiyor. Biri konuşarak anlatmak, diğeri görsel bir çalışma hazırlamak istiyor.', prompt: 'Durumun nasıl devam edebileceğini tahmin et. İletişimi güçlendirecek ve zorlaştıracak davranışları ayır; sonra konuşmayı sürdürecek bir cümle öner.', fields: [['Tahminim ve davranışlar', 'Bir yapıcı, bir iletişimi zorlaştıran davranış yaz.'], ['Dinleyen ve saygılı yanıtım', 'Anlamayı gösteren bir soru veya cümle kur.']], hint: 'Tahminini, kişilerden birinin ne söyleyebileceğine dayandır.' }
+      'İletişim, insanların duygu, düşünce, bilgi ve ihtiyaçlarını birbirlerine aktarıp anlam kurdukları bir süreçtir. Bir mesajın anlaşılmasında mesajı gönderen, mesajı alan, kullanılan kanal ve koşulların yanı sıra karşı tarafın verdiği geri bildirim de rol oynar. Aynı cümle, ses tonu veya ortam değiştiğinde farklı yorumlanabilir; yazılı mesajlarda ise yüz ifadesi ve ses tonu görünmediği için açıklık özellikle önemlidir.\n\nİletişim farklı yollarla gerçekleşebilir. Sözlü iletişimde kişiler yüz yüze, telefonla ya da sesli bir duyuru aracılığıyla konuşur. Yazılı iletişim; not, mektup, duyuru veya dijital mesaj gibi yazıyla kurulur. Sözsüz iletişimde yüz ifadesi, jest, duruş ve uygun bağlamda kullanılan işaretler anlam taşır. Günlük bir konuşmada bu yollar çoğu zaman birlikte kullanılır: kişi konuşurken ses tonundan ve beden dilinden de ipucu verir.\n\nHer yolun güçlü ve sınırlı yanları vardır. Konuşma hızlı soru sormayı sağlar ancak gürültülü ortamda duyulmayabilir; yazı bilgiyi tekrar okumaya imkân verir ama kısa bir mesajın tonu belirsiz kalabilir. Sözsüz işaretler konuşmayı destekler, fakat tek başına ayrıntılı bilgi vermeyebilir ve farklı yorumlanabilir. Bu yüzden iletişim biçimini amaca, kişilere, ortama ve erişilebilirliğe göre seçmek; ardından mesajın doğru anlaşılıp anlaşılmadığını kontrol etmek gerekir.',
+      ['Sözlü, yazılı ve sözsüz iletişim farklı aktarım yollarıdır; günlük yaşamda birlikte kullanılabilir.', 'İletişim biçimini amaca, kişilere, ortama ve erişilebilirliğe göre seç.', 'Geri bildirim, iletinin doğru anlaşılıp anlaşılmadığını görmeye yardım eder.'],
+      ['iletişim', 'sözlü iletişim', 'yazılı iletişim', 'sözsüz iletişim', 'kanal', 'geri bildirim'],
+      { title: 'Bir iletişim yolunu seç ve gerekçelendir', format: 'Durum çözümleme · tür seçimi · gerekçe', prompt: 'Bir grup çalışmasında saat değişikliğini herkese duyurman gerekiyor. Hangi iletişim yollarını birlikte kullanacağını ve anlaşıldığını nasıl kontrol edeceğini açıkla.', fields: [['Seçtiğim yollar ve mesajım', 'Sözlü, yazılı veya sözsüz yollardan hangileri?'], ['Geri bildirim ve gerekçem', 'Herkesin anladığını nasıl anlarsın?']], hint: 'Amacı, alıcıları ve yanlış anlaşılma riskini birlikte düşün.' },
+      { summaryTitle: 'Konu anlatımı · iletişim süreci ve türleri', flowDescription: 'Açıklayıcı okuma → iletişim türlerini sınıflandırma → aynı iletiyi farklı yollarla kurma → uygun kanalı gerekçelendirme.' }
     ),
     3: lesson(
       'Empati, başka bir kişinin duygusunu ve bakış açısını anlamaya çalışmaktır; onunla aynı fikirde olmak zorunlu değildir. Ben dili, kişiyi suçlamak yerine kendi duygunu, durumu ve ihtiyacını anlatır. Farklı düşüncelere saygılı yanıt vermek güvenli iletişimi destekler.',
@@ -230,6 +247,266 @@
     ),
   };
 
+  const activities = {
+    1: [
+      {
+        id: 'communication-importance',
+        title: 'Gruplarda ve sosyal hayatta iletişimin önemini oku',
+        sourceStyle: 'Özgün bilgilendirici metin · ana düşünce ve etkenleri belirleme',
+        format: 'Okuma · metinden bilgi bulma · açıklama',
+        count: '1 konu metni · 3 düşünme sorusu',
+        sourceTitle: 'Özgün konu anlatımı',
+        sourceLabel: 'Uygulama için özgün metin',
+        prompt: 'Metni bölüm bölüm oku. Ardından iletişimin grup yaşamına katkısını ve iletişimi etkileyen etmenleri metinden yararlanarak açıkla.',
+        hint: 'Kendi cümlelerini kullan; bir etmeni yalnızca adlandırmak yerine iletişimi nasıl etkileyebileceğini de belirt.',
+        sourceText: 'Bir sınıf, spor takımı ya da mahalle çalışması gibi gruplarda insanlar ortak bir amaç için bir araya gelir; fakat herkesin bilgisi, düşüncesi ve ihtiyacı aynı olmayabilir. İletişim, bir kişinin söz söylemesiyle bitmez. Önemli olan, iletinin anlaşılması, karşı tarafın ne anladığının görülmesi ve gerekirse açıklama yapılmasıdır. Bu nedenle konuşmak kadar dikkatle dinlemek, uygun zamanda soru sormak ve yanıt vermek de iletişimin parçasıdır.\n\nEtkili iletişim görevlerin paylaşılmasına, ortak kararların alınmasına ve sorunların büyümeden ele alınmasına yardım eder. Bir grup üyesi düşüncesini açıkça ve saygılı bir dille söylediğinde başkaları da katkı sunabilir. Üyeler birbirine söz hakkı tanıdığında farklı görüşler duyulur; açıklayıcı sorular yanlış anlamaları azaltır. Böylece kişiler kendilerini grubun parçası hisseder, ortak işte sorumluluk alır ve gerektiğinde birbirine destek olur.\n\nİletişimin nasıl sonuçlanacağını birden çok etmen etkiler: iletinin açık ve amaca uygun olması, konuşanın seçtiği sözcükler ve ses tonu, dinleyenin dikkatini vermesi ve hemen yargıya varmaması, yüz ifadesi ve beden duruşu, ortamın gürültülü olup olmaması, kullanılan araç ve karşılıklı geri bildirim. Örneğin kalabalık bir yerde fısıltıyla verilen yönerge duyulmayabilir; yazılı mesajda ses tonu görünmediği için kısa bir ifade farklı yorumlanabilir. İletişim kopukluğu görevlerin karışmasına veya kırgınlığa yol açabilir. Kişiler birbirini anlamaya çalışıp “Doğru mu anladım?” diye kontrol ettiğinde ise grupta güven ve iş birliği gelişir.',
+        questions: [
+          question('group-contribution', 'Metne göre etkili iletişim, grup üyelerinin birlikte yaptığı işlere nasıl katkı sağlar? İki katkıyı açıkla.', [
+            textField('contributions', 'Yanıtın', 'Örneğin görev paylaşımı, ortak karar, sorun çözme veya gruba ait hissetme…', 18),
+          ]),
+          question('communication-factors', 'Metinde iletişimi etkileyen hangi etmenler sıralanıyor? En az dört etmeni listele ve bunlardan birinin etkisini açıkla.', [
+            textField('factors', 'İletişimi etkileyen etmenler', 'Etmenleri virgül veya madde işaretleriyle sırala…', 25),
+            textField('factor-effect', 'Bir etmenin olası etkisi', 'Bu etmen olumlu ya da olumsuz olarak neyi değiştirebilir?', 18),
+          ]),
+          question('communication-is-reciprocal', '“İletişim, bir kişinin söz söylemesiyle bitmez.” düşüncesini metinden bir ayrıntıyla açıkla.', [
+            textField('reciprocal-explanation', 'Açıklamam ve metinden dayanağım', 'Dinleme, geri bildirim veya anlamayı kontrol etmeyle ilişkilendir…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'phone-conversation',
+        title: 'Cep telefonu sohbetindeki mesajları incele',
+        sourceStyle: 'Özgün dijital sohbet · anlamı kontrol etme · mesajı iyileştirme',
+        format: 'Sohbet çözümleme · 3 açık uçlu soru',
+        count: '1 telefon sohbeti · 3 soru',
+        sourceTitle: 'Özgün örnek sohbet',
+        sourceLabel: 'Aşağıdaki konuşma bu etkinlik için yazılmıştır',
+        prompt: 'Sohbeti okuyup mesajların nasıl anlaşıldığını incele. Yazılı mesajda eksik kalabilecek bilgileri ve yanlış anlamayı azaltan ifadeleri belirle.',
+        hint: 'Sohbetten kanıt göster; kişileri suçlamak yerine mesajın açıklığına ve verilen yanıta odaklan.',
+        dialogue: [
+          { speaker: 'Zeynep', text: 'Grup sunumunun giriş kısmını bitirdim.' },
+          { speaker: 'Kerem', text: 'Güzel.' },
+          { speaker: 'Zeynep', text: 'Sonuç bölümündeki iki öneriyi sen ekleyebilir misin?' },
+          { speaker: 'Kerem', text: 'Tamamdır.' },
+          { speaker: 'Zeynep', text: 'Dosyayı bu akşam 19.00’da paylaşacağım. Senin bölümün o saate kadar yetişir mi?' },
+          { speaker: 'Kerem', text: 'Ben “tamamdır” yazınca bütün sunumu bitirdiğimi mi düşündün? Ben yalnızca mesajını gördüğümü belirtmiştim.' },
+          { speaker: 'Zeynep', text: 'Haklısın, ne zaman yetiştirebileceğini açıkça sormalıydım. Taslağı 18.30’da gönderirsen birlikte gözden geçirebiliriz.' },
+          { speaker: 'Kerem', text: 'Uygun. Taslağı 18.30’da gönderiyorum.' },
+        ],
+        questions: [
+          question('chat-meaning', 'Sohbette hangi kısa yanıt farklı biçimlerde anlaşılabiliyor? İki kişinin bu yanıtı nasıl yorumladığını yaz.', [
+            textField('ambiguous-message', 'Mesaj ve iki yorum', 'Sohbetten ilgili kısa mesajı ve iki farklı anlamı belirt…', 18),
+          ]),
+          question('chat-repair', 'Zeynep’in daha sonraki mesajı yanlış anlaşılmayı azaltmak için hangi bilgileri açıklıyor?', [
+            textField('clarifying-details', 'Açıklayıcı bilgiler', 'Görev, zaman, beklenen adım veya birlikte gözden geçirme…', 18),
+          ]),
+          question('chat-rewrite', 'Sen bu grup çalışmasında olsaydın, işi ve teslim zamanını netleştiren kısa ve saygılı bir mesaj nasıl yazardın?', [
+            textField('clear-message', 'Kendi mesajım', 'İsteğini açıkça belirt ve karşı tarafın durumunu sormaya yer bırak…', 16),
+          ]),
+        ],
+      },
+      {
+        id: 'traffic-communication',
+        title: 'Trafikte iletişim dilini oku ve yorumla',
+        sourceStyle: 'Özgün bilgilendirici metin · metinden çıkarım · 3 soru',
+        format: 'Günlük yaşam metni · yorumlama',
+        count: '1 trafik metni · 3 soru',
+        sourceTitle: 'Özgün bilgilendirici metin',
+        sourceLabel: 'Uygulama için özgün metin',
+        prompt: 'Trafikte iletişimin yalnızca konuşmadan oluşmadığını düşünerek metni oku. Verilen örnekleri ve güvenli, saygılı iletişim dilini sorularla incele.',
+        hint: 'Trafik işaret ve kurallarının herkes için anlaşılır olmasına, mesajın zamanında verilmesine dikkat et.',
+        sourceText: 'Trafik; sürücülerin, yolcuların, yayaların ve bisiklet kullananların aynı alanı paylaştığı bir ortamdır. Burada iletişim, insanların güvenli biçimde hareket etmesine yardımcı olur. Trafik ışıkları, yol çizgileri ve levhalar yazı ya da simgelerle bilgi verir; dönüş sinyali ve trafik görevlisinin el işareti de sözcük kullanılmadan mesaj iletebilir. Sürücünün kurallara uygun ve zamanında sinyal vermesi, çevresindekilerin ne yapacağını öngörmesini kolaylaştırır.\n\nTrafikte saygılı iletişim, kuralları izlemekle ve başkalarının hareket alanını gözetmekle başlar. Gereksiz korna, öfkeli bağırma veya ani ve öngörülemez davranışlar dikkati dağıtabilir; diğer kişilerin mesajı doğru anlamasını zorlaştırabilir. Bir yaya geçidinde bekleyen kişiye zaman tanımak, bisikletliyi sıkıştırmamak ve yön değişikliğini uygun biçimde bildirmek ortak güvenliği destekler. Bir işaretin anlamı belirsizse tahminle hareket etmek yerine güvenli davranıp kurallara uymak gerekir. Trafikte açık, sakin ve zamanında verilen mesajlar herkesin aynı durumu daha iyi değerlendirmesine yardım eder.',
+        questions: [
+          question('traffic-signals', 'Metinde sözcük kullanılmadan bilgi veren hangi trafik iletişimi örnekleri var? İki örnek yaz.', [
+            textField('nonverbal-traffic', 'Sözsüz iletişim örnekleri', 'İşaret, sinyal, çizgi veya jest örneklerini metinden bul…', 12),
+          ]),
+          question('traffic-language', '“Önüne baksana!” gibi öfkeli bir çıkış yerine aynı güvenlik uyarısını daha açık ve saygılı bir dille nasıl söyleyebilirsin?', [
+            textField('respectful-warning', 'Uygun uyarı cümlem', 'Kısa, sakin ve anlaşılır bir cümle kur…', 10, 'text'),
+          ]),
+          question('traffic-importance', 'Trafikte bir mesajın zamanında ve anlaşılır olması neden önemlidir? Metinden bir gerekçe ve kendi örneğini yaz.', [
+            textField('traffic-reason', 'Gerekçem ve örneğim', 'Güvenlik, hareketi öngörme veya dikkati korumayla ilişkilendir…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'four-communication-cases',
+        title: 'Dört örnek durumu gözlemle ve merak ettiklerini yaz',
+        sourceStyle: 'Dört özgün örnek olay · gözlem ve merak listesi',
+        format: 'Örnek olay inceleme · gözlem / merak tablosu',
+        count: '4 örnek durum · 2 liste',
+        sourceTitle: 'Özgün örnek durumlar',
+        sourceLabel: 'Dört kısa durumu birlikte incele',
+        prompt: 'Her duruma bakarken yalnızca ne olduğunu değil, mesajın nasıl verildiğini ve nasıl karşılandığını da gözle. Ardından gözlemlerini ve merak ettiklerini iki ayrı listede topla.',
+        hint: 'Bir gözlem, metinde görülen bir ayrıntıdır. Merak ettiğin şey ise araştırılabilecek yeni bir sorudur.',
+        caseStudies: [
+          { title: '1. Sınıf projesi', text: 'Eylül, proje planını anlatırken Arda birkaç kez sözünü kesip görevi kendi istediği biçimde dağıtır. Eylül konuşmayı bırakır; diğer grup üyeleri de henüz görüşlerini söylememiştir.' },
+          { title: '2. Grup mesajı', text: 'Bir öğrenci sınıf grubuna “Bunu ben hallederim.” diye yazar. Kimin hangi bölümü hazırlayacağı ve çalışmanın ne zamana kadar tamamlanacağı belirtilmediği için iki arkadaşı farklı işler yapmaya başlar.' },
+          { title: '3. Mahalle toplantısı', text: 'Park temizliği hakkında farklı bir öneri sunulunca toplantıyı yöneten kişi konuşanı sonuna kadar dinler, duyduğunu kendi sözleriyle özetler ve diğer katılımcılara da görüşlerini sorar.' },
+          { title: '4. Kulüp duyurusu', text: 'Bir kulübün toplantı saati yalnızca koridorda sözlü olarak bir kez duyurulur. O sırada okulda olmayan bazı öğrenciler haberi alamaz; kulüp danışmanı daha sonra panoya yazılı duyuru da asar.' },
+        ],
+        questions: [
+          question('observations', 'Dört örnekten gözlemlediğin iletişim davranışlarını listele. En az üç somut ayrıntı yaz.', [
+            textField('observation-list', 'Gözlemlerim', 'Kim ne yaptı, mesaj nasıl verildi veya nasıl karşılandı?', 22),
+          ]),
+          question('wonders', 'Bu durumlar sende hangi merakları uyandırdı? Cevabını araştırmak isteyeceğin en az üç noktayı listele.', [
+            textField('wonder-list', 'Merak ettiklerim', '“Neden…?”, “Nasıl…?” veya “Hangi durumda…?” diye başlayabilirsin.', 22),
+          ]),
+        ],
+      },
+      {
+        id: 'learner-generated-questions',
+        title: 'Etkili iletişim hakkında kendi sorularını oluştur',
+        sourceStyle: 'Öğrenci tarafından soru üretme · önceki gözlem listesinden hareket etme',
+        format: 'Soru oluşturma · araştırmaya hazırlık',
+        count: '3 özgün araştırma sorusu',
+        sourceLabel: 'Önceki etkinlikteki gözlem ve merak listeni kullan',
+        prompt: 'Bir önceki etkinlikte yazdığın gözlem ve meraklara dön. Etkili iletişimin önemiyle ilgili, cevabı hazır verilmeyen ve araştırılabilecek sorular oluştur.',
+        hint: 'Sorularını “neden”, “nasıl” veya “hangi durumda” ile başlatabilir; aynı şeyi üç kez sormamaya çalışabilirsin.',
+        questions: [
+          question('own-question-one', 'İlk araştırma sorunu yaz.', [textField('student-question-1', 'Sorum 1', 'Neden…? Nasıl…? Hangi durumda…?', 8, 'text')]),
+          question('own-question-two', 'İkinci araştırma sorunu yaz.', [textField('student-question-2', 'Sorum 2', 'Farklı bir gözlem veya merakından yola çık…', 8, 'text')]),
+          question('own-question-three', 'Üçüncü araştırma sorunu yaz.', [textField('student-question-3', 'Sorum 3', 'İletişimin gruba etkisini araştırmaya aç…', 8, 'text')]),
+        ],
+      },
+      {
+        id: 'communication-source-research',
+        title: 'Kaynaklardan araştır ve bulgularını kaydet',
+        sourceStyle: 'Yazılı · görsel · dijital kaynak inceleme · araştırma notu',
+        format: 'Kaynak araştırması · yapılandırılmış bulgu alanı',
+        count: '3 kaynak türü · 6 iletişim başlığı · 1 sonuç',
+        sourceLabel: 'Ders kitabı, EBA/MEBİ ve öğretmeninin onayladığı kaynaklar',
+        sourceProviders: ['eba', 'mebi'],
+        prompt: 'Ben dili, empati, farklılıklara saygı, etkin dinleme, beden dili ve sen dilinin etkisi hakkında yazılı, görsel ve dijital kaynakları incele. Kaynağın adını/türünü ve bulduğun bilgiyi kaydet; bilgileri kendi cümlelerinle özetle.',
+        hint: 'Bir bilgiyi doğrudan kopyalama. Kaynak türünü ve adını yaz; bulgunu kendi sözlerinle ifade et. EBA veya MEBİ’deki ilgili ders materyalini ya da öğretmeninin onayladığı başka bir kaynağı kullanabilirsin.',
+        questions: [
+          question('research-source-record', 'Araştırmanda kullandığın kaynakları kaydet. Her kaynak için başlık/ad, sayfa veya erişim bilgisi ve öğrendiğin bir noktayı yaz.', [
+            textField('written-source', 'Yazılı kaynak', 'Kitabın / metnin adı, sayfa ve bulduğum bilgi…', 14),
+            textField('visual-source', 'Görsel kaynak', 'Görselin / şemanın adı veya nerede bulunduğu ve gösterdiği bilgi…', 14),
+            textField('digital-source', 'Dijital kaynak', 'Kurum / içerik başlığı, bağlantı veya erişim tarihi ve bulgu…', 14),
+          ]),
+          question('research-ben-language', 'Ben dili araştırmanda nasıl tanımlanıyor? Bir günlük yaşam cümlesinde nasıl kullanılabileceğini yaz.', [
+            textField('ben-language-note', 'Ben dili bulgum', 'Durum, duygu ve isteği suçlamadan ifade etme üzerine…', 14),
+          ]),
+          question('research-empathy', 'Empati kurmanın iletişimdeki rolü hakkında ne öğrendin?', [
+            textField('empathy-note', 'Empati bulgum', 'Aynı fikirde olmak ile karşı tarafı anlamaya çalışmayı ayır…', 14),
+          ]),
+          question('research-differences', 'Farklı düşünce ve özelliklere saygı göstermek grupta iletişimi nasıl etkileyebilir?', [
+            textField('differences-note', 'Farklılıklara saygı bulgum', 'Katılım, güven veya görüşlerin duyulmasıyla bağlantı kur…', 14),
+          ]),
+          question('research-active-listening', 'Etkin dinleme sırasında gözlenebilecek iki davranışı ve bunların olası katkısını yaz.', [
+            textField('active-listening-note', 'Etkin dinleme bulgum', 'Söz kesmeden dinleme, anladığını kontrol etme veya açıklayıcı soru…', 14),
+          ]),
+          question('research-body-language', 'Beden dili hangi ipuçlarını taşıyabilir? Bu ipuçlarının yanlış yorumlanmaması için neye dikkat edilir?', [
+            textField('body-language-note', 'Beden dili bulgum', 'Yüz ifadesi, jest, duruş veya bağlam…', 14),
+          ]),
+          question('research-you-language', 'Sen diliyle kurulan suçlayıcı bir söz karşı tarafta nasıl bir etki oluşturabilir? Daha yapıcı bir ifade için ne değiştirilebilir?', [
+            textField('you-language-note', 'Sen dilinin etkisi', 'Savunmaya geçme, konuşmanın kesilmesi veya duyguyu/isteği açıkça söyleme…', 14),
+          ]),
+          question('research-synthesis', 'Araştırma bulgularına dayanarak etkili iletişimin grup yaşamındaki önemini iki cümleyle özetle.', [
+            textField('research-conclusion', 'Araştırma sonucum', 'En az iki bulgu arasında bağlantı kur…', 24),
+          ]),
+        ],
+      },
+    ],
+    2: [
+      {
+        id: 'communication-process-and-types',
+        title: 'İletişim sürecini ve iletişim türlerini kavra',
+        sourceStyle: 'Uzun özgün açıklayıcı metin · metinle düşünme',
+        format: 'Konu okuması · süreç / tür / özellik karşılaştırması',
+        count: '1 açıklayıcı metin · 3 düşünme sorusu',
+        sourceTitle: 'Özgün konu anlatımı',
+        sourceLabel: 'İletişim süreci ve türlerine giriş',
+        prompt: 'Önce açıklayıcı metni oku. Ardından iletişim sürecinin ögelerini, sözlü-yazılı-sözsüz yolların özelliklerini ve her yolun sınırlılıklarını örneklerle düşün.',
+        hint: 'Bir iletişim biçimini her durumda en iyi kabul etme; amaca, ortama ve kişilere göre değerlendir.',
+        sourceText: 'İletişim, insanların duygu, düşünce, bilgi ve ihtiyaçlarını birbirlerine aktarıp anlam kurdukları bir süreçtir. Bu süreçte bir kişi ya da grup iletiyi hazırlar; ileti başka bir kişiye veya gruba bir kanal aracılığıyla ulaşır. İletiyi alan kişi onu kendi bilgisi ve içinde bulunduğu koşullarla yorumlar. Verdiği yanıt ya da davranış, iletinin anlaşılıp anlaşılmadığına dair geri bildirim sağlar. Gürültü, dikkatin dağılması, belirsiz sözcükler veya paylaşılan bilginin eksik olması bu akışı etkileyebilir.\n\nİletişim farklı yollarla gerçekleşebilir. Sözlü iletişimde kişiler yüz yüze, telefonla ya da sesli bir duyuru aracılığıyla konuşur. Yazılı iletişim; not, mektup, duyuru veya dijital mesaj gibi yazıyla kurulur. Sözsüz iletişimde yüz ifadesi, jest, duruş ve uygun bağlamda kullanılan işaretler anlam taşır. Günlük bir yüz yüze konuşmada bu yollar çoğu zaman birlikte kullanılır: kişi konuşurken ses tonu ve beden dili de ipucu verir.\n\nHer yolun güçlü ve sınırlı yanları vardır. Konuşma hızlı soru sormayı sağlar ancak gürültülü ortamda duyulmayabilir; yazı bilgiyi tekrar okumaya imkân verir ama kısa bir mesajın tonu belirsiz kalabilir. Sözsüz işaretler konuşmayı destekler; yine de tek başına ayrıntılı bilgi vermeyebilir ve farklı yorumlanabilir. Bu yüzden iletişim biçimini amaca, kişilere, ortama ve erişilebilirliğe göre seçmek; ardından mesajın doğru anlaşılıp anlaşılmadığını kontrol etmek gerekir.',
+        questions: [
+          question('communication-elements', 'Metinde bir iletinin karşı tarafa ulaşmasını ve anlaşılmasını sağlayan hangi ögelerden söz ediliyor? En az üç ögeyi, aralarındaki bağla açıkla.', [
+            textField('communication-elements-note', 'Süreç ögeleri', 'İletiyi hazırlayan, ileti, alan kişi, kanal, geri bildirim veya ortam…', 22),
+          ]),
+          question('feedback-role', 'Geri bildirim, iletinin anlaşılıp anlaşılmadığını görmeye nasıl yardım eder?', [
+            textField('feedback-explanation', 'Açıklamam ve örneğim', 'Bir yanıt, soru veya davranış örneğiyle açıkla…', 18),
+          ]),
+          question('types-compare', 'Metindeki üç iletişim yolundan ikisini seç. Her biri için bir güçlü yön ve bir sınırlılık yaz.', [
+            textField('types-strength-limits', 'Karşılaştırmam', 'Sözlü / yazılı / sözsüz yolları amaç ve ortamla ilişkilendir…', 22),
+          ]),
+        ],
+      },
+      {
+        id: 'classify-communication-types',
+        title: 'Örneklerdeki iletişim türünü belirle',
+        sourceStyle: 'Örnekleri sınıflandırma · seçim ve gerekçelendirme',
+        format: 'Sınıflandırma · 6 özgün günlük yaşam örneği',
+        count: '6 örnek · sözlü / yazılı / sözsüz',
+        sourceLabel: 'Özgün örnekler; türleri iletiyi aktarma yoluna göre sınıflandır',
+        prompt: 'Her örnekte iletinin hangi yolla aktarıldığını seç. Kararsız kaldığında iletinin kendisine değil, örnekte kullanılan araca ve görülebilen davranışa bak.',
+        hint: 'Bir olay birden fazla yolu içerebilir; bu etkinlikte her örnekte özellikle belirtilen aktarım biçimini seç.',
+        questions: [
+          question('type-example-1', 'Sınıf temsilcisi toplantıda söz alıp önerisini arkadaşlarına anlatıyor.', [communicationChoice('type-choice-1', 'spoken', 'Öneri konuşma yoluyla aktarılıyor.', 'Örnekte iletinin hangi yolla verildiğini ayırt et.')]),
+          question('type-example-2', 'Bir öğrenci öğretmenine defterinde kısa bir not bırakıyor.', [communicationChoice('type-choice-2', 'written', 'Bilgi yazılı bir notla iletiliyor.', 'Örnekte kullanılan iletişim aracını düşün.')]),
+          question('type-example-3', 'Bir dinleyici, arkadaşının sözünü kesmeden başını sallayarak onu izlediğini gösteriyor.', [communicationChoice('type-choice-3', 'nonverbal', 'Dinleyici, söz kullanmadan beden hareketiyle geri bildirim veriyor.', 'İletinin konuşma veya yazı olmadan nasıl aktarıldığına bak.')]),
+          question('type-example-4', 'Okul panosuna gezi tarihi ve izin bilgilerini içeren bir duyuru asılıyor.', [communicationChoice('type-choice-4', 'written', 'Tarih ve bilgiler yazıyla duyuruluyor.', 'Mesajın panodaki hangi biçimde sunulduğunu düşün.')]),
+          question('type-example-5', 'Takım antrenmanında oyuncu, arkadaşına eliyle bekle işareti veriyor.', [communicationChoice('type-choice-5', 'nonverbal', 'Oyuncu, hareketle ve sözcük kullanmadan işaret veriyor.', 'İşaretin bir sözcük veya yazı olup olmadığını düşün.')]),
+          question('type-example-6', 'Bir öğrenci telefonla arkadaşını arayıp proje görevini sesli biçimde açıklıyor.', [communicationChoice('type-choice-6', 'spoken', 'Görev bilgisi sesli konuşmayla aktarılıyor.', 'Telefonun bu örnekte hangi iletiyi taşıdığına bak.')]),
+        ],
+      },
+      {
+        id: 'same-message-three-ways',
+        title: 'Aynı amacı farklı iletişim yollarıyla anlat',
+        sourceStyle: 'Uygulamalı üretim · sözlü, yazılı ve sözsüz iletiyi karşılaştırma',
+        format: 'Bir durum · üç farklı ifade biçimi · değerlendirme',
+        count: '3 ileti taslağı · 1 karşılaştırma',
+        sourceLabel: 'Özgün grup çalışması durumu',
+        prompt: 'Aşağıdaki durumda aynı amacı farklı yollarla nasıl ileteceğini yaz. Sözsüz ifadenin, gereken ayrıntıyı tek başına aktarıp aktaramayacağını da değerlendir.',
+        hint: 'Sözlü ve yazılı örneklerinde ana bilgiyi açık ver; sözsüz ipuçlarını mesajı destekleyen işaretler olarak düşün.',
+        scenario: 'Proje grubunun çalışma saati değişti. Bütün üyelerin yeni saati öğrenmesi ve gelemeyecek olanların bunu bildirebilmesi gerekiyor.',
+        questions: [
+          question('spoken-version', 'Bu değişikliği bir grup arkadaşına sözlü olarak nasıl söylersin?', [
+            textField('spoken-message', 'Sözlü ileti örneğim', 'Yeni saati, kimleri ilgilendirdiğini ve yanıt beklentini belirt…', 16),
+          ]),
+          question('written-version', 'Aynı bilgiyi sınıf grubuna yazılı mesaj olarak nasıl gönderirsin?', [
+            textField('written-message', 'Yazılı ileti örneğim', 'Tarih/saat ve yanıt vermesi gereken kişileri açıkça yaz…', 16),
+          ]),
+          question('nonverbal-version', 'Yüz yüze konuşurken hangi sözsüz ipuçları iletini destekleyebilir? Bu ipuçları yeni saati tek başına anlatmaya yeter mi?', [
+            textField('nonverbal-message', 'Sözsüz ipuçları ve sınırı', 'Yüz ifadesi, duruş, dikkat veya el işareti gibi örnekleri değerlendir…', 18),
+          ]),
+          question('message-comparison', 'Üç yolun aynı amaca hizmet ettiğini nasıl kontrol eder ve yanlış anlamayı nasıl azaltırsın?', [
+            textField('message-check', 'Karşılaştırmam', 'Geri bildirim veya bilgiyi tekrar doğrulama adımı ekle…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'choose-communication-channel',
+        title: 'Amaca ve kişilere uygun iletişim yolunu seç',
+        sourceStyle: 'Örnek olay · iletişim türü seçimi · gerekçeli çözüm',
+        format: '3 kısa senaryo · kanal seçimi ve geri bildirim',
+        count: '3 durum · 6 açıklamalı yanıt',
+        sourceLabel: 'Özgün sınıf ve grup yaşamı senaryoları',
+        prompt: 'Her durum için kimlerin bilgiye ulaşması gerektiğini, hangi iletişim yollarını birlikte kullanabileceğini ve anlaşıldığını nasıl kontrol edeceğini düşün.',
+        hint: 'Tek bir yolun herkese ve her amaca uygun olduğunu varsayma; erişim, zaman, gizlilik ve ayrıntı ihtiyacını da değerlendir.',
+        caseStudies: [
+          { title: '1. Saat değişikliği', text: 'Sınıf kulübünün toplantı saati değişti. Bazı öğrenciler o gün okulda değil; birkaç kişi de ilk duyuruyu duymamış olabilir.' },
+          { title: '2. Grup çalışmasına katılım', text: 'Bir grup üyesi hastalık nedeniyle yüz yüze toplantıya gelemiyor. Grubun kararları ve görevleri onun da takip edebilmesi gerekiyor.' },
+          { title: '3. Kısa ve acil yönerge', text: 'Beden eğitimi etkinliğinde öğretmen, hareket başlamadan önce bütün öğrencilerin durmasını ve kendisine bakmasını istiyor.' },
+        ],
+        questions: [
+          question('channel-case-one', 'Saat değişikliği için hangi iki iletişim yolunu birlikte kullanır, duyurunun ulaştığını nasıl kontrol edersin?', [
+            textField('channel-one-choice', 'Yol seçimi ve gerekçem', 'Yazılı duyuru, yüz yüze bilgilendirme veya başka bir uygun yol…', 18),
+            textField('channel-one-feedback', 'Ulaştığını kontrol etme', 'Kimlerin gördüğünü/anladığını nasıl doğrularsın?', 12),
+          ]),
+          question('channel-case-two', 'Toplantıya katılamayan grup üyesinin bilgiye ve kararlara ulaşması için nasıl bir plan kurarsın?', [
+            textField('channel-two-choice', 'İletişim planım', 'Kararları paylaşma, soru sorma ve yanıt verme yolunu açıkla…', 18),
+            textField('channel-two-access', 'Katılımı gözeten adım', 'Üyenin görüşünün nasıl duyulacağını belirt…', 12),
+          ]),
+          question('channel-case-three', 'Hareket başlamadan önce verilen kısa yönergede hangi iletişim yolları birlikte kullanılabilir? Güvenli olmasını nasıl sağlarsın?', [
+            textField('channel-three-choice', 'Uygun yollar ve nedenim', 'Sesli yönerge, görünür işaret veya başka bir destek…', 18),
+            textField('channel-three-safety', 'Güvenlik kontrolüm', 'Herkesin yönergeyi fark ettiğini nasıl doğrularsın?', 12),
+          ]),
+        ],
+      },
+    ],
+  };
+
   const checks = {
     1: [
       check('Bir grupta birlikte yaşamayı en çok hangi davranış destekler?', ['Farklı görüşü dinleyip görev paylaşmak', 'Görevi yalnızca başkasına bırakmak', 'Kararları hiç konuşmadan almak'], 0, 'Saygılı dinleme ve ortak sorumluluk grup yaşamını güçlendirir.', 'Grubun üyelerinin birlikte yapabildiği davranışı düşün.'),
@@ -381,5 +658,5 @@
     ]
   };
 
-  window.SOCIAL_STUDIES_CONTENT = Object.freeze({ lessons, checks });
+  window.SOCIAL_STUDIES_CONTENT = Object.freeze({ lessons, checks, activities });
 })();

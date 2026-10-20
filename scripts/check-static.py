@@ -1340,7 +1340,7 @@ def main() -> int:
                 )
                 if social_test.returncode:
                     errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
-                elif "Social Studies summaries, three-step activities, PDF-aligned formats, migration, completion rules, exact links, and isolated backups passed." not in social_test.stdout:
+                elif "Social Studies summaries, variable textbook-aligned flows, first-topic reading and activity sequence, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
                     errors.append("Social Studies workspace test did not report success")
 
             if not errors:
@@ -1470,7 +1470,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and three-step activities, PDF-aligned formats, safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, PDF-aligned formats, safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 

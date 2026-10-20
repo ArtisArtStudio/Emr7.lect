@@ -25,8 +25,8 @@ Etkinlik çeşitleri yalnızca genel tür adlarından çıkarılmadı; ilgili sa
 
 | PDF / basılı sayfa | PDF'de görülen çalışma ve düşünme adımları | Uygulamadaki karşılığı |
 |---|---|---|
-| `-1`, s. 12 | Birlikte yaşama unsurlarını yapboz parçalarına yerleştirme ve parçaları örneklerle açıklama | 1. hafta: saygı, yardımlaşma, sorumluluk ve farklılıklara saygı için özgün örnekler |
-| `-1`, s. 25–28 | Günlük yaşam çatışma senaryosu; olası devamı tahmin etme (“arkası yarın”); olumlu ve iletişimi zorlaştıran davranışları sınıflandırma; uzlaşma/iletişim üzerine çıkarım. Bir örnekte QR sesinin devamıyla tahminin karşılaştırılması | 2. hafta: yeni bir grup projesi senaryosunda tahmin ve davranış sınıflandırma; 3. hafta: empati ve ben dili; 4. hafta: yapıcı davranış ve uzlaşma. Uygulama, kitaptaki QR sesini yeniden yayımlamaz veya taklit etmez |
+| `-1`, s. 12 | Birlikte yaşama unsurlarını yapboz parçalarına yerleştirme ve parçaları örneklerle açıklama | Bu genel giriş etkinliği, ilk iletişim haftasının özel sırasına eklenmedi; 1. hafta kullanıcı tarafından tarif edilen iletişim okuması, etmenler ve araştırma adımlarıyla başlar. Bu satır PDF’deki envanteri gösterir; ilk iki haftada aynı sayfanın bire bir karşılığı olarak sunulmaz. |
+| `-1`, s. 25–28 | Günlük yaşam çatışma senaryosu; olası devamı tahmin etme (“arkası yarın”); olumlu ve iletişimi zorlaştıran davranışları sınıflandırma; uzlaşma/iletişim üzerine çıkarım. Bir örnekte QR sesinin devamıyla tahminin karşılaştırılması | İlk iki hafta, kullanıcının istediği akışa göre yeniden kuruldu: 1. hafta özgün sohbet/ trafik okuması/ dört örnek olay/ merak ve araştırma; 2. hafta iletişim süreci ve türleri. Kitabın QR sesi yeniden yayımlanmaz veya taklit edilmez |
 | `-1`, s. 37–39 | Fikirleri sırayla yazıp geliştirme; proje taslağı, hedef ve kontrol listesi; hazırlanan ürünü gözden geçirme | 5–7. haftalar: beyin yazımı, erişilebilirlik için sorun–çözüm tablosu, küçük proje kartı ve kontrol listesi |
 | `-2`, s. 40–47 | Millî birlik için kelime bulutu; ulusal bayramlar/anma günleri için beyin fırtınası; yazılı, görsel veya dijital kaynaktan kanıt seçip tabloya aktarma | 8–12. haftalar: kavram bulutu, gerekçeli fikir, kaynak–kanıt–çıkarım notu, örnek karşılaştırma ve öğrenme alanı kavram haritası |
 | `-2`, s. 58–59 çevresi | Evimiz Dünya konusuna geçiş; küreselleşmeyi günlük örnek ve görsellerle düşünme | 13–18. haftalar: kendi tanımını sözlük tanımıyla karşılaştırma, küresel etki tablosu, sorunları etki ölçeğine göre sınıflandırma ve paydaş/çözüm haritası |
@@ -35,7 +35,7 @@ Etkinlik çeşitleri yalnızca genel tür adlarından çıkarılmadı; ilgili sa
 | `-4`, s. 118–123 | Rönesans için soru–cevap; Reform'u kısa haberle anlatma ve neden/sonuçlarını ayırma; Aydınlanma için neden–sonuç tablosu; Sanayi İnkılabı metninde kavram/boşluk çalışması | 27–32. haftalar: soru kartı, özgün haber taslağı, neden–sonuç, üretimden topluma etki zinciri ve yenilikleri kaynak kanıtıyla değerlendirme |
 | `-4`, s. 132–133 çevresi | Kültür ve medeniyet konularında tartışma, kaynak/görsel inceleme, araştırma sonucunu ifade etme | 33–37. haftalar: kavram bulutu, kaynak kartı, kısa rapor, öğrenme alanı kavram haritası ve yıl sonu paylaşım ürünü |
 
-## 37 haftalık akış ve üç adımlı öğrenme düzeni
+## 37 haftalık akış ve değişken etkinlik düzeni
 
 `social-studies.js` içindeki haftalar ayrı tarih, konu ve ilerlemeye sahiptir:
 
@@ -44,13 +44,23 @@ Etkinlik çeşitleri yalnızca genel tür adlarından çıkarılmadı; ilgili sa
 - 19–35. haftalar: **Ortak Mirasımız**
 - 36–37. haftalar: yıl sonu tekrar ve paylaşım
 
-Her hafta önce kısa ve öğrenciye dönük bir **konu özeti**, üç hatırlatma noktası ve anahtar kavramlar gösterilir. Ardından Türkçe çalışma akışına benzer şekilde üç etkinlik adımı sunulur:
+Her hafta öğrenciye dönük konu anlatımı/özeti, hatırlatma noktaları ve anahtar kavramlar gösterilir. Etkinlik sayısı ve biçimi konu akışına göre değişir; tüm haftalara aynı üç soru/etkinlik kalıbı uygulanmaz.
+
+### İlk iletişim konusu: 1. ve 2. haftalar
+
+1. haftada altı ardışık etkinlik bulunur: iletişimin grup ve sosyal hayattaki önemini açıklayan özgün, çok paragraflı okuma ve etmenleri belirleme; özgün cep telefonu sohbetini inceleme ve üç soru; trafikte iletişim dili üzerine özgün okuma ve üç soru; dört özgün durumdan gözlem ve merak listesi; bu listeden öğrencinin kendi araştırma sorularını üretmesi; son olarak ben dili, empati, farklılıklara saygı, etkin dinleme, beden dili ve sen dilinin etkisi üzerine yazılı/görsel/dijital kaynak araştırması için kayıt ve bulgu alanları.
+
+2. hafta iletişim süreci ve sözlü, yazılı, sözsüz iletişim yollarını açıklayan daha geniş bir özgün metinle devam eder. Ardından altı günlük yaşam örneğinde tür sınıflandırma, aynı amacı farklı yollarla ifade etme ve farklı grup durumlarında uygun iletişim yolunu gerekçelendirme etkinlikleri gelir. Metinler, sohbetler, olaylar ve sorular özgün yazılmıştır; ders kitabındaki metin veya soru ifadeleri kopyalanmaz.
+
+### Kalan haftalar
+
+3–37. haftalarda mevcut üç parçalı akış korunur:
 
 1. **Kısa sınama:** Konuya özgü iki çoktan seçmeli soru; seçim kontrol edilince doğru/yeniden deneme geri bildirimi ve ipucu gösterilir.
-2. **Kitapta görülen biçimden esinlenen özgün çalışma:** Örneğin yapboz, örnek olay, sınıflandırma, beyin yazımı, kelime bulutu, kaynak/harita tablosu, GZFT, soru kartı, haber veya neden–sonuç çalışması.
-3. **Uygulama ve öz değerlendirme:** Haftanın konusuna göre senaryo, kaynak/kanıt, etki, karşılaştırma, araştırma veya paylaşım üzerine iki açık yanıt.
+2. **Kitapta görülen biçimden esinlenen özgün çalışma:** Örneğin örnek olay, sınıflandırma, beyin yazımı, proje taslağı, kontrol listesi, kelime bulutu, kaynak/harita tablosu, GZFT, soru kartı, haber veya neden–sonuç çalışması.
+3. **Uygulama ve öz değerlendirme:** Haftanın konusuna göre senaryo, kaynak/kanıt, etki, karşılaştırma, araştırma veya paylaşım üzerine açık yanıtlar.
 
-Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu ancak mini plan ve üç etkinlik adımının gerekli yanıtları tamamlanınca otomatik işaretlenir; kısa sınama sorularının doğru yanıtlanıp geri bildirimin kontrol edilmesi gerekir. Açık uçlu yanıtlar otomatik puanlanmaz. EBA, Tonguç ve MEBİ kutuları öğrenci tarafından elle işaretlenir. Tonguç araması haftanın konusunu içerir.
+Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu mini plan ve o haftanın tüm etkinlik yanıtları tamamlanınca otomatik işaretlenir; seçimli sorular doğru yanıtlanmalı ve geri bildirimi kontrol edilmelidir. Açık uçlu yanıtlar otomatik puanlanmaz. EBA, Tonguç ve MEBİ kutuları öğrenci tarafından elle işaretlenir. Tonguç araması haftanın konusunu içerir.
 
 ## Çizelge bağlantıları
 
@@ -59,4 +69,4 @@ Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu
 - EBA 7. sınıf Sosyal Bilgiler: <https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&okulTuru=6&sinif=15&genelMudurluk=33&ders=17&program=1131&kazanimlar=310150>
 - MEBİ öğrenci bölümü: <https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce>
 
-Sosyal Bilgiler ilerlemesi Türkçe ilerlemesinden ayrı bir tarayıcı anahtarında saklanır; ana uygulamanın JSON yedeğine alınır ve yedekten geri yüklenir. Önceki tek etkinlikli kayıtlardaki yanıtlar yeni akışta ilgili kitap etkinliğine aktarılır; mini-plan kutuları, platform ilerlemesi ve seçili hafta korunur. API anahtarları bu yedeğe veya bu özellikteki dosyalara eklenmez.
+Sosyal Bilgiler ilerlemesi Türkçe ilerlemesinden ayrı bir tarayıcı anahtarında saklanır; ana uygulamanın JSON yedeğine alınır ve yedekten geri yüklenir. İlk iki haftanın etkinlik akışı genişletilirken önceki JSON/yerel ilerleme kayıtları silinmez: yeni etkinlik yanıtları ve seçim kontrolleri kendi alanlarında saklanır, artık kullanılmayan eski yanıtlar da yedek verisinde `legacyResponses` / `legacyChoiceChecks` altında korunur. Mini-plan kutuları, diğer haftaların etkinlik verileri, platform ilerlemesi ve seçili hafta korunur. API anahtarları bu yedeğe veya bu özellikteki dosyalara eklenmez.
