@@ -222,3 +222,133 @@
 @media(max-width:900px){.social-layout{grid-template-columns:1fr}.social-week-navigation{position:static;max-height:470px}.social-week-list{grid-template-columns:repeat(2,minmax(0,1fr))}.social-week-button{grid-template-columns:32px minmax(0,1fr) 18px}}
 @media(max-width:620px){.social-week-list{grid-template-columns:1fr}.social-grid-two{grid-template-columns:1fr}.social-week-heading{display:grid}.social-activity-heading{display:grid}.social-activity-fields{grid-template-columns:1fr}.social-field:has(textarea),.social-field:has(.social-word-preview),.social-checklist-field,.social-choice-question{grid-column:auto}.social-hero:after{right:-35px}.social-week-navigation{max-height:420px}.social-study-table{min-width:700px}.social-summary-heading,.social-practice-heading{display:grid}.social-summary-bottom{grid-template-columns:1fr}.social-practice-track{grid-auto-columns:minmax(205px,82%)}.social-practice-step{min-height:56px}.social-case-study-list{grid-template-columns:1fr}.social-dialogue li{max-width:96%}.social-activity-step{padding:13px}.social-activity-controls{align-items:stretch;flex-wrap:wrap}.social-activity-nav{flex:1}.social-activity-controls>span{order:-1;width:100%;text-align:center}.social-choice-options{grid-template-columns:1fr}.social-sort-categories{grid-template-columns:1fr}.social-sort-guide{display:grid}.social-sort-guide ol{display:grid;gap:4px}}
 @media print{.social-hero,.social-week-navigation,.social-back,.social-print,.social-provider-link,.subject-nav,.top,.social-practice-track,.social-activity-controls,.social-choice-check{display:none!important}.social-layout{display:block}.social-week-content{display:grid!important}.social-week-heading,.social-focus-card,.social-mini-plan,.social-schedule,.social-topic-summary,.social-practice-flow,.social-activity-step{break-inside:avoid}.social-study-table{min-width:0}.social-table-wrap{overflow:visible}.social-plan-source{margin-top:10px}}
+
+/* Social Studies uses the same ink, paper, blue, mint, buttons and progress treatment as Turkish. */
+#socialWorkspace{
+  --social-ink:var(--ink,#102238);
+  --social-muted:var(--muted,#46576b);
+  --social-paper:var(--paper,#f5f7fb);
+  --social-line:var(--line,#e3e9f1);
+  --social-blue:var(--blue,#245cdb);
+  --social-blue-soft:#eaf0ff;
+  --social-mint:var(--mint,#c9f2df);
+  color:var(--social-ink);
+}
+#socialWorkspace .social-hero{background:var(--social-ink);color:var(--white,#fff)}
+#socialWorkspace .social-hero:after{color:#294266}
+#socialWorkspace .social-eyebrow{color:#a8c1ff}
+#socialWorkspace .social-hero>p{color:#cbd5e4}
+#socialWorkspace .social-progress{height:9px;background:#3c4f6c}
+#socialWorkspace .social-progress-value{background:var(--social-mint)}
+#socialWorkspace .social-progress-count{color:#d9e3f1}
+#socialWorkspace .social-back{border-color:var(--social-line);background:#fff;color:var(--social-ink)}
+#socialWorkspace .social-week-navigation h2,
+#socialWorkspace .social-week-heading h2,
+#socialWorkspace .social-topic-summary h3,
+#socialWorkspace .social-practice-heading h3,
+#socialWorkspace .social-activity-heading h4{color:var(--social-ink)}
+#socialWorkspace .social-unit-group{border-color:var(--social-line);background:#fff}
+#socialWorkspace .social-unit-group>summary{background:#f0f3f8}
+#socialWorkspace .social-unit-group>summary:after,
+#socialWorkspace .social-unit-group>summary b{color:var(--social-muted)}
+#socialWorkspace .social-unit-count,
+#socialWorkspace .social-nav-note,
+#socialWorkspace .social-date{color:var(--social-muted)}
+#socialWorkspace .social-week-button:hover{background:#f1f5fc}
+#socialWorkspace .social-week-button.is-current{border-color:#a8c1ff;background:var(--social-blue-soft);color:#173f9f}
+#socialWorkspace .social-week-no{background:#f0f3f8;color:#46576b}
+#socialWorkspace .social-week-button.is-current .social-week-no{background:var(--social-blue);color:#fff}
+#socialWorkspace .social-week-button:focus-visible,
+#socialWorkspace .social-unit-group>summary:focus-visible,
+#socialWorkspace .social-field input:focus-visible,
+#socialWorkspace .social-field textarea:focus-visible,
+#socialWorkspace .social-week-navigation button:focus-visible{outline:3px solid #245cdb66;outline-offset:2px}
+#socialWorkspace .social-focus-card{border-color:#dae8ff;background:#eef5ff}
+#socialWorkspace .social-focus-card p{color:var(--social-ink)}
+#socialWorkspace .social-task input,
+#socialWorkspace .social-provider-check input,
+#socialWorkspace .social-check-option input,
+#socialWorkspace .social-choice-option input{accent-color:var(--social-blue)}
+#socialWorkspace .social-topic-summary{border-color:var(--social-line);background:#fff}
+#socialWorkspace .social-schedule,
+#socialWorkspace .social-card-heading,
+#socialWorkspace .social-table-wrap{min-width:0}
+#socialWorkspace .social-summary-bottom{border-top-color:var(--social-line)}
+#socialWorkspace .social-key-terms span{border-color:#d6e3fb;background:var(--social-blue-soft);color:#234db3}
+#socialWorkspace .social-practice-flow{border-color:var(--social-line)}
+#socialWorkspace .social-practice-count{border-color:var(--social-line);background:#f5f7fb;color:var(--social-muted)}
+#socialWorkspace .social-practice-progress{background:#dfe7f2}
+#socialWorkspace .social-practice-progress span{background:linear-gradient(90deg,#2c67d7,#69a4ef)}
+#socialWorkspace .social-practice-step.is-current{border-color:#a8c1ff;background:var(--social-blue-soft)}
+#socialWorkspace .social-practice-step-no{background:#f0f3f8;color:#46576b}
+#socialWorkspace .social-practice-step.is-current .social-practice-step-no{background:var(--social-blue);color:#fff}
+#socialWorkspace .social-style-note,
+#socialWorkspace .social-case-stem{border-left-color:var(--social-blue);background:#eef5ff;color:#344d68}
+#socialWorkspace .social-style-note b,
+#socialWorkspace .social-case-stem b{color:#234db3}
+#socialWorkspace .social-word-preview span{background:var(--social-blue-soft);color:#234db3}
+#socialWorkspace .social-reading-source,
+#socialWorkspace .social-dialogue{border-color:var(--social-line);background:linear-gradient(135deg,#f5f7fb,#fff)}
+#socialWorkspace .social-reading-heading>span,
+#socialWorkspace .social-reading-heading h5{color:#234db3}
+#socialWorkspace .social-dialogue li:nth-child(even){border-color:#d6e3fb;background:var(--social-blue-soft)}
+#socialWorkspace .social-dialogue li b,
+#socialWorkspace .social-case-study>span{color:#234db3}
+#socialWorkspace .social-case-study{border-color:var(--social-line);background:#f8faff}
+#socialWorkspace .social-question-number{background:var(--social-blue-soft);color:#234db3}
+#socialWorkspace .social-question-card,
+#socialWorkspace .social-choice-question{border-color:var(--social-line);background:#fff}
+#socialWorkspace .social-choice-option:has(input:checked){border-color:var(--social-blue);background:var(--social-blue-soft)}
+#socialWorkspace .social-choice-option input{accent-color:var(--social-blue)}
+#socialWorkspace .social-choice-check,
+#socialWorkspace .social-ai-check{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 13px;border:1px solid var(--social-blue);border-radius:9px;color:#fff;background:var(--social-blue);font:inherit;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 4px 10px #245cdb2a}
+#socialWorkspace .social-choice-check:hover,
+#socialWorkspace .social-ai-check:hover{border-color:#1b4dbd;background:#1b4dbd}
+#socialWorkspace .social-choice-check:disabled,
+#socialWorkspace .social-ai-check:disabled{opacity:.65;cursor:wait}
+#socialWorkspace .social-activity-nav{min-height:41px;padding:9px 13px;border:1px solid var(--social-line);border-radius:11px;color:var(--social-ink);background:#fff;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+#socialWorkspace .social-activity-nav:not(:disabled):hover{border-color:#9bb2df;background:#fff}
+#socialWorkspace .social-activity-nav:disabled{opacity:.45;cursor:not-allowed}
+#socialWorkspace .social-choice-check:focus-visible,
+#socialWorkspace .social-ai-check:focus-visible,
+#socialWorkspace .social-activity-nav:focus-visible,
+#socialWorkspace .social-practice-step:focus-visible,
+#socialWorkspace .social-choice-option:focus-within{outline:3px solid #245cdb66;outline-offset:2px}
+#socialWorkspace .social-choice-feedback.is-reminder{border-color:#d6e3fb;background:var(--social-blue-soft);color:#344d68}
+#socialWorkspace .social-activity-controls{border-top-color:var(--social-line)}
+#socialWorkspace .social-sort-field{border-color:var(--social-line);background:#f8faff}
+#socialWorkspace .social-sort-category[data-category-tone="0"]{border-color:#d6e3fb;background:#f2f6ff}
+#socialWorkspace .social-sort-category[data-category-tone="1"]{border-color:#c9e6d8;background:#eff9f3}
+#socialWorkspace .social-sort-category[data-category-tone="2"]{border-color:#f1dfb5;background:#fff8e8}
+#socialWorkspace .social-sort-category[data-category-tone="3"]{border-color:var(--social-line);background:#f5f7fb}
+#socialWorkspace .social-sort-dropzone:focus-visible{outline:3px solid #245cdb66;border-color:var(--social-blue);background:var(--social-blue-soft)}
+#socialWorkspace .social-sort-dropzone.drag-over{border-color:var(--social-blue);background:var(--social-blue-soft);box-shadow:inset 0 0 0 1px var(--social-blue)}
+#socialWorkspace .social-sort-card:hover{border-color:#9bb2df;background:#f1f5fc}
+#socialWorkspace .social-sort-card:focus-visible{outline:3px solid #245cdb66}
+#socialWorkspace .social-sort-card.is-selected{border-color:var(--social-blue);background:var(--social-blue-soft);box-shadow:0 0 0 2px #245cdb33}
+#socialWorkspace .social-sort-field .social-choice-check{justify-self:start}
+#socialWorkspace .social-source-provider-link,
+#socialWorkspace .social-provider-link{border-color:#d6e3fb;background:var(--social-blue-soft);color:#234db3}
+#socialWorkspace .social-source-provider-link:hover{background:#dfe9ff}
+#socialWorkspace .social-provider-link:hover{color:#173f9f}
+#socialWorkspace .social-provider-link:focus-visible,
+#socialWorkspace .social-source-provider-link:focus-visible{outline:3px solid #245cdb66}
+#socialWorkspace .social-study-table th{border-color:var(--social-line);background:#f0f3f8;color:var(--social-ink)}
+#socialWorkspace .social-study-table td{border-color:var(--social-line)}
+#socialWorkspace .social-provider-check{color:var(--social-ink)}
+#socialWorkspace .social-plan-source,
+#socialWorkspace .social-answer-note{color:var(--social-muted)}
+#socialWorkspace .social-ai-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+#socialWorkspace .social-ai-caption{color:var(--social-muted);font-size:11px;line-height:1.45}
+#socialWorkspace .social-ai-feedback{flex:1 0 100%;margin-top:3px;padding:10px 12px;border:1px solid var(--social-line);border-left:4px solid #5279a2;border-radius:9px;color:#344d68;background:#edf4fb;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+#socialWorkspace .social-ai-feedback[hidden]{display:none!important}
+#socialWorkspace .social-ai-feedback[data-state="correct"]{border-color:#a7d7b3;border-left-color:#27834b;color:#1d5a35;background:#eaf8ed}
+#socialWorkspace .social-ai-feedback[data-state="partial"],
+#socialWorkspace .social-ai-feedback[data-state="incomplete"],
+#socialWorkspace .social-ai-feedback[data-state="unverified"]{border-color:#e7d18b;border-left-color:#c38c09;color:#654b09;background:#fff7dc}
+#socialWorkspace .social-ai-feedback[data-state="wrong"]{border-color:#e5b3b5;border-left-color:#c13740;color:#82282e;background:#ffebea}
+#socialWorkspace .social-ai-feedback[data-state="system"],
+#socialWorkspace .social-ai-feedback[data-state="pending"],
+#socialWorkspace .social-ai-feedback[data-state="unrated"]{border-color:#c8d8e8;border-left-color:#5279a2;color:#334f6e;background:#edf4fb}
+@media(max-width:620px){#socialWorkspace .social-ai-check,#socialWorkspace .social-choice-check{min-height:44px;padding:10px 15px;font-size:14px}}
+@media print{#socialWorkspace .social-ai-check,#socialWorkspace .social-ai-caption{display:none!important}}

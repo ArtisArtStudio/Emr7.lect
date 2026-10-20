@@ -1246,6 +1246,411 @@
         ],
       },
     ],
+    13: [
+      {
+        id: 'global-word-cloud',
+        title: 'Günlük yaşamdan küreselleşme kelime bulutu oluştur',
+        sourceStyle: 'Kelime bulutu · görsel/örnekten kavram çıkarma',
+        format: 'Beyin fırtınası · günlük yaşam bağlantısı',
+        count: 'En az 3 anahtar sözcük · 1 açıklayıcı örnek',
+        prompt: 'Ulaşım, iletişim, ticaret veya kültürden günlük yaşamında gördüğün bağlantıları düşün. Sözcük bulutunu kendi örneğinle açıkla.',
+        hint: 'Bir sözcüğü yalnızca yazmakla kalma; farklı yerlerdeki insanların nasıl etkileştiğini örneğinle göster.',
+        fields: [
+          wordField('global-terms', 'Küreselleşmeyi anlatan anahtar sözcükler', 'Örn. iletişim, paylaşım, ulaşım…'),
+          textField('daily-connection', 'Günlük yaşamımdan bağlantı örneği', 'Hangi kişiler veya yerler bu örnekte birbirine bağlanıyor?', 12),
+        ],
+      },
+      {
+        id: 'globalization-definition',
+        title: 'Kendi tanımını örnek ve sözlük açıklamasıyla karşılaştır',
+        sourceStyle: 'Görsel/örnek inceleme · tanım · karşılaştırma',
+        format: 'Kavram çalışması · benzerlik ve fark',
+        count: '3 kısa açık uçlu soru',
+        prompt: 'Bir görsel veya günlük yaşam örneğinden hareketle önce kendi tanımını oluştur; ardından sözlükteki açıklamayla ortak ve farklı yönlerini karşılaştır.',
+        hint: 'Tanımı yalnızca internet veya telefon kullanımına indirgeme; ülkeler ve toplumlar arasındaki farklı bağlantıları düşün.',
+        questions: [
+          question('global-example', 'Ulaşım, iletişim, ürün veya kültürle ilgili bir örnek seç. Örnekte hangi uzak bağlantı kuruluyor?', [
+            textField('selected-example', 'Seçtiğim örnek ve bağlantı', 'Örneğin hangi kişi, yer veya toplulukları ilişkilendirdiğini yaz…', 14),
+          ]),
+          question('own-globalization-definition', 'Küreselleşmeyi kendi sözlerinle nasıl tanımlarsın?', [
+            textField('own-definition', 'Kendi tanımım', 'Farklı yerlerdeki insanlar/toplumlar arasında hangi bağlar artıyor?', 18),
+          ]),
+          question('dictionary-comparison', 'Kendi tanımın ile sözlük açıklamasını hangi yönden benzer, hangi yönden farklı buldun?', [
+            textField('definition-comparison', 'Benzerlik ve fark', 'İki tanımı aynı ölçüte göre karşılaştır…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'global-connection-sort',
+        title: 'Küresel bağlantı örneklerini başlıklarına göre sınıflandır',
+        sourceStyle: 'Sürükle-bırak · iletişim, ticaret ve kültür bağlantıları',
+        format: 'Görsel/örnek sınıflandırma · kavram eşleştirme',
+        count: '6 örnek kartı · 3 bağlantı başlığı',
+        prompt: 'Her örneği en baskın bağlantı türüne yerleştir. Bir örneğin birden fazla yönü olabileceğini, burada ise en belirgin yönü seçtiğini unutma.',
+        hint: 'İnsanlar arası iletişimi; ürünlerin üretim ve dolaşımından; kültür ve bilginin paylaşılmasından ayır.',
+        fields: [
+          sortField('global-links', 'Örnekleri en uygun bağlantı türüne taşı', [
+            { id: 'communication', label: 'İletişim ve ulaşım', icon: '🌐' },
+            { id: 'trade', label: 'Üretim ve ticaret', icon: '📦' },
+            { id: 'culture', label: 'Kültür ve bilgi paylaşımı', icon: '🎭' },
+          ], [
+            { id: 'video-call', label: 'Farklı ülkelerdeki iki kişinin görüntülü görüşmesi' },
+            { id: 'online-report', label: 'Başka bir ülkede yayımlanan habere çevrim içi erişme' },
+            { id: 'product-label', label: 'Bir ürünün etiketindeki üretim yeri bilgisini inceleme' },
+            { id: 'parts-route', label: 'Bir eşyanın parçalarının farklı yerlerde üretilmesi' },
+            { id: 'music-share', label: 'Farklı ülkelerden müziklerin dinleyicilerle paylaşılması' },
+            { id: 'recipe-share', label: 'Başka bir toplumun yemek tarifinin öğrenilip paylaşılması' },
+          ], {
+            'video-call': 'communication', 'online-report': 'communication',
+            'product-label': 'trade', 'parts-route': 'trade',
+            'music-share': 'culture', 'recipe-share': 'culture',
+          }),
+          textField('connection-reflection', 'Sınıflandırmamdan çıkardığım sonuç', 'Bu bağlantı türlerinden ikisi günlük yaşamda nasıl kesişebilir?', 14),
+        ],
+      },
+    ],
+    14: [
+      {
+        id: 'global-impact-cases',
+        title: 'Küresel bağlantıların farklı kişiler üzerindeki etkilerini incele',
+        sourceStyle: 'Örnek olay inceleme · çok yönlü etki analizi',
+        format: 'Beyin fırtınası · farklı bakış açıları',
+        count: '3 özgün durum · 3 değerlendirme sorusu',
+        prompt: 'Her örnekte olası katkıların ve güçlüklerin kimler için ortaya çıkabileceğini düşün. Aynı bağlantının herkesi aynı biçimde etkilemesi gerekmez.',
+        hint: 'Bir kişi veya grubu “herkes” diye genelleme; yarar ve güçlüğü örnekteki koşullarla açıkla.',
+        caseStudies: [
+          { title: 'Uzaktaki sınıflarla buluşma', text: 'Bir sınıf, başka bir ülkedeki yaşıtlarıyla çevrim içi ortak bir sunum hazırlıyor. Öğrenciler farklı kaynaklara erişiyor; ancak bağlantı hızı ve ekran süresi herkes için aynı olmayabiliyor.' },
+          { title: 'Farklı yerlerde üretilen bir ürün', text: 'Bir eşyanın parçaları birden fazla yerde hazırlanıp başka bir yerde birleştiriliyor. Ürün daha geniş bir pazara ulaşıyor; üretimde yaşanabilecek bir aksama teslimi de etkileyebiliyor.' },
+          { title: 'Çevrim içi satış ve mahalle dükkânı', text: 'Bir küçük işletme çevrim içi satışla yeni müşterilere ulaşmaya çalışıyor. Aynı alanda büyük satıcılarla rekabet etmesi ve teslimat koşullarını düzenlemesi gerekebiliyor.' },
+        ],
+        questions: [
+          question('impact-beneficiaries', 'Seçtiğin durumda hangi kişi veya gruplar bir katkıdan yararlanabilir? Neden?', [
+            textField('beneficiaries', 'Yararlanabilecekler ve gerekçem', 'Örnekteki belirli bir kişiyi/grubu ve katkıyı belirt…', 16),
+          ]),
+          question('impact-challenges', 'Aynı durumda hangi güçlükler ortaya çıkabilir ve kimleri etkileyebilir?', [
+            textField('affected-groups', 'Güçlük ve etkilenenler', 'Bir koşulu ve bundan etkilenebilecek grubu açıkla…', 16),
+          ]),
+          question('impact-balance', 'Yarar ve güçlüğü birlikte düşününce daha dengeli bir değerlendirme nasıl yapılabilir?', [
+            textField('balanced-view', 'Dengeli değerlendirmem', 'İki yönü de örnekteki kanıta bağla…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'global-impact-sort',
+        title: 'Etki kartlarını katkı, güçlük ve koşula göre grupla',
+        sourceStyle: 'Sürükle-bırak · olumlu/olumsuz ve değişebilen etkiler',
+        format: 'Etkilenen grupları ayırt etme · sınıflandırma',
+        count: '6 etki kartı · 3 değerlendirme başlığı',
+        prompt: 'Kartlarda açıklanan etkiyi en uygun başlığa yerleştir. “Koşula göre değişir” başlığında farklı grupların farklı sonuçlar yaşayabileceğini düşün.',
+        hint: 'Bir bağlantı herkese aynı yararı sağlamayabilir; kartta açıkça anlatılan sonucu esas al.',
+        fields: [
+          sortField('impact-cards', 'Etki kartlarını uygun başlığa taşı', [
+            { id: 'benefit', label: 'Katkı sağlayabilir', icon: '＋' },
+            { id: 'challenge', label: 'Güçlük oluşturabilir', icon: '!' },
+            { id: 'depends', label: 'Koşula göre değişebilir', icon: '↔' },
+          ], [
+            { id: 'distant-contact', label: 'Uzakta yaşayan aile üyeleri görüntülü görüşmeyle haberleşebiliyor.' },
+            { id: 'online-learning', label: 'Öğrenci, farklı yerlerde hazırlanmış öğrenme içeriğine ulaşabiliyor.' },
+            { id: 'false-news', label: 'Doğrulanmamış bir paylaşım kısa sürede çok sayıda kişiye ulaşabiliyor.' },
+            { id: 'supply-delay', label: 'Üretimdeki bir aksama, farklı ülkelerdeki ürün teslimlerini geciktirebiliyor.' },
+            { id: 'small-business', label: 'Küçük işletme yeni müşterilere ulaşırken daha geniş rekabetle karşılaşıyor.' },
+            { id: 'cultural-content', label: 'Küresel içerikler yeni kültürleri tanıtırken yerel üretimin görünürlüğünü de etkileyebiliyor.' },
+          ], {
+            'distant-contact': 'benefit', 'online-learning': 'benefit', 'false-news': 'challenge',
+            'supply-delay': 'challenge', 'small-business': 'depends', 'cultural-content': 'depends',
+          }),
+        ],
+      },
+      {
+        id: 'impact-balance-table',
+        title: 'Bir bağlantının etkilerini karşılaştırma tablosuna aktar',
+        sourceStyle: 'Etki tablosu · yarar, güçlük ve bilinçli adım',
+        format: 'Karşılaştırma · öneri geliştirme',
+        count: '4 yanıt alanı',
+        prompt: 'Kendi seçtiğin bir küresel bağlantıyı örnek al; farklı kişiler üzerindeki etkisini ve olumsuz yönleri azaltabilecek bir davranışı tablo mantığıyla açıkla.',
+        hint: 'Örnek, etkilenen kişi/grup ve önerin arasında açık bir bağ kur.',
+        fields: [
+          textField('chosen-connection', 'İncelediğim bağlantı ve örnek', 'Bir ürün, haber, iletişim veya kültür örneği…', 12),
+          textField('positive-impact', 'Olası katkı ve yararlananlar', 'Kim, bu bağlantıdan nasıl yararlanıyor?', 14),
+          textField('negative-impact', 'Olası güçlük ve etkilenenler', 'Kime, hangi koşulda güçlük oluşturabilir?', 14),
+          textField('responsible-action', 'Daha bilinçli bir davranış', 'Güçlüğü azaltmak için uygulanabilir bir adım…', 14),
+        ],
+      },
+    ],
+    15: [
+      {
+        id: 'trace-global-connection',
+        title: 'Bir ürünün veya dijital içeriğin bağlantı yolunu izle',
+        sourceStyle: 'Kaynak inceleme · bilgi/ürün/kültür bağlantısını izleme',
+        format: 'Güvenilir kaynak · doğrulanmış bilgi ve çıkarım',
+        count: '3 kaynak odaklı soru',
+        prompt: 'Günlük kullandığın bir ürünü veya eriştiğin bir içeriği seç. Etiket, kurum sayfası, ders kitabı ya da öğretmenin onayladığı başka bir kaynakta gerçekten gördüğün bilgiyi kendi tahmininden ayır.',
+        hint: 'Kaynakta bulunmayan üretim yeri, kişi veya kurum ayrıntılarını uydurma; kaynağın adını not et.',
+        questions: [
+          question('trace-source', 'İncelediğin ürün/içerik nedir ve hangi kaynağı kullandın?', [
+            textField('item-and-source', 'Örnek ve kaynak kaydım', 'Ürün/içerik, kaynak adı ve bulduğun bilgi…', 14),
+          ]),
+          question('trace-evidence', 'Kaynak hangi farklı yerler veya topluluklar arasında bağlantı gösteriyor?', [
+            textField('verified-route', 'Doğrulanmış bağlantı', 'Yalnızca kaynakta gördüğün yer/kişi/üretim/paylaşım bilgisini yaz…', 14),
+          ]),
+          question('trace-impact', 'Bu bağlantının katkısı ve dikkat edilmesi gereken yönü ne olabilir?', [
+            textField('trace-effect', 'Etki ve sorumluluk', 'Üretici, tüketici, çevre veya içerik sahibi açısından değerlendir…', 16),
+          ]),
+        ],
+      },
+      {
+        id: 'source-claim-sort',
+        title: 'Bilgi iddialarını kaynak kanıtına göre sınıflandır',
+        sourceStyle: 'Sürükle-bırak · kaynak/iddia ayrımı',
+        format: 'Kaynak değerlendirme · doğrulama alışkanlığı',
+        count: '6 bilgi kartı · 2 kaynak başlığı',
+        prompt: 'Kartları verilen bilgiye göre ayır: kaynakta görülen dayanak mı var, yoksa iddia için ek doğrulama mı gerekiyor?',
+        hint: 'Bir reklam cümlesi veya çok paylaşılmış ileti tek başına kanıt sayılmaz; tarih, kurum ve doğrudan bilgi aramayı unutma.',
+        fields: [
+          sortField('source-claims', 'Kartları kanıt durumuna göre yerleştir', [
+            { id: 'evidence', label: 'Kaynakta dayanak gösteriliyor', icon: '✓' },
+            { id: 'verify', label: 'Ek doğrulama gerekiyor', icon: '?' },
+          ], [
+            { id: 'book-date', label: 'Ders kitabında başlık, yazar/kurum ve basım yılı birlikte verilmiş.' },
+            { id: 'product-label', label: 'Ürünün kendi etiketinde üretim yeri bilgisi açıkça yazıyor.' },
+            { id: 'report-source', label: 'Kurum raporu, iddiasını dayandığı veri ve tarih ile gösteriyor.' },
+            { id: 'viral-number', label: 'Kaynağı belirtilmeyen bir paylaşım kesin bir sayı öne sürüyor.' },
+            { id: 'ad-superlative', label: 'Reklam bir ürünü kanıt göstermeden “her açıdan en iyi” diye tanıtıyor.' },
+            { id: 'anonymous-message', label: 'Kim tarafından yazıldığı belli olmayan ileti, bir ülke hakkında genelleme yapıyor.' },
+          ], {
+            'book-date': 'evidence', 'product-label': 'evidence', 'report-source': 'evidence',
+            'viral-number': 'verify', 'ad-superlative': 'verify', 'anonymous-message': 'verify',
+          }),
+        ],
+      },
+      {
+        id: 'responsible-global-choice',
+        title: 'Daha bilinçli bir seçim için kontrol listesi kullan',
+        sourceStyle: 'Örnek olay · sorumlu tercih · kontrol listesi',
+        format: 'Karar verme · kaynak ve etki değerlendirme',
+        count: '3 kontrol maddesi · 2 açık yanıt',
+        prompt: 'Bir ürün alma veya dijital içeriği paylaşma kararı öncesi kaynağı, olası etkileri ve sorumlulukları birlikte düşün.',
+        hint: 'Bir kararın yalnızca sana sağladığı kolaylığı değil, başka kişileri ve çevreyi nasıl etkileyebileceğini de sorgula.',
+        scenario: 'Bir arkadaşın, üretim yeri veya içerik kaynağı hakkında bilgi vermeyen bir paylaşımı “kesin doğru” diyerek gruba gönderiyor. Sen bu bilgiye dayanarak bir ürün seçmeyi ya da içeriği başkalarına aktarmayı düşünüyorsun.',
+        fields: [
+          checklistField('responsible-checks', 'Karar vermeden önce tamamladığım kontroller', [
+            { id: 'source', label: 'Bilgiyi güvenilir ve tarihi belli bir kaynakta ararım.' },
+            { id: 'impact', label: 'Tercihin kimleri ve hangi alanları etkileyebileceğini düşünürüm.' },
+            { id: 'share', label: 'Doğrulamadan kesin bilgi diye yaymam; kişisel bilgileri korurum.' },
+          ]),
+          textField('decision', 'Bu durumda atacağım ilk adım', 'Bilgiyi nasıl doğrular veya kararımı nasıl gözden geçiririm?', 14),
+          textField('decision-reason', 'Gerekçem ve sorumluluk bağlantısı', 'Bu adım neden daha bilinçli bir tercih olur?', 16),
+        ],
+      },
+    ],
+    16: [
+      {
+        id: 'problem-scale-sort',
+        title: 'Sorunları etki alanlarına göre sınıflandır',
+        sourceStyle: 'Sürükle-bırak · bölgesel/küresel etki ölçeği',
+        format: 'Etki alanı · etkilenen topluluklar',
+        count: '6 sorun kartı · 2 ölçek',
+        prompt: 'Bir sorunun nerede başladığından çok kimleri ve hangi alanları etkilediğine bakarak kartı bölgesel veya küresel gruba yerleştir.',
+        hint: 'Bölgesel sorun çevre/komşu bölgelerle sınırlı olabilir; küresel sorunun etkisi çok sayıda ülke ve topluluğa yayılır.',
+        fields: [
+          sortField('problem-scales', 'Sorun kartlarını etki ölçeğine göre taşı', [
+            { id: 'regional', label: 'Bölgesel ölçekte etkiler', icon: '📍' },
+            { id: 'global', label: 'Küresel ölçekte etkiler', icon: '🌍' },
+          ], [
+            { id: 'river-basin', label: 'Bir akarsudaki kirlilik, aynı havzadaki birkaç ili etkiliyor.' },
+            { id: 'nearby-smoke', label: 'Bir orman yangınının dumanı aynı bölgedeki yakın yerleşimlere ulaşıyor.' },
+            { id: 'shared-water', label: 'Komşu ülkelerin ortak su havzasında kuraklık yaşanıyor.' },
+            { id: 'world-climate', label: 'İklim değişikliğinin etkileri farklı kıta ve ülkelerde görülüyor.' },
+            { id: 'ocean-plastic', label: 'Denizlerdeki plastik atıklar akıntılarla farklı ülke kıyılarına taşınıyor.' },
+            { id: 'global-outbreak', label: 'Bir bulaşıcı hastalık salgını birden fazla kıtadaki toplumları etkiliyor.' },
+          ], {
+            'river-basin': 'regional', 'nearby-smoke': 'regional', 'shared-water': 'regional',
+            'world-climate': 'global', 'ocean-plastic': 'global', 'global-outbreak': 'global',
+          }),
+        ],
+      },
+      {
+        id: 'compare-problem-scales',
+        title: 'Bölgesel ve küresel bir sorunu aynı ölçütlerle karşılaştır',
+        sourceStyle: 'Sınıflandırma tablosu · etki alanı ve iş birliği',
+        format: 'Örnek seçme · etkilenenler · ortak çözüm',
+        count: '3 karşılaştırma sorusu',
+        prompt: 'Bir bölgesel ve bir küresel sorun örneğini seç. Etkilenen toplulukları ve çözüm için gereken ortaklıkları aynı ölçütlerle incele.',
+        hint: 'Sorunları yalnızca adlarıyla değil, etki alanı ve çözüm için gereken iş birliğiyle karşılaştır.',
+        questions: [
+          question('regional-problem', 'Bir bölgesel sorun örneği ver. Etki alanını ve etkilenen toplulukları belirt.', [
+            textField('regional-example', 'Bölgesel örnek ve etkilenenler', 'Yakın çevre/komşu bölgeler ölçeğinde bir örnek…', 16),
+          ]),
+          question('global-problem', 'Bir küresel sorun örneği ver. Neden birden fazla ülkeyi etkiliyor?', [
+            textField('global-example', 'Küresel örnek ve kapsamı', 'Etki alanının birçok ülke/topluluğa yayıldığını açıkla…', 16),
+          ]),
+          question('compare-cooperation', 'Bu iki sorun için çözüm ortakları veya iş birliği neden farklılaşabilir?', [
+            textField('scale-cooperation', 'İş birliği karşılaştırmam', 'Sorunun etki alanı, ortakları nasıl etkiler?', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'problem-impact-map',
+        title: 'Sorun ve etkilenenler için açıklamalı etki haritası kur',
+        sourceStyle: 'Etki haritası · neden, kapsam ve paydaş',
+        format: 'Kavram haritası · kanıta dayalı çıkarım',
+        count: '4 bağlantılı alan',
+        prompt: 'Seçtiğin bir sorun için başlangıç/neden, etki alanı, etkilenenler ve çözümde rol alabilecek ortaklar arasındaki bağı yaz.',
+        hint: 'Okların yerine kısa açıklama ekle: kim, hangi etkene bağlı olarak, nasıl etkileniyor?',
+        fields: [
+          textField('map-problem', 'Sorun ve dayanağım', 'Kaynakta veya örnekte açıkça verilen bilgi…', 14),
+          textField('map-scope', 'Etki alanı', 'Hangi yerleri/toplulukları etkiliyor?', 12),
+          textField('map-affected', 'Etkilenen kişiler veya çevre', 'Doğrudan ve dolaylı etkilenenleri ayır…', 12),
+          textField('map-partners', 'İş birliği yapabilecek taraflar', 'Sorunun kapsamına uygun ortaklar…', 14),
+        ],
+      },
+    ],
+    17: [
+      {
+        id: 'stakeholder-sort',
+        title: 'Sorunlara katkı sunabilecek paydaşları görevlerine göre eşleştir',
+        sourceStyle: 'Sürükle-bırak · birey, kurum ve ülkelerin rolleri',
+        format: 'Paydaş sınıflandırma · sorumluluk ölçekleri',
+        count: '8 katkı kartı · 3 paydaş grubu',
+        prompt: 'Her katkıyı en uygun sorumluluk ölçeğine yerleştir. Bir sorun için farklı grupların birlikte çalışabileceğini unutma.',
+        hint: 'Bireylerin günlük davranışını yerel kurumların hizmetinden, ülkeler arası iş birliğinden ayır.',
+        fields: [
+          sortField('stakeholder-roles', 'Katkı kartlarını paydaş grubuna taşı', [
+            { id: 'individual', label: 'Bireyler ve topluluklar', icon: '👥' },
+            { id: 'institutions', label: 'Yerel kurumlar ve kuruluşlar', icon: '🏫' },
+            { id: 'countries', label: 'Ülkeler ve uluslararası iş birliği', icon: '🤝' },
+          ], [
+            { id: 'home-water', label: 'Evde su kullanımını azaltıp tasarruf alışkanlığını paylaşmak' },
+            { id: 'verified-info', label: 'Bir bilgiyi doğruladıktan sonra çevresine duyurmak' },
+            { id: 'municipal-service', label: 'Belediyenin atık toplama ve geri dönüşüm hizmeti düzenlemesi' },
+            { id: 'school-awareness', label: 'Okulun yerel çevre sorunları için bilgilendirme çalışması yapması' },
+            { id: 'local-support', label: 'Yerel kuruluşların ihtiyaç sahiplerine destek noktası oluşturması' },
+            { id: 'shared-water-agreement', label: 'Ülkelerin ortak su kaynakları için görüşüp bilgi paylaşması' },
+            { id: 'international-coordination', label: 'Ülkelerin afet hazırlığı ve müdahale bilgisini birlikte geliştirmesi' },
+            { id: 'joint-research', label: 'Farklı ülkelerdeki uzmanların ortak araştırma yürütmesi' },
+          ], {
+            'home-water': 'individual', 'verified-info': 'individual',
+            'municipal-service': 'institutions', 'school-awareness': 'institutions', 'local-support': 'institutions',
+            'shared-water-agreement': 'countries', 'international-coordination': 'countries', 'joint-research': 'countries',
+          }),
+          textField('stakeholder-reason', 'Bir paydaş seçimini gerekçelendir', 'Bu katkı neden o grubun sorumluluk ölçeğine uygun?', 14),
+        ],
+      },
+      {
+        id: 'shared-action-map',
+        title: 'Sorundan ortak eyleme açıklamalı kavram haritası oluştur',
+        sourceStyle: 'Kavram haritası · sorun, paydaş, eylem ve sonuç',
+        format: 'Çözüm haritası · bireysel ve ortak katkı',
+        count: '3 bağlantılı soru',
+        prompt: 'Bir bölgesel veya küresel sorun seçip etkilenenler, çözüm ortakları, ortak eylem ve beklenen sonuç arasında bağ kur.',
+        hint: 'Her adımda sorumlu kişi/kurumu ve başarının anlaşılacağı bir işareti belirt.',
+        questions: [
+          question('map-problem-and-affected', 'Sorun nedir ve kimleri nasıl etkiliyor?', [
+            textField('problem-and-affected', 'Sorun ve etkilenenler', 'Bir kaynak veya örnekten yararlan…', 16),
+          ]),
+          question('map-partners-and-roles', 'Kimler birlikte çalışabilir? Her paydaşın katkısı ne olur?', [
+            textField('partners-and-roles', 'Paydaşlar ve görevleri', 'Birey, kurum ve/veya ülke rollerini ayır…', 16),
+          ]),
+          question('map-action-and-result', 'Ortak eylem ve beklenen sonucu nasıl gözlemlersin?', [
+            textField('action-and-indicator', 'Eylem ve başarı işareti', 'Uygulanabilir adım ve ölçülebilir belirti…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'solution-plan-review',
+        title: 'Ortak çözüm planını ve sorumlulukları gözden geçir',
+        sourceStyle: 'Çözüm planı · görev paylaşımı · kontrol listesi',
+        format: 'Uygulanabilir öneri · öz değerlendirme',
+        count: '4 planlama kontrolü · 1 öneri',
+        prompt: 'Seçtiğin sorun için küçük ve uygulanabilir bir ilk adım belirle. Önerini paydaş, kaynak, güvenilir bilgi ve beklenen sonuç bakımından denetle.',
+        hint: 'Çözümün etkisini yalnızca dilek olarak bırakma; kimin hangi ilk adımı ne zaman atacağını düşün.',
+        scenario: 'Bir mahalledeki su kaynağıyla ilgili farklı ve doğrulanmamış paylaşımlar dolaşıyor. Öğrenci grubu sorunu büyütmeden güvenilir bilgiye ulaşmak ve uygun kuruma iletmek istiyor.',
+        fields: [
+          textField('first-solution-step', 'İlk ortak adımımız', 'Bilgi toplama, ilgili kuruma danışma veya güvenli bir farkındalık çalışması…', 14),
+          checklistField('solution-plan-checks', 'Planımı gözden geçir', [
+            { id: 'reliable', label: 'Bilgiyi güvenilir bir kaynak veya yetkili kurumla denetliyorum.' },
+            { id: 'roles', label: 'Katkı sunacak kişilerin/kurumların görevini belirtiyorum.' },
+            { id: 'feasible', label: 'Önerdiğim adım güvenli ve uygulanabilir.' },
+            { id: 'indicator', label: 'İlerlemenin nasıl fark edileceğini yazıyorum.' },
+          ]),
+          textField('plan-indicator', 'Beklenen değişim / ilerleme işareti', 'Hangi gözlenebilir bilgi, planın işe yarayıp yaramadığını gösterir?', 14),
+        ],
+      },
+    ],
+    18: [
+      {
+        id: 'neighbor-map-source',
+        title: 'Harita ve güvenilir kaynaktan komşularla iş birliğini araştır',
+        sourceStyle: 'Harita inceleme · kaynak kaydı · kültürel iş birliği',
+        format: 'Sınır komşuları · kültür ve ortak çalışma örnekleri',
+        count: '3 kaynaklı yanıt',
+        prompt: 'Ders kitabındaki haritayı veya öğretmeninin onayladığı bir kaynağı kullan. Bir komşu ülke ve Türkiye ile yürütülen kültürel/insani/teknik iş birliği örneği bul; kaynağın göstermediği ayrıntıları ekleme.',
+        hint: 'Örneğin kaynağını ve hangi ihtiyaca karşılık geldiğini yaz; haritadaki konum bilgisiyle iş birliği örneğini birbirine karıştırma.',
+        sourceProviders: ['eba', 'mebi'],
+        questions: [
+          question('neighbor-map-observation', 'Haritada seçtiğin komşu ülkeyi ve haritadan gözlediğin konum bilgisini yaz.', [
+            textField('neighbor-and-map', 'Komşu ülke ve harita gözlemim', 'Ders kitabı/öğretmen kaynağındaki haritadan hareket et…', 12),
+          ]),
+          question('neighbor-cooperation-source', 'Kaynakta hangi kültürel, insani veya teknik iş birliği örneği veriliyor?', [
+            textField('cooperation-and-source', 'İş birliği örneği ve kaynak', 'Kurum/yazar, kaynak adı ve örnekte görülen bilgi…', 16),
+          ]),
+          question('neighbor-cooperation-meaning', 'Bu çalışma hangi ihtiyaca cevap verebilir ve beklenen ortak yarar nedir?', [
+            textField('cooperation-need', 'İhtiyaç ve ortak yarar', 'Kaynağa dayanarak amacını kendi sözlerinle açıkla…', 18),
+          ]),
+        ],
+      },
+      {
+        id: 'turkey-role-sort',
+        title: 'Katkı örneklerini iş birliği türlerine göre sınıflandır',
+        sourceStyle: 'Sürükle-bırak · diplomasi, yardım ve ortak çalışma',
+        format: 'Türkiye’nin rolü · amaç ve eylem türü',
+        count: '8 örnek kartı · 4 iş birliği türü',
+        prompt: 'Her genel katkı örneğini en baskın çalışma türüne yerleştir. Kartlar örnek durumdur; gerçek bir olay iddiası içermez.',
+        hint: 'Kartın amacına bak: görüşme/müzakere, acil ihtiyaç desteği, kültürel paylaşım veya uzmanlık-bilgi alışverişi.',
+        fields: [
+          sortField('turkey-roles', 'Katkı örneklerini iş birliği türüne taşı', [
+            { id: 'diplomacy', label: 'Diplomasi ve görüşme', icon: '🕊' },
+            { id: 'humanitarian', label: 'İnsani yardım', icon: '🧰' },
+            { id: 'cultural', label: 'Kültürel iş birliği', icon: '🎨' },
+            { id: 'technical', label: 'Teknik/bilimsel ortak çalışma', icon: '🔬' },
+          ], [
+            { id: 'dialogue', label: 'Ülke temsilcilerinin ortak bir sorun için görüşüp uzlaşma araması' },
+            { id: 'relief', label: 'Afetten etkilenenlere barınma ve temel ihtiyaç desteği ulaştırılması' },
+            { id: 'rescue-team', label: 'Afet bölgesinde arama-kurtarma ekiplerinin görev paylaşması' },
+            { id: 'festival', label: 'Farklı toplumların sanatçılarını buluşturan ortak kültür etkinliği düzenlenmesi' },
+            { id: 'language', label: 'Öğrenciler için karşılıklı dil ve kültür tanıtım programı hazırlanması' },
+            { id: 'water-data', label: 'Uzmanların ortak su havzası ölçümlerini paylaşması' },
+            { id: 'health-research', label: 'Araştırmacıların sağlık verilerini etik kurallarla birlikte incelemesi' },
+            { id: 'agreement', label: 'Ülkelerin ortak bir konuda resmi görüşme ve anlaşma yürütmesi' },
+          ], {
+            dialogue: 'diplomacy', relief: 'humanitarian', 'rescue-team': 'humanitarian',
+            festival: 'cultural', language: 'cultural', 'water-data': 'technical',
+            'health-research': 'technical', agreement: 'diplomacy',
+          }),
+        ],
+      },
+      {
+        id: 'turkey-contribution-report',
+        title: 'Türkiye’nin katkısını kaynağa dayalı kısa raporla değerlendir',
+        sourceStyle: 'Kaynak inceleme · Türkiye’nin rolü · amaç ve sonuç',
+        format: 'Kısa rapor · kaynak, ihtiyaç, katkı ve beklenen sonuç',
+        count: '4 rapor alanı',
+        prompt: 'Ders kitabı veya öğretmenin onayladığı güvenilir kaynakta geçen bir örneği seç. İhtiyacı, Türkiye’nin katkısını, iş birliği taraflarını ve beklenen sonucu kendi cümlelerinle kaydet.',
+        hint: 'Örneğin gerçekleştiğini ve ayrıntılarını kaynaktan doğrula; katkıyı tek başına gerçekleşmiş gibi göstermeden diğer ortakları da belirt.',
+        sourceProviders: ['eba', 'mebi'],
+        questions: [
+          question('report-source', 'Kaynağın adını ve örneğin ele aldığı ihtiyacı yaz.', [
+            textField('report-source-and-need', 'Kaynak ve ihtiyaç', 'Kurum/yazar, tarih/sayfa ve ele alınan sorun…', 16),
+          ]),
+          question('report-contribution', 'Kaynakta Türkiye’nin hangi katkısı ve hangi ortakların rolü açıklanıyor?', [
+            textField('report-roles', 'Katkı ve iş birliği tarafları', 'Yardım, diplomasi, kültür veya ortak çalışma…', 16),
+          ]),
+          question('report-outcome', 'Bu katkı hangi ortak yarara veya beklenen sonuca hizmet edebilir?', [
+            textField('report-outcome', 'Beklenen sonuç ve gerekçem', 'Kaynakta verilen bilgi ile kendi çıkarımını ayır…', 18),
+          ]),
+        ],
+      },
+    ],
   };
 
   const checks = {

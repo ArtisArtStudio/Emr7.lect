@@ -65,6 +65,14 @@ const renewedWeekFlows = {
   11: ['solidarity-case-comparison', 'contribution-domain-sort', 'solidarity-mini-report'],
   12: ['unit-concept-sort', 'unit-review-quiz', 'unit-concept-map', 'unit-self-review'],
 };
+const secondLearningAreaFlows = {
+  13: ['global-word-cloud', 'globalization-definition', 'global-connection-sort'],
+  14: ['global-impact-cases', 'global-impact-sort', 'impact-balance-table'],
+  15: ['trace-global-connection', 'source-claim-sort', 'responsible-global-choice'],
+  16: ['problem-scale-sort', 'compare-problem-scales', 'problem-impact-map'],
+  17: ['stakeholder-sort', 'shared-action-map', 'solution-plan-review'],
+  18: ['neighbor-map-source', 'turkey-role-sort', 'turkey-contribution-report'],
+};
 
 for (const week of social.weeks) {
   assert.ok(week.activities.length >= 3, `Week ${week.id} should have a complete activity flow.`);
@@ -81,8 +89,11 @@ for (const week of social.weeks) {
   } else if (week.id <= 12) {
     assert.deepEqual(week.activities.map((activity) => activity.id), renewedWeekFlows[week.id], `Week ${week.id} should have its renewed first-area activity sequence.`);
     assert.equal(week.activities.length, week.id === 12 ? 4 : 3, `Week ${week.id} should retain the planned activity count.`);
+  } else if (week.id >= 13 && week.id <= 18) {
+    assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', ...secondLearningAreaFlows[week.id]], `Week ${week.id} should have its renewed Evimiz Dünya activity sequence.`);
+    assert.equal(week.activities.length, 4, `Week ${week.id} should pair a short self-check with three varied learning activities.`);
   } else {
-    assert.equal(week.activities.length, 3, `Week ${week.id} should retain its existing flow outside the first learning area.`);
+    assert.equal(week.activities.length, 3, `Week ${week.id} should retain its existing flow outside the refreshed learning areas.`);
     assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', 'book', 'apply']);
   }
 
@@ -257,7 +268,17 @@ assert.ok(social.weeks[8].activities[0].sourceStyle.includes('Sürükle-bırak')
 assert.ok(social.weeks[9].activities[0].sourceText.includes('Tekâlif-i Milliye'), 'Week ten should ground solidarity work in an original historical explanation.');
 assert.ok(social.weeks[10].activities[0].caseStudies.length === 4, 'Week eleven should compare four original social-solidarity examples.');
 assert.ok(social.weeks[11].activities.length === 4, 'Week twelve should review the full first learning area with several activity types.');
-assert.ok(social.weeks[12].activities.map((activity) => activity.id).join(',') === 'self-check,book,apply', 'Week thirteen and later flows should remain unchanged.');
+for (const week of social.weeks.slice(12, 18)) {
+  const customActivities = week.activities.slice(1);
+  const kinds = new Set(customActivities.flatMap((activity) => activity.fields.map((field) => field.kind)));
+  assert.ok(kinds.has('sort'), `Week ${week.id} should include a textbook-aligned, accessible classification interaction.`);
+  assert.ok(kinds.has('text') || kinds.has('textarea') || kinds.has('words'), `Week ${week.id} should include open responses for AI feedback.`);
+  assert.ok(customActivities.every((activity) => activity.format && activity.hint), `Week ${week.id} needs activity-specific format and guidance.`);
+}
+assert.ok(social.weeks[12].activities[2].questions.some((question) => question.id === 'dictionary-comparison'), 'Week thirteen should compare a learner-made definition with a dictionary explanation.');
+assert.ok(social.weeks[17].activities[1].sourceProviders.includes('eba') && social.weeks[17].activities[1].sourceProviders.includes('mebi'), 'Week eighteen should offer approved source links for its map-based research.');
+assert.deepEqual(social.weeks.slice(12, 18).map((week) => week.activities.map((activity) => activity.id)), Object.entries(secondLearningAreaFlows).map(([, activityIds]) => ['self-check', ...activityIds]), 'Weeks thirteen through eighteen should use the renewed Evimiz Dünya flows.');
+assert.deepEqual(social.weeks.slice(18).map((week) => week.activities.map((activity) => activity.id)), Array.from({ length: 19 }, () => ['self-check', 'book', 'apply']), 'Week nineteen onward should retain its existing activity flows.');
 assert.ok(social.weeks[1].activities[2].scenario.includes('Proje grubunun'), 'Week two should use an original communication-types transfer situation.');
 assert.ok(social.weeks[10].activities[0].sourceStyle.includes('karşılaştırma'), 'Week eleven should compare contributions across different textbook-linked areas.');
 
@@ -442,6 +463,12 @@ assert.equal(renewedBackup.weeks['3'].legacyResponses.book.rewrite1, 'Eski yanı
 assert.deepEqual(renewedBackup.weeks['3'].responses['language-sort']['language-groups']['i-one'], 'i-language');
 assert.equal(renewedBackup.weeks['3'].responses['language-sort']['language-groups'].unknown, undefined, 'Unknown sort-card IDs must not be imported.');
 assert.deepEqual(renewedBackup.weeks['3'].responses['rewrite-and-reflect'].parts, ['situation'], 'Multi-select backups should retain only valid options.');
+const legacyAIFeedbackBackup = social.normalizeProgress({
+  version: 3,
+  selectedWeek: 3,
+  weeks: { '3': { aiFeedback: { book: { 'field-old-response': { state: 'correct', text: 'Önceki güvenli geri bildirim', fieldIds: ['respect'] } } } } },
+});
+assert.equal(legacyAIFeedbackBackup.weeks['3'].legacyAIFeedback.book['field-old-response'].text, 'Önceki güvenli geri bildirim', 'Obsolete AI feedback should remain available in the backup record.');
 
 const week20Button = { dataset: { socialSelect: '20' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week20Button : null } });
@@ -479,4 +506,132 @@ const activityStepButton = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? activityStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT’yi gerekçeyle dold'), 'The student should be able to navigate to the transfer/reflection step.');
 
-console.log('Social Studies summaries, variable textbook-aligned flows, first-topic reading and activity sequence, progress migration, completion rules, exact links, and backups passed.');
+const week13Button = { dataset: { socialSelect: '13' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week13Button : null } });
+const week13DefinitionStep = { dataset: { socialActivitySelect: '2' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week13DefinitionStep : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Kendi tanımını örnek ve sözlük açıklamasıyla karşılaştır'));
+assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-ai-check"/g) || []).length, 3, 'Each Week 13 open question should have one grouped Groq check button.');
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('question-dictionary-comparison'));
+const week18Button = { dataset: { socialSelect: '18' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week18Button : null } });
+const week18MapStep = { dataset: { socialActivitySelect: '1' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week18MapStep : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Harita ve güvenilir kaynaktan komşularla iş birliğini araştır'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler ↗') && mockElements.socialWeekContent.innerHTML.includes('MEBİ öğrenci bölümü ↗'));
+assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-ai-check"/g) || []).length, 3, 'Each Week 18 source-research question should have a Groq check button.');
+
+async function runSocialAIRegressionChecks() {
+  const week13AgainButton = { dataset: { socialSelect: '13' } };
+  await root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week13AgainButton : null } });
+  const week13DefinitionAgain = { dataset: { socialActivitySelect: '2' } };
+  await root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week13DefinitionAgain : null } });
+
+  const reviewKey = 'question-dictionary-comparison';
+  const feedbackId = 'social-ai-feedback-13-globalization-definition-question-dictionary-comparison';
+  mockElements[feedbackId] = new MockElement(feedbackId);
+  mockElements.apiKey = { value: '' };
+  mockElements.model = { value: 'openai/gpt-oss-20b' };
+  mockElements.apiSettings = { open: false };
+  const button = {
+    dataset: {
+      socialWeek: '13',
+      socialActivity: 'globalization-definition',
+      socialAiKey: reviewKey,
+      socialAiFields: JSON.stringify(['definition-comparison']),
+      socialAiPrompt: 'Tanım benzerliğini ve farkını karşılaştır.',
+    },
+    disabled: false,
+    textContent: '✦ Kontrol et',
+  };
+  const clickAIButton = () => root.listeners.click({
+    target: { closest: (selector) => selector === '[data-social-ai-check]' ? button : null },
+  });
+  const enterAnswer = (value) => root.listeners.input({
+    target: {
+      dataset: { socialWeek: '13', socialActivity: 'globalization-definition', socialResponse: 'definition-comparison' },
+      type: 'textarea',
+      value,
+      closest(selector) { return selector === '[data-social-response]' ? this : null; },
+    },
+  });
+
+  enterAnswer('İkisi de insanlar ve toplumlar arasındaki bağları anlatıyor; biri daha geniş etkileşime odaklanıyor.');
+  let fetchCalls = 0;
+  global.fetch = async () => { fetchCalls += 1; throw new Error('fetch should not run without an API key'); };
+  await clickAIButton();
+  let saved = social.exportProgress().weeks['13'];
+  assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'system', 'Missing Groq settings should give a local settings reminder.');
+  assert.equal(mockElements.apiSettings.open, true, 'A missing-key reminder should open the shared API settings.');
+  assert.equal(fetchCalls, 0, 'The AI button should not call Groq without a user-provided key.');
+
+  enterAnswer('İki tanım da toplumlar arasındaki bağlantıları anlatıyor; sözlük açıklaması daha kapsamlı.');
+  assert.equal(social.exportProgress().weeks['13'].aiFeedback['globalization-definition'][reviewKey], undefined, 'Editing an open response should invalidate previously saved AI feedback.');
+  assert.equal(mockElements[feedbackId].hidden, true, 'Editing an open response should hide stale feedback.');
+
+  const testAPIKey = 'test-key-not-persisted';
+  mockElements.apiKey.value = testAPIKey;
+  let requestUrl = '';
+  let requestOptions;
+  global.fetch = async (url, options) => {
+    fetchCalls += 1;
+    requestUrl = url;
+    requestOptions = options;
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ choices: [{ message: { content: JSON.stringify({
+        status: 'correct', issues: [], hint: 'recheck',
+        fields: [{ id: 'definition-comparison', status: 'correct', issue: 'none', hint: 'recheck' }],
+      }) } }] }),
+    };
+  };
+  await clickAIButton();
+  assert.equal(requestUrl, 'https://api.groq.com/openai/v1/chat/completions');
+  assert.equal(requestOptions.headers.Authorization, `Bearer ${testAPIKey}`, 'The control should reuse the shared Groq key setting.');
+  const requestBody = JSON.parse(requestOptions.body);
+  assert.equal(requestBody.model, mockElements.model.value, 'The control should reuse the shared Groq model setting.');
+  assert.equal(requestBody.response_format.type, 'json_object', 'The AI request should use the constrained assessment format.');
+  assert.ok(requestBody.messages[1].content.includes('daha kapsamlı'), 'The learner response should be assessed.');
+  saved = social.exportProgress().weeks['13'];
+  assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'correct', 'A safe Groq result should be stored for the question.');
+  assert.ok(mockElements[feedbackId].textContent.includes('TAM DOĞRU'));
+  assert.ok(!JSON.stringify(saved).includes(testAPIKey), 'The Groq API key must not be saved with Social Studies progress.');
+
+  enterAnswer('İki açıklamanın kapsamını aynı ölçüte göre yeniden karşılaştırıyorum.');
+  global.fetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify({ status: 'correct', issues: [], fields: [] }) } }] }),
+  });
+  await clickAIButton();
+  saved = social.exportProgress().weeks['13'];
+  assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'unrated', 'An incomplete model assessment must not be presented as fully correct.');
+  assert.ok(mockElements[feedbackId].textContent.includes('SONUÇ SINIFLANDIRILAMADI'));
+
+  enterAnswer('Yeni yanıt: iki açıklamayı aynı ölçüte göre karşılaştırıyorum.');
+  let resolveFetch;
+  global.fetch = () => new Promise((resolve) => { resolveFetch = resolve; });
+  const pendingAssessment = clickAIButton();
+  assert.equal(typeof resolveFetch, 'function', 'The AI check should start its asynchronous Groq request.');
+  enterAnswer('Yanıt değişti; kaynakla tekrar karşılaştıracağım.');
+  resolveFetch({
+    ok: true,
+    status: 200,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify({
+      status: 'partial', issues: ['completeness'], hint: 'compare',
+      fields: [{ id: 'definition-comparison', status: 'partial', issue: 'completeness', hint: 'compare' }],
+    }) } }] }),
+  });
+  await pendingAssessment;
+  saved = social.exportProgress().weeks['13'];
+  assert.equal(saved.aiFeedback['globalization-definition'][reviewKey], undefined, 'An assessment for an edited response must not be persisted.');
+  assert.ok(mockElements[feedbackId].textContent.includes('Yanıt kontrol sırasında değişti'), 'A stale response should be clearly discarded.');
+
+  console.log('Social Studies summaries, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed.');
+}
+
+runSocialAIRegressionChecks().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

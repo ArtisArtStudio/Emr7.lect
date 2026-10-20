@@ -29,7 +29,7 @@ Etkinlik çeşitleri yalnızca genel tür adlarından çıkarılmadı; ilgili sa
 | `-1`, s. 25–28 | Günlük yaşam çatışma senaryosu; olası devamı tahmin etme (“arkası yarın”); olumlu ve iletişimi zorlaştıran davranışları sınıflandırma; uzlaşma/iletişim üzerine çıkarım. Bir örnekte QR sesinin devamıyla tahminin karşılaştırılması | 4. hafta: özgün, yarım bırakılmış grup durumu üzerinden olası devamı tahmin etme; davranışları yapıcı/gerilimi artıran olarak sınıflandırma; ihtiyaçları gözeten uzlaşma planı. QR sesinin içeriği yeniden yayımlanmaz veya taklit edilmez |
 | `-1`, s. 37–39 | Fikirleri sırayla yazıp geliştirme; proje taslağı, hedef ve kontrol listesi; hazırlanan ürünü gözden geçirme | 5–7. haftalar: fırsat eşitliği için beyin yazımı; çevresel engel/düzenleme sınıflandırması; küçük proje hedefi, aşamaları ve kontrol listesi |
 | `-2`, s. 40–47 | Millî birlik için kelime bulutu; ulusal bayramlar/anma günleri için beyin fırtınası; yazılı, görsel veya dijital kaynaktan kanıt seçip tabloya aktarma | 8–12. haftalar: ortak değerler kelime bulutu ve fikir üretme; bayram/anma günü sınıflandırma; Millî Mücadele katkılarını türlerine ayırma; kaynak kanıtı/çıkarımı, örnek karşılaştırma ve açıklamalı kavram haritası |
-| `-2`, s. 58–59 çevresi | Evimiz Dünya konusuna geçiş; küreselleşmeyi günlük örnek ve görsellerle düşünme | 13–18. haftalar: kendi tanımını sözlük tanımıyla karşılaştırma, küresel etki tablosu, sorunları etki ölçeğine göre sınıflandırma ve paydaş/çözüm haritası |
+| `-2`, s. 58–59 çevresi; 2. öğrenme alanı s. 68–83 | Evimiz Dünya’ya geçiş; küreselleşmeyi günlük örnek ve görsellerle düşünme; kitabın kaynak, harita, tablo ve kavram haritası çalışma biçimleri | 13–18. haftalar: özgün kelime bulutu ve tanım karşılaştırması; etki örnekleri/tablosu; kaynak ve iddia ayrımı; bölgesel/küresel ölçek sınıflandırması; paydaş/çözüm haritası; haritadan komşu seçip kaynaklı iş birliği örneği ve Türkiye’nin katkı raporu |
 | `-3`, s. 86–91 | Malazgirt öncesi/sonrası harita karşılaştırması; Osmanlı Beyliği'nin kuruluş konumunu GZFT başlıklarında inceleme; merak sorusu üretme, soru kartı ve kaynaklardan araştırma raporu | 19–23. haftalar: harita gözlemi, kanıtlı GZFT, kavram–örnek tablosu, zaman çizelgesi, dönem ve kaynak karşılaştırması |
 | `-3`, s. 102–103 çevresi | İstanbul'un fethi, hazırlıkları ve sonuçları hakkında metin/kanıt çalışması; tarihî gelişmeyi kısa haber veya manşetle anlatmaya uygun biçimler | 24–26. haftalar: neden–hazırlık–sonuç tablosu, özgün manşet, dönem/harita karşılaştırması ve deniz yolları–Osmanlı ekonomisi için kanıta dayalı yorum |
 | `-4`, s. 118–123 | Rönesans için soru–cevap; Reform'u kısa haberle anlatma ve neden/sonuçlarını ayırma; Aydınlanma için neden–sonuç tablosu; Sanayi İnkılabı metninde kavram/boşluk çalışması | 27–32. haftalar: soru kartı, özgün haber taslağı, neden–sonuç, üretimden topluma etki zinciri ve yenilikleri kaynak kanıtıyla değerlendirme |
@@ -71,11 +71,26 @@ Her hafta öğrenciye dönük konu anlatımı/özeti, hatırlatma noktaları ve 
 
 Sürükle-bırak kartları dokunmatik ekranda karta ve hedefe sırayla dokunarak veya klavyede Enter/Boşluk ile de taşınabilir. Her sınıflandırma, eşleştirme ve seçimli soruda geri bildirim kontrolü bulunur. Sürükleme etkinliğinin doğru tamamlanması için tüm kartlar yerleştirilmeli, cevap kontrol edilmeli ve sınıflandırma doğru olmalıdır. Çoklu seçimde de doğru seçeneklerin tamamı seçilmelidir.
 
-### 13. haftadan sonraki mevcut akış
+### İkinci öğrenme alanı: 13–18. haftalar
 
-13–37. haftaların etkinlik içerikleri ve sırası bu taleple değiştirilmedi. Bu haftalar kendi konu, kaynak ve transfer çalışmalarını korur; yeni sürükle-bırak uygulamaları ilk öğrenme alanındaki 3–12. haftalarla sınırlıdır.
+Evimiz Dünya için her hafta kısa sınama ve üç farklı, özgün uygulama adımı bulunur. Akışlar kitabın günlük yaşam bağlantısı, görsel/harita inceleme, beyin fırtınası, etki tablosu, kaynak değerlendirme, sınıflandırma ve kavram haritası gibi çalışma örüntülerinden esinlenir; kitap metni, görseli veya sorusu aynen kopyalanmaz.
 
-Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu mini plan ve o haftanın tüm etkinlik yanıtları tamamlanınca otomatik işaretlenir; seçimli/çoklu seçimli/sürükle-bırak sorular kontrol edilip doğru tamamlanmalıdır. Açık uçlu yanıtlar otomatik puanlanmaz. EBA, Tonguç ve MEBİ kutuları öğrenci tarafından elle işaretlenir. Tonguç araması haftanın konusunu içerir.
+| Hafta | Evimiz Dünya etkinlik akışı |
+|---:|---|
+| 13 | Küreselleşme kısa sınaması → günlük yaşam bağlantılarından kelime bulutu → kendi tanımını örnek/sözlük açıklamasıyla karşılaştırma → iletişim, ticaret ve kültür örneklerini sınıflandırma |
+| 14 | Küresel etkiler kısa sınaması → farklı kişileri etkileyen özgün örnek olayları inceleme → katkı/güçlük/koşula göre değişen etkileri sınıflandırma → dengeli etki tablosu |
+| 15 | Fırsat ve sorumluluk kısa sınaması → ürün/içerik bağlantısını güvenilir kaynakla izleme → kanıt ile iddiayı ayırma → bilinçli seçim kontrol listesi |
+| 16 | Sorun ölçeği kısa sınaması → bölgesel/küresel sorunları etki alanına göre sınıflandırma → iki ölçeği aynı ölçütlerle karşılaştırma → neden, kapsam, etkilenenler ve paydaşlardan etki haritası |
+| 17 | Ortak çözüm kısa sınaması → birey/kurum/ülke katkılarını sınıflandırma → sorundan ortak eyleme kavram haritası → uygulanabilir çözüm ve ilerleme işareti planı |
+| 18 | Türkiye’nin rolü kısa sınaması → ders kitabı/öğretmen onaylı haritadan komşu seçip iş birliği örneğini kaynakla inceleme → diplomasi/insani yardım/kültür/teknik çalışma katkılarını sınıflandırma → Türkiye’nin katkısı için kaynaklı kısa rapor |
+
+Açık yanıt alanlarında **✦ Kontrol et** düğmesi ortak Türkçe sayfasının Groq API anahtarı ve model ayarlarını kullanır. Öğrenci yanıtı Groq’a doğrudan gönderilir; AI yalnızca izinli durum, issue ve ipucu kodları üretir, öğrenciye gösterilen güvenli geri bildirimi uygulama oluşturur. API anahtarı ilerleme yedeğine eklenmez; öğrenci yanıtları ve güvenli AI geri bildirimi Sosyal Bilgiler ilerlemesiyle birlikte yedeklenir. Anahtarın tarayıcıda ve ağ incelemesinde görülebileceği uyarısı Türkçe ayarlarında korunur. Seçmeli ve sınıflandırmalı yanıtlar AI’ye gönderilmeden uygulama içinde kontrol edilir.
+
+### Üçüncü öğrenme alanı: 19. hafta ve sonrası
+
+19–37. haftaların mevcut içerikleri ve sırası bu taleple değiştirilmedi. Bu haftalar kendi konu özeti, kısa sınaması, kitap çalışması ve uygulama/transfer adımlarını korur.
+
+Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu mini plan ve o haftanın tüm etkinlik yanıtları tamamlanınca otomatik işaretlenir; seçimli/çoklu seçimli/sürükle-bırak sorular kontrol edilip doğru tamamlanmalıdır. Açık yanıtların tamamlanma durumu, yanıt alanının doldurulmasına göre belirlenir; AI kontrolü isteğe bağlıdır. EBA, Tonguç ve MEBİ kutuları öğrenci tarafından elle işaretlenir. Tonguç araması haftanın konusunu içerir.
 
 ## Çizelge bağlantıları
 
@@ -84,4 +99,4 @@ Her haftada ayrıca üç mini-plan görevi bulunur. Uygulamadaki ilerleme kutusu
 - EBA 7. sınıf Sosyal Bilgiler: <https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&okulTuru=6&sinif=15&genelMudurluk=33&ders=17&program=1131&kazanimlar=310150>
 - MEBİ öğrenci bölümü: <https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce>
 
-Sosyal Bilgiler ilerlemesi Türkçe ilerlemesinden ayrı bir tarayıcı anahtarında saklanır; ana uygulamanın JSON yedeğine alınır ve yedekten geri yüklenir. Etkinlik akışları yenilenirken önceki JSON/yerel ilerleme kayıtları silinmez: yeni etkinlik yanıtları ve seçim kontrolleri kendi alanlarında saklanır, artık kullanılmayan eski etkinlik yanıtları da yedek verisinde `legacyResponses` / `legacyChoiceChecks` altında korunur. Mini-plan kutuları, diğer haftaların etkinlik verileri, platform ilerlemesi ve seçili hafta korunur. API anahtarları bu yedeğe veya bu özellikteki dosyalara eklenmez.
+Sosyal Bilgiler ilerlemesi Türkçe ilerlemesinden ayrı bir tarayıcı anahtarında saklanır; ana uygulamanın JSON yedeğine alınır ve yedekten geri yüklenir. Etkinlik akışları yenilenirken önceki JSON/yerel ilerleme kayıtları silinmez: yeni etkinlik yanıtları, seçim kontrolleri ve AI geri bildirimleri kendi alanlarında saklanır; artık kullanılmayan eski etkinlik verileri yedek verisinde `legacyResponses`, `legacyChoiceChecks` ve `legacyAIFeedback` altında korunur. Mini-plan kutuları, 19. hafta ve sonrası dâhil diğer haftaların etkinlik verileri, platform ilerlemesi ve seçili hafta korunur. API anahtarları ve Groq istekleri bu yedeğe veya bu özellikteki dosyalara eklenmez.

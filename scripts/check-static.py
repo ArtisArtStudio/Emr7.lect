@@ -1340,7 +1340,7 @@ def main() -> int:
                 )
                 if social_test.returncode:
                     errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
-                elif "Social Studies summaries, variable textbook-aligned flows, first-topic reading and activity sequence, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
+                elif "Social Studies summaries, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
                     errors.append("Social Studies workspace test did not report success")
 
             if not errors:
