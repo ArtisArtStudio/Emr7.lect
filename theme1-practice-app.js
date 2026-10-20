@@ -69,6 +69,8 @@
     const flow = week.theme1PracticeFlow;
     flow.answers = flow.answers && typeof flow.answers === "object" ? flow.answers : {};
     flow.feedback = flow.feedback && typeof flow.feedback === "object" ? flow.feedback : {};
+    flow.celebratedActivities = Array.isArray(flow.celebratedActivities) ? flow.celebratedActivities : [];
+    flow.themeCelebrated = flow.themeCelebrated === true;
     window.turkceProgressData = root;
     return flow;
   }
@@ -205,25 +207,78 @@
   });
 
   const assessmentIssueMessages = Object.freeze({
-    relevance: "Yanıtın sorunun odağını tam karşılamıyor.",
-    evidence: "Yanıtındaki dayanak güçlendirilmeli.",
-    completeness: "İstenen parçalardan en az biri eksik.",
-    reasoning: "Seçim ile açıklama arasındaki bağlantıyı netleştir.",
-    selection: "Seçim veya eşleştirmelerden biri yeniden gözden geçirilmeli.",
-    accuracy: "Yanıtın bir bölümü sağlanan kaynakla uyuşmuyor.",
+    relevance: "Bu alanın yanıtı sorudaki ölçütle tam örtüşmüyor.",
+    evidence: "Dayanak ile yanıt arasındaki bağ henüz açık değil.",
+    completeness: "Bu alanda istenen parçalardan en az biri eksik.",
+    reasoning: "Seçim ile açıklama arasındaki düşünce adımı net değil.",
+    selection: "Seçim veya eşleştirme ölçütünü yeniden denetle.",
+    accuracy: "Bu alandaki bir bilgi sağlanan kaynakla uyuşmuyor.",
     source: "Bu ayrıntı sağlanan kaynakta doğrulanamıyor."
   });
 
   const assessmentHintMessages = Object.freeze({
-    reread: "Kaynağın ilgili bölümünü yeniden oku ve yanıtını oradaki ipucuyla karşılaştır.",
-    count: "Soruda istenen parçaları tek tek kontrol et; her birine yanıt verdiğinden emin ol.",
-    evidence: "Yanıtına kaynaktan bir dayanak ekle.",
-    explain: "Seçiminin gerekçesini kendi sözlerinle açıkla.",
-    match: "Her seçimi veya eşleştirmeyi verilen ölçütle yeniden karşılaştır.",
-    recheck: "Soruyu ve yanıtını bir kez daha karşılaştırıp cevabını kendi sözlerinle gözden geçir."
+    reread: "Kaynağın ilgili bölümünü yeniden oku; kim/ne yaptı ve bunun hangi sonucu doğurduğunu yanıtınla karşılaştır.",
+    count: "Sorunun istediği parçaları tek tek say; her parçanın yanıtında karşılığı olduğundan emin ol.",
+    evidence: "Dayanağı seçiminle yan yana getir ve bu dayanağın onu nasıl desteklediğini kendi sözlerinle açıkla.",
+    explain: "Önce seçimini belirt; ardından ‘çünkü…’ diye başlayan kendi cümlenle gerekçeni tamamla.",
+    match: "Önce eşleştirme ölçütünü belirle; sonra her kartı bu ölçüte göre ayrı ayrı kontrol et.",
+    recheck: "Yanıtını sorunun ölçütlerine böl; her ölçüte karşılık gelen kısmı ayrı ayrı gözden geçir.",
+    connect: "İki fikri kendi cümlenle ilişkilendir; aralarındaki neden, sonuç ya da karşıtlığın hangisi olduğunu düşün.",
+    keyword: "Bu alanda kelimenin anlamını ve ana düşünceyle bağını ayrı ayrı kontrol et; yalnızca kelime yazmak yeterli mi soruya bak.",
+    sequence: "Olayı başlangıç, tepki ve sonuç sırasına koy; yanıtında hangi aşamanın eksik kaldığını bul.",
+    compare: "İki unsuru aynı ölçüte göre yan yana koy; benzerlik veya farkı kendi sözlerinle açıkla.",
+    context: "Kelimenin geçtiği cümleyi önceki ve sonraki cümleyle birlikte oku; bağlamın anlamı nasıl etkilediğini düşün.",
+    justify: "Seçimini adlandır ve bu seçime götüren düşünceyi kendi sözlerinle açıkla."
   });
 
-  function structuredAssessmentResult(text) {
+  const fieldAssessmentLabels = Object.freeze({
+    correct: "TAM DOĞRU",
+    partial: "KISMEN DOĞRU",
+    wrong: "YANLIŞ",
+    incomplete: "EKSİK",
+    unverified: "DOĞRULANAMADI",
+    unrated: "KONTROL EDİLEMEDİ"
+  });
+
+  const fieldAssessmentCues = Object.freeze({
+    correct: "✓",
+    partial: "◐",
+    wrong: "✕",
+    incomplete: "!",
+    unverified: "ⓘ",
+    unrated: "?"
+  });
+
+  function assessmentHintForIssue(issue, state) {
+    const issueHints = {
+      relevance: "recheck",
+      evidence: "connect",
+      completeness: "count",
+      reasoning: "connect",
+      selection: "match",
+      accuracy: "reread",
+      source: "recheck"
+    };
+    return issueHints[issue] || (state === "incomplete" ? "count" : (state === "unverified" ? "recheck" : "recheck"));
+  }
+
+  function summarizeFieldAssessments(overallState, fieldResults) {
+    if (!fieldResults.length) return overallState;
+    const states = fieldResults.map(field => field.state);
+    if (states.some(state => state === "unrated")) return "unrated";
+    if (states.every(state => state === "correct")) return overallState === "correct" ? "correct" : "unrated";
+    if (states.some(state => state === "correct")) return "partial";
+    if (states.every(state => state === "unverified")) return "unverified";
+    if (states.every(state => state === "incomplete")) return "incomplete";
+    if (states.every(state => state === "wrong")) return "wrong";
+    if (states.some(state => state === "wrong")) return "wrong";
+    if (states.some(state => state === "incomplete")) return "incomplete";
+    if (states.some(state => state === "unverified")) return "unverified";
+    if (states.some(state => state === "partial")) return "partial";
+    return overallState;
+  }
+
+  function structuredAssessmentResult(text, question = null) {
     let source = String(text || "").trim();
     const fenced = source.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
     if (fenced) source = fenced[1].trim();
@@ -235,14 +290,38 @@
     try { result = JSON.parse(source); } catch { return null; }
     if (!result || typeof result !== "object" || Array.isArray(result)) return null;
 
-    const status = String(result.status || "").trim().toLowerCase();
     const statusMap = { correct: "correct", partial: "partial", wrong: "wrong", incomplete: "incomplete", unverified: "unverified" };
-    if (!Object.hasOwn(statusMap, status)) return null;
+    const statusCode = String(result.status || "").trim().toLowerCase();
+    if (!Object.hasOwn(statusMap, statusCode)) return null;
     const issues = Array.isArray(result.issues)
-      ? [...new Set(result.issues.map(value => String(value).trim()).filter(code => Object.hasOwn(assessmentIssueMessages, code)))].slice(0, 2)
+      ? [...new Set(result.issues.map(value => String(value).trim().toLowerCase()).filter(code => Object.hasOwn(assessmentIssueMessages, code)))].slice(0, 2)
       : [];
-    const hint = Object.hasOwn(assessmentHintMessages, result.hint) ? result.hint : (status === "incomplete" ? "count" : "reread");
-    return { state: statusMap[status], issues, hint };
+    const hintCode = String(result.hint || "").trim().toLowerCase();
+    const hint = Object.hasOwn(assessmentHintMessages, hintCode) ? hintCode : assessmentHintForIssue(issues[0], statusCode);
+
+    const questionFields = Array.isArray(question?.fields) ? question.fields : [];
+    const fieldMap = new Map(questionFields.map(field => [String(field.id), field]));
+    const returnedFields = new Map();
+    if (Array.isArray(result.fields)) {
+      for (const item of result.fields) {
+        if (!item || typeof item !== "object") continue;
+        const id = String(item.id || "").trim();
+        if (!fieldMap.has(id) || returnedFields.has(id)) continue;
+        const itemStatus = String(item.status || "").trim().toLowerCase();
+        const fieldState = Object.hasOwn(statusMap, itemStatus) ? statusMap[itemStatus] : "unrated";
+        const issueCode = String(item.issue || "").trim().toLowerCase();
+        const fieldIssue = Object.hasOwn(assessmentIssueMessages, issueCode) ? issueCode : "";
+        const fieldHintCode = String(item.hint || "").trim().toLowerCase();
+        const fieldHint = Object.hasOwn(assessmentHintMessages, fieldHintCode)
+          ? fieldHintCode
+          : assessmentHintForIssue(fieldIssue, fieldState);
+        returnedFields.set(id, { id, label: String(fieldMap.get(id).label || id), state: fieldState, issue: fieldIssue, hint: fieldHint });
+      }
+    }
+    const fields = questionFields.map(field => returnedFields.get(String(field.id)) || {
+      id: String(field.id), label: String(field.label || field.id), state: "unrated", issue: "", hint: "recheck"
+    });
+    return { state: summarizeFieldAssessments(statusMap[statusCode], fields), issues, hint, fields };
   }
 
   function assessmentStateFromText(text) {
@@ -269,8 +348,7 @@
     return assessmentStateFromText(feedback.text);
   }
 
-  function assessmentFeedbackText(text, state, issues = [], hint = "recheck") {
-    if (state === "correct") return "DURUM: TAM DOĞRU\nYanıtın istenen ölçütleri karşılıyor.";
+  function assessmentFeedbackText(text, state, issues = [], hint = "recheck", fieldResults = []) {
     if (state === "system" || state === "pending") return String(text || "");
 
     const stateLabels = {
@@ -281,7 +359,7 @@
       unrated: "SONUÇ SINIFLANDIRILAMADI"
     };
     const defaultIssues = {
-      partial: "Yanıtın bazı ölçütleri karşılıyor; en az bir nokta gözden geçirilmeli.",
+      partial: "Bazı alanlar ölçütleri karşılıyor; en az bir alanı yeniden gözden geçir.",
       incomplete: "İstenen yanıt parçalarının bir bölümü eksik.",
       wrong: "Yanıtın soru ve sağlanan kaynakla uyuşmuyor.",
       unverified: "Yanıtın bu bölümü sağlanan kaynakla doğrulanamıyor.",
@@ -293,9 +371,28 @@
     const issueText = safeIssues.length
       ? safeIssues.map(code => assessmentIssueMessages[code]).join(" ")
       : (defaultIssues[state] || defaultIssues.unrated);
-    const defaultHint = state === "incomplete" ? "count" : (state === "unverified" ? "reread" : "recheck");
+    const defaultHint = assessmentHintForIssue(safeIssues[0], state);
     const hintText = Object.hasOwn(assessmentHintMessages, hint) ? assessmentHintMessages[hint] : assessmentHintMessages[defaultHint];
-    return `DURUM: ${stateLabels[state] || stateLabels.unrated}\nHATA/EKSİK: ${issueText}\nİPUCU: ${hintText}`;
+    const fieldLines = Array.isArray(fieldResults) ? fieldResults.map(field => {
+      const fieldState = Object.hasOwn(fieldAssessmentLabels, field.state) ? field.state : "unrated";
+      const cue = fieldAssessmentCues[fieldState];
+      const label = String(field.label || field.id || "Yanıt alanı");
+      if (fieldState === "correct") return `${cue} ${label}: ${fieldAssessmentLabels.correct}.`;
+      const fieldIssue = Object.hasOwn(assessmentIssueMessages, field.issue) ? assessmentIssueMessages[field.issue] :
+        (fieldState === "unrated" ? "Bu alan için güvenli bir kontrol sonucu alınamadı." : (defaultIssues[fieldState] || defaultIssues.unrated));
+      const fieldHint = fieldState === "unrated"
+        ? "Bu alanı yeniden kontrol et veya öğretmeninden yardım iste."
+        : (assessmentHintMessages[field.hint] || assessmentHintMessages[assessmentHintForIssue(field.issue, fieldState)]);
+      return `${cue} ${label}: ${fieldAssessmentLabels[fieldState]}. ${fieldIssue} İpucu: ${fieldHint}`;
+    }) : [];
+
+    if (state === "correct") {
+      return `DURUM: TAM DOĞRU\n${fieldLines.length ? `ALAN ALAN:\n${fieldLines.join("\n")}` : "Yanıtın istenen ölçütleri karşılıyor."}`;
+    }
+    const lines = [`DURUM: ${stateLabels[state] || stateLabels.unrated}`, `HATA/EKSİK: ${issueText}`];
+    if (fieldLines.length) lines.push(`ALAN ALAN:\n${fieldLines.join("\n")}`);
+    if (!fieldLines.length || fieldResults.every(field => field.state === "correct" || field.state === "unrated")) lines.push(`İPUCU: ${hintText}`);
+    return lines.join("\n");
   }
 
   function savedFeedback(activity, question) {
@@ -410,6 +507,120 @@
     return `<nav class="quest-path" aria-label="Etkinlik adımları"><span class="quest-path-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol>${steps.map((step, index) => `<li><span class="quest-step-icon" aria-hidden="true">${escapeHTML(step.icon)}</span><span class="quest-step-number">${index + 1}</span><span>${escapeHTML(step.label)}</span></li>`).join("")}</ol></nav>`;
   }
 
+  let confettiCanvas = null;
+  let confettiFrame = 0;
+  let confettiRunId = 0;
+
+  function launchConfetti(finalCelebration = false) {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+    if (!document.body || typeof document.createElement !== "function" || typeof window.requestAnimationFrame !== "function") return;
+
+    const width = window.innerWidth || document.documentElement?.clientWidth || 800;
+    const height = window.innerHeight || document.documentElement?.clientHeight || 600;
+    if (!confettiCanvas) {
+      confettiCanvas = document.createElement("canvas");
+      confettiCanvas.setAttribute("aria-hidden", "true");
+      Object.assign(confettiCanvas.style, {
+        position: "fixed", inset: "0", width: "100vw", height: "100vh",
+        zIndex: "10000", pointerEvents: "none"
+      });
+      document.body.appendChild(confettiCanvas);
+    }
+    const context = confettiCanvas.getContext?.("2d");
+    if (!context) return;
+    const pixelRatio = Math.min(2, window.devicePixelRatio || 1);
+    confettiCanvas.width = Math.round(width * pixelRatio);
+    confettiCanvas.height = Math.round(height * pixelRatio);
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+    if (confettiFrame && typeof window.cancelAnimationFrame === "function") window.cancelAnimationFrame(confettiFrame);
+    const runId = ++confettiRunId;
+    const duration = finalCelebration ? 3200 : 1700;
+    const particleCount = finalCelebration ? 220 : 72;
+    const colors = ["#f4b942", "#36a879", "#4c83e6", "#e66b59", "#9a72c7", "#ec77a5"];
+    const particles = Array.from({ length: particleCount }, () => ({
+      x: Math.random() * width,
+      y: -Math.random() * height * 0.35,
+      vx: (Math.random() - 0.5) * (finalCelebration ? 5.8 : 4.2),
+      vy: 1 + Math.random() * (finalCelebration ? 4.5 : 3.2),
+      gravity: 0.035 + Math.random() * 0.055,
+      width: 4 + Math.random() * 5,
+      height: 6 + Math.random() * 7,
+      angle: Math.random() * Math.PI,
+      spin: (Math.random() - 0.5) * 0.18,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    }));
+    let startTime = null;
+    const draw = time => {
+      if (runId !== confettiRunId) return;
+      if (startTime === null) startTime = time;
+      context.clearRect(0, 0, width, height);
+      let visibleParticles = 0;
+      particles.forEach(particle => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vy += particle.gravity;
+        particle.angle += particle.spin;
+        if (particle.y > height + 18) return;
+        visibleParticles += 1;
+        context.save();
+        context.translate(particle.x, particle.y);
+        context.rotate(particle.angle);
+        context.fillStyle = particle.color;
+        context.fillRect(-particle.width / 2, -particle.height / 2, particle.width, particle.height);
+        context.restore();
+      });
+      if (time - startTime < duration && visibleParticles) {
+        confettiFrame = window.requestAnimationFrame(draw);
+      } else {
+        context.clearRect(0, 0, width, height);
+        confettiCanvas.remove?.();
+        confettiCanvas = null;
+        confettiFrame = 0;
+      }
+    };
+    confettiFrame = window.requestAnimationFrame(draw);
+  }
+
+  function isActivityFullyCorrect(activity) {
+    const questions = questionList(activity);
+    const flow = flowState(activeUnit.weekId);
+    return questions.length > 0 && questions.every(question =>
+      storedAssessmentState(flow.feedback[questionKey(activity, question)]) === "correct"
+    );
+  }
+
+  function isUnitFullyCorrect() {
+    return allSteps.length > 0 && allSteps.every(step => isActivityFullyCorrect(step.activity));
+  }
+
+  function isThemeFullyCorrect() {
+    const progress = getProgressRoot();
+    const themeActivities = units.flatMap(unit => (unit.groups || []).flatMap(group =>
+      (group.activities || []).map(activity => ({ activity, weekId: unit.weekId }))
+    ));
+    return themeActivities.length > 0 && themeActivities.every(({ activity, weekId }) => {
+      const feedback = progress[weekId]?.theme1PracticeFlow?.feedback || {};
+      const questions = questionList(activity);
+      return questions.length > 0 && questions.every(question =>
+        storedAssessmentState(feedback[questionKey(activity, question)]) === "correct"
+      );
+    });
+  }
+
+  function isFinalThemeUnit() {
+    return Number(activeUnit?.weekId) === Number(units[units.length - 1]?.weekId);
+  }
+
+  function celebrateActivityIfCompleted(activity) {
+    const flow = flowState(activeUnit.weekId);
+    if (!isActivityFullyCorrect(activity) || flow.celebratedActivities.includes(activity.id)) return;
+    flow.celebratedActivities.push(activity.id);
+    persist();
+    savedNote.textContent = `🎉 ${activity.title} etkinliğini doğru tamamladın!`;
+    launchConfetti(false);
+  }
+
   function renderStep() {
     if (!activeUnit || !allSteps.length) return;
     const step = allSteps[stepIndex];
@@ -432,7 +643,7 @@
       const answers = currentAnswer(activity, question, index);
       const feedback = savedFeedback(activity, question);
       const feedbackState = storedAssessmentState(feedback);
-      const feedbackText = assessmentFeedbackText(feedback?.text, feedbackState, feedback?.issues, feedback?.hint);
+      const feedbackText = assessmentFeedbackText(feedback?.text, feedbackState, feedback?.issues, feedback?.hint, feedback?.fields);
       const resultLabel = assessmentLabels[feedbackState] || "";
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
@@ -731,10 +942,10 @@
         const privateKey = field.expectedAssignments
           ? `\nÖğretmen değerlendirme anahtarı (öğrenciye doğru eşleşmeleri açıklama): ${JSON.stringify(Object.fromEntries(Object.entries(field.expectedAssignments).map(([itemId, categoryId]) => [field.items?.find(item => item.id === itemId)?.label || itemId, choices.get(categoryId) || categoryId])))}\n`
           : "";
-        return `${field.label || field.id}:\n${pairs.join("\n")}${privateKey}`;
+        return `${field.label || field.id} [alan kimliği: ${field.id}; yanıt türü: ${field.type}]:\n${pairs.join("\n")}${privateKey}`;
       }
       const printable = Array.isArray(value) ? value.join(", ") : String(value ?? "").trim();
-      return `${field.label || field.id}: ${printable || "(boş)"}`;
+      return `${field.label || field.id} [alan kimliği: ${field.id}; yanıt türü: ${field.type}]: ${printable || "(boş)"}`;
     });
     const activityQuestionKey = activity.answerKey && typeof activity.answerKey === "object" ? activity.answerKey[question.id] : undefined;
     const explicitKey = question.answerKey ?? question.expectedAnswer ?? activityQuestionKey;
@@ -765,12 +976,12 @@
     }
   }
 
-  function showFeedback(card, text, state, issues = [], hint = "recheck") {
+  function showFeedback(card, text, state, issues = [], hint = "recheck", fieldResults = []) {
     const feedback = card?.querySelector(".feedback-box");
     if (!feedback) return;
     const finalState = Object.hasOwn(assessmentLabels, state) ? state : "system";
     setQuestionAssessment(card, finalState);
-    feedback.textContent = assessmentFeedbackText(text, finalState, issues, hint);
+    feedback.textContent = assessmentFeedbackText(text, finalState, issues, hint, fieldResults);
     feedback.dataset.state = finalState;
     feedback.hidden = false;
   }
@@ -830,10 +1041,12 @@
         "Sen 7. sınıf Türkçe dersi için adil, kanıta dayalı ve ölçütleri tutarlı uygulayan bir değerlendiricisin. Bağlam: Tema 1 · Hayat Boyu Gelişim; Maarif/MEB yönelimi.",
         "Öğrencinin gerçek yanıtını soruyla, sağlanan kaynakla ve öğretmen değerlendirme anahtarıyla karşılaştır. Anahtar ve kaynaklar yalnızca iç değerlendirme içindir; öğrenciye aktarılmamalıdır.",
         "Metinle desteklenen doğru bir açıklamayı, sözcükleri farklı diye reddetme. Özellikle ilgili olay kaynak metinde açıkça varsa ‘metinde yok’ deme. Seçim/eşleştirmelerde her parçayı ayrı; yazılı yanıtta soruya uygunluk, doğruluk, kapsam ve dayanağı ayrı değerlendir.",
+        "ALAN ALAN DEĞERLENDİRME: Öğrenci yanıtında alan kimlikleri ve alan başlıkları verilir. Her alanı bağımsız olarak denetle ve listedeki HER alan için, aynı kimliği kullanarak bir sonuç üret; boş alanı EKSİK olarak işaretle. Birden fazla anahtar kelime/yanıt alanı varsa hepsini tek bir genel karara indirgeme; hangisinin doğru, kısmen doğru, yanlış veya eksik olduğunu ayrı ayrı bildir. Alanın sorudaki rolünü değerlendir; yalnızca ‘dayanak ekle’ demeyi alışkanlık hâline getirme.",
+        "Yönlendirme kodunu o alanın gerçek ihtiyacına göre seç: anlam/bağlam, ilişki kurma, sıralama, ölçütle eşleştirme, kapsam veya kaynak dayanağı. İpucu, cevabın kendisini ya da eş anlamlısını söylemeden öğrencinin bir sonraki düşünme adımını açıklasın. Doğru alanlara ipucu verme.",
         "Tam doğru: tüm doğrulanabilir ölçütler karşılanır. Kısmen doğru: anlamlı/doğru bir bölüm vardır ama ölçütlerden biri eksik veya hatalıdır. Yanlış: temel yanıt ilgisiz ya da kaynakla çelişir. Eksik: istenen yanıt parçalarından biri veya birkaçı yoktur. Doğrulanamadı: yanıtın olgusal iddiası verilen kaynak/anahtarla denetlenemiyordur.",
         "GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, kaynakta cevabı belirten cümleyi, örnek yanıtı veya bunların eş anlamlı/parafraz edilmiş biçimini hiçbir koşulda yazma. Yanlış/eksik yanıtta cevabın ne olduğunu açıklama. Sadece aşağıdaki kapalı kodlardan seçim yap; uygulama öğrenciye gösterilecek güvenli mesajı kendisi oluşturur.",
-        "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Biçim: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck\"}. status tek bir izinli değerdir; issues alanında yalnızca izinli kodlar bulunur (en çok iki tane); hint yalnızca izinli bir koddur. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
-        "Tüm ölçütler karşılanmışsa status=correct, issues=[] ve hint=recheck döndür. Kısmi/yanlış/eksik durumda yalnızca sorunu genel olarak sınıflandıran issue kodları ve güvenli yönlendirme kodu seç. Kaynakta bulunmayan veya sağlanan notlarla/anahtarla doğrulanamayan medya iddiasında status=unverified ve issues=[\"source\"] seç.",
+        "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck|connect|keyword|sequence|compare|context|justify\",\"fields\":[{\"id\":\"verilen-alan-kimliği\",\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issue\":\"relevance|evidence|completeness|reasoning|selection|accuracy|source|none\",\"hint\":\"izinli-ipucu-kodu\"}]}. status ve alan durumları yalnızca izinli değerler; her alan için tek bir issue/hint kodu kullan. `fields` içinde yanıtta verilen HER alan kimliğini tam olarak bir kez ve sırasıyla döndür. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
+        "Tüm alanlar tam doğruysa status=correct, issues=[] ve her alan status=correct olsun. Alanların tümü doğru değilse genel durumu alan sonuçlarına göre seç; doğru alanları yanlış gibi göstermeden hatalı/eksik alanları ayrı belirt. Kaynakta bulunmayan veya sağlanan notlarla/anahtarla doğrulanamayan medya iddiasında ilgili alan status=unverified ve issue=source olsun. Hint kodlarını mümkün olduğunca çeşitlendir ve her alanın içeriğine göre seç; alakasız bir yazı alanına otomatik olarak evidence kodu verme.",
         context.note,
         context.hasVideoAnalysis
           ? "MEDYA KAYNAĞI (iç değerlendirme): Rapor kullanıcı tarafından sağlanan Gemini analizidir; modeli videoyu/URL'yi açmadı ve dinleme kaydını dinlemedi. Görüntü notlarını doğrudan gözlem, yorumları yorum olarak ayır; konuşma bölümleri kısmi/özet olabilir. Rapor dışındaki ayrıntıları bağımsız doğrulanmış sayma ve bağımsız medya doğrulaması yaptığını iddia etme."
@@ -863,7 +1076,7 @@
         body: JSON.stringify({
           model,
           temperature: 0.1,
-          max_completion_tokens: 250,
+          max_completion_tokens: 500,
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: systemPrompt },
@@ -876,20 +1089,23 @@
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
       if (!content) throw new Error("Groq yanıtında geri bildirim bulunamadı.");
-      const assessment = structuredAssessmentResult(content);
+      const assessment = structuredAssessmentResult(content, question);
       const assessmentState = assessment?.state || "unrated";
       const issueCodes = assessment?.issues || [];
-      const hintCode = assessment?.hint || (assessmentState === "incomplete" ? "count" : "reread");
-      const learnerFeedback = assessmentFeedbackText("", assessmentState, issueCodes, hintCode);
+      const hintCode = assessment?.hint || assessmentHintForIssue(issueCodes[0], assessmentState);
+      const fieldResults = assessment?.fields || [];
+      const learnerFeedback = assessmentFeedbackText("", assessmentState, issueCodes, hintCode, fieldResults);
       flowState(activeUnit.weekId).feedback[qKey] = {
         state: assessmentState,
         text: learnerFeedback,
         issues: issueCodes,
         hint: hintCode,
+        fields: fieldResults,
         checkedAt: new Date().toISOString()
       };
       persist();
-      showFeedback(card, learnerFeedback, assessmentState, issueCodes, hintCode);
+      showFeedback(card, learnerFeedback, assessmentState, issueCodes, hintCode, fieldResults);
+      if (assessmentState === "correct") celebrateActivityIfCompleted(activity);
     } catch (error) {
       const message = String(error?.message || error || "Bilinmeyen hata");
       const friendly = /failed to fetch|networkerror|load failed/i.test(message)
@@ -938,7 +1154,23 @@
     if (stepIndex < allSteps.length - 1) goToStep(stepIndex + 1);
     else {
       saveStepIndex();
-      savedNote.textContent = "Bu çalışma birimini tamamladın. İstersen yanıtlarını yeniden gözden geçir.";
+      const flow = flowState(activeUnit.weekId);
+      if (isUnitFullyCorrect()) {
+        if (isFinalThemeUnit() && isThemeFullyCorrect()) {
+          if (!flow.themeCelebrated) {
+            flow.themeCelebrated = true;
+            persist();
+            launchConfetti(true);
+          }
+          savedNote.textContent = "🎉 Harika emek! Tema 1’deki bütün çalışma birimlerini ve etkinlikleri doğru tamamladın!";
+        } else {
+          savedNote.textContent = isFinalThemeUnit()
+            ? "Bu çalışma birimini doğru tamamladın. Tema sonu büyük kutlaması için önceki okuma birimlerindeki etkinlikleri de doğru tamamla."
+            : "🎉 Bu çalışma birimindeki bütün etkinlikleri doğru tamamladın! Tema 1’de ilerlemek için diğer okuma birimlerine geçebilirsin.";
+        }
+      } else {
+        savedNote.textContent = "Bu çalışma birimini bitirdin. Kısmen doğru, eksik veya yanlış işaretli etkinliklere dönüp yanıtlarını yeniden gözden geçirebilirsin.";
+      }
       window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY + 10, behavior: "smooth" });
     }
   });

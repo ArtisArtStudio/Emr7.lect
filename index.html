@@ -13,18 +13,18 @@
 .subject-placeholder[hidden],#turkishWorkspace[hidden]{display:none}.placeholder-mark{font-size:11px;font-weight:850;letter-spacing:.12em;color:#5471ae}.subject-placeholder h1{font-size:clamp(30px,5vw,44px);letter-spacing:-.045em;margin:8px 0}.subject-placeholder>p{max-width:700px;color:var(--muted);margin:0 0 22px}.placeholder-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0 24px}.placeholder-grid>div{padding:16px;background:#fff;border:1px solid var(--line);border-radius:14px}.placeholder-grid b,.placeholder-grid span{display:block}.placeholder-grid b{font-size:14px}.placeholder-grid span{font-size:12px;color:var(--muted);margin-top:5px}
 @media(max-width:650px){.subject-nav{margin-left:-4px;margin-right:-4px;gap:7px}.subject-btn{min-width:128px;padding:9px}.placeholder-grid{grid-template-columns:1fr}.top{align-items:flex-start}.topright{flex-wrap:wrap;justify-content:flex-end}}
 
-#bookText{font-size:18px;line-height:1.78;color:#26231f}
+#bookText{font-size:18px;line-height:1.78;color:#111111}
 #bookText .book-paragraph{margin:0 0 1.1em;text-indent:1em;white-space:pre-line}
 #bookText .book-paragraph.poem-stanza{margin-bottom:1.15em;text-indent:0;line-height:1.72}
 #bookText .book-paragraph.book-omission{margin:.9em 0;text-align:center;text-indent:0;color:var(--muted);font-style:italic}
-#bookText .book-subheading{margin:1.3em 0 .55em;color:#39342c;font-size:1.05em;font-weight:800;line-height:1.35;letter-spacing:-.01em}
+#bookText .book-subheading{margin:1.3em 0 .55em;color:#292929;font-size:1.05em;font-weight:800;line-height:1.35;letter-spacing:-.01em}
 #bookText .book-subheading:first-child{margin-top:0}
 #bookText .book-credit{margin:1.2em 0 0;padding-top:10px;border-top:1px solid var(--line);text-align:right;color:var(--muted);font-size:13px;font-style:italic;text-indent:0}
 #bookText .reading-pause{margin:1.25em 0;padding:16px;background:linear-gradient(145deg,#fff7e8,#fffdf7);border:1px solid #efd49b;border-left:5px solid #d48c22;border-radius:14px;text-indent:0}
 #bookText .reading-pause-heading{display:flex;align-items:center;gap:8px;margin:0 0 8px;color:#82500b;font-size:14px;font-weight:850;letter-spacing:.04em}
 #bookText .reading-pause-prompt{margin:0 0 12px;color:#5e4c2e;font-size:.94em;line-height:1.65}
 #bookText .pause-input-label{display:block;margin:0 0 6px;color:#493a22;font-size:13px;font-weight:750}
-#bookText .pause-prediction{display:block;width:100%;min-height:82px;padding:10px 11px;border:1px solid #c9c0ad;border-radius:10px;background:#fff;font:inherit;font-size:.94em;line-height:1.55;color:#26231f;resize:vertical}
+#bookText .pause-prediction{display:block;width:100%;min-height:82px;padding:10px 11px;border:1px solid #c9c0ad;border-radius:10px;background:#fff;font:inherit;font-size:.94em;line-height:1.55;color:#111111;resize:vertical}
 #bookText .pause-prediction:focus{outline:3px solid #e9c36d80;border-color:#bd811b}
 #bookText .pause-save{margin-top:9px;padding:9px 12px;border:0;border-radius:9px;background:#8b5b12;color:#fff;font-weight:750;cursor:pointer}
 #bookText .pause-save:disabled{cursor:not-allowed;opacity:.55}
@@ -104,7 +104,7 @@
 
 <div class="banner"><b>Plan notu:</b> Bu, MEB’in taslak haftalık planına dayalı ev takip aracıdır; sınıfta işlenen sıra ve sınav kapsamı öğretmen tarafından değiştirilebilir. En son işlenen metni oğlunuzun kitabından veya öğretmenden teyit edin. PDF için “Yazdır / PDF” düğmesini kullanabilirsiniz.</div></div></main></div>
 <div class="footer">Türkçe alanı MEB 2026–2027 taslak çerçeve yıllık planını temel alır. Diğer dersler bu platforma aşamalı olarak eklenecektir.</div></div></div>
-<script src="book-texts.js"></script><script src="theme1-practice.js?v=9"></script><script src="theme1-practice-forms.js?v=8"></script><script src="theme1-practice-app.js?v=10"></script><script>
+<script src="book-texts.js"></script><script src="theme1-practice.js?v=9"></script><script src="theme1-practice-forms.js?v=9"></script><script src="theme1-practice-app.js?v=11"></script><script>
 const BOOK_TEXTS=window.BOOK_TEXTS;
 const BOOK_MAP={1:["Martı Jonathan Livingston", "marti"],2:["Martı Jonathan Livingston", "marti"],3:["Gençliğin Kıymeti", "gencligin"],4:["Sen Sor O Yanıtlasın · Gençliğin Kıymeti", "gencligin"],5:["Adını Göklere Yazdıran Çocuk", "adini"],6:["Adını Göklere Yazdıran Çocuk", "adini"],7:["Bayrağımızın Altında", "bayrak"],12:["Mustafa Kemal’in Kağnısı", "kagni"],13:["Eskici", "eskici"],14:["Ya Hayır Söyle…", "hayir"],15:["Ya Hayır Söyle…", "hayir"],17:["Öğüt", "ogut"],8:["Mustafa 1881–1920: Tarihe Atılan İmza", "mustafa"]};
 const BOOK_CREDITS={"marti":"Richard Bach · Çeviri: Kader Ay ve Aslı Tümerkan · PDF’de kısaltılmıştır.","gencligin":"Şevket Rado · PDF’de kısaltılmıştır.","adini":"Vehbi Belgil · Hazırlayanlar: Alemdar Yalçın ve Gıyasettin Aytaş · PDF’de kısaltılmıştır.","bayrak":"Halide Edip Adıvar · Bursa, 11 Ekim · (Kısaltılmıştır.)","mustafa":"Metin Özdamarlar · PDF’de kısaltılmıştır.","kagni":"Fazıl Hüsnü Dağlarca · Hazırlayanlar: Abdullah Özkan ve Refik Durbaş.","eskici":"Refik Halid Karay · PDF’de kısaltılmıştır.","hayir":"Nezihe Araz · PDF’de kısaltılmıştır.","ogut":"Karacaoğlan"};

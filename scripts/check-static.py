@@ -304,6 +304,8 @@ for (const unitId of [1,3,5]) {{
   if (!foodPressureQuestion?.answerKey?.effect?.includes('avlanmaya') || !foodPressureQuestion.rubric.includes('doğru kabul et')) throw new Error('The Martı hardship evaluator must accept the text-supported hunger/food-search answer');
   const hayatTopicQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'topic');
   if (!hayatTopicQuestion?.answerKey?.mainIdea?.includes('Öğrenmenin yaşı yoktur') || !hayatTopicQuestion.rubric.includes('hayat çok zordur')) throw new Error('The Hayat Büyük Bir Okuldur assessment needs its main idea and an explicit unrelated-answer rejection criterion');
+  const keywordQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'keywords');
+  if (!keywordQuestion || keywordQuestion.fields.map((field) => field.id).join(',') !== 'word-1,word-2,word-3,word-4,word-5' || !keywordQuestion.rubric.includes('birbirinden bağımsız değerlendir')) throw new Error('The five video keyword entries must be graded independently');
   const solutionQuestions = context.window.THEME1_FORMS['marti-a06'];
   if (!vocabularyQuestions.some((question) => question.responseType === 'matching' && question.fields.some((field) => field.type === 'sort')) || !vocabularyQuestions.some((question) => question.fields.some((field) => field.type === 'select'))) throw new Error('The Jonathan vocabulary task needs word matching and dictionary choices');
   if (!comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'checkboxes')) || !comprehensionQuestions.some((question) => question.fields.some((field) => field.type === 'radio')) || !comprehensionQuestions.some((question) => question.responseType === 'matching')) throw new Error('The Jonathan comprehension tasks need selection, matching, and written evidence');
@@ -540,7 +542,14 @@ const saved = {
     answers: {
       'marti-a03::evidence-1': {behaviors: ['Yiyecek aramak yerine uçuş hareketlerini tekrar tekrar denemesi', 'Hız ve süzülme üzerinde çalışıp becerisini geliştirmesi'], evidence: 'Jonathan tests a new way of turning.'},
       'marti-a05::problem': {challenge: 'Aç kalma ve yiyecek arama baskısı', effect: 'Ailesi yiyecek bulamamasından endişelenir; Jonathan başını itaatkâr biçimde eğer ve bir süre avlanmaya çalışır.'},
-      'marti-a08::topic': {answer: 'Hayat çok zordur.'}
+      'marti-a08::topic': {answer: 'Hayat çok zordur.'},
+      'marti-a08::keywords': {
+        'word-1': 'öğrenme — farklı alanlarda sürer',
+        'word-2': 'yaş — her yaştan insan öğrenebilir',
+        'word-3': 'okul — öğrenmenin bir alanı',
+        'word-4': 'deneyim — yeni bilgiler kazandırır',
+        'word-5': 'merak — öğrenmeye yöneltir'
+      }
     },
     feedback: {'marti-a08::topic': {state: 'wrong', text: 'SECRET_LEGACY_ANSWER_9Z'}}
   }},
@@ -553,7 +562,11 @@ const storage = new Map([
 ]);
 const elements = new Map();
 let capturedRequest = null;
-let mockResponse = JSON.stringify({status: 'correct', issues: [], hint: 'recheck', leakedAnswer: 'SECRET_MODEL_ANSWER_7Q'});
+const responseFor = (status, issues, hint, fields, extra = {}) => JSON.stringify({status, issues, hint, fields, ...extra});
+let mockResponse = responseFor('correct', [], 'recheck', [
+  {id: 'behaviors', status: 'correct', issue: 'none', hint: 'recheck'},
+  {id: 'evidence', status: 'correct', issue: 'none', hint: 'recheck'}
+], {leakedAnswer: 'SECRET_MODEL_ANSWER_7Q'});
 const element = (id) => {
   if (!elements.has(id)) {
     const item = {
@@ -581,13 +594,44 @@ const element = (id) => {
   return elements.get(id);
 };
 const loadedNotes = [];
-const browserWindow = {
-  location: {href: 'https://example.github.io/Emr7.lect/?unit=1', search: '?unit=1'}, scrollY: 0, scrollTo() {},
-  setTimeout() { return 1; }, clearTimeout() {}
+const animationCallbacks = [];
+const confettiStats = {canvases: [], currentFrameRects: 0};
+const canvasContext = {
+  setTransform() {}, clearRect() {}, save() {}, translate() {}, rotate() {}, restore() {},
+  fillRect() { confettiStats.currentFrameRects += 1; }
 };
+const browserWindow = {
+  location: {href: 'https://example.github.io/Emr7.lect/?unit=1', search: '?unit=1'},
+  scrollY: 0, innerWidth: 800, innerHeight: 600, devicePixelRatio: 1,
+  scrollTo() {}, setTimeout() { return 1; }, clearTimeout() {}, cancelAnimationFrame() {},
+  requestAnimationFrame(callback) { animationCallbacks.push(callback); return animationCallbacks.length; }
+};
+const documentBody = {appendChild(canvas) { confettiStats.canvases.push(canvas); }};
+const browserDocument = {
+  title: '', body: documentBody, documentElement: {clientWidth: 800, clientHeight: 600}, getElementById: element,
+  createElement(tag) {
+    if (tag !== 'canvas') throw new Error(`Unexpected DOM element in test: ${tag}`);
+    return {style: {}, width: 0, height: 0, setAttribute() {}, getContext() { return canvasContext; }, remove() { this.removed = true; }};
+  }
+};
+function flushConfettiFrames() {
+  const frameCounts = [];
+  let elapsed = 0;
+  let turns = 0;
+  while (animationCallbacks.length && turns < 12) {
+    const callback = animationCallbacks.shift();
+    confettiStats.currentFrameRects = 0;
+    callback(elapsed);
+    frameCounts.push(confettiStats.currentFrameRects);
+    elapsed += 800;
+    turns += 1;
+  }
+  if (animationCallbacks.length) throw new Error('Confetti animation did not stop within the expected duration');
+  return frameCounts;
+}
 const context = vm.createContext({
   window: browserWindow,
-  document: {title: '', getElementById: element},
+  document: browserDocument,
   localStorage: {getItem: (key) => storage.get(key) || null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key)},
   URL, URLSearchParams, Date, console,
   fetch: async (url, options = {}) => {
@@ -630,17 +674,26 @@ async function run() {
   if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
   if (storyButton.card.dataset.checkState !== 'correct' || storyButton.pill.textContent !== '✓ Tam doğru') throw new Error('A fully correct AI result did not set the green status');
   if (!storyButton.feedback.textContent.includes('DURUM: TAM DOĞRU') || storyButton.feedback.textContent.includes('İPUCU') || storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A fully correct response shows a hint or leaked model text');
-  mockResponse = JSON.stringify({status: 'partial', issues: ['evidence'], hint: 'reread', leakedAnswer: 'SECRET_PARTIAL_4F'});
+  mockResponse = responseFor('partial', ['evidence'], 'connect', [
+    {id: 'behaviors', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'evidence', status: 'partial', issue: 'evidence', hint: 'connect'}
+  ], {leakedAnswer: 'SECRET_PARTIAL_4F'});
   await check(storyButton);
   if (storyButton.card.dataset.checkState !== 'partial' || storyButton.pill.textContent !== '◐ Kısmen doğru') throw new Error('A partially correct AI result did not set the yellow status');
-  if (storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A partially correct response exposed an extra model answer field');
-  mockResponse = JSON.stringify({status: 'wrong', issues: ['relevance'], hint: 'reread', fullAnswer: 'SECRET_WRONG_5Q'});
+  if (storyButton.feedback.textContent.includes('SECRET_') || !storyButton.feedback.textContent.includes('İki fikri kendi cümlenle ilişkilendir')) throw new Error('Partial feedback did not provide a safe, targeted next step or exposed model text');
+  mockResponse = responseFor('wrong', ['relevance'], 'recheck', [
+    {id: 'behaviors', status: 'wrong', issue: 'relevance', hint: 'recheck'},
+    {id: 'evidence', status: 'wrong', issue: 'accuracy', hint: 'reread'}
+  ], {fullAnswer: 'SECRET_WRONG_5Q'});
   await check(storyButton);
   if (storyButton.card.dataset.checkState !== 'wrong' || storyButton.pill.textContent !== '✕ Yanlış') throw new Error('A wrong AI result did not set the red status');
   if (storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A wrong response exposed an extra model answer field');
 
   advance(2);
-  mockResponse = JSON.stringify({status: 'correct', issues: [], hint: 'recheck', leakedAnswer: 'SECRET_FOOD_6T'});
+  mockResponse = responseFor('correct', [], 'recheck', [
+    {id: 'challenge', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'effect', status: 'correct', issue: 'none', hint: 'recheck'}
+  ], {leakedAnswer: 'SECRET_FOOD_6T'});
   const foodButton = findButton('marti-a05::problem');
   await check(foodButton);
   prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
@@ -649,7 +702,9 @@ async function run() {
 
   advance(3);
   if (stage.innerHTML.includes('SECRET_LEGACY_ANSWER_9Z')) throw new Error('Previously saved free-form AI feedback still exposes an answer after migration');
-  mockResponse = JSON.stringify({status: 'wrong', issues: ['relevance'], hint: 'reread', answer: 'Öğrenmenin yaşı yoktur; insanlar farklı yaşlarda öğrenir.'});
+  mockResponse = responseFor('wrong', ['relevance'], 'keyword', [
+    {id: 'answer', status: 'wrong', issue: 'relevance', hint: 'keyword'}
+  ], {answer: 'Öğrenmenin yaşı yoktur; insanlar farklı yaşlarda öğrenir.'});
   const hayatButton = findButton('marti-a08::topic');
   await check(hayatButton);
   const mediaSystem = capturedRequest.body.messages.find((message) => message.role === 'system').content;
@@ -659,27 +714,97 @@ async function run() {
   if (hayatButton.card.dataset.checkState !== 'wrong' || hayatButton.feedback.textContent.includes('Öğrenmenin yaşı yoktur') || hayatButton.feedback.textContent.includes('SECRET_')) throw new Error('The wrong Hayat answer received feedback that leaked the correct main idea');
   if (stage.innerHTML.includes('source-limit-note') || stage.innerHTML.includes('Yapay zekâ sınırı')) throw new Error('The removed user-facing AI warning card still appears before a video activity');
 
+  mockResponse = responseFor('partial', ['completeness', 'reasoning'], 'keyword', [
+    {id: 'word-1', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'word-2', status: 'wrong', issue: 'relevance', hint: 'keyword'},
+    {id: 'word-3', status: 'incomplete', issue: 'completeness', hint: 'count'},
+    {id: 'word-4', status: 'partial', issue: 'reasoning', hint: 'connect'},
+    {id: 'word-5', status: 'correct', issue: 'none', hint: 'recheck'}
+  ], {answer: 'SECRET_FIVE_KEYWORDS_2P'});
+  const keywordsButton = findButton('marti-a08::keywords');
+  await check(keywordsButton);
+  prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
+  const keywordFeedback = keywordsButton.feedback.textContent;
+  if (!prompt.includes('alan kimliği: word-1') || !prompt.includes('alan kimliği: word-5')) throw new Error('The five keyword inputs were not identified separately in the assessment prompt');
+  for (const marker of ['Anahtar kelime 1 ve ana düşünceyle bağı: TAM DOĞRU', 'Anahtar kelime 2 ve ana düşünceyle bağı: YANLIŞ', 'Anahtar kelime 3 ve ana düşünceyle bağı: EKSİK', 'Anahtar kelime 4 ve ana düşünceyle bağı: KISMEN DOĞRU', 'Anahtar kelime 5 ve ana düşünceyle bağı: TAM DOĞRU']) if (!keywordFeedback.includes(marker)) throw new Error(`Per-field video keyword feedback is missing ${marker}`);
+  if (keywordsButton.card.dataset.checkState !== 'partial' || keywordFeedback.includes('SECRET_FIVE_KEYWORDS_2P') || !keywordFeedback.includes('kelimenin anlamını ve ana düşünceyle bağını ayrı ayrı')) throw new Error('Per-field keyword feedback lacks safe, tailored hints or exposed free model text');
+  mockResponse = responseFor('correct', [], 'recheck', [], {leakedAnswer: 'SECRET_UNRATED_8B'});
+  await check(keywordsButton);
+  if (keywordsButton.card.dataset.checkState !== 'unrated' || keywordsButton.feedback.textContent.includes('SECRET_UNRATED_8B') || keywordsButton.pill.textContent.includes('Tam doğru')) throw new Error('A response omitting the per-field results was incorrectly accepted as fully correct');
+  mockResponse = responseFor('wrong', ['accuracy'], 'reread', ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'].map((id) => ({id, status: 'correct', issue: 'none', hint: 'recheck'})));
+  await check(keywordsButton);
+  if (keywordsButton.card.dataset.checkState !== 'unrated' || keywordsButton.pill.textContent.includes('Tam doğru')) throw new Error('Conflicting overall and per-field assessments were incorrectly accepted');
+
+  const progressRoot = context.window.turkceProgressData || {};
+  progressRoot[3] = progressRoot[3] || {};
+  progressRoot[3].theme1PracticeFlow = progressRoot[3].theme1PracticeFlow || {answers: {}, feedback: {}, stepIndex: 3};
+  progressRoot[3].theme1PracticeFlow.feedback = progressRoot[3].theme1PracticeFlow.feedback || {};
+  progressRoot[3].theme1PracticeFlow.feedback['genclik-a04::shared-message'] = {state: 'correct', text: 'DURUM: TAM DOĞRU'};
+  progressRoot[3].theme1PracticeFlow.celebratedActivities = [];
+  context.window.turkceProgressData = progressRoot;
   context.window.renderTheme1PracticeFlow(3);
-  mockResponse = JSON.stringify({status: 'correct', issues: [], hint: 'recheck'});
+  mockResponse = responseFor('correct', [], 'recheck', [
+    {id: 'photo', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'video', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'link', status: 'correct', issue: 'none', hint: 'recheck'}
+  ]);
   const kindnessButton = findButton('genclik-a04::visual-link');
   await check(kindnessButton);
   const kindnessSystem = capturedRequest.body.messages.find((message) => message.role === 'system').content;
   const kindnessPrompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
   if (!loadedNotes.includes('docs/video-analysis/bir-iyilik-hikayesi-gemini-analysis.md') || !kindnessPrompt.includes('933 yuvalama sahası')) throw new Error('Bir İyilik Hikâyesi Gemini notes were not loaded into the Groq prompt');
   if (!kindnessSystem.includes('MEDYA KAYNAĞI (iç değerlendirme)') || !kindnessSystem.includes('bağımsız medya doğrulaması')) throw new Error('The internal media source-limit instruction is missing');
+  if (!context.window.turkceProgressData[3].theme1PracticeFlow.celebratedActivities.includes('genclik-a04')) throw new Error('A fully correct activity did not record its one-time celebration');
+  const activityConfettiFrames = flushConfettiFrames();
+  if (confettiStats.canvases.length !== 1 || activityConfettiFrames[0] !== 72 || !confettiStats.canvases[0].removed) throw new Error('A completed activity did not display and clean up the smaller confetti animation');
 
   context.window.renderTheme1PracticeFlow(5);
+  mockResponse = responseFor('correct', [], 'recheck', [
+    {id: 'kaoru', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'athlete', status: 'correct', issue: 'none', hint: 'recheck'},
+    {id: 'comparison', status: 'correct', issue: 'none', hint: 'recheck'}
+  ]);
   const compareButton = findButton('adiny-a03::compare-1');
   await check(compareButton);
   const comparisonPrompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
   if (!loadedNotes.includes('docs/video-analysis/yigit-caner-aydin-gemini-analysis.md') || !comparisonPrompt.includes('Bentenjima') || !comparisonPrompt.includes('2013 yılında üniversite öğrencisiyken')) throw new Error('The Kaoru story and user-provided Yiğit Caner Aydın report were not both sent as source context');
   advance(2);
   const listeningButton = findButton('adiny-a05::note-1');
-  mockResponse = JSON.stringify({status: 'unverified', issues: ['source'], hint: 'reread'});
+  mockResponse = responseFor('unverified', ['source'], 'recheck', [
+    {id: 'answer', status: 'unverified', issue: 'source', hint: 'recheck'}
+  ]);
   await check(listeningButton);
   const listeningPrompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
   if (!loadedNotes.includes('docs/video-analysis/ali-kuscu-gemini-analysis.md') || !listeningPrompt.includes('Semerkant') || !listeningPrompt.includes('Kullanıcı tarafından sağlanan Gemini dinleme kaydı analiz raporu')) throw new Error('Ali Kuşçu audio analysis was not loaded or labeled as user-provided listening context');
-  console.log('Question-level states, safe feedback filtering, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
+
+  const completeProgress = context.window.turkceProgressData || {};
+  for (const unit of context.window.THEME1_PRACTICE.units) {
+    completeProgress[unit.weekId] = completeProgress[unit.weekId] || {};
+    const flow = completeProgress[unit.weekId].theme1PracticeFlow || {answers: {}, feedback: {}, stepIndex: 0};
+    flow.answers = flow.answers || {};
+    flow.feedback = {};
+    flow.themeCelebrated = false;
+    const activitiesInUnit = unit.groups.flatMap((group) => group.activities || []);
+    for (const activity of activitiesInUnit) {
+      const configured = context.window.THEME1_FORMS[activity.id];
+      const prompts = activity.prompts?.length ? activity.prompts : [activity.instruction || activity.title];
+      const questions = Array.isArray(configured) && configured.length ? configured : prompts.map((prompt, index) => ({id: `response-${index + 1}`}));
+      for (const question of questions) flow.feedback[`${activity.id}::${question.id}`] = {state: 'correct', text: 'DURUM: TAM DOĞRU'};
+    }
+    flow.stepIndex = 0;
+    completeProgress[unit.weekId].theme1PracticeFlow = flow;
+  }
+  context.window.turkceProgressData = completeProgress;
+  const finalUnit = context.window.THEME1_PRACTICE.units.at(-1);
+  const finalActivityCount = finalUnit.groups.flatMap((group) => group.activities || []).length;
+  context.window.renderTheme1PracticeFlow(finalUnit.weekId);
+  for (let index = 1; index < finalActivityCount; index += 1) next();
+  next();
+  const finalFlow = completeProgress[finalUnit.weekId].theme1PracticeFlow;
+  const finalConfettiFrames = flushConfettiFrames();
+  if (!finalFlow.themeCelebrated || !element('theme1PracticeSaved').textContent.includes('Tema 1’deki bütün çalışma birimlerini')) throw new Error('The final Theme 1 celebration did not require and record complete theme progress');
+  if (confettiStats.canvases.length !== 2 || finalConfettiFrames[0] !== 220 || !confettiStats.canvases[1].removed) throw new Error('The final Theme 1 completion did not show the larger confetti animation');
+  console.log('Question and field states, targeted safe hints, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
 }
 run().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
 """
@@ -803,7 +928,7 @@ def text_reader_test_source(html: str) -> str:
             raise ValueError(f"A workbook instruction was mixed into the {key} story")
     if not re.search(r"#bookText\s*\{[^}]*font-size:\s*18px", html):
         raise ValueError("The reading text font was not increased to 18px")
-    if "background:#fffdf6" not in html or "#bookText{font-size:18px;line-height:1.78;color:#26231f}" not in html:
+    if "background:#fffdf6" not in html or "#bookText{font-size:18px;line-height:1.78;color:#111111}" not in html:
         raise ValueError("The reader needs a warm neutral background and high-contrast charcoal text")
     foreground = re.search(r"#bookText\s*\{[^}]*color:(#[0-9a-fA-F]{6})", html)
     reader_box = re.search(r'<div id="bookText"[^>]*style="([^"]+)"', html)
@@ -946,6 +1071,15 @@ def main() -> int:
             errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
     practice_css = (ROOT / "theme1-practice.css").read_text(encoding="utf-8") if (ROOT / "theme1-practice.css").is_file() else ""
+    celebration_requirements = (
+        "function launchConfetti(finalCelebration = false)", "prefers-reduced-motion: reduce",
+        "particleCount = finalCelebration ? 220 : 72", "celebrateActivityIfCompleted(activity)",
+        "flow.celebratedActivities.includes(activity.id)", 'assessmentState === "correct"',
+        "function isThemeFullyCorrect()", "function isFinalThemeUnit()", "flow.themeCelebrated", "launchConfetti(true)",
+    )
+    for requirement in celebration_requirements:
+        if requirement not in app_js:
+            errors.append(f"Correct-completion celebration flow is missing: {requirement}")
     if "data-question-tone" in app_js or "data-question-tone" in practice_css:
         errors.append("Question cards must not cycle through unrelated colors by question number")
     for state in ("correct", "partial", "incomplete", "wrong", "unverified"):
@@ -1155,7 +1289,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
-                    elif "Question-level states, safe feedback filtering, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
+                    elif "Question and field states, targeted safe hints, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
                         errors.append("Groq prompt test did not report success")
 
             if not errors:
@@ -1205,7 +1339,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation and return, saved-progress migration, full-width single writing fields, embedded typed Theme 1 packages, accessible sorting, Groq assessment states and user-attributed Gemini video/audio notes, no game card, Bayrağımız credit, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, high-contrast reading, per-field safe assessment, targeted hints, accessible sorting, correct-completion celebrations, user-attributed Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 

@@ -225,7 +225,13 @@
       }),
       q("keywords", "Videodan beş anahtar kelime seç. Her birinin ana düşünceyle bağını kısa notla belirt.", [
         ...[1, 2, 3, 4, 5].map(number => text(`word-${number}`, `Anahtar kelime ${number} ve ana düşünceyle bağı`, 2))
-      ], { sourceMode: "qr" }),
+      ], {
+        sourceMode: "qr",
+        rubric: "word-1, word-2, word-3, word-4 ve word-5 alanlarını birbirinden bağımsız değerlendir. Her alanda kelimenin Gemini raporundaki içeriğe uygun bir anahtar kavram olup olmadığını ve öğrencinin bu kelimeyi ana düşünceyle ilişkilendiren kısa not yazıp yazmadığını ayrı kontrol et. Uygun kelime + eksik ilişki kısmen doğru; ilgisiz kelime yanlış; boş alan eksiktir. Beş alanın hiçbirini tek bir genel ‘dayanak ekle’ yorumuna indirgeme; alanlara göre farklı, cevabı açığa çıkarmayan ipucu kodları seç.",
+        answerKey: {
+          evaluation: "Beş farklı alanın her birinde ilgili kelime ve ana düşünceyle kısa bağlantı bulunmalı. Belirli tek bir zorunlu kelime listesi yoktur; kabul edilebilir kelimeler kullanıcı tarafından sağlanan Gemini raporundaki öğrenme temasına uygun olmalıdır."
+        }
+      }),
       q("relationship", "Seçtiğin iki kelimenin birbiriyle ve videonun ana düşüncesiyle ilişkisini açıkla.", [text("answer", "İki kelime, aralarındaki ilişki ve dayanağım", 3)], { sourceMode: "qr" })
     ],
     "marti-a09": [
