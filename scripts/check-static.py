@@ -551,7 +551,7 @@ const saved = {
         'word-5': 'merak — öğrenmeye yöneltir'
       }
     },
-    feedback: {'marti-a08::topic': {state: 'wrong', text: 'SECRET_LEGACY_ANSWER_9Z'}}
+    feedback: {'marti-a01::stop-1': {}, 'marti-a08::topic': {state: 'wrong', text: 'SECRET_LEGACY_ANSWER_9Z'}}
   }},
   3: {theme1PracticeFlow: {stepIndex: 3, answers: {'genclik-a04::visual-link': {photo: 'Sahil fotoğrafı.', video: 'Bir çocuk çöp topluyor.', link: 'İkisi de doğayı korumayı anlatıyor.'}}, feedback: {}}},
   5: {theme1PracticeFlow: {stepIndex: 2, answers: {'adiny-a03::compare-1': {kaoru: 'Kaoru teleskop yaptı.', athlete: 'Sporcu okçulukta çalıştı.', comparison: 'İkisi de emek verdi.'}, 'adiny-a05::note-1': {answer: 'Semerkant'}}, feedback: {}}}
@@ -672,6 +672,7 @@ for (const source of sources) vm.runInContext(source, context);
 element('apiKey').value = 'unit-test-key';
 context.window.renderTheme1PracticeFlow(1);
 const stage = element('activity-stage');
+if (stage.innerHTML.includes('DURUM: SONUÇ SINIFLANDIRILAMADI')) throw new Error('Unchecked questions must not render a default unclassified-result card');
 const next = () => element('next-step').listeners.click();
 const advance = (count) => { for (let index = 0; index < count; index += 1) next(); };
 const findButton = (key) => stage.checkButtons.find((item) => item.dataset.checkQuestion === key);
@@ -706,7 +707,7 @@ async function run() {
   await check(storyButton);
   if (rateLimitResponseCount !== previousRateLimitResponses + 1) throw new Error('The Groq TPM response was not retried once after its suggested wait');
   if (storyButton.card.dataset.checkState !== 'partial' || storyButton.pill.textContent !== '◐ Kısmen doğru') throw new Error('A partially correct AI result did not set the yellow status');
-  if (storyButton.feedback.textContent.includes('SECRET_') || !storyButton.feedback.textContent.includes('İki fikri kendi cümlenle ilişkilendir')) throw new Error('Partial feedback did not provide a safe, targeted next step or exposed model text');
+  if (storyButton.feedback.textContent.includes('SECRET_') || !storyButton.feedback.textContent.includes("Jonathan'ın karar ve davranışlarının anlatıldığı bölüme dön") || !storyButton.feedback.textContent.includes('Seçtiğin ayrıntının sorudaki ölçütü nasıl karşıladığını kendin açıkla')) throw new Error('Text-based feedback did not provide a source-linked, non-answer-revealing hint or exposed model text');
   mockResponse = responseFor('wrong', ['relevance'], 'recheck', [
     {id: 'behaviors', status: 'wrong', issue: 'relevance', hint: 'recheck'},
     {id: 'evidence', status: 'wrong', issue: 'accuracy', hint: 'reread'}
@@ -728,6 +729,7 @@ async function run() {
 
   advance(3);
   if (stage.innerHTML.includes('SECRET_LEGACY_ANSWER_9Z')) throw new Error('Previously saved free-form AI feedback still exposes an answer after migration');
+  if (!stage.innerHTML.includes('Videodaki farklı ortamlarda geçen iki sahneyi yan yana getir')) throw new Error('Previously saved video feedback did not upgrade to a contextual, non-disclosing hint when rendered');
   mockResponse = responseFor('wrong', ['relevance'], 'context', [
     {id: 'answer', status: 'wrong', issue: 'relevance', hint: 'context'}
   ], {answer: 'Öğrenmenin yaşı yoktur; insanlar farklı yaşlarda öğrenir.'});
@@ -739,7 +741,7 @@ async function run() {
   if (!mediaSystem.includes('MEDYA KAYNAĞI (iç değerlendirme)') || !mediaSystem.includes('bağımsız medya doğrulaması')) throw new Error('Groq was not told the user-provided video report is not independent verification');
   if (hayatButton.card.dataset.checkState !== 'wrong' || hayatButton.feedback.textContent.includes('Öğrenmenin yaşı yoktur') || hayatButton.feedback.textContent.includes('SECRET_')) throw new Error('The wrong Hayat answer received feedback that leaked the correct main idea');
   if (hayatButton.feedback.textContent.includes('ALAN ALAN') || hayatButton.feedback.textContent.includes('Videonun ana fikri:') || hayatButton.feedback.textContent.includes('Kelimenin geçtiği cümleyi')) throw new Error('A single video answer was split into a field list or received an unrelated context hint');
-  if (!hayatButton.feedback.textContent.includes('Videoda görülen kişileri ve ne yaptıklarını hatırla')) throw new Error('The incorrect video-topic answer did not receive a topic-specific hint');
+  if (!hayatButton.feedback.textContent.includes('Videodaki farklı ortamlarda geçen iki sahneyi yan yana getir') || !hayatButton.feedback.textContent.includes('Ortak yönü kendin çıkar')) throw new Error('The incorrect video-topic answer did not receive a source-linked, non-answer-revealing hint');
   if (stage.innerHTML.includes('source-limit-note') || stage.innerHTML.includes('Yapay zekâ sınırı')) throw new Error('The removed user-facing AI warning card still appears before a video activity');
 
   mockResponse = responseFor('partial', ['completeness', 'reasoning'], 'keyword', [
@@ -762,7 +764,7 @@ async function run() {
   if (!prompt.includes('alan kimliği: word-1') || !prompt.includes('alan kimliği: word-5')) throw new Error('The five keyword inputs were not identified separately in the assessment prompt');
   for (const marker of ['Anahtar kelime 1 ve ana düşünceyle bağı: TAM DOĞRU', 'Anahtar kelime 2 ve ana düşünceyle bağı: YANLIŞ', 'Anahtar kelime 3 ve ana düşünceyle bağı: EKSİK', 'Anahtar kelime 4 ve ana düşünceyle bağı: KISMEN DOĞRU', 'Anahtar kelime 5 ve ana düşünceyle bağı: TAM DOĞRU']) if (!keywordFeedback.includes(marker)) throw new Error(`Per-field video keyword feedback is missing ${marker}`);
   if (!keywordFeedback.includes('YANIT BÖLÜMLERİ:') || keywordFeedback.includes('ALAN ALAN')) throw new Error('Multi-answer feedback uses a confusing field-by-field heading');
-  if (keywordsButton.card.dataset.checkState !== 'partial' || keywordFeedback.includes('SECRET_FIVE_KEYWORDS_2P') || !keywordFeedback.includes('Her kelimeyi videoda görülen ya da duyulan somut bir örnekle ilişkilendir')) throw new Error('Per-field keyword feedback lacks safe, tailored hints or exposed free model text');
+  if (keywordsButton.card.dataset.checkState !== 'partial' || keywordFeedback.includes('SECRET_FIVE_KEYWORDS_2P') || !keywordFeedback.includes('Raporda birbirinden farklı etkinlik örnekleri var') || !keywordFeedback.includes('kelimeyle ortak düşünce arasındaki bağı kendin açıkla') || keywordFeedback.includes('satranç') || keywordFeedback.includes('Öğrenmenin yaşı yoktur')) throw new Error('Per-field keyword feedback lacks source-specific, non-answer-revealing hints or exposed free model text');
   const firstThreeFieldsOnly = responseFor('partial', ['relevance'], 'keyword', [
     {id: 'word-1', status: 'partial', issue: 'relevance', hint: 'keyword'},
     {id: 'word-2', status: 'partial', issue: 'relevance', hint: 'keyword'},

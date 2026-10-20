@@ -229,12 +229,25 @@
     compare: "İki unsuru aynı ölçüte göre yan yana koy; benzerlik veya farkı kendi sözlerinle açıkla.",
     context: "Kelimenin geçtiği cümleyi önceki ve sonraki cümleyle birlikte oku; bağlamın anlamı nasıl etkilediğini düşün.",
     justify: "Seçimini adlandır ve bu seçime götüren düşünceyi kendi sözlerinle açıkla.",
-    videoTopic: "Videoda görülen kişileri ve ne yaptıklarını hatırla. Bu örneklerin ortak konusunu kendi cümlenle söyle ve cümleni belirli bir görüntü ayrıntısıyla destekle.",
-    videoKeywords: "Her kelimeyi videoda görülen ya da duyulan somut bir örnekle ilişkilendir; her kısa notun ana fikirle bağını ayrı kontrol et.",
-    videoConnection: "Videodaki sahne veya örneği sorunun istediği düşünceyle birleştir; bu örneğin neyi gösterdiğini kendi sözlerinle açıkla.",
-    videoCompare: "İki kaynağı aynı ölçüte göre karşılaştır; her biri için ayrı bir gözlem seç ve aralarındaki benzerlik ya da farkı belirt.",
-    audioEvidence: "Dinleme kaydındaki ilgili bölüme dön; sorunun istediği bilgiyi taşıyan ifadeyi yakalayıp notunla karşılaştır.",
-    mediaEvidence: "Yanıtını videodaki ya da dinleme kaydındaki belirli bir örnekle ilişkilendir; genel yorum yerine kaynağın hangi ayrıntısını kullandığını düşün."
+    videoTopic: "Videodaki farklı sahneleri ayrı ayrı düşün ve ortak yönlerini kendin çıkar. Ana fikri kendi cümlenle kur; onu destekleyen tek bir görüntü ayrıntısı seç.",
+    videoKeywords: "Seçtiğin her kelime için videodan ayrı bir sahne ya da duyulan ayrıntı bul. Bu örneğin kelimeyle ve ana düşünceyle bağını kısa notla açıkla.",
+    videoConnection: "Videodan ilişkilendirdiğin sahneyi sorudaki düşünceyle yan yana koy. Aradaki bağı, örneğin ne gösterdiğini kendi sözlerinle açıklayarak kur.",
+    hayatVideoTopic: "Videodaki farklı ortamlarda geçen iki sahneyi yan yana getir. Ortak yönü kendin çıkar; ana fikri kendi cümlenle yazıp onu destekleyen tek bir sahne seç.",
+    hayatVideoKeywords: "Raporda birbirinden farklı etkinlik örnekleri var. Seçtiğin her kelime için ayrı bir görüntü ya da duyulan ayrıntı bul; kelimeyle ortak düşünce arasındaki bağı kendin açıkla. Hazır kelime listesi yok.",
+    hayatVideoConnection: "İki kelimenin videoda karşılık geldiği ayrı sahneleri düşün. Önce aralarındaki bağı, sonra bu bağın ana düşünceye katkısını kendi sözlerinle kur.",
+    martiTextEvidence: "Jonathan'ın karar ve davranışlarının anlatıldığı bölüme dön; aynı olayın hemen öncesini ya da sonrasını da oku. Seçtiğin ayrıntının sorudaki ölçütü nasıl karşıladığını kendin açıkla.",
+    martiTextCauseEffect: "Jonathan'ın karşılaştığı güçlüğün anlatıldığı bölümü bul; sonrasında verdiği tepkiyi ve yaptığı denemeyi sırayla izle. Bu iki adım arasındaki nedeni metinden çıkar.",
+    videoCompare: "Videodaki örnekle diğer kaynaktaki örneği aynı ölçüte göre incele. Her kaynaktan ayrı bir dayanak bul; ortak ya da farklı yönü kendin çıkar.",
+    audioEvidence: "Dinleme kaydındaki ilgili bölümü yeniden dinle; sorudaki kavramın geçtiği ifadeyi ve çevresindeki cümleyi yakala. Bu ayrıntıyı yanıtınla karşılaştır.",
+    mediaEvidence: "Videoda ya da dinleme kaydında fark ettiğin bir ayrıntıyı sorudaki ölçütle eşleştir. Gözlemi yorumundan ayır ve sonucu kendin çıkar.",
+    textCauseEffect: "Metinde önce ne olduğunu, ardından hangi değişimin geldiğini izle. Nedenle sonucu kendi cümlenle bağla; olayları yalnızca art arda sayma.",
+    textMainIdea: "Metindeki örnekleri tek tek sıralamak yerine ortak yönlerini düşün. Ana düşünceyi kendi cümlenle kur ve onu destekleyen bir ayrıntı seç.",
+    textSummary: "Metindeki olayları sırasıyla takip et; başlangıç, önemli değişim ve sonucu seç. Tekrarlanan ayrıntıları ayıkla ve ana adımları kendi sözlerinle birleştir.",
+    textCompare: "İki unsuru aynı ölçüte göre metinde karşılaştır; her biri için ayrı bir dayanak bul. Benzerlik ya da farkı bu dayanaklardan kendin çıkar.",
+    textCharacter: "Bir kişilik özelliği çıkarmadan önce bunu düşündüren davranış ya da sözü metinden bul. Kanıtla çıkarım arasındaki bağı açıkla.",
+    textVocabulary: "Sözcüğün geçtiği cümleye ve çevresindeki ipuçlarına dön. Anlamı cümlede deneyerek kontrol et ve seçenekleri bağlamla karşılaştır.",
+    textEvidence: "Metindeki ilgili davranış, söz ya da olayı bul; çevresindeki ayrıntıları da oku. Açıkla, bu dayanak sorudaki düşünceyi nasıl destekliyor?",
+    textSource: "Soru kökündeki anahtar sözcüğü kaynakta bul. İlgili bölümün çevresini de oku ve seçtiğin ayrıntının yanıtını nasıl desteklediğini açıkla."
   });
 
   const fieldAssessmentLabels = Object.freeze({
@@ -270,14 +283,37 @@
 
   function assessmentHintForQuestion(question, activity, field) {
     const prompt = `${question?.prompt || ""} ${field?.label || ""}`.toLocaleLowerCase("tr-TR");
-    const hasMediaSource = question?.sourceMode === "qr" || Boolean(question?.sourceUrl || activity?.sourceUrl || activity?.videoSource);
-    if (!hasMediaSource) return "";
-    if (question?.id === "topic" || /ana fikr|videonun konusu/.test(prompt)) return "videoTopic";
-    if (question?.id === "keywords" || /anahtar kelime/.test(prompt)) return "videoKeywords";
-    if (question?.sourceLinkType === "audio" || activity?.sourceLinkType === "audio") return "audioEvidence";
-    if (/karşılaştır|benzerlik|farklılık/.test(prompt)) return "videoCompare";
-    if (/anlam bağı|ortak ileti|ilişkisini açıkla/.test(prompt)) return "videoConnection";
-    return "mediaEvidence";
+    if (activity?.id === "marti-a08") {
+      if (question?.id === "topic") return "hayatVideoTopic";
+      if (question?.id === "keywords") return "hayatVideoKeywords";
+      if (question?.id === "relationship") return "hayatVideoConnection";
+    }
+    const sourceNote = `${question?.sourceNote || ""} ${activity?.sourceNote || ""}`;
+    const hasMediaSource = question?.sourceMode === "qr" || Boolean(question?.sourceUrl || question?.videoSource || activity?.sourceUrl || activity?.videoSource) || /qr|video|dinleme kaydı|söyleşi/i.test(sourceNote);
+    const isAudioSource = question?.sourceLinkType === "audio" || activity?.sourceLinkType === "audio";
+    if (hasMediaSource) {
+      if (isAudioSource) return "audioEvidence";
+      if (question?.id === "keywords" || /anahtar kelime/.test(prompt)) return "videoKeywords";
+      if (question?.id === "topic" || /ana fikr|videonun konusu/.test(prompt)) return "videoTopic";
+      if (/karşılaştır|benzerlik|farklılık/.test(prompt)) return "videoCompare";
+      if (/anlam bağı|ortak ileti|ilişkisini açıkla/.test(prompt)) return "videoConnection";
+      return "mediaEvidence";
+    }
+
+    const hasRelatedText = question?.sourceMode === "activity" || question?.sourceMode === "story" || question?.sourceMode === "book" ||
+      (question?.sourceMode !== "none" && (Boolean(question?.sourceKey) || Boolean(question?.sourceKeys?.length) || Boolean(activity?.sourceText) || Boolean(activitySourceKeys[activity?.id])));
+    if (!hasRelatedText) return "";
+    const isMartiStoryQuestion = activitySourceKeys[activity?.id]?.includes("marti") && /jonathan/.test(prompt);
+    if (isMartiStoryQuestion && /neden|sonuç|etki|zincir|değişim/.test(prompt)) return "martiTextCauseEffect";
+    if (isMartiStoryQuestion && /kanıt|dayanak|ayrıntı|örnek/.test(prompt)) return "martiTextEvidence";
+    if (/neden|sonuç|etki|zincir|değişim/.test(prompt)) return "textCauseEffect";
+    if (/ana fikr|ana düşünce|ana ileti/.test(prompt)) return "textMainIdea";
+    if (/özet|özetle/.test(prompt)) return "textSummary";
+    if (/karşılaştır|benzerlik|farklılık/.test(prompt)) return "textCompare";
+    if (/sözlük|kelime|sözcük|anlam|bağlam/.test(prompt)) return "textVocabulary";
+    if (/kişilik|karakter|özellik|çıkarım/.test(prompt)) return "textCharacter";
+    if (/kanıt|dayanak|ayrıntı|örnek/.test(prompt)) return "textEvidence";
+    return "textSource";
   }
 
   function summarizeFieldAssessments(overallState, fieldResults) {
@@ -663,8 +699,15 @@
       const qKey = questionKey(activity, question);
       const answers = currentAnswer(activity, question, index);
       const feedback = savedFeedback(activity, question);
-      const feedbackState = storedAssessmentState(feedback);
-      const feedbackText = assessmentFeedbackText(feedback?.text, feedbackState, feedback?.issues, feedback?.hint, feedback?.fields);
+      const hasSavedFeedback = Boolean(feedback && (feedback.state || feedback.text || feedback.checkedAt));
+      const feedbackState = hasSavedFeedback ? storedAssessmentState(feedback) : "";
+      const questionHint = hasSavedFeedback ? assessmentHintForQuestion(question, activity, null) : "";
+      const feedbackFields = Array.isArray(feedback?.fields) && questionHint
+        ? feedback.fields.map(field => field.state === "correct" ? field : { ...field, hint: questionHint })
+        : feedback?.fields;
+      const feedbackText = hasSavedFeedback
+        ? assessmentFeedbackText(feedback.text, feedbackState, feedback.issues, questionHint || feedback.hint, feedbackFields)
+        : "";
       const resultLabel = assessmentLabels[feedbackState] || "";
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
       const fieldHTMLContent = fields.map(field => fieldHTML(field, answers[field.id], qKey, activeUnit.weekId)).join("");
