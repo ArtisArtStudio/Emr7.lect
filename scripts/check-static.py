@@ -562,6 +562,8 @@ const storage = new Map([
 ]);
 const elements = new Map();
 let capturedRequest = null;
+let mockRateLimitOnce = false;
+let rateLimitResponseCount = 0;
 const responseFor = (status, issues, hint, fields, extra = {}) => JSON.stringify({status, issues, hint, fields, ...extra});
 let mockResponse = responseFor('correct', [], 'recheck', [
   {id: 'behaviors', status: 'correct', issue: 'none', hint: 'recheck'},
@@ -603,7 +605,7 @@ const canvasContext = {
 const browserWindow = {
   location: {href: 'https://example.github.io/Emr7.lect/?unit=1', search: '?unit=1'},
   scrollY: 0, innerWidth: 800, innerHeight: 600, devicePixelRatio: 1,
-  scrollTo() {}, setTimeout() { return 1; }, clearTimeout() {}, cancelAnimationFrame() {},
+  scrollTo() {}, setTimeout(callback, delay) { if (typeof callback === 'function' && delay !== 1300) callback(); return 1; }, clearTimeout() {}, cancelAnimationFrame() {},
   requestAnimationFrame(callback) { animationCallbacks.push(callback); return animationCallbacks.length; }
 };
 const documentBody = {appendChild(canvas) { confettiStats.canvases.push(canvas); }};
@@ -642,6 +644,14 @@ const context = vm.createContext({
       loadedNotes.push(sourcePath);
       return {ok: true, text: async () => notes};
     }
+    if (mockRateLimitOnce) {
+      mockRateLimitOnce = false;
+      rateLimitResponseCount += 1;
+      return {
+        ok: false, status: 429, headers: {get: () => null},
+        json: async () => ({error: {message: 'Rate limit reached for tokens per minute (TPM). Please try again in 0.01s.'}})
+      };
+    }
     capturedRequest = {url, body: JSON.parse(options.body)};
     return {ok: true, json: async () => ({choices: [{message: {content: mockResponse}}]})};
   }
@@ -671,6 +681,7 @@ async function run() {
   const strictPromptChecks = ['GİZLİ CEVAP KORUMASI', 'Yalnızca geçerli bir JSON nesnesi', 'status', 'Doğru cevabı', 'issues=[]'].map((phrase) => system.includes(phrase));
   if (strictPromptChecks.some((passed) => !passed)) throw new Error(`Groq prompt does not require a closed, non-disclosing JSON response: ${JSON.stringify(strictPromptChecks)}`);
   if (capturedRequest.body.response_format?.type !== 'json_object') throw new Error('Groq assessment request does not enforce JSON mode');
+  if (capturedRequest.body.max_completion_tokens !== 240) throw new Error('Groq output-token budget is not scaled to the number of answer fields');
   if (!prompt.includes('Jonathan tests a new way of turning.') || !prompt.includes('Durgun denizin minik dalgacıkları')) throw new Error('Groq request omitted the student answer or relevant story source text');
   if (storyButton.card.dataset.checkState !== 'correct' || storyButton.pill.textContent !== '✓ Tam doğru') throw new Error('A fully correct AI result did not set the green status');
   if (!storyButton.feedback.textContent.includes('DURUM: TAM DOĞRU') || storyButton.feedback.textContent.includes('İPUCU') || storyButton.feedback.textContent.includes('SECRET_')) throw new Error('A fully correct response shows a hint or leaked model text');
@@ -678,7 +689,10 @@ async function run() {
     {id: 'behaviors', status: 'correct', issue: 'none', hint: 'recheck'},
     {id: 'evidence', status: 'partial', issue: 'evidence', hint: 'connect'}
   ], {leakedAnswer: 'SECRET_PARTIAL_4F'});
+  const previousRateLimitResponses = rateLimitResponseCount;
+  mockRateLimitOnce = true;
   await check(storyButton);
+  if (rateLimitResponseCount !== previousRateLimitResponses + 1) throw new Error('The Groq TPM response was not retried once after its suggested wait');
   if (storyButton.card.dataset.checkState !== 'partial' || storyButton.pill.textContent !== '◐ Kısmen doğru') throw new Error('A partially correct AI result did not set the yellow status');
   if (storyButton.feedback.textContent.includes('SECRET_') || !storyButton.feedback.textContent.includes('İki fikri kendi cümlenle ilişkilendir')) throw new Error('Partial feedback did not provide a safe, targeted next step or exposed model text');
   mockResponse = responseFor('wrong', ['relevance'], 'recheck', [
@@ -804,7 +818,7 @@ async function run() {
   const finalConfettiFrames = flushConfettiFrames();
   if (!finalFlow.themeCelebrated || !element('theme1PracticeSaved').textContent.includes('Tema 1’deki bütün çalışma birimlerini')) throw new Error('The final Theme 1 celebration did not require and record complete theme progress');
   if (confettiStats.canvases.length !== 2 || finalConfettiFrames[0] !== 220 || !confettiStats.canvases[1].removed) throw new Error('The final Theme 1 completion did not show the larger confetti animation');
-  console.log('Question and field states, targeted safe hints, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
+  console.log('Question and field states, targeted safe hints, one-time TPM retry, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
 }
 run().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
 """
@@ -1071,15 +1085,17 @@ def main() -> int:
             errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
     practice_css = (ROOT / "theme1-practice.css").read_text(encoding="utf-8") if (ROOT / "theme1-practice.css").is_file() else ""
-    celebration_requirements = (
+    app_runtime_requirements = (
         "function launchConfetti(finalCelebration = false)", "prefers-reduced-motion: reduce",
         "particleCount = finalCelebration ? 220 : 72", "celebrateActivityIfCompleted(activity)",
         "flow.celebratedActivities.includes(activity.id)", 'assessmentState === "correct"',
         "function isThemeFullyCorrect()", "function isFinalThemeUnit()", "flow.themeCelebrated", "launchConfetti(true)",
+        "function groqRateLimitRetryDelay(response, payload)", "max_completion_tokens: completionTokenBudget",
+        "const completionTokenBudget = Math.min(340", "Groq geçici hız sınırına ulaştı",
     )
-    for requirement in celebration_requirements:
+    for requirement in app_runtime_requirements:
         if requirement not in app_js:
-            errors.append(f"Correct-completion celebration flow is missing: {requirement}")
+            errors.append(f"Practice runtime recovery or completion flow is missing: {requirement}")
     if "data-question-tone" in app_js or "data-question-tone" in practice_css:
         errors.append("Question cards must not cycle through unrelated colors by question number")
     for state in ("correct", "partial", "incomplete", "wrong", "unverified"):
@@ -1289,7 +1305,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
-                    elif "Question and field states, targeted safe hints, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
+                    elif "Question and field states, targeted safe hints, one-time TPM retry, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
                         errors.append("Groq prompt test did not report success")
 
             if not errors:
@@ -1339,7 +1355,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, high-contrast reading, per-field safe assessment, targeted hints, accessible sorting, correct-completion celebrations, user-attributed Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, high-contrast reading, per-field safe assessment, targeted hints, TPM retry, accessible sorting, correct-completion celebrations, user-attributed Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 

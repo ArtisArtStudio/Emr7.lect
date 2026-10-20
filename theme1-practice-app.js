@@ -994,6 +994,18 @@
     settings?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  function groqRateLimitRetryDelay(response, payload) {
+    const message = String(payload?.error?.message || "");
+    if (Number(response?.status) !== 429 && !/rate limit|tokens per minute|\bTPM\b/i.test(message)) return 0;
+    const headerSeconds = Number(response?.headers?.get?.("retry-after"));
+    const messageMatch = message.match(/(?:try again in|retry after)\s+([\d.]+)\s*s(?:ec(?:ond)?s?)?/i);
+    const seconds = Number.isFinite(headerSeconds) && headerSeconds > 0
+      ? headerSeconds
+      : (messageMatch ? Number(messageMatch[1]) : 0);
+    if (!Number.isFinite(seconds) || seconds <= 0 || seconds > 15) return 0;
+    return Math.max(750, Math.ceil(seconds * 1000) + 250);
+  }
+
   async function checkQuestion(activity, question, button) {
     const qKey = questionKey(activity, question);
     const index = questionList(activity).indexOf(question);
@@ -1047,9 +1059,9 @@
         "GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, kaynakta cevabı belirten cümleyi, örnek yanıtı veya bunların eş anlamlı/parafraz edilmiş biçimini hiçbir koşulda yazma. Yanlış/eksik yanıtta cevabın ne olduğunu açıklama. Sadece aşağıdaki kapalı kodlardan seçim yap; uygulama öğrenciye gösterilecek güvenli mesajı kendisi oluşturur.",
         "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck|connect|keyword|sequence|compare|context|justify\",\"fields\":[{\"id\":\"verilen-alan-kimliği\",\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issue\":\"relevance|evidence|completeness|reasoning|selection|accuracy|source|none\",\"hint\":\"izinli-ipucu-kodu\"}]}. status ve alan durumları yalnızca izinli değerler; her alan için tek bir issue/hint kodu kullan. `fields` içinde yanıtta verilen HER alan kimliğini tam olarak bir kez ve sırasıyla döndür. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
         "Tüm alanlar tam doğruysa status=correct, issues=[] ve her alan status=correct olsun. Alanların tümü doğru değilse genel durumu alan sonuçlarına göre seç; doğru alanları yanlış gibi göstermeden hatalı/eksik alanları ayrı belirt. Kaynakta bulunmayan veya sağlanan notlarla/anahtarla doğrulanamayan medya iddiasında ilgili alan status=unverified ve issue=source olsun. Hint kodlarını mümkün olduğunca çeşitlendir ve her alanın içeriğine göre seç; alakasız bir yazı alanına otomatik olarak evidence kodu verme.",
-        context.note,
+        context.text ? "İlgili kaynak içeriği kullanıcı mesajında verilmiştir." : context.note,
         context.hasVideoAnalysis
-          ? "MEDYA KAYNAĞI (iç değerlendirme): Rapor kullanıcı tarafından sağlanan Gemini analizidir; modeli videoyu/URL'yi açmadı ve dinleme kaydını dinlemedi. Görüntü notlarını doğrudan gözlem, yorumları yorum olarak ayır; konuşma bölümleri kısmi/özet olabilir. Rapor dışındaki ayrıntıları bağımsız doğrulanmış sayma ve bağımsız medya doğrulaması yaptığını iddia etme."
+          ? "MEDYA KAYNAĞI (iç değerlendirme): Aşağıdaki not kullanıcı tarafından sağlanan Gemini raporudur. QR açılmadı; video izlenmedi/ses dinlenmedi. Konuşma bölümleri kısmi/özet olabilir; rapor dışı ayrıntıları doğrulanmış sayma veya bağımsız medya doğrulaması iddia etme. Görüntü notlarını gözlem, yorumları yorum olarak tut."
           : context.videoUnavailable
             ? "MEDYA KAYNAĞI (iç değerlendirme): QR bağlantısı açılamaz/izlenemez/dinlenemez. Transkript veya değerlendirme anahtarı yoksa videoya dair olgusal iddialar doğrulanamaz; bunları doğru/yanlış diye sınıflandırma, status=unverified kullan."
             : context.hasVideoSource && context.answerKeyAvailable
@@ -1065,18 +1077,18 @@
         `Soru: ${question.prompt}`,
         `Öğrencinin yanıtı:\n${response}`,
         rubric,
-        context.hasVideoAnalysis ? "Kaynak erişimi (iç kullanım): Yalnızca kullanıcı tarafından sağlanan Gemini video/dinleme raporu verildi; QR bağlantısı model tarafından açılmadı, video izlenmedi ve ses kaydı dinlenmedi. Raporun dışındaki içerik doğrulanamaz." : context.videoUnavailable ? "Kaynak erişimi (iç kullanım): Model QR bağlantısını açıp videoyu izleyemez veya dinleme kaydını dinleyemez. Transkript/cevap anahtarı yoksa medya içeriği doğrulanamaz; olgusal video iddiası için status=unverified seç." : context.hasVideoSource && context.answerKeyAvailable ? "Kaynak erişimi (iç kullanım): Bağlantı izlenemez/dinlenemez; yanıtı yalnızca sağlanan değerlendirme anahtarına göre denetle, bağımsız video doğrulaması yapıldığını varsayma." : "Video/metin için sağlanan kaynak varsa yalnızca onu kullan.",
         context.text ? `\nİlgili kaynak metin:\n${context.text}` : `\nKaynak bilgisi: ${context.note}`,
-        "Sıkı kontrol et: yanlış/ilgisiz cevabı doğruymuş gibi yorumlama, öğrencinin vermediği davranışları ona atfetme. Yanıt olarak yalnızca system mesajındaki kapalı JSON kod sözleşmesine uy; hiçbir açıklama veya cevap yazma."
+        "Kaynak ve ölçütlere göre değerlendir; yalnızca system mesajındaki kapalı JSON sözleşmesini uygula."
       ].join("\n");
       const model = modelInput?.value || DEFAULT_MODEL;
-      const result = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const completionTokenBudget = Math.min(340, Math.max(240, 170 + (question.fields || []).length * 34));
+      const requestGroq = () => fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
         body: JSON.stringify({
           model,
           temperature: 0.1,
-          max_completion_tokens: 500,
+          max_completion_tokens: completionTokenBudget,
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: systemPrompt },
@@ -1085,7 +1097,20 @@
           ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low", reasoning_format: "hidden" } : {})
         })
       });
-      const payload = await result.json().catch(() => ({}));
+      let result = await requestGroq();
+      let payload = await result.json().catch(() => ({}));
+      const retryDelay = result.ok ? 0 : groqRateLimitRetryDelay(result, payload);
+      if (retryDelay > 0) {
+        const waitSeconds = (retryDelay / 1000).toFixed(1).replace(/\.0$/, "");
+        if (prior) {
+          prior.textContent = `Groq geçici hız sınırına ulaştı; ${waitSeconds} saniye bekleyip bir kez daha denenecek…`;
+          prior.dataset.state = "pending";
+          setQuestionAssessment(card, "pending");
+        }
+        await new Promise(resolve => window.setTimeout(resolve, retryDelay));
+        result = await requestGroq();
+        payload = await result.json().catch(() => ({}));
+      }
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
       if (!content) throw new Error("Groq yanıtında geri bildirim bulunamadı.");
@@ -1108,9 +1133,14 @@
       if (assessmentState === "correct") celebrateActivityIfCompleted(activity);
     } catch (error) {
       const message = String(error?.message || error || "Bilinmeyen hata");
-      const friendly = /failed to fetch|networkerror|load failed/i.test(message)
-        ? "Groq’a ulaşılamadı. İnternet bağlantısını ve API erişimini kontrol et; anahtar bu cihazda kalır."
-        : `Kontrol tamamlanamadı: ${message}`;
+      const rateLimitMatch = message.match(/(?:try again in|retry after)\s+([\d.]+)\s*s(?:ec(?:ond)?s?)?/i);
+      const rateLimitWait = rateLimitMatch ? `${Math.ceil(Number(rateLimitMatch[1]))} saniye bekleyip` : "birkaç saniye bekleyip";
+      const isRateLimited = /rate limit|tokens per minute|\bTPM\b|HTTP 429/i.test(message);
+      const friendly = isRateLimited
+        ? `Groq’un geçici token hız sınırına ulaşıldı. Yanıtın bu tarayıcıda kayıtlı; ${rateLimitWait} yeniden dene. İstersen daha düşük kaynak kullanan bir modeli seç.`
+        : /failed to fetch|networkerror|load failed/i.test(message)
+          ? "Groq’a ulaşılamadı. İnternet bağlantısını ve API erişimini kontrol et; anahtar bu cihazda kalır."
+          : `Kontrol tamamlanamadı: ${message}`;
       flowState(activeUnit.weekId).feedback[qKey] = { state: "system", text: friendly, checkedAt: new Date().toISOString() };
       persist();
       showFeedback(card, friendly, "system");
