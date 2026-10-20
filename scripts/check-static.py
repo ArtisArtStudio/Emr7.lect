@@ -303,7 +303,7 @@ for (const unitId of [1,3,5]) {{
   const foodPressureQuestion = viewpointQuestions.find((question) => question.id === 'problem');
   if (!foodPressureQuestion?.answerKey?.effect?.includes('avlanmaya') || !foodPressureQuestion.rubric.includes('doğru kabul et')) throw new Error('The Martı hardship evaluator must accept the text-supported hunger/food-search answer');
   const hayatTopicQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'topic');
-  if (!hayatTopicQuestion?.answerKey?.mainIdea?.includes('Öğrenmenin yaşı yoktur') || !hayatTopicQuestion.rubric.includes('hayat çok zordur')) throw new Error('The Hayat Büyük Bir Okuldur assessment needs its main idea and an explicit unrelated-answer rejection criterion');
+  if (!hayatTopicQuestion?.answerKey?.mainIdea?.includes('Öğrenmenin yaşı yoktur') || !hayatTopicQuestion.rubric.includes('hayat çok zordur') || !hayatTopicQuestion.fields[0].label.includes('ana fikri')) throw new Error('The Hayat video question needs its correct main-idea label, answer key, and unrelated-answer rejection criterion');
   const keywordQuestion = context.window.THEME1_FORMS['marti-a08'].find((question) => question.id === 'keywords');
   if (!keywordQuestion || keywordQuestion.fields.map((field) => field.id).join(',') !== 'word-1,word-2,word-3,word-4,word-5' || !keywordQuestion.rubric.includes('birbirinden bağımsız değerlendir')) throw new Error('The five video keyword entries must be graded independently');
   const solutionQuestions = context.window.THEME1_FORMS['marti-a06'];
@@ -716,8 +716,8 @@ async function run() {
 
   advance(3);
   if (stage.innerHTML.includes('SECRET_LEGACY_ANSWER_9Z')) throw new Error('Previously saved free-form AI feedback still exposes an answer after migration');
-  mockResponse = responseFor('wrong', ['relevance'], 'keyword', [
-    {id: 'answer', status: 'wrong', issue: 'relevance', hint: 'keyword'}
+  mockResponse = responseFor('wrong', ['relevance'], 'context', [
+    {id: 'answer', status: 'wrong', issue: 'relevance', hint: 'context'}
   ], {answer: 'Öğrenmenin yaşı yoktur; insanlar farklı yaşlarda öğrenir.'});
   const hayatButton = findButton('marti-a08::topic');
   await check(hayatButton);
@@ -726,6 +726,8 @@ async function run() {
   if (!loadedNotes.includes('docs/video-analysis/hayat-buyuk-bir-okuldur-gemini-analysis.txt') || !prompt.includes('Hayat çok zordur') || !prompt.includes('Öğrenmenin yaşı yoktur')) throw new Error('The Hayat video notes, student response, or private main-idea key were omitted from the Groq prompt');
   if (!mediaSystem.includes('MEDYA KAYNAĞI (iç değerlendirme)') || !mediaSystem.includes('bağımsız medya doğrulaması')) throw new Error('Groq was not told the user-provided video report is not independent verification');
   if (hayatButton.card.dataset.checkState !== 'wrong' || hayatButton.feedback.textContent.includes('Öğrenmenin yaşı yoktur') || hayatButton.feedback.textContent.includes('SECRET_')) throw new Error('The wrong Hayat answer received feedback that leaked the correct main idea');
+  if (hayatButton.feedback.textContent.includes('ALAN ALAN') || hayatButton.feedback.textContent.includes('Videonun ana fikri:') || hayatButton.feedback.textContent.includes('Kelimenin geçtiği cümleyi')) throw new Error('A single video answer was split into a field list or received an unrelated context hint');
+  if (!hayatButton.feedback.textContent.includes('Videoda görülen kişileri ve ne yaptıklarını hatırla')) throw new Error('The incorrect video-topic answer did not receive a topic-specific hint');
   if (stage.innerHTML.includes('source-limit-note') || stage.innerHTML.includes('Yapay zekâ sınırı')) throw new Error('The removed user-facing AI warning card still appears before a video activity');
 
   mockResponse = responseFor('partial', ['completeness', 'reasoning'], 'keyword', [
@@ -741,7 +743,8 @@ async function run() {
   const keywordFeedback = keywordsButton.feedback.textContent;
   if (!prompt.includes('alan kimliği: word-1') || !prompt.includes('alan kimliği: word-5')) throw new Error('The five keyword inputs were not identified separately in the assessment prompt');
   for (const marker of ['Anahtar kelime 1 ve ana düşünceyle bağı: TAM DOĞRU', 'Anahtar kelime 2 ve ana düşünceyle bağı: YANLIŞ', 'Anahtar kelime 3 ve ana düşünceyle bağı: EKSİK', 'Anahtar kelime 4 ve ana düşünceyle bağı: KISMEN DOĞRU', 'Anahtar kelime 5 ve ana düşünceyle bağı: TAM DOĞRU']) if (!keywordFeedback.includes(marker)) throw new Error(`Per-field video keyword feedback is missing ${marker}`);
-  if (keywordsButton.card.dataset.checkState !== 'partial' || keywordFeedback.includes('SECRET_FIVE_KEYWORDS_2P') || !keywordFeedback.includes('kelimenin anlamını ve ana düşünceyle bağını ayrı ayrı')) throw new Error('Per-field keyword feedback lacks safe, tailored hints or exposed free model text');
+  if (!keywordFeedback.includes('YANIT BÖLÜMLERİ:') || keywordFeedback.includes('ALAN ALAN')) throw new Error('Multi-answer feedback uses a confusing field-by-field heading');
+  if (keywordsButton.card.dataset.checkState !== 'partial' || keywordFeedback.includes('SECRET_FIVE_KEYWORDS_2P') || !keywordFeedback.includes('Her kelimeyi videoda görülen ya da duyulan somut bir örnekle ilişkilendir')) throw new Error('Per-field keyword feedback lacks safe, tailored hints or exposed free model text');
   mockResponse = responseFor('correct', [], 'recheck', [], {leakedAnswer: 'SECRET_UNRATED_8B'});
   await check(keywordsButton);
   if (keywordsButton.card.dataset.checkState !== 'unrated' || keywordsButton.feedback.textContent.includes('SECRET_UNRATED_8B') || keywordsButton.pill.textContent.includes('Tam doğru')) throw new Error('A response omitting the per-field results was incorrectly accepted as fully correct');

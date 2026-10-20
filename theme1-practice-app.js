@@ -207,12 +207,12 @@
   });
 
   const assessmentIssueMessages = Object.freeze({
-    relevance: "Bu alanın yanıtı sorudaki ölçütle tam örtüşmüyor.",
-    evidence: "Dayanak ile yanıt arasındaki bağ henüz açık değil.",
-    completeness: "Bu alanda istenen parçalardan en az biri eksik.",
+    relevance: "Yanıtın sorunun istediği noktaya odaklanmıyor.",
+    evidence: "Yanıt ile dayanak arasındaki bağ henüz açık değil.",
+    completeness: "Sorunun istediği parçalardan en az biri eksik.",
     reasoning: "Seçim ile açıklama arasındaki düşünce adımı net değil.",
     selection: "Seçim veya eşleştirme ölçütünü yeniden denetle.",
-    accuracy: "Bu alandaki bir bilgi sağlanan kaynakla uyuşmuyor.",
+    accuracy: "Yanıtındaki bir bilgi sağlanan kaynakla uyuşmuyor.",
     source: "Bu ayrıntı sağlanan kaynakta doğrulanamıyor."
   });
 
@@ -228,7 +228,13 @@
     sequence: "Olayı başlangıç, tepki ve sonuç sırasına koy; yanıtında hangi aşamanın eksik kaldığını bul.",
     compare: "İki unsuru aynı ölçüte göre yan yana koy; benzerlik veya farkı kendi sözlerinle açıkla.",
     context: "Kelimenin geçtiği cümleyi önceki ve sonraki cümleyle birlikte oku; bağlamın anlamı nasıl etkilediğini düşün.",
-    justify: "Seçimini adlandır ve bu seçime götüren düşünceyi kendi sözlerinle açıkla."
+    justify: "Seçimini adlandır ve bu seçime götüren düşünceyi kendi sözlerinle açıkla.",
+    videoTopic: "Videoda görülen kişileri ve ne yaptıklarını hatırla. Bu örneklerin ortak konusunu kendi cümlenle söyle ve cümleni belirli bir görüntü ayrıntısıyla destekle.",
+    videoKeywords: "Her kelimeyi videoda görülen ya da duyulan somut bir örnekle ilişkilendir; her kısa notun ana fikirle bağını ayrı kontrol et.",
+    videoConnection: "Videodaki sahne veya örneği sorunun istediği düşünceyle birleştir; bu örneğin neyi gösterdiğini kendi sözlerinle açıkla.",
+    videoCompare: "İki kaynağı aynı ölçüte göre karşılaştır; her biri için ayrı bir gözlem seç ve aralarındaki benzerlik ya da farkı belirt.",
+    audioEvidence: "Dinleme kaydındaki ilgili bölüme dön; sorunun istediği bilgiyi taşıyan ifadeyi yakalayıp notunla karşılaştır.",
+    mediaEvidence: "Yanıtını videodaki ya da dinleme kaydındaki belirli bir örnekle ilişkilendir; genel yorum yerine kaynağın hangi ayrıntısını kullandığını düşün."
   });
 
   const fieldAssessmentLabels = Object.freeze({
@@ -262,6 +268,18 @@
     return issueHints[issue] || (state === "incomplete" ? "count" : (state === "unverified" ? "recheck" : "recheck"));
   }
 
+  function assessmentHintForQuestion(question, activity, field) {
+    const prompt = `${question?.prompt || ""} ${field?.label || ""}`.toLocaleLowerCase("tr-TR");
+    const hasMediaSource = question?.sourceMode === "qr" || Boolean(question?.sourceUrl || activity?.sourceUrl || activity?.videoSource);
+    if (!hasMediaSource) return "";
+    if (question?.id === "topic" || /ana fikr|videonun konusu/.test(prompt)) return "videoTopic";
+    if (question?.id === "keywords" || /anahtar kelime/.test(prompt)) return "videoKeywords";
+    if (question?.sourceLinkType === "audio" || activity?.sourceLinkType === "audio") return "audioEvidence";
+    if (/karşılaştır|benzerlik|farklılık/.test(prompt)) return "videoCompare";
+    if (/anlam bağı|ortak ileti|ilişkisini açıkla/.test(prompt)) return "videoConnection";
+    return "mediaEvidence";
+  }
+
   function summarizeFieldAssessments(overallState, fieldResults) {
     if (!fieldResults.length) return overallState;
     const states = fieldResults.map(field => field.state);
@@ -278,7 +296,7 @@
     return overallState;
   }
 
-  function structuredAssessmentResult(text, question = null) {
+  function structuredAssessmentResult(text, question = null, activity = null) {
     let source = String(text || "").trim();
     const fenced = source.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
     if (fenced) source = fenced[1].trim();
@@ -297,7 +315,8 @@
       ? [...new Set(result.issues.map(value => String(value).trim().toLowerCase()).filter(code => Object.hasOwn(assessmentIssueMessages, code)))].slice(0, 2)
       : [];
     const hintCode = String(result.hint || "").trim().toLowerCase();
-    const hint = Object.hasOwn(assessmentHintMessages, hintCode) ? hintCode : assessmentHintForIssue(issues[0], statusCode);
+    const questionHint = assessmentHintForQuestion(question, activity, null);
+    const hint = questionHint || (Object.hasOwn(assessmentHintMessages, hintCode) ? hintCode : assessmentHintForIssue(issues[0], statusCode));
 
     const questionFields = Array.isArray(question?.fields) ? question.fields : [];
     const fieldMap = new Map(questionFields.map(field => [String(field.id), field]));
@@ -312,9 +331,10 @@
         const issueCode = String(item.issue || "").trim().toLowerCase();
         const fieldIssue = Object.hasOwn(assessmentIssueMessages, issueCode) ? issueCode : "";
         const fieldHintCode = String(item.hint || "").trim().toLowerCase();
-        const fieldHint = Object.hasOwn(assessmentHintMessages, fieldHintCode)
+        const questionFieldHint = assessmentHintForQuestion(question, activity, fieldMap.get(id));
+        const fieldHint = questionFieldHint || (Object.hasOwn(assessmentHintMessages, fieldHintCode)
           ? fieldHintCode
-          : assessmentHintForIssue(fieldIssue, fieldState);
+          : assessmentHintForIssue(fieldIssue, fieldState));
         returnedFields.set(id, { id, label: String(fieldMap.get(id).label || id), state: fieldState, issue: fieldIssue, hint: fieldHint });
       }
     }
@@ -373,24 +393,25 @@
       : (defaultIssues[state] || defaultIssues.unrated);
     const defaultHint = assessmentHintForIssue(safeIssues[0], state);
     const hintText = Object.hasOwn(assessmentHintMessages, hint) ? assessmentHintMessages[hint] : assessmentHintMessages[defaultHint];
-    const fieldLines = Array.isArray(fieldResults) ? fieldResults.map(field => {
+    const showFieldBreakdown = Array.isArray(fieldResults) && fieldResults.length > 1;
+    const fieldLines = showFieldBreakdown ? fieldResults.map(field => {
       const fieldState = Object.hasOwn(fieldAssessmentLabels, field.state) ? field.state : "unrated";
       const cue = fieldAssessmentCues[fieldState];
-      const label = String(field.label || field.id || "Yanıt alanı");
+      const label = String(field.label || field.id || "Yanıt bölümü");
       if (fieldState === "correct") return `${cue} ${label}: ${fieldAssessmentLabels.correct}.`;
       const fieldIssue = Object.hasOwn(assessmentIssueMessages, field.issue) ? assessmentIssueMessages[field.issue] :
-        (fieldState === "unrated" ? "Bu alan için güvenli bir kontrol sonucu alınamadı." : (defaultIssues[fieldState] || defaultIssues.unrated));
+        (fieldState === "unrated" ? "Bu bölüm için güvenli bir kontrol sonucu alınamadı." : (defaultIssues[fieldState] || defaultIssues.unrated));
       const fieldHint = fieldState === "unrated"
-        ? "Bu alanı yeniden kontrol et veya öğretmeninden yardım iste."
+        ? "Bu bölümü yeniden kontrol et veya öğretmeninden yardım iste."
         : (assessmentHintMessages[field.hint] || assessmentHintMessages[assessmentHintForIssue(field.issue, fieldState)]);
       return `${cue} ${label}: ${fieldAssessmentLabels[fieldState]}. ${fieldIssue} İpucu: ${fieldHint}`;
     }) : [];
 
     if (state === "correct") {
-      return `DURUM: TAM DOĞRU\n${fieldLines.length ? `ALAN ALAN:\n${fieldLines.join("\n")}` : "Yanıtın istenen ölçütleri karşılıyor."}`;
+      return `DURUM: TAM DOĞRU\n${fieldLines.length ? `YANIT BÖLÜMLERİ:\n${fieldLines.join("\n")}` : "Yanıtın istenen ölçütleri karşılıyor."}`;
     }
     const lines = [`DURUM: ${stateLabels[state] || stateLabels.unrated}`, `HATA/EKSİK: ${issueText}`];
-    if (fieldLines.length) lines.push(`ALAN ALAN:\n${fieldLines.join("\n")}`);
+    if (fieldLines.length) lines.push(`YANIT BÖLÜMLERİ:\n${fieldLines.join("\n")}`);
     if (!fieldLines.length || fieldResults.every(field => field.state === "correct" || field.state === "unrated")) lines.push(`İPUCU: ${hintText}`);
     return lines.join("\n");
   }
@@ -1057,7 +1078,7 @@
         "Yönlendirme kodunu o alanın gerçek ihtiyacına göre seç: anlam/bağlam, ilişki kurma, sıralama, ölçütle eşleştirme, kapsam veya kaynak dayanağı. İpucu, cevabın kendisini ya da eş anlamlısını söylemeden öğrencinin bir sonraki düşünme adımını açıklasın. Doğru alanlara ipucu verme.",
         "Tam doğru: tüm doğrulanabilir ölçütler karşılanır. Kısmen doğru: anlamlı/doğru bir bölüm vardır ama ölçütlerden biri eksik veya hatalıdır. Yanlış: temel yanıt ilgisiz ya da kaynakla çelişir. Eksik: istenen yanıt parçalarından biri veya birkaçı yoktur. Doğrulanamadı: yanıtın olgusal iddiası verilen kaynak/anahtarla denetlenemiyordur.",
         "GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, kaynakta cevabı belirten cümleyi, örnek yanıtı veya bunların eş anlamlı/parafraz edilmiş biçimini hiçbir koşulda yazma. Yanlış/eksik yanıtta cevabın ne olduğunu açıklama. Sadece aşağıdaki kapalı kodlardan seçim yap; uygulama öğrenciye gösterilecek güvenli mesajı kendisi oluşturur.",
-        "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck|connect|keyword|sequence|compare|context|justify\",\"fields\":[{\"id\":\"verilen-alan-kimliği\",\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issue\":\"relevance|evidence|completeness|reasoning|selection|accuracy|source|none\",\"hint\":\"izinli-ipucu-kodu\"}]}. status ve alan durumları yalnızca izinli değerler; her alan için tek bir issue/hint kodu kullan. `fields` içinde yanıtta verilen HER alan kimliğini tam olarak bir kez ve sırasıyla döndür. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
+        "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck|connect|keyword|sequence|compare|context|justify|videoTopic|videoKeywords|videoConnection|videoCompare|audioEvidence|mediaEvidence\",\"fields\":[{\"id\":\"verilen-alan-kimliği\",\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issue\":\"relevance|evidence|completeness|reasoning|selection|accuracy|source|none\",\"hint\":\"izinli-ipucu-kodu\"}]}. status ve alan durumları yalnızca izinli değerler; her alan için tek bir issue/hint kodu kullan. `fields` içinde yanıtta verilen HER alan kimliğini tam olarak bir kez ve sırasıyla döndür. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
         "Tüm alanlar tam doğruysa status=correct, issues=[] ve her alan status=correct olsun. Alanların tümü doğru değilse genel durumu alan sonuçlarına göre seç; doğru alanları yanlış gibi göstermeden hatalı/eksik alanları ayrı belirt. Kaynakta bulunmayan veya sağlanan notlarla/anahtarla doğrulanamayan medya iddiasında ilgili alan status=unverified ve issue=source olsun. Hint kodlarını mümkün olduğunca çeşitlendir ve her alanın içeriğine göre seç; alakasız bir yazı alanına otomatik olarak evidence kodu verme.",
         context.text ? "İlgili kaynak içeriği kullanıcı mesajında verilmiştir." : context.note,
         context.hasVideoAnalysis
@@ -1114,7 +1135,7 @@
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
       if (!content) throw new Error("Groq yanıtında geri bildirim bulunamadı.");
-      const assessment = structuredAssessmentResult(content, question);
+      const assessment = structuredAssessmentResult(content, question, activity);
       const assessmentState = assessment?.state || "unrated";
       const issueCodes = assessment?.issues || [];
       const hintCode = assessment?.hint || assessmentHintForIssue(issueCodes[0], assessmentState);

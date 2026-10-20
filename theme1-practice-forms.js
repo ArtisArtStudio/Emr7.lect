@@ -216,7 +216,7 @@
     ],
 
     "marti-a08": [
-      q("topic", "Kitaptaki QR içeriği ‘Hayat Büyük Bir Okuldur’ videosunu izledikten sonra ana fikrini tek cümleyle yaz.", [text("answer", "Videonun konusu", 2)], {
+      q("topic", "Kitaptaki QR içeriği ‘Hayat Büyük Bir Okuldur’ videosunu izledikten sonra ana fikrini tek cümleyle yaz.", [text("answer", "Videonun ana fikri", 2)], {
         sourceMode: "qr",
         rubric: "Bu video sorusunda yalnızca kullanıcı tarafından sağlanan Gemini raporundaki ana iletiyi temel al. Raporda farklı yaş ve alanlarda öğrenme örnekleri aktarılır. Öğrenmenin yaşla sınırlı olmadığı ve yaşam boyunca sürdüğü biçimindeki tek cümlelik açıklamaları kabul et; 'hayat çok zordur' gibi öğrenme ile ilgisiz bir cümleyi doğru sayma. Medya raporunu bağımsız olarak doğrulanmış kabul etme ve doğru cevabı geri bildirimde yazma.",
         answerKey: {
