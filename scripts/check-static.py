@@ -564,6 +564,9 @@ const elements = new Map();
 let capturedRequest = null;
 let mockRateLimitOnce = false;
 let rateLimitResponseCount = 0;
+let mockJSONValidationOnce = false;
+let jsonValidationResponseCount = 0;
+const sentGroqBodies = [];
 const responseFor = (status, issues, hint, fields, extra = {}) => JSON.stringify({status, issues, hint, fields, ...extra});
 let mockResponse = responseFor('correct', [], 'recheck', [
   {id: 'behaviors', status: 'correct', issue: 'none', hint: 'recheck'},
@@ -644,6 +647,13 @@ const context = vm.createContext({
       loadedNotes.push(sourcePath);
       return {ok: true, text: async () => notes};
     }
+    const requestBody = JSON.parse(options.body);
+    sentGroqBodies.push(requestBody);
+    if (mockJSONValidationOnce) {
+      mockJSONValidationOnce = false;
+      jsonValidationResponseCount += 1;
+      return {ok: false, status: 400, json: async () => ({error: {message: 'Failed to validate JSON. Please adjust your prompt. See failed_generation.'}})};
+    }
     if (mockRateLimitOnce) {
       mockRateLimitOnce = false;
       rateLimitResponseCount += 1;
@@ -652,7 +662,7 @@ const context = vm.createContext({
         json: async () => ({error: {message: 'Rate limit reached for tokens per minute (TPM). Please try again in 0.01s.'}})
       };
     }
-    capturedRequest = {url, body: JSON.parse(options.body)};
+    capturedRequest = {url, body: requestBody};
     return {ok: true, json: async () => ({choices: [{message: {content: mockResponse}}]})};
   }
 });
@@ -738,7 +748,12 @@ async function run() {
     {id: 'word-5', status: 'correct', issue: 'none', hint: 'recheck'}
   ], {answer: 'SECRET_FIVE_KEYWORDS_2P'});
   const keywordsButton = findButton('marti-a08::keywords');
+  const firstKeywordRequest = sentGroqBodies.length;
+  const previousJSONValidationResponses = jsonValidationResponseCount;
+  mockJSONValidationOnce = true;
   await check(keywordsButton);
+  const keywordRequestAttempts = sentGroqBodies.slice(firstKeywordRequest);
+  if (jsonValidationResponseCount !== previousJSONValidationResponses + 1 || keywordRequestAttempts.length !== 2 || keywordRequestAttempts[0].response_format?.type !== 'json_object' || keywordRequestAttempts[1].response_format || keywordRequestAttempts[1].max_completion_tokens < 480) throw new Error('A Groq JSON-validation failure was not retried once with the safe fallback format');
   prompt = capturedRequest.body.messages.find((message) => message.role === 'user').content;
   const keywordFeedback = keywordsButton.feedback.textContent;
   if (!prompt.includes('alan kimliği: word-1') || !prompt.includes('alan kimliği: word-5')) throw new Error('The five keyword inputs were not identified separately in the assessment prompt');
@@ -821,7 +836,7 @@ async function run() {
   const finalConfettiFrames = flushConfettiFrames();
   if (!finalFlow.themeCelebrated || !element('theme1PracticeSaved').textContent.includes('Tema 1’deki bütün çalışma birimlerini')) throw new Error('The final Theme 1 celebration did not require and record complete theme progress');
   if (confettiStats.canvases.length !== 2 || finalConfettiFrames[0] !== 220 || !confettiStats.canvases[1].removed) throw new Error('The final Theme 1 completion did not show the larger confetti animation');
-  console.log('Question and field states, targeted safe hints, one-time TPM retry, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
+  console.log('Question and field states, targeted safe hints, one-time TPM retry, JSON-validation fallback, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed.');
 }
 run().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
 """
@@ -1093,8 +1108,9 @@ def main() -> int:
         "particleCount = finalCelebration ? 220 : 72", "celebrateActivityIfCompleted(activity)",
         "flow.celebratedActivities.includes(activity.id)", 'assessmentState === "correct"',
         "function isThemeFullyCorrect()", "function isFinalThemeUnit()", "flow.themeCelebrated", "launchConfetti(true)",
-        "function groqRateLimitRetryDelay(response, payload)", "max_completion_tokens: completionTokenBudget",
+        "function groqRateLimitRetryDelay(response, payload)", "max_completion_tokens: maxTokens",
         "const completionTokenBudget = Math.min(340", "Groq geçici hız sınırına ulaştı",
+        "requestWithRateLimitRetry(false, Math.max(480, completionTokenBudget))", "failed to validate json|failed_generation",
     )
     for requirement in app_runtime_requirements:
         if requirement not in app_js:
@@ -1308,7 +1324,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Question-level Groq prompt test failed:\n{result.stderr.strip()}")
-                    elif "Question and field states, targeted safe hints, one-time TPM retry, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
+                    elif "Question and field states, targeted safe hints, one-time TPM retry, JSON-validation fallback, activity and full-theme confetti celebrations, no hint on correct answers, fair Martı evidence, media-source attribution, and hidden warning-card removal passed." not in result.stdout:
                         errors.append("Groq prompt test did not report success")
 
             if not errors:
@@ -1358,7 +1374,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, high-contrast reading, per-field safe assessment, targeted hints, TPM retry, accessible sorting, correct-completion celebrations, user-attributed Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, high-contrast reading, per-field safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, user-attributed Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 

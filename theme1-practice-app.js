@@ -1103,14 +1103,14 @@
       ].join("\n");
       const model = modelInput?.value || DEFAULT_MODEL;
       const completionTokenBudget = Math.min(340, Math.max(240, 170 + (question.fields || []).length * 34));
-      const requestGroq = () => fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const requestGroq = (jsonMode, maxTokens) => fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
         body: JSON.stringify({
           model,
           temperature: 0.1,
-          max_completion_tokens: completionTokenBudget,
-          response_format: { type: "json_object" },
+          max_completion_tokens: maxTokens,
+          ...(jsonMode ? { response_format: { type: "json_object" } } : {}),
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
@@ -1118,19 +1118,32 @@
           ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low", reasoning_format: "hidden" } : {})
         })
       });
-      let result = await requestGroq();
-      let payload = await result.json().catch(() => ({}));
-      const retryDelay = result.ok ? 0 : groqRateLimitRetryDelay(result, payload);
-      if (retryDelay > 0) {
-        const waitSeconds = (retryDelay / 1000).toFixed(1).replace(/\.0$/, "");
+      const requestWithRateLimitRetry = async (jsonMode, maxTokens) => {
+        let result = await requestGroq(jsonMode, maxTokens);
+        let payload = await result.json().catch(() => ({}));
+        const retryDelay = result.ok ? 0 : groqRateLimitRetryDelay(result, payload);
+        if (retryDelay > 0) {
+          const waitSeconds = (retryDelay / 1000).toFixed(1).replace(/\.0$/, "");
+          if (prior) {
+            prior.textContent = `Groq geçici hız sınırına ulaştı; ${waitSeconds} saniye bekleyip bir kez daha denenecek…`;
+            prior.dataset.state = "pending";
+            setQuestionAssessment(card, "pending");
+          }
+          await new Promise(resolve => window.setTimeout(resolve, retryDelay));
+          result = await requestGroq(jsonMode, maxTokens);
+          payload = await result.json().catch(() => ({}));
+        }
+        return { result, payload };
+      };
+      let { result, payload } = await requestWithRateLimitRetry(true, completionTokenBudget);
+      const jsonValidationError = !result.ok && /failed to validate json|failed_generation/i.test(String(payload.error?.message || ""));
+      if (jsonValidationError) {
         if (prior) {
-          prior.textContent = `Groq geçici hız sınırına ulaştı; ${waitSeconds} saniye bekleyip bir kez daha denenecek…`;
+          prior.textContent = "Groq yanıt biçimini doğrulayamadı; güvenli JSON denetimiyle bir kez daha deneniyor…";
           prior.dataset.state = "pending";
           setQuestionAssessment(card, "pending");
         }
-        await new Promise(resolve => window.setTimeout(resolve, retryDelay));
-        result = await requestGroq();
-        payload = await result.json().catch(() => ({}));
+        ({ result, payload } = await requestWithRateLimitRetry(false, Math.max(480, completionTokenBudget)));
       }
       if (!result.ok) throw new Error(payload.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
       const content = payload.choices?.[0]?.message?.content?.trim();
@@ -1157,11 +1170,14 @@
       const rateLimitMatch = message.match(/(?:try again in|retry after)\s+([\d.]+)\s*s(?:ec(?:ond)?s?)?/i);
       const rateLimitWait = rateLimitMatch ? `${Math.ceil(Number(rateLimitMatch[1]))} saniye bekleyip` : "birkaç saniye bekleyip";
       const isRateLimited = /rate limit|tokens per minute|\bTPM\b|HTTP 429/i.test(message);
+      const isJSONValidationFailure = /failed to validate json|failed_generation/i.test(message);
       const friendly = isRateLimited
         ? `Groq’un geçici token hız sınırına ulaşıldı. Yanıtın bu tarayıcıda kayıtlı; ${rateLimitWait} yeniden dene. İstersen daha düşük kaynak kullanan bir modeli seç.`
-        : /failed to fetch|networkerror|load failed/i.test(message)
-          ? "Groq’a ulaşılamadı. İnternet bağlantısını ve API erişimini kontrol et; anahtar bu cihazda kalır."
-          : `Kontrol tamamlanamadı: ${message}`;
+        : isJSONValidationFailure
+          ? "Groq bu yanıtta güvenli JSON biçimini üretemedi. Yanıtın kayıtlı; yeniden dene veya farklı bir modeli seç."
+          : /failed to fetch|networkerror|load failed/i.test(message)
+            ? "Groq’a ulaşılamadı. İnternet bağlantısını ve API erişimini kontrol et; anahtar bu cihazda kalır."
+            : `Kontrol tamamlanamadı: ${message}`;
       flowState(activeUnit.weekId).feedback[qKey] = { state: "system", text: friendly, checkedAt: new Date().toISOString() };
       persist();
       showFeedback(card, friendly, "system");
