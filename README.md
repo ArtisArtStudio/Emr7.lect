@@ -1,17 +1,19 @@
 # 7. Sınıf Öğrenme Rotası
 
-Türkçe dersi için tema bazlı haftalık çalışma planı, yapılandırılmış okuma alanı ve aynı okuma sayfasına gömülü Tema 1 çalışma paketleri sunan statik bir öğrenme uygulaması.
+Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 7 için ders kitabına dayalı, 37 ham haftaya ayrılmış çalışma planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
 
 **Yayımlanan uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
 
 ## Neler var?
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
-- Aynı metin veya konunun art arda işlendiği haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir.
+- MEB 2026 7. sınıf Sosyal Bilgiler ders kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı 37 haftalık ayrı rota.
+- Sosyal Bilgiler etkinlikleri, PDF’de görülen yapboz, beyin yazımı, proje kontrol listesi, kelime bulutu, kaynak/tablo inceleme, harita/GZFT, soru–cevap, haber metni ve neden–sonuç gibi biçimlerden esinlenen özgün görevlerdir; kitap metinleri/kaynak soruları kopyalanmaz.
+- Aynı metin veya konunun art arda işlendiği Türkçe haftalar tek çalışma sayfasında birleştirilir; iki haftanın tarih aralığı, odağı ve görevleri birlikte gösterilir. Sosyal Bilgiler ham haftaları ise birbirinden ayrı tutulur.
 - Tema bazında gruplanmış haftalık rota ve PDF’deki kaynak metinleri paragraf/dize düzeniyle sunan okuyucu.
 - Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; seçilen haftanın numaralı paketi aynı okuma sayfasında sırayla açılır.
 - Kaynak görevine uygun yazılı yanıt, seçim ve erişilebilir sürükle-bırak / dokunarak eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
-- İlerlemeyi tarayıcıda saklama ve JSON yedeği alıp geri yükleme.
+- Türkçe ve Sosyal Bilgiler ilerlemesini ayrı tarayıcı alanlarında saklama; ikisini birlikte JSON yedeğine alıp geri yükleme. Sosyal Bilgilerde mini plan ve etkinlik tamamlanınca uygulama kutusu otomatik işaretlenir; EBA/Tonguç/MEBİ kutuları öğrenci tarafından işaretlenir.
 - İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
 
 ## Yerelde çalıştırma
@@ -41,7 +43,7 @@ Depo ve uygulama herkese açıktır; mevcut GitHub Pages yayını şu adrestedir
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
-Ana dosyalar `index.html`, `book-texts.js`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince diğer tema/haftalar gizlenir ve hafta listesine dönüş kontrolü sunulur. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
+Ana dosyalar `index.html`, `book-texts.js`, `social-studies.js`, `social-studies.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler alanı ayrı bir istemci modülünde çalışır ve Türkçe ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince diğer tema/haftalar gizlenir ve hafta listesine dönüş kontrolü sunulur. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
 
 ## Kontroller
 
@@ -50,7 +52,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 etkinliğin form türlerini, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 ham haftayı ve etkinlik tamamlama kurallarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

@@ -1163,6 +1163,8 @@ def main() -> int:
         'id="backToWeeks"', 'id="theme1Practice"', 'id="step-track"',
         'id="activity-stage"', 'id="previous-step"', 'id="next-step"',
         'id="weeklyStudySchedule"', 'id="studyScheduleRows"',
+        'id="socialWorkspace"', 'id="socialWeekList"', 'id="socialWeekContent"',
+        'id="socialProgressBar"', 'social-studies.js', 'social-studies.css',
         'theme1-practice-forms.js', 'theme1-practice-app.js', 'theme1-practice.css',
     ):
         if marker not in html:
@@ -1171,10 +1173,10 @@ def main() -> int:
         errors.append("The focused-week selection, return, or embedded package flow is not wired")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies.js?v="):
         if asset not in html:
-            errors.append(f"Theme 1 assets need a cache-busting version after the page redesign: {asset}")
-    for required in ("function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
+            errors.append(f"Client assets need a cache-busting version: {asset}")
+    for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SOCIAL_STUDIES?.resetProgress()", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
         if required not in html:
             errors.append(f"Per-raw-week study tracking or its saved-progress migration is missing: {required}")
     if "--ink:#102238" not in html or "--muted:#46576b" not in html:
@@ -1266,7 +1268,7 @@ def main() -> int:
         errors.append("Node.js is required to check JavaScript syntax and week grouping")
     else:
         js_files = []
-        for relative in ("book-texts.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
+        for relative in ("book-texts.js", "social-studies.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
             asset = ROOT / relative
             if not asset.is_file():
                 errors.append(f"Missing JavaScript asset: {relative}")
@@ -1328,6 +1330,18 @@ def main() -> int:
                     errors.append("Theme 1 embedded practice test did not report success")
                 elif "Raw-week study schedules, YouTube topic links, manual per-week platform checks, and automatic in-app completion passed." not in result.stdout:
                     errors.append("Weekly study schedule test did not report success")
+
+            if not errors:
+                social_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-social-studies.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if social_test.returncode:
+                    errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
+                elif "Social Studies raw-week plan, PDF-aligned activity formats, completion rules, links, and subject-isolated backup passed." not in social_test.stdout:
+                    errors.append("Social Studies workspace test did not report success")
 
             if not errors:
                 try:
@@ -1456,7 +1470,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, focused-week navigation, darker text contrast, per-week study tracking, per-field safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, focused-week navigation, darker text contrast, raw-week study tracking, the 37-week Social Studies plan and PDF-aligned activities, per-field safe assessment, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 
