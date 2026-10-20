@@ -9,6 +9,7 @@
   const STORAGE_KEY = 'emr7lect.socialStudies.v1';
   const EBA_URL = 'https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&okulTuru=6&sinif=15&genelMudurluk=33&ders=17&program=1131&kazanimlar=310150';
   const MEBI_URL = 'https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce';
+  const EXAM_DATES_BY_WEEK = Object.freeze({ 8: '6 Kasım 2026' });
   const PROVIDERS = ['eba', 'tonguc', 'mebi'];
   const SOCIAL_AI_DEFAULT_MODEL = 'openai/gpt-oss-20b';
   const SOCIAL_AI_FIELD_KINDS = new Set(['text', 'textarea', 'words']);
@@ -1096,7 +1097,7 @@
       return `<details class="social-unit-group" data-unit="${escapeHTML(unit.id)}" ${items.some((item) => item.id === progress.selectedWeek) ? 'open' : ''}><summary><span><b>${escapeHTML(unit.label)}</b><strong>${escapeHTML(unit.title)}</strong></span><small class="social-unit-count">${completeCount}/${items.length}</small></summary><div class="social-week-buttons">${items.map((item) => {
         const complete = isWeekComplete(item);
         const active = item.id === progress.selectedWeek;
-        return `<button type="button" class="social-week-button${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}" data-social-select="${item.id}" ${active ? 'aria-current="page"' : ''}><span class="social-week-no">${item.id}.</span><span class="social-week-meta"><span class="social-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="social-week-topic">${escapeHTML(item.topic)}</span></span><span class="social-week-status" id="social-week-status-${item.id}" aria-label="${complete ? 'Hafta tamamlandı' : 'Hafta tamamlanmadı'}">${complete ? '✓' : ''}</span></button>`;
+        return `<button type="button" class="social-week-button${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}" data-social-select="${item.id}" ${active ? 'aria-current="page"' : ''}><span class="social-week-no">${item.id}.</span><span class="social-week-meta"><span class="social-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="social-week-topic">${escapeHTML(item.topic)}</span>${EXAM_DATES_BY_WEEK[item.id] ? `<span class="social-week-exam">1. sınav (${escapeHTML(EXAM_DATES_BY_WEEK[item.id])})</span>` : ''}</span><span class="social-week-status" id="social-week-status-${item.id}" aria-label="${complete ? 'Hafta tamamlandı' : 'Hafta tamamlanmadı'}">${complete ? '✓' : ''}</span></button>`;
       }).join('')}</div></details>`;
     }).join('');
   }
@@ -1169,9 +1170,11 @@
     const links = getProviderLinks(item);
     const done = isWeekComplete(item, saved);
     const dateLabel = `${item.date} 2026–2027 · ${item.id}. hafta`;
+    const examDate = EXAM_DATES_BY_WEEK[item.id];
+    const examNoticeHTML = examDate ? `<aside class="social-exam-notice" role="note" aria-label="1. sınav tarihi"><span>1. sınav</span><strong>${escapeHTML(examDate)}</strong></aside>` : '';
     content.innerHTML = `
       <header class="social-week-heading card">
-        <div><div class="social-eyebrow">${escapeHTML(item.unitLabel)} · ${escapeHTML(item.unit)}</div><p class="social-date">${escapeHTML(dateLabel)}</p><h2 id="socialWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p class="social-focus">${escapeHTML(item.focus)}</p></div>
+        <div><div class="social-eyebrow">${escapeHTML(item.unitLabel)} · ${escapeHTML(item.unit)}</div>${examNoticeHTML}<p class="social-date">${escapeHTML(dateLabel)}</p><h2 id="socialWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p class="social-focus">${escapeHTML(item.focus)}</p></div>
         <button class="social-print print" type="button" data-social-print>Yazdır / PDF</button>
       </header>
       <section class="card social-topic-summary" aria-labelledby="socialSummaryTitle">

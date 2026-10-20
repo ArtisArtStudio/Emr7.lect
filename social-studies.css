@@ -1,4 +1,5 @@
 /* Social Studies workspace: matching the reader palette with accessible, high-contrast controls. */
+/* Shared course accent comes from --subject-accent; reading cards stay white or paper-yellow. */
 .social-workspace{display:grid;gap:18px;min-width:0;color:#102238}
 .social-workspace[hidden],#socialWeekPrompt[hidden],#socialWeekContent[hidden]{display:none!important}
 .social-hero{position:relative;overflow:hidden;padding:clamp(22px,4vw,34px);border-radius:22px;background:linear-gradient(125deg,#123b52,#205f72);color:#fff}
@@ -36,7 +37,7 @@
 .social-week-no{display:grid;place-items:center;min-width:31px;height:29px;border-radius:9px;background:#e9eef4;color:#29465c;font-size:11px;font-weight:850}
 .social-week-button.is-current .social-week-no{background:#206780;color:#fff}
 .social-week-meta{display:grid;gap:2px;min-width:0}
-.social-week-date{color:#4a6073;font-size:10px;font-weight:700}
+.social-week-date{color:#4a6073;font-size:10px;font-weight:700}.social-week-exam{display:block;margin-top:2px;color:#b42318;font-size:10px;font-weight:850;line-height:1.35}
 .social-week-topic{overflow:hidden;color:#203c52;font-size:12px;font-weight:750;line-height:1.3;text-overflow:ellipsis}
 .social-week-status{display:grid;place-items:center;color:#17613b;font-size:17px;font-weight:900}
 .social-week-main{display:grid;gap:15px;min-width:0}
@@ -47,7 +48,7 @@
 .social-week-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding:21px 23px}
 .social-week-heading>div{min-width:0}
 .social-week-heading h2{margin:4px 0 8px;font-size:clamp(22px,3vw,29px);line-height:1.2;letter-spacing:-.03em;color:#102238}
-.social-date{margin:5px 0 0;color:#304c78;font-size:12px;font-weight:800;letter-spacing:.03em}
+.social-date{margin:5px 0 0;color:#304c78;font-size:12px;font-weight:800;letter-spacing:.03em}.social-exam-notice{display:grid;gap:1px;width:fit-content;max-width:100%;margin:10px 0 9px;padding:9px 12px;border:1px solid #e3a4a7;border-left:5px solid #bd2632;border-radius:10px;background:#fff0ef;color:#9f1c26}.social-exam-notice span{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.social-exam-notice strong{font-size:15px;line-height:1.35}
 .social-focus{margin:0;color:#33465d;line-height:1.65}
 .social-print{flex:none}
 .social-grid-two{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:stretch}
@@ -107,7 +108,7 @@
 .social-summary-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
 .social-summary-heading .tag{color:#304c78}
 .social-topic-summary h3{margin:4px 0 0;color:#102238;font-size:20px}
-.social-summary-text{max-width:980px;margin:0;color:#263f53;font-size:15px;line-height:1.75}
+.social-summary-text{max-width:980px;margin:0;padding:18px;border:1px solid #e7e0d0;border-radius:12px;background:#fffdf6;color:#111;font-size:16px;line-height:1.75}
 .social-summary-text p{margin:0}
 .social-summary-text p+p{margin-top:12px}
 .social-summary-bottom{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(180px,1fr);gap:20px;padding-top:11px;border-top:1px solid #dbe5ec}
@@ -152,7 +153,7 @@
 .social-reading-heading>span{color:#28647b;font-size:9px;font-weight:950;letter-spacing:.11em}
 .social-reading-heading h5{margin:0;color:#18364c;font-size:15px;line-height:1.35}
 .social-reading-heading small{color:#586e80;font-size:10px;line-height:1.45}
-.social-reading-text{max-width:940px;color:#263f53;font-size:14px;line-height:1.8}
+.social-reading-text{max-width:940px;padding:16px;border:1px solid #e7e0d0;border-radius:11px;background:#fffdf6;color:#111;font-size:14px;line-height:1.8}
 .social-reading-text p{margin:0}
 .social-reading-text p+p{margin-top:12px}
 .social-dialogue ol{display:grid;gap:8px;margin:0;padding:0;list-style:none}
@@ -223,14 +224,14 @@
 @media(max-width:620px){.social-week-list{grid-template-columns:1fr}.social-grid-two{grid-template-columns:1fr}.social-week-heading{display:grid}.social-activity-heading{display:grid}.social-activity-fields{grid-template-columns:1fr}.social-field:has(textarea),.social-field:has(.social-word-preview),.social-checklist-field,.social-choice-question{grid-column:auto}.social-hero:after{right:-35px}.social-week-navigation{max-height:420px}.social-study-table{min-width:700px}.social-summary-heading,.social-practice-heading{display:grid}.social-summary-bottom{grid-template-columns:1fr}.social-practice-track{grid-auto-columns:minmax(205px,82%)}.social-practice-step{min-height:56px}.social-case-study-list{grid-template-columns:1fr}.social-dialogue li{max-width:96%}.social-activity-step{padding:13px}.social-activity-controls{align-items:stretch;flex-wrap:wrap}.social-activity-nav{flex:1}.social-activity-controls>span{order:-1;width:100%;text-align:center}.social-choice-options{grid-template-columns:1fr}.social-sort-categories{grid-template-columns:1fr}.social-sort-guide{display:grid}.social-sort-guide ol{display:grid;gap:4px}}
 @media print{.social-hero,.social-week-navigation,.social-back,.social-print,.social-provider-link,.subject-nav,.top,.social-practice-track,.social-activity-controls,.social-choice-check{display:none!important}.social-layout{display:block}.social-week-content{display:grid!important}.social-week-heading,.social-focus-card,.social-mini-plan,.social-schedule,.social-topic-summary,.social-practice-flow,.social-activity-step{break-inside:avoid}.social-study-table{min-width:0}.social-table-wrap{overflow:visible}.social-plan-source{margin-top:10px}}
 
-/* Social Studies uses the same ink, paper, blue, mint, buttons and progress treatment as Turkish. */
+/* Social Studies shares the reader ink/paper and control system; its course accent is dynamic and subtle. */
 #socialWorkspace{
   --social-ink:var(--ink,#102238);
   --social-muted:var(--muted,#46576b);
   --social-paper:var(--paper,#f5f7fb);
   --social-line:var(--line,#e3e9f1);
-  --social-blue:var(--blue,#245cdb);
-  --social-blue-soft:#eaf0ff;
+  --social-blue:var(--subject-accent,var(--blue,#245cdb));
+  --social-blue-soft:var(--subject-tint,#eaf0ff);
   --social-mint:var(--mint,#c9f2df);
   color:var(--social-ink);
 }
@@ -255,7 +256,7 @@
 #socialWorkspace .social-nav-note,
 #socialWorkspace .social-date{color:var(--social-muted)}
 #socialWorkspace .social-week-button:hover{background:#f1f5fc}
-#socialWorkspace .social-week-button.is-current{border-color:#a8c1ff;background:var(--social-blue-soft);color:#173f9f}
+#socialWorkspace .social-week-button.is-current{border-color:var(--social-blue);background:var(--social-blue-soft);color:var(--social-blue)}
 #socialWorkspace .social-week-no{background:#f0f3f8;color:#46576b}
 #socialWorkspace .social-week-button.is-current .social-week-no{background:var(--social-blue);color:#fff}
 #socialWorkspace .social-week-button:focus-visible,
@@ -278,8 +279,8 @@
 #socialWorkspace .social-practice-flow{border-color:var(--social-line)}
 #socialWorkspace .social-practice-count{border-color:var(--social-line);background:#f5f7fb;color:var(--social-muted)}
 #socialWorkspace .social-practice-progress{background:#dfe7f2}
-#socialWorkspace .social-practice-progress span{background:linear-gradient(90deg,#2c67d7,#69a4ef)}
-#socialWorkspace .social-practice-step.is-current{border-color:#a8c1ff;background:var(--social-blue-soft)}
+#socialWorkspace .social-practice-progress span{background:var(--social-blue)}
+#socialWorkspace .social-practice-step.is-current{border-color:var(--social-blue);background:var(--social-blue-soft)}
 #socialWorkspace .social-practice-step-no{background:#f0f3f8;color:#46576b}
 #socialWorkspace .social-practice-step.is-current .social-practice-step-no{background:var(--social-blue);color:#fff}
 #socialWorkspace .social-style-note,

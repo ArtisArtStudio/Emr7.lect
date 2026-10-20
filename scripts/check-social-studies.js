@@ -299,6 +299,15 @@ assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activit
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Metinde iletişimi etkileyen hangi etmenler sıralanıyor?'));
 assert.ok(!mockElements.socialWeekContent.innerHTML.includes('Önce kısa sınama'), 'The first communication week must not be forced into the generic three-step template.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler') && mockElements.socialWeekContent.innerHTML.includes('MEBİ çalışmaları'));
+assert.equal(social.weeks[7].date, '2–6 Kas', 'Social Studies week eight should contain the user-provided 6 November exam date.');
+assert.ok(mockElements.socialWeekList.innerHTML.includes('1. sınav (6 Kasım 2026)'), 'Week eight should show its first-exam date in the selection list.');
+assert.equal((mockElements.socialWeekList.innerHTML.match(/1\. sınav \(6 Kasım 2026\)/g) || []).length, 1, 'Only Social Studies week eight should carry the Social Studies exam notice.');
+const week8ExamButton = { dataset: { socialSelect: '8' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week8ExamButton : null } });
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('class="social-exam-notice"') && mockElements.socialWeekContent.innerHTML.includes('6 Kasım 2026'), 'Selecting week eight should show its red exam-date card.');
+const week1AfterExamButton = { dataset: { socialSelect: '1' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week1AfterExamButton : null } });
+assert.ok(!mockElements.socialWeekContent.innerHTML.includes('social-exam-notice'), "Weeks without an exam must not inherit another week's notice.");
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('https://eba.gov.tr/dersler/detay/17-sosyal-bilgiler?duzey=Ortaokul&amp;okulTuru=6&amp;sinif=15&amp;genelMudurluk=33&amp;ders=17&amp;program=1131&amp;kazanimlar=310150'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce'));
 assert.equal(mockElements.socialWeekPrompt.hidden, true);
@@ -628,7 +637,7 @@ async function runSocialAIRegressionChecks() {
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey], undefined, 'An assessment for an edited response must not be persisted.');
   assert.ok(mockElements[feedbackId].textContent.includes('Yanıt kontrol sırasında değişti'), 'A stale response should be clearly discarded.');
 
-  console.log('Social Studies summaries, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed.');
+  console.log('Social Studies summaries, Week 8 exam notice, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed.');
 }
 
 runSocialAIRegressionChecks().catch((error) => {

@@ -16,7 +16,9 @@ Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler 
 - Tema 1’de PDF etkinlik türleri ve sayılarıyla eşleştirilmiş 43 özgün çalışma; seçilen haftanın numaralı paketi aynı okuma sayfasında sırayla açılır.
 - Kaynak görevine uygun yazılı yanıt, seçim ve erişilebilir sürükle-bırak / dokunarak eşleştirme araçları; her soru için isteğe bağlı Groq geri bildirimi.
 - Türkçe ve Sosyal Bilgiler ilerlemesini ayrı tarayıcı alanlarında saklama; ikisini birlikte JSON yedeğine alıp geri yükleme. Sosyal Bilgilerde mini plan ve o haftanın tüm etkinlikleri tamamlanınca uygulama kutusu otomatik işaretlenir; seçimli, çoklu seçimli ve sınıflandırma yanıtları doğru kontrol edilmelidir. EBA/Tonguç/MEBİ kutuları öğrenci tarafından işaretlenir. Etkinlik akışları yenilenirken artık kullanılmayan yanıtlar ve AI geri bildirimleri de JSON yedeğinde korunur.
-- İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
+- İsteğe bağlı Groq geri bildirimi ve ElevenLabs seslendirme; her iki ayar da ders seçicisinin altındaki ortak dişli panelinden yönetilir. Anahtarlar ders alanlarına kopyalanmaz; ElevenLabs kullanılamadığında cihazın `speechSynthesis` sesi yedek olarak kullanılabilir.
+- Kullanıcının bildirdiği 2026 birinci dönem tarihleri içinde Türkçe 10 Kasım (9–13 Kas haftası) ve Sosyal Bilgiler 6 Kasım (2–6 Kas haftası) için haftalık listede kırmızı sınav etiketi ve seçilen haftanın başında kırmızı tarih kartı gösterilir. Ortak ders araçlarındaki **Deneme Sınavları** bağlantısı `https://mebi.eba.gov.tr/student/exam/midterm` adresini açar.
+- Ders arayüzü, erişilebilirlik, ortak ders akışı ve gelecek dersler (özellikle Fen Bilimleri) için tasarım kuralları [`docs/subject-ui-style-guide.md`](docs/subject-ui-style-guide.md) içinde kayıtlıdır; kurs rengi yalnızca hafif sayfa tonunda ve aktif durumlarda kullanılır.
 
 ## Yerelde çalıştırma
 
@@ -45,7 +47,7 @@ Depo ve uygulama herkese açıktır; mevcut GitHub Pages yayını şu adrestedir
 
 <https://artisartstudio.github.io/Emr7.lect/>
 
-Ana dosyalar `index.html`, `book-texts.js`, `social-studies-content.js`, `social-studies.js`, `social-studies.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler alanı ayrı bir istemci modülünde çalışır ve Türkçe ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince diğer tema/haftalar gizlenir ve hafta listesine dönüş kontrolü sunulur. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
+Ana dosyalar `index.html`, `book-texts.js`, `social-studies-content.js`, `social-studies.js`, `social-studies.css`, `theme1-practice.css`, `theme1-practice-app.js` ve `theme1-practice-forms.js` dosyalarıdır. Sosyal Bilgiler alanı ayrı bir istemci modülünde çalışır ve Türkçe ilerlemesini etkilemez. Theme 1 akışı ayrı bir sayfa açmadan `index.html` içinde gösterilir; hafta seçilince çalışma içeriği değişirken masaüstünde sol hafta listesi sabit kalır, dar ekranda liste içeriğin üstünde normal sayfa akışında yer alır. `.nojekyll`, Pages'in alt çizgiyle başlayan dosyaları Jekyll filtresinden geçirmemesini sağlar. Gelecek derslerin aynı navigasyon, ilerleme, “Kontrol et” ve yedek akışını uygulaması için `docs/subject-ui-style-guide.md` takip edilir. Proje statiktir; uygulama sunucusu veya gömülü API anahtarı gerekmez.
 
 ## Kontroller
 
@@ -54,7 +56,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel yolları, JavaScript sözdizimini, haftaya odaklanma/dönüş akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 haftanın konu özetlerini, ilk iletişim konusunun değişken etkinlik ve okuma akışını, kalan haftaların etkinliklerini, ilerleme/yedek geçişini ve bağlantılarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, sınav haftası notlarını, ortak ders araçlarını ve masaüstü/mobil hafta navigasyonu akışını, 43 Türkçe etkinliğinin form türlerini, Sosyal Bilgilerdeki 37 haftanın konu özetlerini, ilk iletişim konusunun değişken etkinlik ve okuma akışını, kalan haftaların etkinliklerini, ilerleme/yedek geçişini ve bağlantılarını, gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler; bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

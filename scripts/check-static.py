@@ -239,7 +239,6 @@ const title = {focusCount: 0, focus() { this.focusCount += 1; }};
 const practiceTitle = {focusCount: 0, focus() { this.focusCount += 1; }};
 const practice = {hidden: true, scrollCount: 0, scrollIntoView() { this.scrollCount += 1; }};
 const activeWeek = {focusCount: 0, scrollCount: 0, focus() { this.focusCount += 1; }, scrollIntoView() { this.scrollCount += 1; }};
-const backButton = {listeners: {}, addEventListener(name, callback) { this.listeners[name] = callback; }};
 const browserWindow = {
   location: {href: 'https://example.test/Emr7.lect/', search: '', hash: ''},
   history: {pushState(state, title, url) {
@@ -253,7 +252,7 @@ const browserWindow = {
   scrollTo() { scrollCount += 1; }
 };
 const document = {
-  getElementById(id) { return id === 'title' ? title : id === 'theme1Practice' ? practice : id === 'theme1PracticeTitle' ? practiceTitle : id === 'backToWeeks' ? backButton : null; },
+  getElementById(id) { return id === 'title' ? title : id === 'theme1Practice' ? practice : id === 'theme1PracticeTitle' ? practiceTitle : null; },
   querySelector(selector) { return selector === '#weeklist .weekbtn.active' ? activeWeek : null; }
 };
 const context = vm.createContext({window: browserWindow, document, URL, URLSearchParams, weeks,
@@ -265,20 +264,17 @@ vm.runInContext(__ROUTE_CODE__, context);
 context.selectReadingWeek(3);
 if (current !== 3 || !focusMode || !new URL(browserWindow.location.href).searchParams.has('week')) throw new Error('Selecting a week did not enter focused mode or create a week route');
 if (renderCount !== 1 || title.focusCount !== 0 || practiceTitle.focusCount !== 1 || practice.scrollCount !== 1 || scrollCount !== 0) throw new Error('Theme 1 selection did not scroll and move keyboard focus to its first practice package');
-backButton.listeners.click();
-if (focusMode || new URL(browserWindow.location.href).searchParams.has('week')) throw new Error('The return control did not restore the week-selection route');
-if (activeWeek.focusCount !== 1 || activeWeek.scrollCount !== 1 || renderCount !== 2) throw new Error('Returning to the list did not restore accessible focus');
 context.selectReadingWeek(99);
-if (current !== 3 || focusMode || pushes.length !== 2) throw new Error('An invalid week unexpectedly changed the reader state');
+if (current !== 3 || !focusMode || pushes.length !== 1) throw new Error('An invalid week unexpectedly changed the reader state');
 browserWindow.location.search = '?week=5';
 listeners.popstate();
 if (current !== 5 || !focusMode || practiceTitle.focusCount !== 2 || practice.scrollCount !== 2) throw new Error('Browser history did not restore focused-week mode and the selected package');
 browserWindow.location.search = '';
 listeners.popstate();
-if (focusMode || activeWeek.focusCount !== 2 || renderCount !== 4) throw new Error('Browser history did not return to the week list');
+if (focusMode || activeWeek.focusCount !== 1 || renderCount !== 3) throw new Error('Browser history did not return to the week list while retaining the reader navigation');
 context.selectReadingWeek(7);
 if (current !== 7 || !focusMode || practiceTitle.focusCount !== 2 || title.focusCount !== 1 || scrollCount !== 1) throw new Error('A non-Theme 1 week did not retain its standard reader focus and scroll behavior');
-console.log('Focused-week selection, return control, browser history, Theme 1 practice visibility, and keyboard focus passed.');
+console.log('Focused-week selection, persistent sidebar, browser history, Theme 1 practice visibility, and keyboard focus passed.');
 """.replace("__ROUTE_CODE__", json.dumps(route_code))
 
 
@@ -1160,7 +1156,8 @@ def main() -> int:
         errors.append("The main reader still links to the separate Theme 1 practice page")
     for marker in (
         'id="weekSelectionPrompt"', 'id="weekContent"', 'id="readerLayout"',
-        'id="backToWeeks"', 'id="theme1Practice"', 'id="step-track"',
+        'id="weekExamNotice"', 'id="weekExamDate"', 'id="apiSettings"', 'id="courseTools"',
+        'id="theme1Practice"', 'id="step-track"',
         'id="activity-stage"', 'id="previous-step"', 'id="next-step"',
         'id="weeklyStudySchedule"', 'id="studyScheduleRows"',
         'id="socialWorkspace"', 'id="socialWeekList"', 'id="socialWeekContent"',
@@ -1170,7 +1167,17 @@ def main() -> int:
         if marker not in html:
             errors.append(f"The reader is missing integrated/focused-week markup: {marker}")
     if "function selectReadingWeek" not in html or "function focusSelectedWeek" not in html or "window.setTimeout(focusSelectedWeek,0)" not in html or "week-focused" not in html or "renderTheme1PracticeFlow" not in html:
-        errors.append("The focused-week selection, return, or embedded package flow is not wired")
+        errors.append("The focused-week selection or embedded package flow is not wired")
+    if 'id="backToWeeks"' in html or 'function returnToWeekSelection' in html:
+        errors.append("Turkish still has an unnecessary return-to-week-selection control")
+    if '#readerLayout.week-focused>.weeks{display:none}' in html or '#readerLayout.week-focused{grid-template-columns:minmax(250px,305px) minmax(0,1fr)}' not in html or '#readerLayout>.weeks{position:sticky;top:12px' not in html or '@media(max-width:800px){#readerLayout.week-focused{grid-template-columns:minmax(0,1fr)}' not in html:
+        errors.append("The Turkish week navigation must stay visible and sticky on desktop, then stack on mobile")
+    if html.count('https://mebi.eba.gov.tr/student/exam/midterm') != 1 or '<strong>Deneme Sınavları</strong>' not in html or 'aria-hidden="true">⚙</span>' not in html:
+        errors.append("The shared MEBİ mock-exam link or gear-based AI settings panel is missing")
+    if "const EXAM_DATES_BY_WEEK=Object.freeze({9:'10 Kasım 2026'});" not in html or "[9,'9–13 Kas'" not in html or '1. sınav (${examDate})' not in html or 'id="weekExamNotice"' not in html:
+        errors.append("Turkish first-term exam notices must map to the user-provided date inside week nine only")
+    if html.index('id="apiSettings"') > html.index('<section class="hero">'):
+        errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
     for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v="):
@@ -1181,6 +1188,20 @@ def main() -> int:
             errors.append(f"Per-week study tracking or its saved-progress migration is missing: {required}")
     if "--ink:#102238" not in html or "--muted:#46576b" not in html:
         errors.append("The weekly reader text and muted text colors must use the darker contrast palette")
+    if html.count('id="apiSettings"') != 1 or 'body[data-subject="fen"]' not in html or 'body[data-subject="sosyal"]' not in html:
+        errors.append("Shared AI settings and the reusable per-course palette must be defined once at the course-navigation level")
+    style_guide = ROOT / "docs" / "subject-ui-style-guide.md"
+    if not style_guide.is_file() or "Fen Bilimleri" not in style_guide.read_text(encoding="utf-8"):
+        errors.append("The reusable subject UI guide for future courses is missing")
+    social_css = (ROOT / "social-studies.css").read_text(encoding="utf-8") if (ROOT / "social-studies.css").is_file() else ""
+    summary_style = re.search(r"\.social-summary-text\{([^}]+)\}", social_css)
+    reading_style = re.search(r"\.social-reading-text\{([^}]+)\}", social_css)
+    if not summary_style or "background:#fffdf6" not in summary_style.group(1) or "color:#111" not in summary_style.group(1):
+        errors.append("Social Studies topic summaries must use the warm yellow reading surface and dark text")
+    if not reading_style or "background:#fffdf6" not in reading_style.group(1) or "color:#111" not in reading_style.group(1):
+        errors.append("Social Studies source-reading panels must keep the same accessible yellow surface")
+    if ".social-exam-notice" not in social_css or ".social-week-exam" not in social_css:
+        errors.append("Social Studies exam notices need visible red card and week-list treatments")
     app_js = (ROOT / "theme1-practice-app.js").read_text(encoding="utf-8") if (ROOT / "theme1-practice-app.js").is_file() else ""
     practice_css = (ROOT / "theme1-practice.css").read_text(encoding="utf-8") if (ROOT / "theme1-practice.css").is_file() else ""
     if "--practice-ink: #102238" not in practice_css or "--practice-muted: #46576b" not in practice_css:
@@ -1340,7 +1361,7 @@ def main() -> int:
                 )
                 if social_test.returncode:
                     errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
-                elif "Social Studies summaries, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
+                elif "Social Studies summaries, Week 8 exam notice, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
                     errors.append("Social Studies workspace test did not report success")
 
             if not errors:
@@ -1359,7 +1380,7 @@ def main() -> int:
                         )
                     if result.returncode:
                         errors.append(f"Focused-week interaction test failed:\n{result.stderr.strip()}")
-                    elif "Focused-week selection, return control, browser history, Theme 1 practice visibility, and keyboard focus passed." not in result.stdout:
+                    elif "Focused-week selection, persistent sidebar, browser history, Theme 1 practice visibility, and keyboard focus passed." not in result.stdout:
                         errors.append("Focused-week interaction test did not report success")
 
             if not errors:
