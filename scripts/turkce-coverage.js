@@ -45,6 +45,13 @@ const sandbox = {};
 global.window = sandbox;
 // eslint-disable-next-line no-eval
 eval(read('theme1-practice.js'));
+eval(read('theme1-extras.js'));
+const extrasUnits = (sandbox.THEME1_EXTRAS?.units || []).map((unit) => ({
+  weekId: unit.weekId,
+  title: unit.title,
+  span: unit.activities.length,
+  hasWrite: unit.activities.some((activity) => activity.type === 'write'),
+}));
 const practiceUnits = sandbox.THEME1_PRACTICE.units.map((unit) => ({
   weekId: unit.weekId,
   span: unit.groups.reduce((total, group) => total + group.activities.length, 0),
@@ -68,14 +75,15 @@ const rows = weeks.map((week) => {
     quiz: key && quizCounts.has(key) ? `${quizCounts.get(key)} soru` : '—',
     activities: activityCountFor(week.id),
     writing: writingWeeks.has(week.id) ? 'var' : '—',
+    extras: extrasUnits.find((unit) => unit.weekId === week.id)?.span || 0,
   };
 });
 
 const pad = (value, width) => String(value).padEnd(width);
-console.log(`${pad('Hafta', 6)}${pad('Tema', 30)}${pad('Eser', 44)}${pad('Metin', 16)}${pad('Quiz', 9)}${pad('Etkinlik', 9)}Yazma`);
-console.log('-'.repeat(122));
+console.log(`${pad('Hafta', 6)}${pad('Tema', 30)}${pad('Eser', 44)}${pad('Metin', 16)}${pad('Quiz', 9)}${pad('Etkinlik', 9)}${pad('Ek', 5)}Yazma`);
+console.log('-'.repeat(127));
 for (const row of rows) {
-  console.log(`${pad(row.id, 6)}${pad(row.theme, 30)}${pad(row.book.slice(0, 42), 44)}${pad(row.text, 16)}${pad(row.quiz, 9)}${pad(row.activities, 9)}${row.writing}`);
+  console.log(`${pad(row.id, 6)}${pad(row.theme, 30)}${pad(row.book.slice(0, 42), 44)}${pad(row.text, 16)}${pad(row.quiz, 9)}${pad(row.activities, 9)}${pad(row.extras || '—', 5)}${row.writing}`);
 }
 
 const gaps = {
@@ -91,6 +99,9 @@ console.log(`\nMetin: ${rows.filter((row) => row.text !== '—' && row.text !== 
   `Quiz: ${rows.filter((row) => row.quiz !== '—').length}/${rows.length} hafta (${totalQuiz} soru) · ` +
   `Etkinlik: ${rows.filter((row) => row.activities > 0).length}/${rows.length} hafta (${totalActivities} etkinlik) · ` +
   `Yazma görevi: ${rows.filter((row) => row.writing === 'var').length}/${rows.length} hafta`);
+console.log(`Ana metinden sonraki ek okuma: ${extrasUnits.length}/${rows.length} hafta · ` +
+  `${extrasUnits.reduce((total, unit) => total + unit.span, 0)} ek etkinlik · ` +
+  `${extrasUnits.filter((unit) => unit.hasWrite).length} ek yazma görevi.`);
 
 const report = [
   ['Metinsiz (dinleme/izleme dışı) hafta', gaps.text],

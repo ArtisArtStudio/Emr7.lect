@@ -114,15 +114,33 @@ Yani haftada **8–10 etkinlik + 6 soruluk quiz**; 9 eksik hafta için yaklaşı
 | 2 | Hafta 7–8 (Mustafa 1881–1920) seti: 10 etkinlik + quiz | `turkce-tema2` paketi | Adım 1 |
 | 3 | Hafta 9 ve 14 dinleme/izleme paketi: kısa özet + not çizelgesi + 6 soru | dinleme kartı | İçerik dökümü |
 | 4 | Hafta 10–15 (Tema 3) setleri: şiir incelemesi, Eskici, Ya Hayır Söyle, Öğüt | `turkce-tema3` paketi | Adım 1 |
-| 5 | Şiir metinleri: Zafer, Uçun Kuşlar, Ağaç ve Sen | okuma alanına 3 şiir | **Metin sağlanmalı** |
+| 5 | Şiir metinleri: Zafer, Uçun Kuşlar, Ağaç ve Sen | okuma alanına 3 şiir | **Metin sağlanmalı** (Tema 1 için özgün şiir yazıldı) |
 | 6 | Tema 2–3 ölçmesi + 4 öz değerlendirme formu | ölçme kartı | Adım 2–4 |
 | 7 | `turkce-coverage.js --strict` CI'ya bağlanır | eksik hafta kalmadığını garanti eder | Tüm adımlar |
 
 ---
 
-## 6. Karar bekleyen tek konu: şiir metinleri
+## 5b. Uygulanan ilk adım: Tema 1 ek okuma ve etkinlikler
 
-Kanun gereği kitap metinlerini kendimiz yeniden üretemeyiz ve depoda PDF olmadığı için "Zafer", "Uçun Kuşlar" ve "Ağaç ve Sen" metinlerini alamıyoruz. Üç seçenek var:
+Tema 1'in ana metinlerinden **sonra** gösterilen ayrı bir ek bölüm eklendi (`theme1-extras.js`, `theme1-extras-app.js`). Mevcut Tema 1 etkinlik alanı (`theme1-practice.js`, `theme1-practice-app.js`) değiştirilmedi; ek bölüm onun altında ayrı bir kart olarak duruyor.
+
+| Hafta | Tür | Ek metin | Etkinlikler | Beceri odağı |
+| --- | --- | --- | --- | --- |
+| 1 | Kısa hikâye | Yirmi Yedinci Deneme | eşleştirme (4) · seçim (3) · yazma (150 kr) | azim, geri bildirim, metinden kanıt |
+| 3 | Bilgilendirici metin | Bir Dakikanın Defteri | eşleştirme (4) · seçim (3) · yazma (160 kr) | düşünceyi geliştirme yolları, plan |
+| 5 | Şiir (4 kıta) | Yıldız Sayan Çocuk | eşleştirme (4) · seçim (3) · yazma (150 kr) | benzetme, kişileştirme, abartma, konuşturma |
+
+Tasarım kuralları:
+
+- Metinler özgün yazıldı; kitaptaki metin kopyalanmadı ve **öğrenciye dönük metinde kitap/sayfa referansı yok**.
+- Her eşleştirmede 4 kavram + 1 çeldirici bulunur; seçim sorularında doğru şık yönergeye yazılmaz.
+- **Cevap anahtarı gösterilmez.** Geri bildirim `DURUM` · `YOL GÖSTERİCİ` · `İPUCU/ÖLÇÜTLER` başlıklarıyla yol gösterir; yazmada metinden bir örnek işaret edilir ve öğrenci yeniden yazmaya teşvik edilir.
+- Yanıtlar `data[...].extras[activityId]` altında saklanır; mevcut Tema 1 ilerlemesinden ayrıdır.
+- Doğrulama: `node scripts/check-turkce-extras.js` (kapsam, tür dengesi, söz sanatları, cevap sızması ve ana etkinlik alanının değişmediği denetimi).
+
+## 6. Şiir metinleri: alınan karar
+
+Kanun gereği kitap metinlerini kendimiz yeniden üretemeyiz ve depoda PDF olmadığı için "Zafer", "Uçun Kuşlar" ve "Ağaç ve Sen" metinlerini alamıyoruz. Tema 1 için **2. seçenek uygulandı**: söz sanatları çalışmasını karşılayan özgün bir şiir ("Yıldız Sayan Çocuk") yazıldı ve ana metinden sonraki ek bölüme yerleştirildi. Tema 2–3 şiirleri için seçenekler hâlâ açık:
 
 1. **Metinleri siz sağlayın** (PDF sayfaları veya düz metin). En doğru seçenek; kitaptaki metnin aynısı okuma alanına girer, `sport-a07` gerçek metinle çalışır.
 2. **Özgün eşdeğer metin yazalım.** Aynı temada, aynı ölçütlerle incelenebilecek 3 yeni şiir yazarız; etkinlik "kitaptaki şiir" yerine "uygulamadaki şiir" der. İçerik tamamlanır ama kitabın metni olmaz.
@@ -134,7 +152,8 @@ Aynı soru dinleme/izleme içerikleri için de geçerli: Ali Kuşçu ve Yiğit C
 
 ## 7. Özet
 
-- Türkçe alanında **Tema 1** (hafta 1–6) iyi durumda: metin + 43 etkinlik + quiz.
+- Türkçe alanında **Tema 1** (hafta 1–6) iyi durumda: metin + 43 etkinlik + quiz; ayrıca hafta 1, 3 ve 5 için ana metinden sonra gelen **9 ek etkinlik** (3 ek metin, 3 yazma görevi) hazır.
 - **Tema 2 ve Tema 3** (hafta 7–15) büyük ölçüde boş: 9 haftada etkinlik yok, 4 haftada quiz yok, 2 haftada metin bile yok.
 - Kitaptaki **şiir, serbest okuma, kısa metin, tema ölçmesi ve öz değerlendirme** katmanları uygulamada ya yok ya eksik.
 - Öncelik: Tema 2–3 envanteri → haftalık setler → dinleme haftaları → şiir metinleri → ölçme/öz değerlendirme.
+- Tema 1 ek katmanı tamamlandı; aynı düzen (ana metin → mevcut etkinlikler → ek okuma) Tema 2–3 setlerine de uygulanabilir.
