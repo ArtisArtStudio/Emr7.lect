@@ -44,7 +44,7 @@ Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik 
 
 ## Konu bazlı etkinlik seti (ilk iki hafta)
 
-Haftalık özgün uygulamanın yanında, 1. ve 2. hafta için konu başına **on dört** etkinlik içeren ayrı bir set eklendi. Etkinlikler; ders kitabındaki eşleştirme, karşılaştırma tablosu, sınıflandırma, tanım, haber/veri yorumu ve araştırma şablonu biçimlerinin beceri dağılımı incelenerek yazıldı. Ayrıntılı sayfa–etkinlik eşleştirmesi ve tür dağılımı [`science-activity-analysis-weeks-1-2.md`](science-activity-analysis-weeks-1-2.md) içindedir.
+Haftalık özgün uygulamanın yanında, 1.–3. hafta için konu başına **on dört** etkinlik içeren ayrı bir set eklendi. Etkinlikler; ders kitabındaki eşleştirme, karşılaştırma tablosu, sınıflandırma, tanım, haber/veri yorumu ve araştırma şablonu biçimlerinin beceri dağılımı incelenerek yazıldı. Ayrıntılı sayfa–etkinlik eşleştirmesi ve tür dağılımı [`science-activity-analysis-weeks-1-2.md`](science-activity-analysis-weeks-1-2.md) içindedir.
 
 | Hafta | Etkinlik | Tür dağılımı |
 | ---: | ---: | --- |

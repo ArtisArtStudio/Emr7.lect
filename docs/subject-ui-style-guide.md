@@ -52,9 +52,19 @@ Show first-term exam notices only in courses explicitly requested for them. Map 
 
 ## Fen Bilimleri source and content notes
 
-- The current Fen area follows the user's four-part **MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap (2026)**. Its three units are mapped to the existing 37 school-calendar weeks as 12 / 7 / 18 weeks; this is a suggested home-study sequence, not an official weekly pacing document. The book/topic/page map is in `docs/science-week-topic-map.md`.
+- The current Fen area follows the user's four-part **MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap (2026)**. Its three units are mapped to the 15 teaching weeks of the first term (14 Eylül – 1 Ocak) as 5 / 3 / 7 weeks; this is a suggested home-study sequence, not an official weekly pacing document. The book/topic/page map is in `docs/science-week-topic-map.md`.
 - Original science activities are mapped to the book's observed formats (models, comparisons, observations, reports, posters, concept maps, and self-checks) in `docs/science-activity-inventory.md`. Do not copy the book's wording, questions, or figures; its copyright page restricts reproducing these. Use the original AI-assisted wide illustrations and separately rendered concept routes in `science.js`; do not embed textbook page art.
 - Health topics are for school science study, not diagnosis or individualized treatment. Keep health suggestions general, evidence-aware, and directed to a trusted adult/health professional when personal advice is needed.
+
+## Shared activity-area layout
+
+Fen Bilimleri, Sosyal Bilgiler and Türkçe use one activity-area language so a student learns the interface once:
+
+- Section tag `ETKİNLİK SETİ`, heading `Konu etkinlikleri: <hafta konusu>`, a one-sentence note, then a counter row `X / Y etkinlik tamamlandı` with a second counter (`N bölüm · M etkinlik` in Fen; `N etkinlik` in the others) and a progress bar (`aria-valuemin="0"`, `aria-valuemax="100"`).
+- Every activity opens with the kicker `ETKİNLİK n / N`, its title, the format/skill chips (`format`, `count`, `skill`), and the state badge (`Doğru`, `Kısmen doğru`, `Yeniden bak`, `Değerlendirilemedi`, `Eksik`).
+- The action row is `✦ Kontrol et` plus `Yanıt otomatik kaydedilir.`; the helper line says the answer is evaluated with the shared Groq settings and that the correct answer is never shown.
+- Feedback appears in one live-status box; written-answer feedback carries the `🔊 Geri bildirimi sesli oku` / `Durdur` pair. Reading is limited to written-answer feedback — never the topic text, the answer key or the whole page.
+- No activity area cites the textbook or a page number (`Kitap bağlamı`, `Ders kitabı: s. N` and similar strings must not appear).
 
 ## Adding a future course
 

@@ -1149,6 +1149,7 @@
 
   function renderPracticeActivity(activity, entry, weekId, groupTitle) {
     const meta = PRACTICE_ACTIVITY_META[activity.type] || PRACTICE_ACTIVITY_META.text;
+    const activityTotal = (ACTIVITY_DATA.weeks?.[weekId]?.groups || []).reduce((total, group) => total + (group.activities?.length || 0), 0);
     const done = activityDone(activity, entry);
     const assessment = entry.assessment || null;
     const state = assessment?.state || '';
@@ -1174,7 +1175,7 @@
       <details>
         <summary class="science-activity-summary-row">
           <span class="science-activity-icon" aria-hidden="true">${meta.icon}</span>
-          <span class="science-activity-heading"><small>${escapeHTML(groupTitle)} · Etkinlik ${escapeHTML(activity.no)}</small><strong>${escapeHTML(activity.title)}</strong><span class="science-activity-chips"><b>${escapeHTML(activity.format)}</b><b>${escapeHTML(activity.count)}</b><b>${escapeHTML(activity.skill)}</b></span></span>
+          <span class="science-activity-heading"><small>ETKİNLİK ${escapeHTML(activity.no)} / ${escapeHTML(String(activityTotal))} · ${escapeHTML(groupTitle)}</small><strong>${escapeHTML(activity.title)}</strong><span class="science-activity-chips"><b>${escapeHTML(activity.format)}</b><b>${escapeHTML(activity.count)}</b><b>${escapeHTML(activity.skill)}</b></span></span>
           <span class="science-activity-pill" id="science-pill-${activity.id}" data-state="${state || 'none'}"${label ? '' : ' hidden'}>${escapeHTML(label)}</span>
           <span class="science-activity-state${done ? ' is-done' : ''}" id="science-state-${activity.id}" aria-label="${done ? 'Tamamlandı' : 'Tamamlanmadı'}">${done ? '✓' : ''}</span>
         </summary>
