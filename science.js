@@ -279,6 +279,7 @@
         aiFeedback: feedback && AI_STATES.has(feedback.state) && typeof feedback.text === 'string'
           ? { state: feedback.state, text: feedback.text.slice(0, 3000), checkedAt: typeof feedback.checkedAt === 'string' ? feedback.checkedAt.slice(0, 40) : '' }
           : null,
+        activities: normalizeActivities(raw.activities),
       };
     }
     return normalized;
@@ -415,6 +416,320 @@
     return item.focus || '';
   }
 
+
+  /* ---------------------------------------------------------------------------
+     Konu bazlı etkinlik seti. İlk iki haftanın etkinlikleri science-activities.js
+     içinde tanımlıdır: eşleştirme, boşluk doldurma, doğru-yanlış, süreç sıralama,
+     sürükle-bırak sınıflandırma, çoktan seçmeli ve kısa metin yazma.
+     --------------------------------------------------------------------------- */
+  const ACTIVITY_DATA = window.SCIENCE_ACTIVITIES || { weeks: {} };
+  const EXAM_DATES_BY_WEEK = Object.freeze({ 8: '3 Kasım 2026' });
+  const PRACTICE_FOLD = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
+
+  function normalizePracticeValue(value) {
+    return String(value ?? '')
+      .toLocaleLowerCase('tr')
+      .normalize('NFC')
+      .replace(/\u0307/g, '')
+      .replace(/[çğıöşü]/g, (letter) => PRACTICE_FOLD[letter])
+      .replace(/[.,;:!?()"'’]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function normalizeActivities(raw) {
+    const out = {};
+    if (!isRecord(raw)) return out;
+    for (const [id, entry] of Object.entries(raw)) {
+      if (!/^[a-z0-9]+-a\d+$/.test(id) || !isRecord(entry)) continue;
+      const values = isRecord(entry.values)
+        ? Object.fromEntries(Object.entries(entry.values)
+          .filter(([key, value]) => /^(m|s|b|o|c|t|x)[:a-z0-9]*$/i.test(key) && typeof value === 'string')
+          .map(([key, value]) => [key, value.slice(0, 5000)]))
+        : {};
+      out[id] = { values, checked: entry.checked === true };
+    }
+    return out;
+  }
+
+  function activityGroups(item) {
+    const data = ACTIVITY_DATA.weeks?.[item?.id];
+    return data && Array.isArray(data.groups) ? data.groups : [];
+  }
+
+  function activityList(item) {
+    return activityGroups(item).flatMap((group) => group.activities || []);
+  }
+
+  function practiceEntry(saved, activityId, create = false) {
+    if (!saved) return { values: {} };
+    if (!isRecord(saved.activities)) {
+      if (!create) return { values: {} };
+      saved.activities = {};
+    }
+    if (!isRecord(saved.activities[activityId])) {
+      if (!create) return { values: {} };
+      saved.activities[activityId] = { values: {}, checked: false };
+    }
+    const entry = saved.activities[activityId];
+    if (!isRecord(entry.values)) entry.values = {};
+    return entry;
+  }
+
+  function evaluateActivity(activity, values = {}) {
+    const wrong = [];
+    const note = (label) => { if (wrong.length < 6) wrong.push(label); };
+    if (activity.type === 'text') {
+      const length = String(values.x || '').trim().length;
+      const enough = length >= activity.minChars;
+      return { total: 1, correct: enough ? 1 : 0, wrong: enough ? [] : [`Yanıtın ${length}/${activity.minChars} karakter`], text: true, length };
+    }
+    if (activity.type === 'fill') {
+      let correct = 0;
+      activity.blanks.forEach((blank, index) => {
+        const value = normalizePracticeValue(values[`b:${index}`]);
+        if (value && blank.answers.some((answer) => normalizePracticeValue(answer) === value)) correct += 1;
+        else note(`${index + 1}. boşluk`);
+      });
+      return { total: activity.blanks.length, correct, wrong };
+    }
+    const list = activity.items || activity.questions || activity.statements || [];
+    let correct = 0;
+    list.forEach((item, index) => {
+      let ok = false;
+      if (activity.type === 'match') ok = values[`m:${item.id}`] === activity.answers[item.id];
+      else if (activity.type === 'sort') ok = values[`s:${item.id}`] === item.answer;
+      else if (activity.type === 'order') ok = values[`o:${item.id}`] === String(index + 1);
+      else if (activity.type === 'tf') ok = values[`t:${item.id}`] === (item.answer ? 'D' : 'Y');
+      else if (activity.type === 'choice') ok = values[`c:${item.id}`] === String(item.answer);
+      if (ok) correct += 1;
+      else note(activity.type === 'tf' ? item.text : activity.type === 'choice' ? `${index + 1}. soru` : item.label);
+    });
+    return { total: list.length, correct, wrong };
+  }
+
+  function activityDone(activity, entry) {
+    if (!entry) return false;
+    const result = evaluateActivity(activity, entry.values || {});
+    return result.total > 0 && result.correct === result.total;
+  }
+
+  function practiceSummary(item) {
+    const saved = progress.weeks[String(item.id)];
+    const activities = activityList(item);
+    const done = activities.filter((activity) => activityDone(activity, saved?.activities?.[activity.id])).length;
+    return { activities, done, total: activities.length };
+  }
+
+  function practiceFeedbackText(activity, result) {
+    if (result.text) {
+      if (result.correct === result.total) {
+        return `<b>Yanıtın yeterli uzunlukta.</b> ${result.length} karakter yazdın (en az ${activity.minChars}). Şimdi ölçütleri yeniden okuyup somut bir örnek ekleyerek güçlendir.`;
+      }
+      return `<b>Yanıtını genişlet.</b> ${result.length}/${activity.minChars} karakter. Ölçütlerden birini seç ve somut bir örnek ekle.`;
+    }
+    if (result.correct === result.total) {
+      return `<b>Hepsi doğru.</b> ${result.correct}/${result.total} · Yanıtların ölçütlerle örtüşüyor.`;
+    }
+    const list = result.wrong.length
+      ? `<ul>${result.wrong.slice(0, 4).map((label) => `<li>${escapeHTML(label)}</li>`).join('')}</ul>`
+      : '';
+    return `<b>Yeniden bak.</b> ${result.correct}/${result.total} doğru. Doğru yanıtı doğrudan söylemiyorum; şu bölümleri yeniden incele:${list}`;
+  }
+
+  function renderMatch(activity, entry) {
+    const options = activity.options.map((option) => `<option value="${escapeHTML(option.id)}">${escapeHTML(option.label)}</option>`).join('');
+    return `<div class="science-practice-match">${activity.items.map((item) => {
+      const id = `practice-${activity.id}-m-${item.id}`;
+      const value = entry.values[`m:${item.id}`] || '';
+      return `<div class="science-match-row"><label for="${id}">${escapeHTML(item.label)}</label><select id="${id}" data-practice-select="${activity.id}" data-practice-key="m:${item.id}"><option value="">Seç…</option>${options}</select></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderFill(activity, entry) {
+    const tokens = String(activity.text).split(/\{\{(\d+)\}\}/);
+    const body = tokens.map((token, index) => {
+      if (index % 2 === 0) return escapeHTML(token);
+      const number = Number(token);
+      const id = `practice-${activity.id}-b-${number}`;
+      const value = entry.values[`b:${number - 1}`] || '';
+      return `<span class="science-fill-blank"><label class="visually-hidden" for="${id}">${number}. boşluk</label><input id="${id}" type="text" inputmode="text" autocomplete="off" spellcheck="false" data-practice-input="${activity.id}" data-practice-key="b:${number - 1}" placeholder="${escapeHTML(activity.blanks[number - 1]?.hint || '')}" value="${escapeHTML(value)}"><span class="science-fill-index" aria-hidden="true">${number}</span></span>`;
+    }).join('');
+    return `<p class="science-practice-fill">${body}</p>`;
+  }
+
+  function renderSort(activity, entry) {
+    const placed = new Map(Object.entries(entry.values)
+      .filter(([key, value]) => key.startsWith('s:') && value)
+      .map(([key, value]) => [key.slice(2), value]));
+    const card = (item) => `<button type="button" class="science-sort-card" draggable="true" data-practice-card="${activity.id}:${item.id}" aria-pressed="false">${escapeHTML(item.label)}</button>`;
+    const inZone = (zoneId) => activity.items.filter((item) => (placed.get(item.id) || 'bank') === zoneId);
+    const zone = (zoneId, label, description) => {
+      const cards = inZone(zoneId);
+      return `<section class="science-sort-zone" data-practice-zone="${activity.id}:${zoneId}" tabindex="0" role="group" aria-label="${escapeHTML(label)}"><h5>${escapeHTML(label)}</h5>${description ? `<p class="science-sort-hint">${escapeHTML(description)}</p>` : ''}<div class="science-sort-cards">${cards.length ? cards.map(card).join('') : '<span class="science-sort-empty">Kartı buraya bırak</span>'}</div></section>`;
+    };
+    const assignedCount = placed.size;
+    return `<div class="science-practice-sort"><div class="science-sort-bank-wrap">${zone('bank', 'Kartlar', 'Taşınacak kartlar burada bekler.')}</div><div class="science-sort-zones">${activity.categories.map((category) => zone(category.id, category.label, category.description)).join('')}</div><p class="science-sort-status" id="science-sort-status-${activity.id}" role="status" aria-live="polite">${assignedCount} / ${activity.items.length} kart yerleştirildi</p></div>`;
+  }
+
+  function renderOrder(activity, entry) {
+    const numbers = Array.from({ length: activity.items.length }, (_, index) => `<option value="${index + 1}">${index + 1}</option>`).join('');
+    return `<div class="science-practice-order">${activity.items.map((item) => {
+      const id = `practice-${activity.id}-o-${item.id}`;
+      const value = entry.values[`o:${item.id}`] || '';
+      return `<div class="science-order-row"><label for="${id}">${escapeHTML(item.label)}</label><select id="${id}" data-practice-order="${activity.id}" data-practice-key="o:${item.id}"><option value="">–</option>${numbers}</select></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderRadioGroup(activity, key, choices, value) {
+    return choices.map((choice) => `<label class="science-practice-radio"><input type="radio" name="practice-${activity.id}-${key}" value="${escapeHTML(choice.value)}" data-practice-radio="${activity.id}" data-practice-key="${escapeHTML(key)}"${value === choice.value ? ' checked' : ''}><span>${escapeHTML(choice.label)}</span></label>`).join('');
+  }
+
+  function renderTrueFalse(activity, entry) {
+    return `<div class="science-practice-tf">${activity.statements.map((statement) => `<fieldset class="science-tf-row"><legend>${escapeHTML(statement.text)}</legend><div class="science-tf-choices">${renderRadioGroup(activity, `t:${statement.id}`, [{ value: 'D', label: 'Doğru' }, { value: 'Y', label: 'Yanlış' }], entry.values[`t:${statement.id}`] || '')}</div></fieldset>`).join('')}</div>`;
+  }
+
+  function renderChoice(activity, entry) {
+    return `<div class="science-practice-choice">${activity.questions.map((question, index) => `<fieldset class="science-choice-row"><legend><span class="science-choice-no">${index + 1}</span> ${escapeHTML(question.prompt)}</legend><div class="science-choice-options">${renderRadioGroup(activity, `c:${question.id}`, question.options.map((option, optionIndex) => ({ value: String(optionIndex), label: option })), entry.values[`c:${question.id}`] || '')}</div></fieldset>`).join('')}</div>`;
+  }
+
+  function renderTextAnswer(activity, entry) {
+    return `<textarea class="science-response science-practice-text" rows="6" maxlength="5000" data-practice-text="${activity.id}" data-practice-key="x" placeholder="${escapeHTML(activity.placeholder || 'Yanıtını yaz…')}">${escapeHTML(entry.values.x || '')}</textarea>`;
+  }
+
+  function renderPracticeActivity(activity, entry, weekId) {
+    const result = evaluateActivity(activity, entry.values);
+    const done = result.total > 0 && result.correct === result.total;
+    const criteria = Array.isArray(activity.criteria)
+      ? `<ul class="science-criteria">${activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>`
+      : '';
+    const source = activity.sourceText ? `<blockquote class="science-activity-source">${escapeHTML(activity.sourceText)}</blockquote>` : '';
+    let body = '';
+    if (activity.type === 'match') body = renderMatch(activity, entry);
+    else if (activity.type === 'fill') body = renderFill(activity, entry);
+    else if (activity.type === 'sort') body = renderSort(activity, entry);
+    else if (activity.type === 'order') body = renderOrder(activity, entry);
+    else if (activity.type === 'tf') body = renderTrueFalse(activity, entry);
+    else if (activity.type === 'choice') body = renderChoice(activity, entry);
+    else if (activity.type === 'text') body = renderTextAnswer(activity, entry);
+    const feedback = entry.checked ? practiceFeedbackText(activity, result) : '';
+    return `<details class="science-activity" id="science-activity-${activity.id}" data-practice-week="${weekId}">
+      <summary><span class="science-activity-no" aria-hidden="true">${escapeHTML(activity.no)}</span><span class="science-activity-summary"><strong>${escapeHTML(activity.title)}</strong><small>${escapeHTML(activity.format)} · ${escapeHTML(activity.count)}</small></span><span class="science-activity-state${done ? ' is-done' : ''}" id="science-activity-state-${activity.id}" aria-label="${done ? 'Tamamlandı' : 'Tamamlanmadı'}">${done ? '✓' : ''}</span></summary>
+      <div class="science-activity-body">
+        <p class="science-activity-instruction">${escapeHTML(activity.instruction)}</p>
+        ${source}${body}${criteria}
+        <div class="science-activity-actions"><button type="button" class="science-check-button" data-practice-check="${activity.id}">Kontrol et</button><span class="science-activity-skill">${escapeHTML(activity.skill)}</span></div>
+        <div class="science-practice-feedback${entry.checked ? ` is-checked${done ? ' is-correct' : ''}` : ''}" id="science-practice-feedback-${activity.id}" role="status" aria-live="polite">${feedback}</div>
+      </div>
+    </details>`;
+  }
+
+  function renderPracticeSet(item, saved) {
+    const groups = activityGroups(item);
+    if (!groups.length) return '';
+    const data = ACTIVITY_DATA.weeks[item.id];
+    const summary = practiceSummary(item);
+    return `<section class="card science-activity-set" aria-labelledby="scienceActivitySetTitle-${item.id}">
+      <div class="science-section-heading"><div class="tag">ETKİNLİK SETİ</div><h3 id="scienceActivitySetTitle-${item.id}">Konu etkinlikleri: ${escapeHTML(data.topic)}</h3><p>${escapeHTML(data.note)}</p><p class="science-practice-progress" id="science-practice-progress-${item.id}" role="status" aria-live="polite">${summary.done} / ${summary.total} etkinlik tamamlandı</p></div>
+      ${groups.map((group) => `<div class="science-activity-group"><h4>${escapeHTML(group.title)}</h4>${group.activities.map((activity) => renderPracticeActivity(activity, practiceEntry(saved, activity.id), item.id)).join('')}</div>`).join('')}
+    </section>`;
+  }
+
+  function practiceWeekFor(activityId) {
+    return WEEKS.find((week) => activityList(week).some((activity) => activity.id === activityId)) || null;
+  }
+
+  function refreshPracticeProgress(weekId) {
+    const item = WEEK_BY_ID.get(Number(weekId));
+    if (!item) return;
+    const summary = practiceSummary(item);
+    const node = document.getElementById(`science-practice-progress-${item.id}`);
+    if (node) node.textContent = `${summary.done} / ${summary.total} etkinlik tamamlandı`;
+  }
+
+  function refreshPracticeState(activityId, activity) {
+    const entry = practiceEntry(ensureWeekProgress(practiceWeekFor(activityId)?.id), activityId);
+    const done = activityDone(activity, entry);
+    const state = document.getElementById(`science-activity-state-${activityId}`);
+    if (state) {
+      state.textContent = done ? '✓' : '';
+      state.classList.toggle('is-done', done);
+      state.setAttribute('aria-label', done ? 'Tamamlandı' : 'Tamamlanmadı');
+    }
+  }
+
+  function checkPractice(activityId) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const activity = activityList(week).find((entry) => entry.id === activityId);
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    const result = evaluateActivity(activity, entry.values);
+    entry.checked = true;
+    persist();
+    const feedback = document.getElementById(`science-practice-feedback-${activityId}`);
+    if (feedback) {
+      feedback.innerHTML = practiceFeedbackText(activity, result);
+      feedback.classList.add('is-checked');
+      feedback.classList.toggle('is-correct', result.total > 0 && result.correct === result.total);
+    }
+    refreshPracticeState(activityId, activity);
+    refreshPracticeProgress(week.id);
+  }
+
+  function setPracticeValue(activityId, key, value) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    const next = String(value ?? '').slice(0, 5000);
+    if (entry.values[key] === next) return;
+    entry.values[key] = next;
+    entry.checked = false;
+    persist();
+    const feedback = document.getElementById(`science-practice-feedback-${activityId}`);
+    if (feedback) {
+      feedback.textContent = '';
+      feedback.classList.remove('is-checked', 'is-correct');
+    }
+    refreshPracticeState(activityId, activityList(week).find((activity) => activity.id === activityId));
+    refreshPracticeProgress(week.id);
+  }
+
+  function movePracticeCard(activityId, itemId, zoneId) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    entry.values[`s:${itemId}`] = zoneId === 'bank' ? '' : zoneId;
+    entry.checked = false;
+    persist();
+    const root = document.getElementById('scienceWorkspace');
+    const zone = root?.querySelector?.(`[data-practice-zone="${activityId}:${zoneId}"]`);
+    const cards = zone?.querySelector?.('.science-sort-cards');
+    const card = root?.querySelector?.(`[data-practice-card="${activityId}:${itemId}"]`);
+    if (cards && card) {
+      cards.querySelector('.science-sort-empty')?.remove();
+      cards.append(card);
+      card.classList.remove('is-picked');
+      card.setAttribute('aria-pressed', 'false');
+      root.querySelectorAll?.(`[data-practice-zone^="${activityId}:"]`).forEach((other) => {
+        const container = other.querySelector('.science-sort-cards');
+        if (container && !container.querySelector('[data-practice-card]')) {
+          container.innerHTML = '<span class="science-sort-empty">Kartı buraya bırak</span>';
+        }
+      });
+    }
+    const status = document.getElementById(`science-sort-status-${activityId}`);
+    const activity = activityList(week).find((entryItem) => entryItem.id === activityId);
+    if (status) {
+      const placed = Object.entries(entry.values).filter(([entryKey, entryValue]) => entryKey.startsWith('s:') && entryValue).length;
+      status.textContent = `${placed} / ${activity.items.length} kart yerleştirildi`;
+    }
+    refreshPracticeState(activityId, activity);
+    refreshPracticeProgress(week.id);
+  }
+
   // Kavramlar konu anlatımının hemen ardından tek bir yatay şeritte akar; her kart o kavramı
   // anlatan cümlenin kendisine bağlanır, böylece ayrı bir sözlük bloğu oluşmaz.
   function renderConceptFlow(item) {
@@ -447,7 +762,7 @@
           const complete = isWeekComplete(item);
           const statusText = complete ? 'Tamamlandı' : selected ? 'Seçili' : 'Aç';
           return `<button type="button" class="science-week-button${selected ? ' is-current' : ''}${complete ? ' is-complete' : ''}" id="science-week-button-${item.id}" data-science-week-select="${item.id}"${selected ? ' aria-current="step"' : ''}>
-            <span class="science-week-no">${item.id}</span><span class="science-week-meta"><span class="science-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="science-week-topic">${escapeHTML(item.topic)}</span></span><span class="science-week-status" id="science-week-status-${item.id}" aria-label="${statusText}">${complete ? '✓' : ''}</span>
+            <span class="science-week-no">${item.id}</span><span class="science-week-meta"><span class="science-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="science-week-topic">${escapeHTML(item.topic)}</span>${EXAM_DATES_BY_WEEK[item.id] ? `<span class="science-week-exam">1. sınav (${escapeHTML(EXAM_DATES_BY_WEEK[item.id])})</span>` : ''}</span><span class="science-week-status" id="science-week-status-${item.id}" aria-label="${statusText}">${complete ? '✓' : ''}</span>
           </button>`;
         }).join('')}</div>
       </details>`;
@@ -504,7 +819,7 @@
     const source = `MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap (2026), ${unit.number}. Ünite “${unit.title}”, s. ${item.pages}.`;
     content.innerHTML = `
       <header class="card science-week-heading">
-        <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p><h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Ders kitabı: s. ${escapeHTML(item.pages)}</span></div>
+        <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p>${EXAM_DATES_BY_WEEK[item.id] ? `<aside class="science-exam-notice" role="note" aria-label="Birinci sınav tarihi"><span>1. sınav</span><strong>${escapeHTML(EXAM_DATES_BY_WEEK[item.id])}</strong></aside>` : ''}<h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Ders kitabı: s. ${escapeHTML(item.pages)}</span></div>
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
       ${renderVisual(item)}
@@ -512,6 +827,7 @@
       ${renderConceptFlow(item)}
       ${renderResearchBrief(item.researchBrief)}
       <section class="card science-practice-card" aria-labelledby="sciencePracticeTitle"><div class="science-section-heading"><div class="tag">ETKİNLİKLER</div><h3 id="sciencePracticeTitle">Öğrendiklerimi deniyorum</h3><p>Önce kısa soruyu yanıtla; sonra özgün uygulamayı tamamla. Seçimli sorular yerel olarak kontrol edilir.</p></div>${renderQuiz(item, saved)}${renderActivity(item, saved)}</section>
+      ${renderPracticeSet(item, saved)}
       <div class="science-grid-two"><section class="card science-mini-plan"><h3>Öğrenci için mini plan</h3><p>Üç görevi tamamladıkça işaretle. Yanıtlar bu tarayıcıda ayrı Fen Bilimleri alanında saklanır.</p><div class="science-task-list">${item.tasks.map((task, index) => `<label class="science-task"><input type="checkbox" data-science-task="${index}" data-science-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section><section class="card science-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(source)}</small></section></div>
       <section class="card science-schedule" aria-labelledby="scienceScheduleTitle"><div class="science-section-heading"><h3 id="scienceScheduleTitle">Haftalık çalışma çizelgesi</h3><p>Uygulamadaki görevler ve etkinlik tamamlanınca ilk durum otomatik işaretlenir; dış kaynak çalışmalarını bitirince ilgili kutuyu sen işaretle.</p></div><div class="science-table-wrap"><table class="science-study-table"><caption class="visually-hidden">${item.id}. hafta Fen Bilimleri çalışma çizelgesi</caption><thead><tr><th scope="col">Uygulamadaki çalışmalar</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>
         <td><label class="science-provider-check"><input type="checkbox" data-science-our="${item.id}" disabled ${complete ? 'checked' : ''}><span>Mini plan ve iki etkinlik</span></label><span class="science-auto-status${complete ? ' is-done' : ''}" id="science-our-status-${item.id}" role="status" aria-live="polite">${complete ? 'Tamamlandı · otomatik' : 'Görevleri ve etkinliği tamamla.'}</span></td>
@@ -706,9 +1022,31 @@
     if (!root || root.dataset.scienceBound === 'true') return;
     root.dataset.scienceBound = 'true';
     root.addEventListener('click', (event) => {
-      const target = event.target?.closest?.('[data-science-week-select], [data-science-quiz-check], [data-science-ai-check], [data-science-reset], [data-science-print]');
+      const practiceCard = event.target?.closest?.('[data-practice-card]');
+      const practiceZone = event.target?.closest?.('[data-practice-zone]');
+      if (practiceCard) {
+        const [activityId, itemId] = String(practiceCard.dataset.practiceCard).split(':');
+        const picked = practiceCard.getAttribute('aria-pressed') === 'true';
+        root.dataset.practicePicked = picked ? '' : `${activityId}:${itemId}`;
+        root.querySelectorAll?.('[data-practice-card]').forEach((card) => {
+          if (card === practiceCard) card.setAttribute('aria-pressed', String(!picked));
+          else card.setAttribute('aria-pressed', 'false');
+        });
+        practiceCard.classList.toggle?.('is-picked', !picked);
+        return;
+      }
+      if (practiceZone && root.dataset.practicePicked) {
+        const [activityId, itemId] = root.dataset.practicePicked.split(':');
+        const zoneId = String(practiceZone.dataset.practiceZone).split(':')[1];
+        root.dataset.practicePicked = '';
+        movePracticeCard(activityId, itemId, zoneId);
+        return;
+      }
+      const target = event.target?.closest?.('[data-science-week-select], [data-science-quiz-check], [data-science-ai-check], [data-science-reset], [data-science-print], [data-practice-check]');
       if (!target) return;
-      if (target.dataset.scienceWeekSelect) {
+      if (target.dataset.practiceCheck) {
+        checkPractice(target.dataset.practiceCheck);
+      } else if (target.dataset.scienceWeekSelect) {
         const weekId = Number(target.dataset.scienceWeekSelect);
         if (!WEEK_BY_ID.has(weekId)) return;
         progress.selectedWeek = weekId;
@@ -729,6 +1067,14 @@
     root.addEventListener('change', (event) => {
       const input = event.target;
       if (!input) return;
+      if (input.dataset.practiceSelect !== undefined || input.dataset.practiceOrder !== undefined) {
+        setPracticeValue(input.dataset.practiceSelect || input.dataset.practiceOrder, input.dataset.practiceKey, input.value);
+        return;
+      }
+      if (input.dataset.practiceRadio !== undefined) {
+        setPracticeValue(input.dataset.practiceRadio, input.dataset.practiceKey, input.value);
+        return;
+      }
       if (input.dataset.scienceQuizAnswer !== undefined) {
         const saved = ensureWeekProgress(input.dataset.scienceQuizAnswer);
         if (!saved) return;
@@ -753,8 +1099,55 @@
         refreshProgressUI();
       }
     });
+    root.addEventListener('dragstart', (event) => {
+      const card = event.target?.closest?.('[data-practice-card]');
+      if (!card) return;
+      root.dataset.practiceDrag = card.dataset.practiceCard;
+      card.classList.add('is-dragging');
+      event.dataTransfer?.setData?.('text/plain', card.dataset.practiceCard);
+    });
+    root.addEventListener('dragend', (event) => {
+      event.target?.closest?.('[data-practice-card]')?.classList.remove('is-dragging');
+      root.querySelectorAll?.('[data-practice-zone]').forEach((zone) => zone.classList.remove('is-over'));
+    });
+    root.addEventListener('dragover', (event) => {
+      const zone = event.target?.closest?.('[data-practice-zone]');
+      if (!zone) return;
+      event.preventDefault();
+      zone.classList.add('is-over');
+    });
+    root.addEventListener('dragleave', (event) => {
+      event.target?.closest?.('[data-practice-zone]')?.classList.remove('is-over');
+    });
+    root.addEventListener('drop', (event) => {
+      const zone = event.target?.closest?.('[data-practice-zone]');
+      const dragged = root.dataset.practiceDrag;
+      if (!zone || !dragged) return;
+      event.preventDefault();
+      zone.classList.remove('is-over');
+      const [activityId, itemId] = dragged.split(':');
+      root.dataset.practiceDrag = '';
+      movePracticeCard(activityId, itemId, String(zone.dataset.practiceZone).split(':')[1]);
+    });
+    root.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const zone = event.target?.closest?.('[data-practice-zone]');
+      if (!zone || !root.dataset.practicePicked) return;
+      event.preventDefault();
+      const [activityId, itemId] = root.dataset.practicePicked.split(':');
+      root.dataset.practicePicked = '';
+      movePracticeCard(activityId, itemId, String(zone.dataset.practiceZone).split(':')[1]);
+    });
     root.addEventListener('input', (event) => {
       const input = event.target;
+      if (input?.dataset?.practiceInput !== undefined) {
+        setPracticeValue(input.dataset.practiceInput, input.dataset.practiceKey, input.value);
+        return;
+      }
+      if (input?.dataset?.practiceText !== undefined) {
+        setPracticeValue(input.dataset.practiceText, 'x', input.value);
+        return;
+      }
       if (input?.dataset?.scienceActivityAnswer === undefined) return;
       const saved = ensureWeekProgress(input.dataset.scienceActivityAnswer);
       if (!saved) return;
@@ -791,6 +1184,21 @@
     render();
   }
 
+  // Yazdırma sırasında kapalı etkinlikler de kâğıda aktarılsın.
+  if (typeof window.addEventListener === 'function') {
+    window.addEventListener('beforeprint', () => {
+      const nodes = document.querySelectorAll?.('details.science-activity') || [];
+      window.__scienceClosedActivities = [];
+      nodes.forEach((node) => {
+        if (!node.open) { window.__scienceClosedActivities.push(node); node.open = true; }
+      });
+    });
+    window.addEventListener('afterprint', () => {
+      (window.__scienceClosedActivities || []).forEach((node) => { node.open = false; });
+      window.__scienceClosedActivities = [];
+    });
+  }
+
   window.SCIENCE = {
     weeks: WEEKS,
     units: UNITS,
@@ -806,5 +1214,8 @@
     safeScienceAssessment,
     safeScienceFeedbackText,
     runAICheck: runScienceAICheck,
+    activitiesFor: (weekId) => activityList(WEEK_BY_ID.get(Number(weekId)) || {}),
+    practiceSummaryFor: (weekId) => practiceSummary(WEEK_BY_ID.get(Number(weekId)) || {}),
+    examDateFor: (weekId) => EXAM_DATES_BY_WEEK[Number(weekId)] || '',
   };
 })();

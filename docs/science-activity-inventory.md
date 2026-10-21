@@ -4,8 +4,8 @@ Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik 
 
 | Hafta | Kitap konusu / başvuru | Uygulamadaki özgün etkinlik | Etkinlik biçimi |
 | ---: | --- | --- | --- |
-| 1 | 1. Ünite · Uzay Çağı · s. 14–15 · Uzay araştırmalarına giriş ve gözlem soruları | Bir uzay gözlemi planla | Araştırma sorusu ve gözlem çizelgesi |
-| 2 | 1. Ünite · Uzay Çağı · s. 15–23 · Türkiye’nin uzay çalışmaları ve uydular | Uydu görev kartları | Örnek olay sınıflandırma |
+| 1 | 1. Ünite · Uzay Çağı · s. 14–15 · Uzay araştırmalarına giriş ve gözlem soruları | Bir uzay gözlemi planla · **ayrıca 14 etkinliklik konu seti** | Araştırma sorusu ve gözlem çizelgesi · eşleştirme, boşluk doldurma, sınıflandırma, sıralama, doğru–yanlış, çoktan seçmeli, metin yazma |
+| 2 | 1. Ünite · Uzay Çağı · s. 15–23 · Türkiye’nin uzay çalışmaları ve uydular | Uydu görev kartları · **ayrıca 14 etkinliklik konu seti** | Örnek olay sınıflandırma |
 | 3 | 1. Ünite · Uzay Çağı · s. 16–23 · Uzay araçları ve gözlem teknolojileri | Görev için doğru aracı seç | Tasarım kararı ve gerekçe |
 | 4 | 1. Ünite · Uzay Çağı · s. 23–25 · Teleskoplar, gözlem yerleri ve gökyüzü gözlemi | Gözlem yeri karşılaştırması | Kanıt tablosu |
 | 5 | 1. Ünite · Uzay Çağı · s. 24–30 · Uzay teknolojilerinin günlük yaşama katkıları | Teknoloji aktarım zinciri | Neden–sonuç şeması |
@@ -41,6 +41,19 @@ Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik 
 | 35 | 3. Ünite · Vücudumuzdaki Sistemler · s. 89–139 · Vücudumuzdaki sistemlerin birlikte çalışması | Bir hücrenin madde yolculuğu | Sistemler arası kavram haritası |
 | 36 | 3. Ünite · Vücudumuzdaki Sistemler · s. 140–148 · Vücudumuzdaki sistemler: bilim insanları ve sentez | Bilim insanı için kaynak kartı | Kısa araştırma özeti |
 | 37 | 3. Ünite · Vücudumuzdaki Sistemler · s. 141–148 · Yıl sonu: sistemler, modeller ve öz değerlendirme | Fen öğrenme portföyü | Üç üniteli öz değerlendirme |
+
+## Konu bazlı etkinlik seti (ilk iki hafta)
+
+Haftalık özgün uygulamanın yanında, 1. ve 2. hafta için konu başına **on dört** etkinlik içeren ayrı bir set eklendi. Etkinlikler; ders kitabındaki eşleştirme, karşılaştırma tablosu, sınıflandırma, tanım, haber/veri yorumu ve araştırma şablonu biçimlerinin beceri dağılımı incelenerek yazıldı. Ayrıntılı sayfa–etkinlik eşleştirmesi ve tür dağılımı [`science-activity-analysis-weeks-1-2.md`](science-activity-analysis-weeks-1-2.md) içindedir.
+
+| Hafta | Etkinlik | Tür dağılımı |
+| ---: | ---: | --- |
+| 1 | 14 | 3 eşleştirme · 2 boşluk doldurma · 2 sürükle-bırak · 1 doğru–yanlış · 1 sıralama · 2 çoktan seçmeli · 3 metin yazma |
+| 2 | 14 | 3 eşleştirme · 2 boşluk doldurma · 2 sürükle-bırak · 1 doğru–yanlış · 1 sıralama · 2 çoktan seçmeli · 3 metin yazma |
+
+- Seçimli etkinlikler yerel olarak kontrol edilir; yanlışta doğru yanıt gösterilmez, yalnızca yeniden incelenecek maddeler belirtilir.
+- Metin yazma etkinliklerinde ölçüt listesi ve en az uzunluk bilgisi görünür kalır.
+- Yanıtlar haftalık Fen ilerlemesinin içinde saklanır; yazdırma sırasında kapalı etkinlikler açılır.
 
 ## Kitaptaki etkinlik biçimlerinden yararlanma
 
