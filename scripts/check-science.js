@@ -127,8 +127,8 @@ assert.ok(listHTML.includes('science-week-exam'), 'The exam date should use its 
 // Konu bazlı etkinlik seti: ilk iki haftada en az 10 etkinlik, yedi etkileşim türü.
 const activityData = global.window.SCIENCE_ACTIVITIES;
 assert.ok(activityData, 'The activity set should be exposed for the science course.');
-assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 'The analysed activity rounds should cover the first fourteen weeks.');
-for (const weekId of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]) {
+assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], 'The analysed activity rounds should cover all fifteen weeks of the first term.');
+for (const weekId of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]) {
   const activities = science.activitiesFor(weekId);
   assert.ok(activities.length >= 10 && activities.length <= 15, `Week ${weekId} should carry 10–15 topic activities, found ${activities.length}.`);
   assert.equal(new Set(activities.map((activity) => activity.id)).size, activities.length, `Week ${weekId} activity ids should be unique.`);
@@ -158,7 +158,8 @@ assert.equal(science.practiceSummaryFor(11).total, 14, 'Week 11 should carry its
 assert.equal(science.practiceSummaryFor(12).total, 14, 'Week 12 should carry its own activity set.');
 assert.equal(science.practiceSummaryFor(13).total, 14, 'Week 13 should carry its own activity set.');
 assert.equal(science.practiceSummaryFor(14).total, 14, 'Week 14 should carry its own activity set.');
-assert.equal(science.practiceSummaryFor(15).total, 0, 'Weeks without an analysed set should not fake activities.');
+assert.equal(science.practiceSummaryFor(15).total, 14, 'Week 15 should carry its own activity set.');
+assert.equal(science.practiceSummaryFor(16).total, 0, 'Weeks without an analysed set should not fake activities.');
 const week3Groups = global.window.SCIENCE_ACTIVITIES.weeks[3].groups;
 assert.equal(week3Groups.length, 3, 'Week 3 should be organised in three sections.');
 assert.deepEqual(week3Groups.map((group) => group.activities.length), [4, 4, 6], 'Week 3 sections should keep the shared 4-4-6 layout.');
@@ -255,6 +256,15 @@ assert.deepEqual([...new Set(week14Activities.map((activity) => activity.type))]
 assert.equal(week14Activities.filter((activity) => activity.type === 'text').length, 2, 'Week 14 should keep two writing tasks.');
 assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(global.window.SCIENCE_ACTIVITIES.weeks[14])), 'Week 14 activities must not cite the textbook.');
 assert.match(global.window.SCIENCE_ACTIVITIES.weeks[14].topic, /boşaltım/i, 'Week 14 should cover excretion.');
+const week15Groups = global.window.SCIENCE_ACTIVITIES.weeks[15].groups;
+assert.equal(week15Groups.length, 3, 'Week 15 should be organised in three sections.');
+assert.deepEqual(week15Groups.map((group) => group.activities.length), [4, 4, 6], 'Week 15 sections should keep the shared 4-4-6 layout.');
+const week15Activities = week15Groups.flatMap((group) => group.activities);
+assert.deepEqual([...new Set(week15Activities.map((activity) => activity.type))].sort(), ['choice', 'fill', 'match', 'order', 'sort', 'text', 'tf'], 'Week 15 should use all seven interaction types.');
+assert.equal(week15Activities.filter((activity) => activity.type === 'text').length, 2, 'Week 15 should keep two writing tasks.');
+assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(global.window.SCIENCE_ACTIVITIES.weeks[15])), 'Week 15 activities must not cite the textbook.');
+assert.match(global.window.SCIENCE_ACTIVITIES.weeks[15].topic, /sistem/i, 'Week 15 should cover body systems.');
+assert.equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].reduce((total, weekId) => total + science.activitiesFor(weekId).length, 0), 210, 'The full first term should offer 210 topic activities.');
 for (const activity of week8Activities) {
   if (activity.type === 'text') {
     assert.ok(activity.criteria.length >= 3, `${activity.id} should keep at least three criteria.`);
