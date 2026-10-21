@@ -93,7 +93,10 @@ for (const topic of expectedTopics) assert.ok(science.weeks.some((week) => week.
 const mergedTopics = science.weeks.reduce((total, week) => total + week.topic.split(' · ').length, 0);
 assert.equal(mergedTopics, 37, 'All 37 original topic titles should survive inside the 15 merged weeks.');
 assert.ok(science.weeks.every((week) => week.date && week.topic && week.focus && week.pages));
-assert.ok(science.weeks.every((week) => week.summary.length === 4 && week.summary.join(' ').length >= 900 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
+assert.ok(science.weeks.every((week) => week.summary.length >= 4 && week.summary.length <= 6 && week.summary.join(' ').length >= 2800 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
+assert.ok(science.weeks.every((week) => !Array.isArray(week.blockLabels) || week.blockLabels.length === week.summary.length), 'Per-week block headings should match the number of explanation blocks.');
+assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(science.weeks)), 'Lesson texts should explain the topic directly instead of citing the textbook or page numbers.');
+assert.ok(science.weeks.every((week) => week.terms.every((term) => week.summary.join(' ').toLocaleLowerCase('tr').includes(term.toLocaleLowerCase('tr')))), 'Every concept should be defined inside the weekly narrative, not only in the concept strip.');
 assert.equal(new Set(science.weeks.flatMap((week) => week.terms.map((term) => term.toLocaleLowerCase('tr')))).size, 132, 'Every concept should still appear in the merged weekly flow.');
 assert.equal(science.weeks.filter((week) => week.researchBrief).length, 8, 'Research results should be limited to the Keşif Noktası and suitable performance-task topics.');
 assert.deepEqual(science.weeks.filter((week) => week.researchBrief).map((week) => week.id), [3, 4, 9, 10, 12, 13, 14, 15]);
@@ -127,7 +130,8 @@ for (const week of science.weeks) {
   const imageCount = (html.match(/class="science-visual-image"/g) || []).length;
   const expectedImages = week.visual === 'spaceVehicles' ? 7 : ['spaceReview', 'systemsReview'].includes(week.visual) ? 4 : 1;
   assert.equal(imageCount, expectedImages, `Week ${week.id} should render all concept-matched science illustrations.`);
-  assert.ok(html.includes('science-visual-note'), `Week ${week.id} should explain how to read its visual.`);
+  assert.ok(html.includes('science-visual-note'), `Week ${week.id} should describe what its illustration shows.`);
+  assert.ok(!/GÖRSELİ \/ KANITI OKU|KİTAPTAN SOMUT ÖRNEK/.test(html), `Week ${week.id} should use topic headings instead of instruction-style headings.`);
   assert.ok(!html.includes('Kavram sözlüğü') && !html.includes('Süreç bağlantısı'), `Week ${week.id} should keep concept definitions within the narrative rather than a separate glossary.`);
 }
 

@@ -231,9 +231,26 @@
     };
   }
 
-  function renderParagraphs(paragraphs) {
-    const labels = ['KAVRAMI TANI', 'SÜREÇ VE NEDEN-SONUÇ', 'KİTAPTAN SOMUT ÖRNEK', 'GÖRSELİ / KANITI OKU'];
-    return paragraphs.map((paragraph, index) => `<article class="science-explain-block"><span>${labels[index] || 'KONU NOTU'}</span><p>${escapeHTML(paragraph)}</p></article>`).join('');
+  // Anlatım blokları, konunun kendi akışını izler: tanım, süreç, örnek, uygulama ve tarih.
+  // Başlıklar haftanın blok sayısına göre seçilir; metinlerin içinde kitap adı ya da sayfa
+  // numarası geçmez, konu doğrudan anlatılır.
+  const EXPLAIN_LABELS = {
+    4: ['KAVRAM VE TANIM', 'SÜREÇ VE NEDEN-SONUÇ', 'ÖRNEKLER VE KANITLAR', 'BİLİM İNSANLARI VE TARİH'],
+    5: ['KAVRAM VE TANIM', 'SÜREÇ VE NEDEN-SONUÇ', 'ÖRNEKLER VE KANITLAR', 'GÜNLÜK YAŞAM VE UYGULAMA', 'BİLİM İNSANLARI VE TARİH'],
+  };
+
+  // Metin içindeki **kavram** vurguları, HTML'e kaçış uygulandıktan sonra <strong> etiketine
+  // dönüştürülür; böylece tanımlar düz metin olarak değil, okunabilir bir vurguyla görünür.
+  function renderRichText(text) {
+    return escapeHTML(String(text)).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  function renderParagraphs(item) {
+    const paragraphs = item.summary;
+    const labels = Array.isArray(item.blockLabels) && item.blockLabels.length === paragraphs.length
+      ? item.blockLabels
+      : (EXPLAIN_LABELS[paragraphs.length] || EXPLAIN_LABELS[4]);
+    return paragraphs.map((paragraph, index) => `<article class="science-explain-block"><span>${escapeHTML(labels[index] || 'KONU NOTU')}</span><p>${renderRichText(paragraph)}</p></article>`).join('');
   }
 
   function renderResearchBrief(brief) {
@@ -285,7 +302,10 @@
     const blocks = [...(item.summary || []), ...(item.points || []), item.focus || ''];
     for (const block of blocks) {
       const sentence = String(block).split(/(?<=[.!?])\s+/).find((part) => part.toLocaleLowerCase('tr').includes(needle));
-      if (sentence) return sentence.length > 260 ? `${sentence.slice(0, 257).trimEnd()}…` : sentence;
+      if (sentence) {
+        const clean = sentence.replace(/\*\*/g, '');
+        return clean.length > 260 ? `${clean.slice(0, 257).trimEnd()}…` : clean;
+      }
     }
     return item.focus || '';
   }
@@ -383,7 +403,7 @@
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
       ${renderVisual(item)}
-      <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item.summary)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div></div></section>
+      <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${renderRichText(point)}</li>`).join('')}</ul></div></div></section>
       ${renderConceptFlow(item)}
       ${renderResearchBrief(item.researchBrief)}
       <section class="card science-practice-card" aria-labelledby="sciencePracticeTitle"><div class="science-section-heading"><div class="tag">ETKİNLİKLER</div><h3 id="sciencePracticeTitle">Öğrendiklerimi deniyorum</h3><p>Önce kısa soruyu yanıtla; sonra özgün uygulamayı tamamla. Seçimli sorular yerel olarak kontrol edilir.</p></div>${renderQuiz(item, saved)}${renderActivity(item, saved)}</section>
