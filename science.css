@@ -56,18 +56,31 @@
 .science-section-heading h3{margin:0;color:#102238;font-size:18px;line-height:1.35}
 .science-section-heading p{margin:4px 0 0;color:#46576b;font-size:13px;line-height:1.6}
 .science-topic-summary{padding:20px 22px}
-.science-summary-text{padding:17px 19px;border:1px solid #eadfb8;border-radius:14px;background:#fffdf6;color:#111;font-size:15px;line-height:1.78}
-.science-summary-text p{margin:0 0 12px;color:#111}
-.science-summary-text p:last-child{margin-bottom:0}
+.science-summary-text{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;color:#172f42;font-size:15px;line-height:1.75}
+.science-explain-block{display:grid;align-content:start;gap:7px;padding:14px 15px;border:1px solid #dce8ee;border-radius:13px;background:#fbfdfe;color:#172f42}
+.science-explain-block:first-child{grid-column:1/-1;border-left:4px solid #2182a2;background:#f1f8fb}
+.science-explain-block>span{color:#236680;font-size:9px;font-weight:900;letter-spacing:.1em}
+.science-explain-block p{margin:0;color:#172f42;font-size:14px;line-height:1.72}
 .science-summary-bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.7fr);gap:15px;margin-top:16px}
 .science-summary-bottom h4{margin:0 0 8px;color:#203c52;font-size:13px}
 .science-summary-bottom ul{display:grid;gap:6px;margin:0;padding-left:20px;color:#30495c;font-size:13px;line-height:1.55}
 .science-key-terms>div{display:flex;flex-wrap:wrap;gap:7px}
 .science-key-terms span{display:inline-flex;padding:6px 9px;border:1px solid #d3e2e8;border-radius:999px;background:#f6fafb;color:#28536a;font-size:11px;font-weight:750}
-.science-visual{display:grid;gap:10px;margin:0;padding:16px;overflow:hidden}
-.science-visual figcaption{display:flex;align-items:center;gap:9px;color:#253f53;font-size:13px;font-weight:800;line-height:1.5}
+.science-visual{display:grid;gap:11px;margin:0;padding:16px;overflow:hidden;border-color:#d7e6ec;background:#fbfdfe}
+.science-visual figcaption{display:flex;align-items:center;gap:9px;color:#253f53;font-size:14px;font-weight:800;line-height:1.5}
+.science-visual figcaption strong{color:#15384e}
 .science-visual figcaption span{flex:none;padding:4px 7px;border-radius:999px;background:#e6f3f8;color:#176b8c;font-size:9px;font-weight:900;letter-spacing:.08em}
-.science-visual svg{display:block;width:100%;height:auto;max-height:320px;border-radius:14px}
+.science-visual-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.science-visual-gallery.is-single{grid-template-columns:minmax(0,1fr)}
+.science-visual-item{min-width:0;overflow:hidden;border:1px solid #dbe7ed;border-radius:13px;background:#fff}
+.science-visual-image{display:block;width:100%;aspect-ratio:3/1;object-fit:cover;background:#edf4f7}
+.science-visual-gallery:not(.is-single) .science-visual-image{aspect-ratio:2.2/1}
+.science-visual-item-label{padding:7px 10px;color:#254c63;font-size:11px;font-weight:850;line-height:1.4}
+.science-visual-routes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.science-visual-route{display:grid;align-content:start;gap:4px;min-width:0;padding:10px 11px;border:1px solid #dce8ee;border-radius:10px;background:#f4f9fb}
+.science-visual-route>span{color:#236680;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.science-visual-route>strong{color:#253f53;font-size:12px;font-weight:750;line-height:1.55;overflow-wrap:anywhere}
+.science-visual-note{margin:0;padding:10px 12px;border-left:3px solid #3e93b1;border-radius:0 9px 9px 0;background:#eef7fa;color:#29475c;font-size:12px;line-height:1.55}
 .science-practice-card{display:grid;gap:17px;padding:20px 22px}
 .science-quiz-fieldset{display:grid;gap:11px;min-width:0;margin:0;padding:15px;border:1px solid #d5e2e8;border-radius:14px;background:#f8fbfc}
 .science-quiz-fieldset legend{max-width:100%;padding:0 5px;color:#1d3549;font-size:14px;font-weight:850;line-height:1.55}
@@ -124,5 +137,5 @@
 .science-source-note{margin:0;padding:0 3px;color:#5c6f80;font-size:11px;line-height:1.6}
 .science-workspace :focus-visible{outline-color:#167fa6}
 @media(max-width:850px){.science-layout{grid-template-columns:minmax(0,1fr)}.science-week-navigation{position:static;max-height:none;overflow:visible}.science-week-list{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));align-items:start}.science-week-buttons{max-height:420px;overflow:auto}}
-@media(max-width:600px){.science-hero{padding:22px}.science-hero:after{right:-20px;top:-26px;font-size:135px}.science-hero-actions{gap:10px}.science-week-heading{flex-direction:column;padding:19px}.science-summary-bottom,.science-grid-two{grid-template-columns:minmax(0,1fr)}.science-topic-summary,.science-practice-card{padding:16px}.science-summary-text{padding:14px;font-size:14px}.science-ai-actions{grid-template-columns:minmax(0,1fr)}.science-ai-check{width:100%}.science-ai-feedback{grid-column:1}.science-week-list{grid-template-columns:minmax(0,1fr)}.science-visual{padding:12px}.science-visual svg{max-height:260px}}
+@media(max-width:600px){.science-visual-routes{grid-template-columns:minmax(0,1fr)}.science-hero{padding:22px}.science-hero:after{right:-20px;top:-26px;font-size:135px}.science-hero-actions{gap:10px}.science-week-heading{flex-direction:column;padding:19px}.science-summary-bottom,.science-grid-two{grid-template-columns:minmax(0,1fr)}.science-topic-summary,.science-practice-card{padding:16px}.science-summary-text{grid-template-columns:minmax(0,1fr);font-size:14px}.science-explain-block:first-child{grid-column:auto}.science-visual-gallery{gap:8px}.science-visual-image{aspect-ratio:2.4/1}.science-visual-gallery:not(.is-single) .science-visual-image{aspect-ratio:1.7/1}.science-ai-actions{grid-template-columns:minmax(0,1fr)}.science-ai-check{width:100%}.science-ai-feedback{grid-column:1}.science-week-list{grid-template-columns:minmax(0,1fr)}.science-visual{padding:12px}}
 @media print{.science-hero-actions,.science-week-navigation,.science-print,.science-ai-check,.science-provider-check,.science-source-link,.science-reset,.science-back{display:none!important}.science-workspace{gap:8px}.science-hero{padding:12px;background:#fff;color:#102238;border:1px solid #bbb}.science-hero>p,.science-eyebrow{color:#333}.science-layout{display:block}.science-week-content{gap:8px}.science-week-heading,.science-topic-summary,.science-practice-card,.science-mini-plan,.science-focus-card,.science-schedule,.science-visual{break-inside:avoid;box-shadow:none}.science-table-wrap{overflow:visible}.science-study-table{min-width:0}.science-study-table th,.science-study-table td{padding:5px;font-size:9px}.science-week-navigation{display:none}}

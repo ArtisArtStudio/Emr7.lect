@@ -1,6 +1,6 @@
 # Fen Bilimleri 7 — kitap etkinlik biçimleri ve özgün uygulama envanteri
 
-Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik türlerini (model kurma, gözlem, sınıflandırma, rapor, poster, kavram haritası ve öz değerlendirme gibi) konu başlıklarıyla eşleştirir. Uygulamadaki görevler **yeni sorular ve yeni örneklerdir**; kitaptaki yönerge, soru veya çizimler aktarılmamıştır. Kitapta yer alan hak bildirimi nedeniyle özgün Türkçe etiketli SVG şemalar kullanılmıştır.
+Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik türlerini (model kurma, gözlem, sınıflandırma, rapor, poster, kavram haritası ve öz değerlendirme gibi) konu başlıklarıyla eşleştirir. Uygulamadaki görevler **yeni sorular ve yeni örneklerdir**; kitaptaki yönerge, soru veya çizimler aktarılmamıştır. Kitaptaki şekiller aktarılmaz; eşlik eden görseller özgün yapay zekâ destekli illüstrasyonlardır. Bu turda etkinlik envanterindeki yönergeler ve görev eşleştirmeleri değiştirilmemiştir.
 
 | Hafta | Kitap konusu / başvuru | Uygulamadaki özgün etkinlik | Etkinlik biçimi |
 | ---: | --- | --- | --- |

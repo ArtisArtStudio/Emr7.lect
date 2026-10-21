@@ -17,50 +17,86 @@
   const WEEK_BY_ID = new Map(WEEKS.map((week) => [week.id, week]));
 
   const VISUALS = {
-    orbit: {
-      title: 'Uzay araştırmalarında araç, veri ve Dünya',
-      aria: 'Dünya çevresindeki yörüngede görev yapan uydu; gözlem ve haberleşme verilerini yeryüzüne iletiyor.',
-      svg: `<svg viewBox="0 0 780 250" role="img" aria-label="Dünya çevresindeki uydu ve veri akışı şeması" focusable="false"><defs><linearGradient id="science-orbit-earth" x1="0" x2="1"><stop offset="0" stop-color="#9ddbf1"/><stop offset="1" stop-color="#3689b8"/></linearGradient></defs><rect x="0" y="0" width="780" height="250" rx="20" fill="#eef8fc"/><circle cx="390" cy="156" r="70" fill="url(#science-orbit-earth)"/><path d="M325 152c28-11 49-5 61 10 15 18 41 14 60 1 10-8 21-9 33-7" fill="none" stroke="#4a9b75" stroke-width="13" stroke-linecap="round"/><ellipse cx="390" cy="155" rx="172" ry="75" fill="none" stroke="#1784ad" stroke-width="3" stroke-dasharray="8 9"/><g transform="translate(529 91)"><rect x="-18" y="-12" width="36" height="24" rx="5" fill="#f5b94d" stroke="#7c5a19" stroke-width="2"/><rect x="-56" y="-10" width="30" height="20" rx="3" fill="#3e75a8"/><rect x="26" y="-10" width="30" height="20" rx="3" fill="#3e75a8"/><path d="M-26 0h8m36 0h8" stroke="#fff" stroke-width="2"/><path d="M-9 15 4 45 17 15" fill="none" stroke="#e79643" stroke-width="3" stroke-dasharray="4 4"/></g><path d="M462 114 435 132" stroke="#145d7c" stroke-width="2"/><path d="M438 132l10-1-4-8" fill="#145d7c"/><text x="535" y="58" text-anchor="middle" fill="#18384c" font-size="17" font-weight="700">Uydu / gözlem aracı</text><text x="390" y="238" text-anchor="middle" fill="#18384c" font-size="17" font-weight="700">Dünya</text><text x="126" y="76" fill="#18384c" font-size="15" font-weight="700">Ölçüm ve görüntü</text><path d="M175 83 268 117" stroke="#5686a0" stroke-width="2"/><text x="586" y="193" fill="#18384c" font-size="15" font-weight="700">Veri → yorum</text><path d="M575 185 504 174" stroke="#5686a0" stroke-width="2"/></svg>`,
+    space: {
+      title: 'Uyduyla Dünya’yı gözlemlemek',
+      images: [{ src: 'assets/science-space.jpg', alt: 'Özgün bilim illüstrasyonu: bir yapay uydu Dünya yörüngesinde gözlem ve iletişim görevi yapıyor.' }],
     },
-    'space-risk': {
-      title: 'Uzay kirliliği ve ışık kirliliği için önleme fikri',
-      aria: 'İki özgün şema: yörüngedeki atıkları izleme ve yapay ışığı gereken yere yöneltme.',
-      svg: `<svg viewBox="0 0 780 250" role="img" aria-label="Uzay kirliliği ve ışık kirliliği şeması" focusable="false"><rect width="780" height="250" rx="20" fill="#eff7fb"/><rect x="18" y="18" width="360" height="214" rx="16" fill="#f8fbfd" stroke="#cbdfe9"/><rect x="402" y="18" width="360" height="214" rx="16" fill="#f8fbfd" stroke="#cbdfe9"/><text x="198" y="47" text-anchor="middle" fill="#173b52" font-size="18" font-weight="750">Yörüngedeki atık</text><circle cx="198" cy="139" r="48" fill="#7bc1d9"/><path d="M154 136c20-7 33 4 47 2 14-2 27-11 44-8" fill="none" stroke="#4c9c74" stroke-width="9" stroke-linecap="round"/><ellipse cx="198" cy="139" rx="126" ry="58" fill="none" stroke="#2f85a8" stroke-width="2" stroke-dasharray="7 7"/><path d="M93 98l14-8 4 16-13 5zM279 176l16-6-2 14-13 3z" fill="#efaa4e" stroke="#7a5b2e" stroke-width="2"/><text x="198" y="218" text-anchor="middle" fill="#29485a" font-size="13" font-weight="650">İzle • önle • görev sonunu planla</text><text x="582" y="47" text-anchor="middle" fill="#173b52" font-size="18" font-weight="750">Işığı doğru yönelt</text><rect x="431" y="155" width="300" height="49" rx="5" fill="#d9edf2"/><path d="M448 154h266l-33-77H480z" fill="#ffe4a6" opacity=".82"/><path d="M460 154h242" stroke="#c78d39" stroke-width="3"/><path d="M580 146V95" stroke="#3a6579" stroke-width="8"/><path d="M557 95h48l-12-16h-24z" fill="#edb349" stroke="#725725" stroke-width="2"/><path d="M563 105 535 144m61-39 28 39" stroke="#e2a23e" stroke-width="3" stroke-dasharray="5 5"/><text x="582" y="224" text-anchor="middle" fill="#29485a" font-size="13" font-weight="650">Gerekli alanı, gerektiği kadar aydınlat</text></svg>`,
+    telescope: {
+      title: 'Gözlemevi ve karanlık gökyüzü',
+      images: [{ src: 'assets/science-light-pollution.jpg', alt: 'Özgün bilim illüstrasyonu: karanlık gökyüzüne bakan bir gözlemevi ve uzakta aydınlatılmış yerleşim.' }],
+      routes: [{ label: 'Gözlem için uygun yer', text: 'Yüksek · kuru · açık · kent ışıklarından uzak' }],
     },
-    'star-life': {
-      title: 'Yıldız yaşam döngüsü — başlangıç ve kütleye bağlı yollar',
-      aria: 'Bulutsu ve önyıldızdan başlayan yıldız yaşamı, küçük ve büyük kütleli yıldızlarda farklı sonlara dallanıyor.',
-      svg: `<svg viewBox="0 0 780 300" role="img" aria-label="Yıldız yaşam döngüsünün iki kola ayrılan özgün akış şeması" focusable="false"><rect width="780" height="300" rx="20" fill="#f5f6fd"/><g fill="#fff" stroke="#b8c6e4" stroke-width="2"><rect x="28" y="24" width="142" height="48" rx="14"/><rect x="208" y="24" width="142" height="48" rx="14"/><rect x="388" y="24" width="142" height="48" rx="14"/><rect x="215" y="112" width="180" height="47" rx="14"/><rect x="421" y="112" width="180" height="47" rx="14"/><rect x="622" y="112" width="135" height="47" rx="14"/><rect x="215" y="203" width="180" height="47" rx="14"/><rect x="421" y="203" width="180" height="47" rx="14"/><rect x="622" y="203" width="135" height="47" rx="14"/></g><g fill="#193b54" font-size="15" font-weight="700" text-anchor="middle"><text x="99" y="54">Bulutsu</text><text x="279" y="54">Önyıldız</text><text x="459" y="54">Yıldız</text><text x="305" y="141">Küçük kütleli yol</text><text x="511" y="141">Büyük kütleli yol</text><text x="689" y="141">Süpernova</text><text x="305" y="232">Beyaz cüce</text><text x="511" y="232">Nötron yıldızı</text><text x="689" y="232">Kara delik</text></g><g fill="none" stroke="#547e9b" stroke-width="3"><path d="M170 48h35m-8-7 8 7-8 7"/><path d="M350 48h35m-8-7 8 7-8 7"/><path d="M459 74v22H305v13m0-13h206v13m90 23h18m-8-7 8 7-8 7M305 159v43m0-8-7 8 7-8 7 8m199-43v43m0-8-7 8 7-8 7 8m190-43v43m0-8-7 8 7-8 7 8"/></g><text x="305" y="184" text-anchor="middle" fill="#4c6278" font-size="12">Gezegenimsi bulutsu →</text><text x="511" y="184" text-anchor="middle" fill="#4c6278" font-size="12">Büyük kütleli kalıntı →</text><text x="689" y="184" text-anchor="middle" fill="#4c6278" font-size="12">çekirdek kalıntısı</text></svg>`,
+    debris: {
+      title: 'Yörüngedeki uzay atıkları',
+      images: [{ src: 'assets/science-space-debris.jpg', alt: 'Özgün bilim illüstrasyonu: Dünya çevresinde görev yapan uydular ve yörüngede kalan insan yapımı parçalar.' }],
+      routes: [{ label: 'Risk ilişkisi', text: 'İşlevini yitiren cisimler → yörünge atıkları → etkin araçlar için çarpışma riski' }],
+    },
+    light: {
+      title: 'Işık kirliliği ve gökyüzü gözlemi',
+      images: [{ src: 'assets/science-light-pollution.jpg', alt: 'Özgün bilim illüstrasyonu: kent ışığının gökyüzüne saçılması ve yakındaki karanlık gözlem alanı.' }],
+      routes: [{ label: 'Gözlem ilişkisi', text: 'Yukarı saçılan yapay ışık → gökyüzü parlaması → sönük yıldızları görmek zorlaşır' }],
+    },
+    stars: {
+      title: 'Yıldızların oluşumu ve yaşamı',
+      images: [{ src: 'assets/science-stars.jpg', alt: 'Özgün bilim illüstrasyonu: gaz ve toz bulutundan yıldız oluşumu ve kütleye bağlı yıldız evreleri.' }],
+      routes: [
+        { label: 'Daha küçük kütleli yol', text: 'Bulutsu → Önyıldız → Kırmızı dev → Gezegenimsi bulutsu → Beyaz cüce' },
+        { label: 'Büyük kütleli yol', text: 'Bulutsu → Önyıldız → Kırmızı süperdev → Süpernova → Nötron yıldızı / kara delik' },
+      ],
+    },
+    galaxy: {
+      title: 'Samanyolu ve galaksilerin ölçeği',
+      images: [{ src: 'assets/science-galaxy.jpg', alt: 'Özgün bilim illüstrasyonu: yıldızlarla dolu sarmal bir galaksi ve uzaktaki galaksiler.' }],
+      routes: [{ label: 'Ölçek', text: 'Yıldız → Güneş Sistemi → Samanyolu → Evren' }],
     },
     energy: {
-      title: 'Hareket sırasında kinetik ve potansiyel enerji dönüşümü',
-      aria: 'Eğimli bir yolda yükseklik ve hız değiştikçe çekim potansiyel enerjisi ile kinetik enerji de değişiyor.',
-      svg: `<svg viewBox="0 0 780 250" role="img" aria-label="Eğimli yol üzerinde enerji dönüşümü şeması" focusable="false"><rect width="780" height="250" rx="20" fill="#f3f9fc"/><path d="M46 196C146 194 186 46 310 50S440 191 538 192 646 56 734 54" fill="none" stroke="#4d86a5" stroke-width="8" stroke-linecap="round"/><path d="M46 211h690" stroke="#9db7c7" stroke-width="2"/><circle cx="190" cy="103" r="17" fill="#e99138" stroke="#874e25" stroke-width="3"/><circle cx="390" cy="117" r="17" fill="#e99138" stroke="#874e25" stroke-width="3"/><circle cx="596" cy="120" r="17" fill="#e99138" stroke="#874e25" stroke-width="3"/><g fill="#18384c" font-size="15" font-weight="700" text-anchor="middle"><text x="190" y="75">Yüksek nokta</text><text x="390" y="158">Alçalan yol</text><text x="596" y="160">Hareket</text></g><g><rect x="70" y="16" width="201" height="35" rx="17" fill="#fff0d3"/><text x="170" y="39" text-anchor="middle" fill="#805111" font-size="14" font-weight="700">Çekim potansiyel enerjisi</text><rect x="490" y="16" width="171" height="35" rx="17" fill="#e4f3fb"/><text x="575" y="39" text-anchor="middle" fill="#175b7e" font-size="14" font-weight="700">Kinetik enerji</text></g><path d="M275 60 343 94" stroke="#617f95" stroke-width="2" stroke-dasharray="5 5"/><path d="M444 129 508 129" stroke="#617f95" stroke-width="2" stroke-dasharray="5 5"/><text x="390" y="235" text-anchor="middle" fill="#4b6275" font-size="12">Modelde sürtünmenin etkisini ayrıca değerlendir.</text></svg>`,
+      title: 'Kuvvet, hareket ve enerji dönüşümü',
+      images: [{ src: 'assets/science-energy.jpg', alt: 'Özgün bilim illüstrasyonu: eğimli bir yolda ilerleyen bilye; yükseklik ve hareket enerjisi birlikte düşünülüyor.' }],
+      routes: [
+        { label: 'Aşağı inerken', text: 'Çekim potansiyel enerjisi azalabilir · kinetik enerji artabilir' },
+        { label: 'Yukarı çıkarken', text: 'Kinetik enerji azalabilir · çekim potansiyel enerjisi artabilir' },
+      ],
     },
     digestion: {
-      title: 'Besinin sindirim kanalındaki yolculuğu',
-      aria: 'Besin ağızdan başlayıp yutak, yemek borusu, mide, ince bağırsak ve kalın bağırsak boyunca ilerliyor.',
-      svg: `<svg viewBox="0 0 780 230" role="img" aria-label="Sindirim kanalındaki temel organların sıralı şeması" focusable="false"><rect width="780" height="230" rx="20" fill="#f7faf6"/><g fill="#fff" stroke="#9fcbb6" stroke-width="2"><rect x="20" y="79" width="104" height="54" rx="15"/><rect x="151" y="79" width="104" height="54" rx="15"/><rect x="282" y="79" width="104" height="54" rx="15"/><rect x="413" y="79" width="104" height="54" rx="15"/><rect x="544" y="79" width="104" height="54" rx="15"/><rect x="675" y="79" width="90" height="54" rx="15"/></g><g fill="#21483a" font-size="14" font-weight="700" text-anchor="middle"><text x="72" y="111">Ağız</text><text x="203" y="111">Yutak</text><text x="334" y="103">Yemek</text><text x="334" y="121">borusu</text><text x="465" y="111">Mide</text><text x="596" y="103">İnce</text><text x="596" y="121">bağırsak</text><text x="720" y="103">Kalın</text><text x="720" y="121">bağırsak</text></g><g fill="none" stroke="#4c8f73" stroke-width="3"><path d="M124 106h23m-8-7 8 7-8 7M255 106h23m-8-7 8 7-8 7M386 106h23m-8-7 8 7-8 7M517 106h23m-8-7 8 7-8 7M648 106h23m-8-7 8 7-8 7"/></g><text x="390" y="185" text-anchor="middle" fill="#385f4e" font-size="14" font-weight="650">Parçalanma → sindirim → emilim</text><text x="390" y="207" text-anchor="middle" fill="#5b7267" font-size="12">Şema basitleştirilmiştir; yardımcı organlar ayrıca görev alır.</text></svg>`,
+      title: 'Sindirim organları ve besin yolu',
+      images: [{ src: 'assets/science-digestion.jpg', alt: 'Özgün bilim illüstrasyonu: insan sindirim kanalının temel organları.' }],
+      routes: [{ label: 'Besinin yolu', text: 'Ağız → Yutak → Yemek borusu → Mide → İnce bağırsak → Kalın bağırsak → Anüs' }],
     },
     circulation: {
-      title: 'Küçük ve büyük kan dolaşımı',
-      aria: 'İki ayrı yol: kalp ile akciğerler arasındaki küçük dolaşım ve kalp ile vücudun diğer bölümleri arasındaki büyük dolaşım.',
-      svg: `<svg viewBox="0 0 780 240" role="img" aria-label="Küçük ve büyük kan dolaşımını karşılaştıran iki yol şeması" focusable="false"><rect width="780" height="240" rx="20" fill="#f7f8fc"/><text x="390" y="35" text-anchor="middle" fill="#263f58" font-size="18" font-weight="750">İki dolaşım yolu</text><g><rect x="34" y="58" width="712" height="69" rx="17" fill="#eef7fb" stroke="#c7dfeb"/><text x="74" y="99" fill="#1d4f6b" font-size="15" font-weight="750">Küçük dolaşım</text><rect x="254" y="73" width="110" height="38" rx="12" fill="#fff" stroke="#8bb6ca"/><rect x="510" y="73" width="120" height="38" rx="12" fill="#fff" stroke="#8bb6ca"/><text x="309" y="97" text-anchor="middle" fill="#193d52" font-size="14" font-weight="700">Kalp</text><text x="570" y="97" text-anchor="middle" fill="#193d52" font-size="14" font-weight="700">Akciğerler</text><path d="M364 92h137m-10-8 10 8-10 8M510 107H373m10 8-10-8 10-8" fill="none" stroke="#317d9c" stroke-width="3"/></g><g><rect x="34" y="145" width="712" height="69" rx="17" fill="#fbf3f1" stroke="#e7c9c2"/><text x="74" y="186" fill="#7d4038" font-size="15" font-weight="750">Büyük dolaşım</text><rect x="254" y="160" width="110" height="38" rx="12" fill="#fff" stroke="#d4a39b"/><rect x="510" y="160" width="120" height="38" rx="12" fill="#fff" stroke="#d4a39b"/><text x="309" y="184" text-anchor="middle" fill="#633c37" font-size="14" font-weight="700">Kalp</text><text x="570" y="184" text-anchor="middle" fill="#633c37" font-size="14" font-weight="700">Vücut</text><path d="M364 179h137m-10-8 10 8-10 8M510 194H373m10 8-10-8 10-8" fill="none" stroke="#bd6252" stroke-width="3"/></g></svg>`,
+      title: 'Kalp ve kan dolaşımı',
+      images: [{ src: 'assets/science-circulation.jpg', alt: 'Özgün bilim illüstrasyonu: kalp ve vücuttaki kırmızı-mavi damar ağı.' }],
+      routes: [
+        { label: 'Küçük kan dolaşımı', text: 'Kalp → Akciğerler → Kalp' },
+        { label: 'Büyük kan dolaşımı', text: 'Kalp → Vücut → Kalp' },
+      ],
     },
     respiration: {
-      title: 'Hava yolu, gaz alışverişi ve diyafram',
-      aria: 'Hava burun ve üst solunum yollarından bronşlara ve akciğerlere ilerliyor; oksijen kana, karbondioksit hava keseciklerine geçiyor.',
-      svg: `<svg viewBox="0 0 780 250" role="img" aria-label="Solunum sisteminin hava yolu ve gaz alışverişi şeması" focusable="false"><rect width="780" height="250" rx="20" fill="#f1f8fb"/><g fill="#fff" stroke="#91bdd0" stroke-width="2"><rect x="25" y="67" width="108" height="54" rx="15"/><rect x="163" y="67" width="108" height="54" rx="15"/><rect x="301" y="67" width="124" height="54" rx="15"/><rect x="455" y="67" width="108" height="54" rx="15"/><rect x="591" y="67" width="160" height="54" rx="15"/></g><g fill="#1c495e" font-size="14" font-weight="700" text-anchor="middle"><text x="79" y="100">Burun</text><text x="217" y="100">Yutak</text><text x="363" y="91">Soluk</text><text x="363" y="109">borusu</text><text x="509" y="100">Bronşlar</text><text x="671" y="100">Akciğerler</text></g><g fill="none" stroke="#3284a4" stroke-width="3"><path d="M133 94h30m-9-7 9 7-9 7M271 94h30m-9-7 9 7-9 7M425 94h30m-9-7 9 7-9 7M563 94h28m-9-7 9 7-9 7"/></g><circle cx="626" cy="169" r="30" fill="#d9edf5" stroke="#7fb1c7" stroke-width="2"/><circle cx="690" cy="169" r="30" fill="#d9edf5" stroke="#7fb1c7" stroke-width="2"/><text x="657" y="222" text-anchor="middle" fill="#345b6d" font-size="12" font-weight="650">Akciğerlerde gaz alışverişi</text><path d="M592 164h-88" stroke="#2d8a62" stroke-width="3"/><path d="M511 164l9-6v12z" fill="#2d8a62"/><text x="548" y="151" text-anchor="middle" fill="#236c4d" font-size="12" font-weight="700">O₂ kana</text><path d="M504 188h88" stroke="#c95e59" stroke-width="3"/><path d="M592 188l-9-6v12z" fill="#c95e59"/><text x="548" y="211" text-anchor="middle" fill="#9a413e" font-size="12" font-weight="700">CO₂ dışarı</text><path d="M268 188h-56" stroke="#617f95" stroke-width="5" stroke-linecap="round"/><path d="M216 188l9-7v14z" fill="#617f95"/><text x="240" y="218" text-anchor="middle" fill="#405b6e" font-size="12" font-weight="650">Diyafram hareketi</text></svg>`,
+      title: 'Solunum sistemi',
+      images: [{ src: 'assets/science-respiration.jpg', alt: 'Özgün bilim illüstrasyonu: soluk borusu, bronşlar, akciğerler ve diyafram.' }],
+      routes: [{ label: 'Havanın yolu', text: 'Burun → Yutak → Gırtlak → Soluk borusu → Bronş → Bronşçuk → Alveol' }],
     },
     excretion: {
-      title: 'Böbreklerden idrarın vücuttan atılmasına',
-      aria: 'İdrar böbreklerde oluşur, üreterlerden idrar kesesine ve üretradan vücut dışına ilerler.',
-      svg: `<svg viewBox="0 0 780 230" role="img" aria-label="Boşaltım sistemindeki idrar yolunun sıralı şeması" focusable="false"><rect width="780" height="230" rx="20" fill="#f6f8fc"/><g fill="#fff" stroke="#b3bddb" stroke-width="2"><rect x="34" y="78" width="144" height="58" rx="16"/><rect x="224" y="78" width="144" height="58" rx="16"/><rect x="414" y="78" width="144" height="58" rx="16"/><rect x="604" y="78" width="144" height="58" rx="16"/></g><g fill="#373d68" font-size="15" font-weight="750" text-anchor="middle"><text x="106" y="112">Böbrekler</text><text x="296" y="112">Üreterler</text><text x="486" y="103">İdrar</text><text x="486" y="121">kesesi</text><text x="676" y="112">Üretra</text></g><g fill="none" stroke="#627ab3" stroke-width="3"><path d="M178 107h42m-10-8 10 8-10 8M368 107h42m-10-8 10 8-10 8M558 107h42m-10-8 10 8-10 8"/></g><text x="390" y="182" text-anchor="middle" fill="#47506f" font-size="14" font-weight="650">İdrar yolu: oluşum → taşıma → depolama → atılma</text><text x="390" y="204" text-anchor="middle" fill="#5f6780" font-size="12">Böbrekler ayrıca kanın süzülmesinde görev alır.</text></svg>`,
+      title: 'Böbrekler ve idrar yolu',
+      images: [{ src: 'assets/science-excretion.jpg', alt: 'Özgün bilim illüstrasyonu: böbrekler, üreterler, idrar kesesi ve üretra.' }],
+      routes: [{ label: 'İdrarın yolu', text: 'Böbrek → Üreter → İdrar kesesi → Üretra' }],
     },
-    systems: {
-      title: 'Vücut sistemlerinin birlikte çalışması',
-      aria: 'Sindirim ve solunum maddeleri dolaşıma kazandırır; dolaşım hücrelere taşır, solunum ve boşaltım atıkların uzaklaştırılmasına katkı verir.',
-      svg: `<svg viewBox="0 0 780 250" role="img" aria-label="Sindirim, solunum, dolaşım ve boşaltım sistemlerinin ilişkisi" focusable="false"><rect width="780" height="250" rx="20" fill="#f5f9fb"/><g fill="#fff" stroke-width="2"><rect x="45" y="50" width="150" height="58" rx="17" stroke="#8fbea7"/><rect x="238" y="50" width="150" height="58" rx="17" stroke="#8bbbd1"/><rect x="431" y="50" width="150" height="58" rx="17" stroke="#d5a29b"/><rect x="624" y="50" width="120" height="58" rx="17" stroke="#aaaed0"/></g><g fill="#203d4e" font-size="14" font-weight="750" text-anchor="middle"><text x="120" y="84">Sindirim</text><text x="313" y="84">Solunum</text><text x="506" y="84">Dolaşım</text><text x="684" y="84">Boşaltım</text></g><g fill="none" stroke="#68889b" stroke-width="3"><path d="M195 79h36m-9-7 9 7-9 7M388 79h36m-9-7 9 7-9 7M581 79h36m-9-7 9 7-9 7"/><path d="M684 116v60H120v-60" stroke-dasharray="7 6"/></g><g fill="#445f70" font-size="12" font-weight="650" text-anchor="middle"><text x="213" y="65">besin</text><text x="406" y="65">O₂</text><text x="598" y="65">atık</text><text x="390" y="198">Maddeler dolaşım aracılığıyla hücrelere ulaşır; atıklar ilgili yollarla uzaklaştırılır.</text></g><circle cx="120" cy="175" r="13" fill="#83bf9f"/><circle cx="313" cy="175" r="13" fill="#78b6d0"/><circle cx="506" cy="175" r="13" fill="#d78678"/><circle cx="684" cy="175" r="13" fill="#9b9fc8"/></svg>`,
+    spaceReview: {
+      title: 'Uzay Çağı: ana fikirler bir arada',
+      images: [
+        { src: 'assets/science-space.jpg', alt: 'Dünya yörüngesindeki uydu ve gözlem aracı.', label: 'Araştırma araçları' },
+        { src: 'assets/science-space-debris.jpg', alt: 'Yörüngedeki etkin araçlar ve uzay atıkları.', label: 'Yörünge güvenliği' },
+        { src: 'assets/science-stars.jpg', alt: 'Yıldızların oluşumu ve kütleye bağlı yaşam evreleri.', label: 'Yıldızların yaşamı' },
+        { src: 'assets/science-galaxy.jpg', alt: 'Sarmal galaksi ve uzaktaki galaksiler.', label: 'Galaksi ölçeği' },
+      ],
+    },
+    systemsReview: {
+      title: 'Vücudumuzdaki sistemleri karşılaştıralım',
+      images: [
+        { src: 'assets/science-digestion.jpg', alt: 'Sindirim kanalının temel organları.', label: 'Sindirim' },
+        { src: 'assets/science-circulation.jpg', alt: 'Kalp ve vücuttaki damar ağı.', label: 'Dolaşım' },
+        { src: 'assets/science-respiration.jpg', alt: 'Soluk borusu, akciğerler ve diyafram.', label: 'Solunum' },
+        { src: 'assets/science-excretion.jpg', alt: 'Böbrekler ve idrar yolu.', label: 'Boşaltım' },
+      ],
     },
   };
 
@@ -182,13 +218,20 @@
   }
 
   function renderParagraphs(paragraphs) {
-    return paragraphs.map((paragraph) => `<p>${escapeHTML(paragraph)}</p>`).join('');
+    const labels = ['TEMEL KAVRAM', 'NASIL İŞLER?', 'AKLINDA TUT'];
+    return paragraphs.map((paragraph, index) => `<article class="science-explain-block"><span>${labels[index] || 'KONU NOTU'}</span><p>${escapeHTML(paragraph)}</p></article>`).join('');
   }
 
-  function renderVisual(id) {
-    const visual = VISUALS[id];
+  function renderVisual(item) {
+    const visual = VISUALS[item.visual];
     if (!visual) return '';
-    return `<figure class="card science-visual"><figcaption><span>ÖZGÜN ŞEMA</span>${escapeHTML(visual.title)}</figcaption>${visual.svg}</figure>`;
+    const singleImage = visual.images.length === 1;
+    return `<figure class="card science-visual${singleImage ? ' is-single' : ' is-gallery'}">
+      <figcaption><span>ÖZGÜN GÖRSEL MODEL</span><strong>${escapeHTML(visual.title)}</strong></figcaption>
+      <div class="science-visual-gallery${singleImage ? ' is-single' : ''}">${visual.images.map((image) => `<div class="science-visual-item"><img class="science-visual-image" src="${escapeHTML(image.src)}" alt="${escapeHTML(image.alt)}" loading="lazy" decoding="async">${!singleImage && image.label ? `<div class="science-visual-item-label">${escapeHTML(image.label)}</div>` : ''}</div>`).join('')}</div>
+      ${Array.isArray(visual.routes) && visual.routes.length ? `<div class="science-visual-routes">${visual.routes.map((route) => `<div class="science-visual-route"><span>${escapeHTML(route.label)}</span><strong>${escapeHTML(route.text)}</strong></div>`).join('')}</div>` : ''}
+      <p class="science-visual-note">${escapeHTML(item.visualNote || '')}</p>
+    </figure>`;
   }
 
   function renderWeekList() {
@@ -264,8 +307,8 @@
         <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p><h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Ders kitabı: s. ${escapeHTML(item.pages)}</span></div>
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
+      ${renderVisual(item)}
       <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item.summary)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div><div class="science-key-terms"><h4>Anahtar kavramlar</h4><div>${item.terms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div></div></div></section>
-      ${renderVisual(item.visual)}
       <section class="card science-practice-card" aria-labelledby="sciencePracticeTitle"><div class="science-section-heading"><div class="tag">ETKİNLİKLER</div><h3 id="sciencePracticeTitle">Öğrendiklerimi deniyorum</h3><p>Önce kısa soruyu yanıtla; sonra özgün uygulamayı tamamla. Seçimli sorular yerel olarak kontrol edilir.</p></div>${renderQuiz(item, saved)}${renderActivity(item, saved)}</section>
       <div class="science-grid-two"><section class="card science-mini-plan"><h3>Öğrenci için mini plan</h3><p>Üç görevi tamamladıkça işaretle. Yanıtlar bu tarayıcıda ayrı Fen Bilimleri alanında saklanır.</p><div class="science-task-list">${item.tasks.map((task, index) => `<label class="science-task"><input type="checkbox" data-science-task="${index}" data-science-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section><section class="card science-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(source)}</small></section></div>
       <section class="card science-schedule" aria-labelledby="scienceScheduleTitle"><div class="science-section-heading"><h3 id="scienceScheduleTitle">Haftalık çalışma çizelgesi</h3><p>Uygulamadaki görevler ve etkinlik tamamlanınca ilk durum otomatik işaretlenir; dış kaynak çalışmalarını bitirince ilgili kutuyu sen işaretle.</p></div><div class="science-table-wrap"><table class="science-study-table"><caption class="visually-hidden">${item.id}. hafta Fen Bilimleri çalışma çizelgesi</caption><thead><tr><th scope="col">Uygulamadaki çalışmalar</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>
@@ -274,7 +317,7 @@
         <td><a class="science-provider-link" href="${escapeHTML(links.tonguc)}" target="_blank" rel="noopener noreferrer">Tonguç konu araması ↗</a><small class="science-provider-note">${escapeHTML(item.topic)} için video araması</small><label class="science-provider-check"><input type="checkbox" data-science-provider="tonguc" data-science-week="${item.id}" ${saved.providers.tonguc ? 'checked' : ''}><span>Tonguç çalışmam bitti</span></label></td>
         <td><a class="science-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ ↗</a><small class="science-provider-note">Portaldan Fen Bilimleri çalışmalarını seç.</small><label class="science-provider-check"><input type="checkbox" data-science-provider="mebi" data-science-week="${item.id}" ${saved.providers.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
       </tr></tbody></table></div></section>
-      <p class="science-source-note">${escapeHTML(source)} Haftalık dağılım öneri niteliğindedir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Konu anlatımları, sorular, etkinlik yönergeleri ve şemalar özgündür; ders kitabının metinleri, soruları ve şekilleri kopyalanmamıştır.</p>`;
+      <p class="science-source-note">${escapeHTML(source)} Haftalık dağılım öneri niteliğindedir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Konu anlatımları ilgili ders kitabı sayfaları esas alınarak özgün biçimde yazılmıştır; görseller özgün yapay zekâ destekli illüstrasyonlardır, ders kitabındaki metinler, sorular ve şekiller kopyalanmamıştır.</p>`;
   }
 
   function refreshProgressUI() {

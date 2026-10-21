@@ -62,7 +62,8 @@ Tarihler, uygulamadaki 2026–2027 çalışma takviminin 37 haftasıyla aynıdı
 
 ## İçerik ve görsel notu
 
-- Uygulamadaki konu özetleri, sorular, etkinlik yönergeleri ve şemalar bu çalışma alanı için özgün yazılmıştır; ders kitabının metinleri, soruları ve şekilleri kopyalanmamıştır.
-- PDF künyesinde metin, soru ve şekillerin yayımlanmasına ilişkin hak bildirimi bulunduğundan kitaptaki görseller uygulamaya aktarılmadı. Bunun yerine Türkçe etiketli, basitleştirilmiş ve özgün SVG şemalar kullanıldı.
-- Bilimsel model ve şemalar gerçek sistemlerin basitleştirilmiş gösterimleridir; özellikle sağlık konuları tanı veya kişiye özel tedavi önerisi değildir.
-- Benzer etkinlik biçimlerinin kitaptaki örneklerle eşleştirmesi science-activity-inventory.md dosyasındadır.
+- Haftalık konu açıklamaları, anahtar kavramlar ve model notları ilgili kitap sayfa aralıklarıyla karşılaştırılarak bu çalışma alanı için özgün biçimde yazıldı. Onaylanmış başlıklar ve haftalar değiştirilmedi.
+- Kaynak görselleri sayfa düzeyinde gözden geçirildi: s. 23’te yer tabanlı teleskoplar, TUG/DAG ve ışık kirliliği; s. 30’da yörünge atıkları; s. 42’de başlangıç kütlesine göre iki yıldız yaşam yolu; s. 45 ve 48’de takımyıldızlar, Samanyolu ve Andromeda; s. 60, 64, 71 ve 78–79’da fiziksel iş ve enerji örnekleri; s. 91–95’te sindirim organları; s. 105’te küçük/büyük dolaşım; s. 121–122’de solunum organları, alveol ve soluk alıp verme; s. 130 ve 132’de boşaltım sistemi incelendi.
+- `assets/science-*.jpg` dosyaları, Türkçe okuma illüstrasyonlarının yumuşak guaj/suluboya editoryal yaklaşımını örnek alan özgün yapay zekâ destekli görsellerdir. Kitaptaki fotoğraf, çizim veya sayfa tasarımı kullanılmadı. Akış şeritleri, organ yolları ve açıklama notları yeni hazırlanmış arayüz metnidir; görselde gösterilmeyen alveol veya yardımcı boşaltım organları metinle açıkça belirtilir.
+- Bilimsel illüstrasyonlar ve akış modelleri gerçek sistemlerin seçilmiş özelliklerini basitleştirir; renkler ve oranlar temsili olabilir. Sağlık konuları tanı veya kişiye özel tedavi önerisi değildir.
+- Bu turda etkinlik yönergeleri, mini planlar ve çoktan seçmeli sorulara dokunulmadı. Mevcut etkinlik biçimlerinin kitaptaki örneklerle eşleştirmesi `science-activity-inventory.md` dosyasındadır.

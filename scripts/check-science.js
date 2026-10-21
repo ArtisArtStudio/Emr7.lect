@@ -91,11 +91,14 @@ const expectedTopics = [
 ];
 for (const topic of expectedTopics) assert.ok(science.weeks.some((week) => week.topic === topic), `Missing textbook-aligned science topic: ${topic}`);
 assert.ok(science.weeks.every((week) => week.date && week.topic && week.focus && week.pages));
-assert.ok(science.weeks.every((week) => week.summary.join(' ').length >= 220 && week.points.length >= 3 && week.terms.length >= 3));
+assert.ok(science.weeks.every((week) => week.summary.length === 3 && week.summary.join(' ').length >= 400 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
 assert.ok(science.weeks.every((week) => week.tasks.length === 3 && week.activity.criteria.length >= 3));
 assert.ok(science.weeks.every((week) => week.quiz.options.length === 4 && Number.isInteger(week.quiz.answer) && week.quiz.answer >= 0 && week.quiz.answer < week.quiz.options.length));
 assert.ok(science.weeks.every((week) => week.activity.minChars >= 15 && week.activity.title && week.activity.format && week.activity.prompt));
-assert.ok(science.weeks.every((week) => ['orbit', 'space-risk', 'star-life', 'energy', 'digestion', 'circulation', 'respiration', 'excretion', 'systems'].includes(week.visual)));
+assert.ok(science.weeks.every((week) => ['space', 'telescope', 'debris', 'light', 'stars', 'galaxy', 'spaceReview', 'energy', 'digestion', 'circulation', 'respiration', 'excretion', 'systemsReview'].includes(week.visual)));
+assert.deepEqual(science.weeks.slice(0, 12).map((week) => week.visual), ['space', 'space', 'space', 'telescope', 'space', 'debris', 'light', 'stars', 'stars', 'stars', 'galaxy', 'spaceReview']);
+assert.ok(science.weeks.slice(34).every((week) => week.visual === 'systemsReview'));
+assert.ok(science.weeks.every((week) => week.summary[0] && week.summary[1] && week.summary[2]));
 assert.ok(new Set(science.weeks.map((week) => week.activity.title)).size === 37, 'Each week should have its own original activity title.');
 
 const links = science.getProviderLinks(science.weeks[0]);
@@ -111,6 +114,14 @@ assert.match(mockElements.scienceWeekList.innerHTML, /Vücudumuzdaki Sistemler/)
 assert.equal(mockElements.scienceWeekPrompt.hidden, false, 'The workspace should begin with the week-selection prompt.');
 assert.equal(mockElements.scienceWeekContent.hidden, true);
 assert.equal(mockElements.scienceProgressCount.textContent, '0 / 37 hafta tamamlandı');
+
+for (const week of science.weeks) {
+  science.importProgress({ selectedWeek: week.id, weeks: {} });
+  const html = mockElements.scienceWeekContent.innerHTML;
+  const imageCount = (html.match(/class="science-visual-image"/g) || []).length;
+  assert.equal(imageCount, ['spaceReview', 'systemsReview'].includes(week.visual) ? 4 : 1, `Week ${week.id} should render its mapped science illustration(s).`);
+  assert.ok(html.includes('science-visual-note'), `Week ${week.id} should explain how to read its visual.`);
+}
 
 const normalized = science.normalizeProgress({
   version: 99,
@@ -147,10 +158,26 @@ assert.ok(storage.has('emr7lect.science.v1'), 'Science progress should have its 
 assert.equal(mockElements.scienceWeekPrompt.hidden, true);
 assert.equal(mockElements.scienceWeekContent.hidden, false);
 assert.match(mockElements.scienceWeekContent.innerHTML, /Uzay araştırmalarına giriş/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /<svg/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /class="science-visual-image"/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /ÖZGÜN GÖRSEL MODEL/);
+assert.ok(mockElements.scienceWeekContent.innerHTML.indexOf('science-visual') < mockElements.scienceWeekContent.innerHTML.indexOf('science-topic-summary'), 'The lesson visual should introduce the explanation.');
+assert.ok(!mockElements.scienceWeekContent.innerHTML.includes('<svg'), 'The generated editorial images replace the placeholder inline SVG drawings.');
 assert.match(mockElements.scienceWeekContent.innerHTML, /ÖZGÜN UYGULAMA/);
 assert.match(mockElements.scienceWeekContent.innerHTML, /Kontrol et/);
 assert.equal(mockElements.scienceProgressCount.textContent, '1 / 37 hafta tamamlandı');
+
+science.importProgress({ selectedWeek: 12, weeks: {} });
+assert.equal((mockElements.scienceWeekContent.innerHTML.match(/class="science-visual-image"/g) || []).length, 4, 'The space review should show four separate source-aligned images.');
+assert.match(mockElements.scienceWeekContent.innerHTML, /Yörünge güvenliği/);
+science.importProgress({ selectedWeek: 35, weeks: {} });
+assert.equal((mockElements.scienceWeekContent.innerHTML.match(/class="science-visual-image"/g) || []).length, 4, 'The systems review should show four separate anatomy illustrations.');
+assert.match(mockElements.scienceWeekContent.innerHTML, /Boşaltım/);
+science.importProgress({ selectedWeek: 9, weeks: {} });
+assert.match(mockElements.scienceWeekContent.innerHTML, /Büyük kütleli yol/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /Gezegenimsi bulutsu/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /science-visual-routes/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /loading="lazy"/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /alt="Özgün bilim illüstrasyonu/);
 
 const assessment = science.safeScienceAssessment(JSON.stringify({
   state: 'partial', issue: 'completeness', hint: 'recheck', freeText: 'This must never appear to the learner.',
@@ -219,7 +246,7 @@ async function checkAICheckAndStaleResponse() {
   assert.equal(science.exportProgress().selectedWeek, null);
   assert.deepEqual(science.exportProgress().weeks, {});
   assert.ok(storage.has('emr7lect.science.v1'));
-  console.log('Fen Bilimleri 37-week book map, calendar alignment, original topic/activity data, accessible rendering, safe Groq checks, progress isolation, completion rules, and backup API passed.');
+  console.log('Fen Bilimleri 37-week book map, calendar alignment, refined topic explanations, untouched activity data, accessible image rendering, safe Groq checks, progress isolation, completion rules, and backup API passed.');
 }
 
 checkAICheckAndStaleResponse().catch((error) => {

@@ -1196,6 +1196,26 @@ def main() -> int:
         errors.append("Fen Bilimleri and Social Studies need visibly distinct course accent colors")
     if 'id="scienceWorkspace"' not in html or 'id="scienceWeekList"' not in html or 'id="scienceWeekContent"' not in html:
         errors.append("Fen Bilimleri needs its own weekly course workspace, navigation, and reader")
+    science_js_path = ROOT / "science.js"
+    science_css_path = ROOT / "science.css"
+    science_js = science_js_path.read_text(encoding="utf-8") if science_js_path.is_file() else ""
+    science_css = science_css_path.read_text(encoding="utf-8") if science_css_path.is_file() else ""
+    science_images = set(re.findall(r"src: '(assets/science-[^']+\.jpg)'", science_js))
+    required_science_images = {
+        "assets/science-space.jpg", "assets/science-space-debris.jpg", "assets/science-light-pollution.jpg",
+        "assets/science-stars.jpg", "assets/science-galaxy.jpg", "assets/science-energy.jpg",
+        "assets/science-digestion.jpg", "assets/science-circulation.jpg", "assets/science-respiration.jpg",
+        "assets/science-excretion.jpg",
+    }
+    if not required_science_images.issubset(science_images):
+        errors.append("Fen visual mapping must include all ten original science illustrations")
+    for image in science_images:
+        if not (ROOT / image).is_file():
+            errors.append(f"Missing Fen science image: {image}")
+    if "science-visual-image" not in science_js or "science-explain-block" not in science_js or "science-explain-block" not in science_css:
+        errors.append("Fen lessons need accessible image rendering and structured explanation cards")
+    if ".science-summary-text{display:grid" not in science_css or "background:#fffdf6" in science_css:
+        errors.append("Fen topic summaries must keep their cool blue identity, distinct from Social Studies")
     style_guide = ROOT / "docs" / "subject-ui-style-guide.md"
     if not style_guide.is_file() or "Fen Bilimleri" not in style_guide.read_text(encoding="utf-8"):
         errors.append("The reusable subject UI guide for future courses is missing")
@@ -1379,7 +1399,7 @@ def main() -> int:
                 )
                 if science_test.returncode:
                     errors.append(f"Fen Bilimleri workspace test failed:\n{science_test.stderr.strip()}")
-                elif "Fen Bilimleri 37-week book map, calendar alignment, original topic/activity data, accessible rendering, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
+                elif "Fen Bilimleri 37-week book map, calendar alignment, refined topic explanations, untouched activity data, accessible image rendering, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
                     errors.append("Fen Bilimleri workspace test did not report success")
 
             if not errors:
@@ -1509,7 +1529,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, the date-aligned 37-week textbook-mapped Fen curriculum and original activities, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, the date-aligned 37-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 
