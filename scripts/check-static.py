@@ -1184,9 +1184,30 @@ def main() -> int:
         errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v=", "ai-grader.js?v="):
         if asset not in html:
             errors.append(f"Client assets need a cache-busting version: {asset}")
+    grader_path = ROOT / "ai-grader.js"
+    grader = grader_path.read_text(encoding="utf-8") if grader_path.is_file() else ""
+    if not grader:
+        errors.append("The shared AI feedback coach (ai-grader.js) is missing")
+    else:
+        for required in ("YOL GÖSTERİCİ", "YAZMAYA BAŞLA", "TEŞVİK", "GUIDE_CONTRACT", "COACH_RULES", "sanitizeGuidance", "composeCoachBlock", "lengthCoach"):
+            if required not in grader:
+                errors.append(f"The shared AI feedback coach is missing: {required}")
+        if "window.EMR7_AI_GRADER" not in grader:
+            errors.append("The shared AI feedback coach must expose itself as window.EMR7_AI_GRADER")
+    if html.index("ai-grader.js?v=") > html.index("social-studies-content.js?v="):
+        errors.append("ai-grader.js must load before the course scripts")
+    for course_file, label in (("science.js", "Fen Bilimleri"), ("social-studies.js", "Sosyal Bilgiler"), ("theme1-practice-app.js", "Türkçe")):
+        course_path = ROOT / course_file
+        course_source = course_path.read_text(encoding="utf-8") if course_path.is_file() else ""
+        if "window.EMR7_AI_GRADER" not in course_source and "GRADER =" not in course_source:
+            errors.append(f"{label} must use the shared AI feedback coach")
+        if "composeCoachBlock" not in course_source:
+            errors.append(f"{label} must render the guided coaching block")
+        if "GUIDE_CONTRACT" not in course_source:
+            errors.append(f"{label} must request the guidance fields from the model")
     for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "science.hidden=!isScience", "window.SCIENCE?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "science:window.SCIENCE?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SCIENCE?.importProgress(obj.science)", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "PLAN_VERSION=2", "turkcePlanVersion", ".eskiPlan", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
         if required not in html:
             errors.append(f"Per-week study tracking or its saved-progress migration is missing: {required}")

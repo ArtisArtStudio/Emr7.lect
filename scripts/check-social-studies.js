@@ -35,6 +35,7 @@ class MockElement {
   focus() {}
 }
 
+require('../ai-grader.js');
 require('../social-studies-content.js');
 require('../social-studies.js');
 const social = global.window.SOCIAL_STUDIES;
@@ -617,6 +618,8 @@ async function runSocialAIRegressionChecks() {
       status: 200,
       json: async () => ({ choices: [{ message: { content: JSON.stringify({
         status: 'correct', issues: [], hint: 'recheck',
+        guide: 'Konu özetindeki küreselleşme tanımına dön ve iki açıklamayı aynı ölçüte göre karşılaştır.',
+        starter: 'İki açıklama arasındaki fark …, çünkü …',
         fields: [{ id: 'definition-comparison', status: 'correct', issue: 'none', hint: 'recheck' }],
       }) } }] }),
     };
@@ -631,6 +634,10 @@ async function runSocialAIRegressionChecks() {
   saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'correct', 'A safe Groq result should be stored for the question.');
   assert.ok(mockElements[feedbackId].textContent.includes('TAM DOĞRU'));
+  assert.match(requestBody.messages[0].content, /YAZMA KOÇLUĞU/, 'The system prompt should carry the shared coaching rules.');
+  assert.match(requestBody.messages[0].content, /"guide"/, 'The contract should ask for the guidance fields.');
+  assert.match(mockElements[feedbackId].textContent, /YOL GÖSTERİCİ: Konu özetindeki/, 'The guided next step should reach the student.');
+  assert.match(mockElements[feedbackId].textContent, /YAZMAYA BAŞLA: İki açıklama arasındaki fark/, 'The sentence starter should reach the student.');
   assert.ok(!JSON.stringify(saved).includes(testAPIKey), 'The Groq API key must not be saved with Social Studies progress.');
 
   enterAnswer('İki açıklamanın kapsamını aynı ölçüte göre yeniden karşılaştırıyorum.');
@@ -643,6 +650,24 @@ async function runSocialAIRegressionChecks() {
   saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'unrated', 'An incomplete model assessment must not be presented as fully correct.');
   assert.ok(mockElements[feedbackId].textContent.includes('SONUÇ SINIFLANDIRILAMADI'));
+
+  // Cevap sızdıran koçluk metni öğrenciye ulaşmaz; güvenli yedek kullanılır.
+  enterAnswer('Güvenlik denemesi için yeniden yazıyorum.');
+  global.fetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify({
+      status: 'incomplete', issues: ['completeness'], hint: 'explain',
+      guide: 'Ders kitabının 88. sayfasındaki doğru cevabı yaz.',
+      starter: 'Doğru cevap: küreselleşme',
+      fields: [{ id: 'definition-comparison', status: 'incomplete', issue: 'completeness', hint: 'explain' }],
+    }) } }] }),
+  });
+  await clickAIButton();
+  const guardedText = mockElements[feedbackId].textContent;
+  assert.match(guardedText, /YOL GÖSTERİCİ: Yanıtını “durum → neden → sonuç”/, 'Unsafe guidance should fall back to the safe coaching line.');
+  assert.match(guardedText, /YAZMAYA BAŞLA: Bu durumda/, 'Unsafe starters should fall back to the safe sentence frame.');
+  assert.ok(!/Ders kitab|88\. sayfa|Doğru cevap/.test(guardedText), 'Book references and answer leaks must never reach the student.');
 
   enterAnswer('Yeni yanıt: iki açıklamayı aynı ölçüte göre karşılaştırıyorum.');
   let resolveFetch;

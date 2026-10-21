@@ -245,6 +245,50 @@ Konu metni, sayfa metni veya çoktan seçmeli cevap anahtarı okunmaz.
 
 ---
 
+## 9b. Yazılı yanıt koçluğu (ortak modül)
+
+Yazılı yanıt geri bildirimi üç derste de `ai-grader.js` (`window.EMR7_AI_GRADER`) üzerinden üretilir.
+Amaç: öğrenciyi yazmaya teşvik etmek ve bir sonraki cümleyi nasıl kuracağını göstermek — cevabı söylemek değil.
+
+Model hâlâ yalnızca güvenli kodlar döndürür; bunlara iki yol gösterici alan eklenir:
+
+| Alan | Sınır | İçerik |
+|---|---|---|
+| `guide` | 220 karakter | Öğrencinin bir sonraki adımı; haftanın konu anlatımındaki bir başlığa, metindeki bir bölüme ya da öğrencinin kendi sözüne işaret edebilir |
+| `starter` | 140 karakter | Öğrencinin tamamlayacağı yarım cümle: “Bunun nedeni …, çünkü …” |
+
+- `sanitizeGuidance`: satır sonlarını temizler, sınırı aşanı kısaltır; `HTML/{ }` içeren, **ders kitabı / sayfa numarası**, “cevap anahtarı / doğru cevap / doğru seçenek” geçen metni **atar**.
+- Güvenli metin yoksa derse özgü yedek kullanılır (Fen: konu anlatımındaki paragrafa dön; Sosyal: durum → neden → sonuç; Türkçe: metindeki cümleye dön).
+- Geri bildirim blokları: `YOL GÖSTERİCİ`, `YAZMAYA BAŞLA`, `TEŞVİK`; yazılı yanıtta ayrıca `YAZMA HEDEFİ: Şu an 120/220 karakter…` (`lengthCoach`).
+- `COACH_RULES` sistem mesajına eklenir; doğru yanıtta “bir örnek/karşı örnek ekle” genişletmesi istenir.
+- Kural: koçluk **nereye bakılacağını** ve **cümlenin nasıl kurulacağını** söyler; cevabın içeriğini, sayısal sonucu veya anahtar kavramı söylemez.
+- Testler: `check-science.js` ve `check-social-studies.js` sınırları, güvenli yedeği ve sızıntı yasağını doğrular; `check-static.py` üç dersin de modülü kullandığını denetler.
+
+---
+
+## 9c. Dönem, hafta ve ders saati standardı
+
+Yeni bir ders ya da kitap eklendiğinde haftalık plan **tahminle** değil şu sırayla kurulur:
+
+1. **Kapsam:** Kitap tek dönemlik mi, yıl boyu mu? Yalnız 1. dönem kitabı varsa plan 1. dönemde biter; 2. dönem temaları plana eklenmez.
+2. **Dönem takvimi:** 2026–2027 1. dönem **14 Eylül – 22 Ocak**. Ara tatil **16–20 Kasım** haftası plana sayılmaz → **18 öğretim haftası**.
+3. **Bitiş haftası:** Konular dönem sonundan **~3 hafta önce** biter (sınav/pekiştirme payı) → **15 konu haftası**.
+4. **Haftalık ders saati:** Fen **4**, Türkçe **5**, Sosyal Bilgiler **3** saat.
+5. **Saat bütçesi:** `hafta × haftalık saat` = toplam ders saati (Fen 60, Türkçe 75, Sosyal 45). Konu ve etkinlik yükü bu bütçeye göre bölünür.
+6. **Haftalık konu dağılımı:** Bir haftaya en çok **2 konu** (Sosyal'de 2–3 kısa konu) düşer. Kitapta olmayan ek konu, “tekrar/review”, “dönem sonu”, “yıl sonu” bölümleri **çıkarılır**.
+7. **Tek kaynak:** Tarihler tek yerde tutulur (`TERM_PLAN` / hafta listesi); Fen ve Türkçe takvimi bu listeyle karşılaştırılır.
+
+| Ders | Hafta | Haftalık saat | Toplam | Dağılım |
+|---|---|---|---|---|
+| Fen Bilimleri | 15 | 4 | 60 | Uzay 1–5 · Kuvvet-Enerji 6–8 · Sistemler 9–15 |
+| Türkçe | 15 | 5 | 75 | Hayat Boyu Gelişim 1–5 · Bir Hilal Uğruna 6–10 · İletişim ve Sosyal İlişkiler 11–15 (11 çalışma sayfası, 12 metin) |
+| Sosyal Bilgiler | 15 | 3 | 45 | Birlikte Yaşamak 1–5 · Evimiz Dünya 6–8 · Ortak Mirasımız 9–15 |
+
+- Haftalık konu sayısı arttığında etkinlik akışı **birleşik** yazılır: aynı haftanın etkinlikleri tek listede, alan kimlikleri çakışmayacak biçimde (`-2` soneki).
+- Bir dönem 18 haftaysa ve konu 15 haftada bitiyorsa kalan 3 hafta **sınav ve pekiştirme** için boş bırakılır; plana uydurma konu eklenmez.
+
+---
+
 ## 10. Arayüz standardı
 
 - Türkçe çalışma alanı iskeleti şablondur: görev yolu, ikon, durum pill'i, geri bildirim kutusu,
@@ -276,6 +320,7 @@ python3 scripts/check-secrets.py
 node --check science.js
 node --check science-content.js
 node --check science-term-notes.js
+node --check ai-grader.js
 git diff --check
 ```
 

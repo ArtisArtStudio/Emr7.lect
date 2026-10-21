@@ -377,7 +377,8 @@
     const fields = questionFields.map(field => returnedFields.get(String(field.id)) || {
       id: String(field.id), label: String(field.label || field.id), state: "unrated", issue: "", hint: "recheck"
     });
-    return { state: summarizeFieldAssessments(statusMap[statusCode], fields), issues, hint, fields };
+    const guidance = GRADER.sanitizeGuidance(result);
+    return { state: summarizeFieldAssessments(statusMap[statusCode], fields), issues, hint, fields, ...guidance };
   }
 
   function assessmentStateFromText(text) {
@@ -404,7 +405,29 @@
     return assessmentStateFromText(feedback.text);
   }
 
-  function assessmentFeedbackText(text, state, issues = [], hint = "recheck", fieldResults = []) {
+  const GRADER = window.EMR7_AI_GRADER || {
+    GUIDE_CONTRACT: "",
+    COACH_RULES: "",
+    sanitizeGuidance: () => ({ guide: "", starter: "" }),
+    composeCoachBlock: () => "",
+    lengthCoach: () => "",
+  };
+  const TURKCE_COACH_GUIDE = "Metinde soruyla ilgili cümleye dön; o cümledeki bir ayrıntıyı kendi cümlelerinle açıkla ve nedenini belirt.";
+  const TURKCE_COACH_STARTER = "Metinde … cümlesi bunu gösteriyor, çünkü …";
+  const TURKCE_COACH_ENCOURAGE = "Yazmaya devam et; ilk cümleyi kurduğunda geri kalanı daha kolay gelir.";
+  const TURKCE_COACH_STRETCH = "İyi kurdun; metinden ikinci bir kanıt ekleyerek yanıtını güçlendir.";
+
+  function turkceCoachBlock(coaching, state) {
+    return GRADER.composeCoachBlock({
+      guide: coaching?.guide,
+      starter: coaching?.starter,
+      fallbackGuide: TURKCE_COACH_GUIDE,
+      fallbackStarter: TURKCE_COACH_STARTER,
+      encourage: state === "correct" ? TURKCE_COACH_STRETCH : TURKCE_COACH_ENCOURAGE,
+    });
+  }
+
+  function assessmentFeedbackText(text, state, issues = [], hint = "recheck", fieldResults = [], coaching = null) {
     if (state === "system" || state === "pending") return String(text || "");
 
     const stateLabels = {
@@ -443,11 +466,14 @@
       return `${cue} ${label}: ${fieldAssessmentLabels[fieldState]}. ${fieldIssue} İpucu: ${fieldHint}`;
     }) : [];
 
+    const coach = turkceCoachBlock(coaching, state);
     if (state === "correct") {
-      return `DURUM: TAM DOĞRU\n${fieldLines.length ? `YANIT BÖLÜMLERİ:\n${fieldLines.join("\n")}` : "Yanıtın istenen ölçütleri karşılıyor."}`;
+      const base = `DURUM: TAM DOĞRU\n${fieldLines.length ? `YANIT BÖLÜMLERİ:\n${fieldLines.join("\n")}` : "Yanıtın istenen ölçütleri karşılıyor."}`;
+      return coach ? `${base}\n${coach}` : base;
     }
     const lines = [`DURUM: ${stateLabels[state] || stateLabels.unrated}`, `HATA/EKSİK: ${issueText}`];
     if (fieldLines.length) lines.push(`YANIT BÖLÜMLERİ:\n${fieldLines.join("\n")}`);
+    if (coach) lines.push(coach);
     if (!fieldLines.length || fieldResults.every(field => field.state === "correct" || field.state === "unrated")) lines.push(`İPUCU: ${hintText}`);
     return lines.join("\n");
   }
@@ -706,7 +732,7 @@
         ? feedback.fields.map(field => field.state === "correct" ? field : { ...field, hint: questionHint })
         : feedback?.fields;
       const feedbackText = hasSavedFeedback
-        ? assessmentFeedbackText(feedback.text, feedbackState, feedback.issues, questionHint || feedback.hint, feedbackFields)
+        ? assessmentFeedbackText(feedback.text, feedbackState, feedback.issues, questionHint || feedback.hint, feedbackFields, { guide: feedback.guide, starter: feedback.starter })
         : "";
       const resultLabel = assessmentLabels[feedbackState] || "";
       const fields = question.fields || [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 4 }];
@@ -1048,13 +1074,13 @@
     if (ttsRow) ttsRow.hidden = true;
   }
 
-  function showFeedback(card, text, state, issues = [], hint = "recheck", fieldResults = []) {
+  function showFeedback(card, text, state, issues = [], hint = "recheck", fieldResults = [], coaching = null) {
     const feedback = card?.querySelector(".feedback-box");
     if (!feedback) return;
     const ttsRow = card?.querySelector(".theme1-tts");
     const finalState = Object.hasOwn(assessmentLabels, state) ? state : "system";
     setQuestionAssessment(card, finalState);
-    feedback.textContent = assessmentFeedbackText(text, finalState, issues, hint, fieldResults);
+    feedback.textContent = assessmentFeedbackText(text, finalState, issues, hint, fieldResults, coaching);
     feedback.dataset.state = finalState;
     feedback.hidden = false;
     if (ttsRow) ttsRow.hidden = !feedback.textContent.trim();
@@ -1132,6 +1158,7 @@
         "Tam doğru: tüm doğrulanabilir ölçütler karşılanır. Kısmen doğru: anlamlı/doğru bir bölüm vardır ama ölçütlerden biri eksik veya hatalıdır. Yanlış: temel yanıt ilgisiz ya da kaynakla çelişir. Eksik: istenen yanıt parçalarından biri veya birkaçı yoktur. Doğrulanamadı: yanıtın olgusal iddiası verilen kaynak/anahtarla denetlenemiyordur.",
         "GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, kaynakta cevabı belirten cümleyi, örnek yanıtı veya bunların eş anlamlı/parafraz edilmiş biçimini hiçbir koşulda yazma. Yanlış/eksik yanıtta cevabın ne olduğunu açıklama. Sadece aşağıdaki kapalı kodlardan seçim yap; uygulama öğrenciye gösterilecek güvenli mesajı kendisi oluşturur.",
         "ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|selection|accuracy|source\"],\"hint\":\"reread|count|evidence|explain|match|recheck|connect|keyword|sequence|compare|context|justify|videoTopic|videoKeywords|videoConnection|videoCompare|audioEvidence|mediaEvidence\",\"fields\":[{\"id\":\"verilen-alan-kimliği\",\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issue\":\"relevance|evidence|completeness|reasoning|selection|accuracy|source|none\",\"hint\":\"izinli-ipucu-kodu\"}]}. status ve alan durumları yalnızca izinli değerler; her alan için tek bir issue/hint kodu kullan. `fields` içinde yanıtta verilen HER alan kimliğini tam olarak bir kez ve sırasıyla döndür. Serbest metin, alıntı, cevap, cevap özeti veya başka JSON alanı ekleme.",
+        `YAZMA KOÇLUĞU: Yazılı yanıtlarda öğrencinin bir sonraki cümlesini kurmasına yardım et. Şu iki alanı da ekle: ${GRADER.GUIDE_CONTRACT}. guide alanında metindeki bir bölüme, konu başlığına ya da öğrencinin kendi cümlesindeki bir sözcüğe işaret edebilirsin; cevabı, sonucu veya anahtar cümleyi yazma.`,
         "Tüm alanlar tam doğruysa status=correct, issues=[] ve her alan status=correct olsun. Alanların tümü doğru değilse genel durumu alan sonuçlarına göre seç; doğru alanları yanlış gibi göstermeden hatalı/eksik alanları ayrı belirt. Kaynakta bulunmayan veya sağlanan notlarla/anahtarla doğrulanamayan medya iddiasında ilgili alan status=unverified ve issue=source olsun. Hint kodlarını mümkün olduğunca çeşitlendir ve her alanın içeriğine göre seç; alakasız bir yazı alanına otomatik olarak evidence kodu verme.",
         context.text ? "İlgili kaynak içeriği kullanıcı mesajında verilmiştir." : context.note,
         context.hasVideoAnalysis
@@ -1253,17 +1280,20 @@
       const issueCodes = assessment?.issues || [];
       const hintCode = assessment?.hint || assessmentHintForIssue(issueCodes[0], assessmentState);
       const fieldResults = assessment?.fields || [];
-      const learnerFeedback = assessmentFeedbackText("", assessmentState, issueCodes, hintCode, fieldResults);
+      const coaching = { guide: assessment?.guide || "", starter: assessment?.starter || "" };
+      const learnerFeedback = assessmentFeedbackText("", assessmentState, issueCodes, hintCode, fieldResults, coaching);
       flowState(activeUnit.weekId).feedback[qKey] = {
         state: assessmentState,
         text: learnerFeedback,
         issues: issueCodes,
         hint: hintCode,
         fields: fieldResults,
+        guide: coaching.guide,
+        starter: coaching.starter,
         checkedAt: new Date().toISOString()
       };
       persist();
-      showFeedback(card, learnerFeedback, assessmentState, issueCodes, hintCode, fieldResults);
+      showFeedback(card, learnerFeedback, assessmentState, issueCodes, hintCode, fieldResults, coaching);
       if (assessmentState === "correct") celebrateActivityIfCompleted(activity);
     } catch (error) {
       const message = String(error?.message || error || "Bilinmeyen hata");

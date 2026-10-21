@@ -716,11 +716,27 @@
   }
 
   /* --- Güvenli geri bildirim: yalnızca kapalı kodlar kullanılır, doğru yanıt söylenmez --- */
-  function practiceFeedbackText(state, issues = [], hint = 'recheck') {
+  const COACH_ENCOURAGE = 'Yazmaya devam et; ilk cümleyi kurduğunda geri kalanı daha kolay gelir.';
+  const COACH_STRETCH = 'İyi kurdun; bir örnek ya da karşı örnek ekleyerek yanıtını güçlendir.';
+
+  function practiceCoachBlock(coaching) {
+    if (!coaching || !GRADER) return '';
+    return GRADER.composeCoachBlock({
+      guide: coaching.guide,
+      starter: coaching.starter,
+      fallbackGuide: coaching.fallbackGuide,
+      fallbackStarter: coaching.fallbackStarter,
+      encourage: coaching.encourage,
+    });
+  }
+
+  function practiceFeedbackText(state, issues = [], hint = 'recheck', coaching = null) {
     if (state === 'system' || state === 'pending') return '';
     const label = PRACTICE_STATES[state] || PRACTICE_STATES.unrated;
+    const coach = practiceCoachBlock(coaching);
     if (state === 'correct') {
-      return `DURUM: ${label}\nYanıtın istenen ölçütleri karşılıyor. Bir sonraki etkinliğe geçebilirsin.`;
+      const base = `DURUM: ${label}\nYanıtın istenen ölçütleri karşılıyor. Bir sonraki etkinliğe geçebilirsin.`;
+      return coach ? `${base}\n${coach}` : base;
     }
     const safeIssues = issues.filter((code) => Object.hasOwn(PRACTICE_ISSUES, code)).slice(0, 2);
     const fallback = {
@@ -732,18 +748,55 @@
     };
     const issueText = safeIssues.length ? safeIssues.map((code) => PRACTICE_ISSUES[code]).join(' ') : fallback[state] || fallback.unrated;
     const hintCode = Object.hasOwn(PRACTICE_HINTS, hint) ? hint : 'recheck';
-    return `DURUM: ${label}\nHATA/EKSİK: ${issueText}\nİPUCU: ${PRACTICE_HINTS[hintCode]}`;
+    const lines = [`DURUM: ${label}`, `HATA/EKSİK: ${issueText}`];
+    const lengthLine = coaching && GRADER && coaching.minChars ? GRADER.lengthCoach(coaching.length, coaching.minChars) : '';
+    if (lengthLine) lines.push(`YAZMA HEDEFİ: ${lengthLine}`);
+    if (coach) lines.push(coach);
+    lines.push(`İPUCU: ${PRACTICE_HINTS[hintCode]}`);
+    return lines.join('\n');
+  }
+
+  function textCoaching(activity, entry, assessment) {
+    if (!activity || activity.type !== 'text') return null;
+    const written = String(entry?.values?.x || '').trim().length;
+    return {
+      guide: assessment?.guide || '',
+      starter: assessment?.starter || '',
+      fallbackGuide: TEXT_COACH_GUIDE,
+      fallbackStarter: TEXT_COACH_STARTER,
+      encourage: assessment?.state === 'correct' ? COACH_STRETCH : COACH_ENCOURAGE,
+      length: written,
+      minChars: activity.minChars,
+    };
   }
 
   function localVerdictText(activity, result) {
     if (activity.type === 'text') {
-      if (result.correct === result.total) return practiceFeedbackText('correct');
-      return `DURUM: ${PRACTICE_STATES.incomplete}\nHATA/EKSİK: Yanıtın ${result.length}/${activity.minChars} karakter; ölçütlerdeki her başlığı karşılayacak kadar yazmadın.\nİPUCU: ${PRACTICE_HINTS.count} Somut bir örnek ve gerekçe ekle.`;
+      const coaching = {
+        fallbackGuide: TEXT_COACH_GUIDE,
+        fallbackStarter: TEXT_COACH_STARTER,
+        encourage: result.correct === result.total ? COACH_STRETCH : COACH_ENCOURAGE,
+        length: result.length,
+        minChars: activity.minChars,
+      };
+      if (result.correct === result.total) return practiceFeedbackText('correct', [], 'recheck', coaching);
+      return practiceFeedbackText('incomplete', ['completeness'], 'count', coaching);
     }
     if (result.correct === result.total) return practiceFeedbackText('correct');
     const state = result.correct === 0 ? 'wrong' : 'partial';
     return `DURUM: ${PRACTICE_STATES[state]} · ${result.correct}/${result.total}\nHATA/EKSİK: ${result.correct === 0 ? PRACTICE_ISSUES.selection : 'Yanıtının bir bölümü ölçütleri karşılıyor; en az bir maddeyi yeniden gözden geçir.'}\nİPUCU: ${PRACTICE_HINTS[activity.type === 'fill' ? 'context' : activity.type === 'order' ? 'sequence' : 'match']}`;
   }
+
+  /* --- Ortak geri bildirim koçu (ai-grader.js) ------------------------------------------ */
+  const GRADER = window.EMR7_AI_GRADER || {
+    GUIDE_CONTRACT: '',
+    COACH_RULES: '',
+    sanitizeGuidance: () => ({ guide: '', starter: '' }),
+    composeCoachBlock: () => '',
+    lengthCoach: () => '',
+  };
+  const TEXT_COACH_GUIDE = 'Konu anlatımındaki ilgili paragrafa dön; oradaki nedeni kendi cümlelerinle yeniden kur ve somut bir örnek ekle.';
+  const TEXT_COACH_STARTER = 'Bunun nedeni …, çünkü …';
 
   /* --- Yapay zekâ değerlendirmesi: yalnızca JSON kodları istenir ------------------------- */
   const PRACTICE_AI_SYSTEM = [
@@ -754,7 +807,8 @@
     'Tam doğru: tüm doğrulanabilir ölçütler karşılanır. Kısmen doğru: anlamlı/doğru bir bölüm vardır ama ölçütlerden biri eksik veya hatalıdır. Yanlış: temel yanıt ilgisiz ya da bilgiyle çelişir. Eksik: istenen yanıt parçalarından biri veya birkaçı yoktur. Doğrulanamadı: yanıtın olgusal iddiası verilen bilgiyle denetlenemiyordur.',
     'GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, anahtarın parafrazını, doğru eşleşmeyi ya da doğru sırayı hiçbir koşulda yazma. Hangi maddenin yanlış olduğunu tek tek söyleme. Yalnızca aşağıdaki kapalı kodlardan seçim yap; öğrenciye gösterilecek güvenli mesajı uygulama kendisi oluşturur.',
     'İpucu, cevabın kendisini ya da eş anlamlısını söylemeden öğrencinin bir sonraki düşünme adımını açıklasın. Doğru yanıtlara ipucu verme.',
-    'ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {"status":"correct|partial|wrong|incomplete|unverified","issues":["selection|accuracy|completeness|reasoning|evidence|relevance|source"],"hint":"reread|match|sequence|count|context|connect|evidence|explain|justify|compare|keyword|unit|recheck"}. issues en çok iki kod içersin; hint yalnızca izinli bir kod olsun. Başka alan ekleme.',
+    `'ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {"status":"correct|partial|wrong|incomplete|unverified","issues":["selection|accuracy|completeness|reasoning|evidence|relevance|source"],"hint":"reread|match|sequence|count|context|connect|evidence|explain|justify|compare|keyword|unit|recheck"}. issues en çok iki kod içersin; hint yalnızca izinli bir kod olsun. Yazılı yanıtlarda şu iki alanı da ekle: ${GRADER.GUIDE_CONTRACT}. Başka alan ekleme.`,
+    GRADER.COACH_RULES,
     'Tüm yanıt doğruysa status=correct ve issues=[] döndür.',
   ].join('\n');
 
@@ -814,7 +868,8 @@
       ? [...new Set(parsed.issues.map((code) => String(code).trim().toLowerCase()))].filter((code) => Object.hasOwn(PRACTICE_ISSUES, code)).slice(0, 2)
       : [];
     const hint = String(parsed.hint || '').trim().toLowerCase();
-    return { state, issues, hint: Object.hasOwn(PRACTICE_HINTS, hint) ? hint : 'recheck' };
+    const guidance = GRADER ? GRADER.sanitizeGuidance(parsed) : { guide: '', starter: '' };
+    return { state, issues, hint: Object.hasOwn(PRACTICE_HINTS, hint) ? hint : 'recheck', ...guidance };
   }
 
   function groqRetryDelay(response, payload) {
@@ -1006,7 +1061,7 @@
     setPending('Ölçütlere göre inceleniyor…');
     try {
       const assessment = await askPracticeAssessment(activity, entry.values);
-      const text = practiceFeedbackText(assessment.state, assessment.issues, assessment.hint);
+      const text = practiceFeedbackText(assessment.state, assessment.issues, assessment.hint, textCoaching(activity, entry, assessment));
       entry.checked = true;
       entry.assessment = { ...assessment, text, checkedAt: new Date().toISOString() };
       persist();

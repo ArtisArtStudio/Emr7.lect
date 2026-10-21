@@ -66,6 +66,15 @@ Fen Bilimleri, Sosyal Bilgiler and Türkçe use one activity-area language so a 
 - Feedback appears in one live-status box; written-answer feedback carries the `🔊 Geri bildirimi sesli oku` / `Durdur` pair. Reading is limited to written-answer feedback — never the topic text, the answer key or the whole page.
 - No activity area cites the textbook or a page number (`Kitap bağlamı`, `Ders kitabı: s. N` and similar strings must not appear).
 
+## Writing coach for open answers
+
+All three courses share `ai-grader.js` (`window.EMR7_AI_GRADER`). It owns the written-answer coaching rules so the behaviour cannot drift between courses:
+
+- The model still returns only safe codes plus two guided fields: `guide` (≤ 220 characters, one sentence telling the student the next step) and `starter` (≤ 140 characters, a half sentence the student finishes).
+- `sanitizeGuidance` trims both fields, rejects HTML/braces, and drops any text that cites the textbook, a page number, the answer key or "the correct answer". Unsafe text never reaches the student; the course fallback line is used instead.
+- Feedback shows three blocks: `YOL GÖSTERİCİ` (guided next step, may point at a heading in the week's own explanation or at the student's own wording), `YAZMAYA BAŞLA` (sentence frame), `TEŞVİK` (encouragement). Written answers also get `YAZMA HEDEFİ` with the remaining character count from `lengthCoach`.
+- Correct answers are never revealed: the guide may say *where to look* and *how to build the sentence*, never the content of the answer.
+
 ## Adding a future course
 
 - Add its subject identity and accent/wash to `index.html`; use the same top-level course selector and shared tools.

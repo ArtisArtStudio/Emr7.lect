@@ -51,6 +51,7 @@ global.document = {
   getElementById: (id) => mockElements[id] ?? null,
 };
 
+require('../ai-grader.js');
 require('../science-content.js');
 require('../science-term-notes.js');
 require('../science-activities.js');
@@ -490,6 +491,67 @@ for (const leak of ['Haberleşme uydusu', 'Gözlem uydusu', 'Televizyon yayını
   assert.ok(!feedbackElement.textContent.includes(leak), 'Safe feedback must not name the correct card or the wrong card.');
 }
 assert.equal(science.exportProgress().weeks['1'].activities['f1-a04'].assessment.state, 'partial', 'The AI verdict should persist with the activity answers.');
+
+// Yazılı yanıt koçluğu: guide/starter alanları geri bildirime girer, sınır ve güvenlik kuralları uygulanır.
+const textActivityId = 'f1-a09';
+for (const suffix of ['feedback', 'pill', 'card', 'state']) {
+  mockElements[`science-${suffix}-${textActivityId}`] = new MockElement(`science-${suffix}-${textActivityId}`);
+}
+const grader = global.window.EMR7_AI_GRADER;
+assert.ok(grader, 'The shared AI grader module should be loaded before the science workspace.');
+assert.equal(grader.LIMITS.guide, 220);
+assert.equal(grader.LIMITS.starter, 140);
+assert.match(grader.GUIDE_CONTRACT, /guide/);
+assert.match(grader.COACH_RULES, /YAZMA KOÇLUĞU/);
+
+science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { [textActivityId]: { values: { x: 'Uzay çalışmaları günlük yaşamı etkiler çünkü haberleşme kolaylaşır.' } } } } } });
+let coachResponse = null;
+global.fetch = async (_url, options) => {
+  coachResponse = JSON.parse(options.body);
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify({
+      status: 'partial',
+      issues: ['evidence'],
+      hint: 'evidence',
+      guide: 'Konu anlatımındaki “Uzay kirliliği” paragrafına dön ve nedeni kendi cümlelerinle kur.',
+      starter: 'Bunun nedeni …, çünkü …',
+    }) } }] }),
+  };
+};
+await science.checkActivity(textActivityId, new MockElement('coach-button'));
+global.fetch = previousFetch;
+const coachText = mockElements[`science-feedback-${textActivityId}`].textContent;
+assert.match(coachResponse.messages[0].content, /YAZMA KOÇLUĞU/, 'The system prompt should carry the shared coaching rules.');
+assert.match(coachResponse.messages[0].content, /"guide"/, 'The contract should ask for the guidance fields.');
+assert.match(coachText, /YOL GÖSTERİCİ: Konu anlatımındaki/, 'The guided next step should reach the student.');
+assert.match(coachText, /YAZMAYA BAŞLA: Bunun nedeni/, 'The sentence starter should reach the student.');
+assert.match(coachText, /YAZMA HEDEFİ: Şu an \d+\/220 karakter/, 'The writing target should state the remaining length.');
+for (const leak of ['Haberleşme uydusu', 'Gözlem uydusu', 'Televizyon yayını iletmek']) {
+  assert.ok(!coachText.includes(leak), 'Coaching feedback must not leak the answer key.');
+}
+
+// Cevap sızdıran ya da kitaba gönderme yapan koçluk metni atılır; güvenli yedek kullanılır.
+science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { [textActivityId]: { values: { x: 'Kısa yanıt.' } } } } } });
+global.fetch = async () => ({
+  ok: true,
+  status: 200,
+  json: async () => ({ choices: [{ message: { content: JSON.stringify({
+    status: 'incomplete',
+    issues: ['completeness'],
+    hint: 'count',
+    guide: 'Ders kitabının 42. sayfasındaki doğru cevabı yaz.',
+    starter: 'Doğru cevap: haberleşme uydusu',
+  }) } }] }),
+});
+await science.checkActivity(textActivityId, new MockElement('coach-button'));
+global.fetch = previousFetch;
+const safeCoachText = mockElements[`science-feedback-${textActivityId}`].textContent;
+assert.match(safeCoachText, /YOL GÖSTERİCİ: Konu anlatımındaki ilgili paragrafa dön/, 'Unsafe guidance should fall back to the safe coaching line.');
+assert.match(safeCoachText, /YAZMAYA BAŞLA: Bunun nedeni/, 'Unsafe starters should fall back to the safe sentence frame.');
+assert.ok(!/42\. sayfa|Ders kitab|Doğru cevap/.test(safeCoachText), 'Book references and answer leaks must never reach the student.');
+
   mockElements.apiKey.value = '';
   console.log('Fen konu etkinlikleri: boşluklarda ipucu yok, çoktan seçmeli dışındaki etkinlikler güvenli Groq değerlendirmesiyle kontrol ediliyor.');
 }
