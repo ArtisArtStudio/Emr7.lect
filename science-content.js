@@ -1,12 +1,15 @@
 /*
- * 7. sınıf Fen Bilimleri için özgün, ders kitabı temelli haftalık konu akışı.
- * Başlıklar ve sayfa aralıkları MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap'tan
- * (2026) alınan içerik haritasına dayanır; anlatım, sorular ve çizimler bu uygulama için özgün hazırlanmıştır.
+ * 7. sınıf Fen Bilimleri için özgün haftalık konu akışı.
+ *
+ * Metinler; ünite kazanımları ile ders kitabındaki bilgi kutusu türlerinin (Haber, Bağlantı
+ * Noktası, Keşif Noktası, Kontrol Noktası etkinliği, Bilgi Bankası, Tarihe Not Düşenler,
+ * Performans Görevi) tema tema incelenmesinden yararlanılarak yazılmıştır. Anlatımda kitaba
+ * atıf yapılmaz, sayfa numarası verilmez; tanımlar, tarihsel örnekler, bilim insanlarının
+ * yaşamları ve kavramlar doğrudan konunun akışı içinde verilir.
  *
  * Çalışma takvimi: 2026–2027 döneminde Fen Bilimleri haftada 4 ders saati görülür.
  * Ders 14–18 Eylül'de başlar, 28–31 Aralık haftasında sona erer (15 ders haftası).
- * Bir önceki 37 konuluk akış, bu 15 haftaya anlamlı biçimde birleştirilmiştir; her haftanın
- * konu başlıkları, anlatım blokları, kavramları ve araştırma sonuçları korunur.
+ * Her hafta 4–6 anlatım bloğu, hatırlanacak maddeler, kavram şeridi, görevler ve bir quiz içerir.
  */
 (() => {
   'use strict';
@@ -40,21 +43,26 @@
       "topic": "Uzay araştırmalarına giriş ve gözlem soruları · Türkiye’nin uzay çalışmaları ve uydular",
       "pages": "14–23",
       "visual": "space",
-      "visualNote": "Uydu, yeryüzünden veri toplayan veya veri ileten bir araçtır. Görselde görülen özellik ile o özelliğe ilişkin yorumunu ayrı tut. Uydu görüntüsü veya sinyali yeryüzündeki çalışmalara veri sağlayabilir; görev türünü taşıdığı araçlar belirler.",
-      "focus": "Bir uzay araştırmasının merak sorusundan gözleme, ölçüme ve kanıta nasıl ilerlediğini açıkla. Türkiye’nin uzay çalışmalarını uydu görevleri ve günlük yaşamda kullanılan verilerle ilişkilendir.",
+      "visualNote": "Görsel, Dünya çevresindeki yörüngesinde görev yapan bir gözlem uydusunu gösterir: güneş panelleri elektrik üretir, gövdeye bağlı algılayıcı yeryüzüne bakar ve topladığı veriyi yer istasyonuna iletir.",
+      "focus": "Bir uzay araştırmasının merak sorusundan gözleme, ölçüme ve kanıta nasıl ilerlediğini; Türkiye'nin uydu görevlerini haberleşme ve Dünya gözlemi ayrımıyla açıklar.",
       "summary": [
-        "Uzay nedir? Ders kitabı uzayı, Dünya dışında kalan gök cisimlerinin bulunduğu büyük boşluk olarak tanımlar. Yıldızlar, gezegenler, uydular ve aralarındaki uzaklıklar bu ortamın parçalarıdır. Evren daha kapsayıcı kavramdır: uzayı ve içindeki tüm gök cisimlerini, galaksileri ve yapıları birlikte düşünür. Uzay araştırması, bu yapı ve olaylar hakkında gözlem ve ölçümle bilgi aramaktır. Yapay uydu, Dünya’nın ya da başka bir gök cisminin çevresinde belirli bir yörüngede görev yapmak üzere insan eliyle üretilip gönderilen araçtır. Bütün uydular aynı işi yapmaz: haberleşme uyduları sinyalleri iletir, Dünya gözlem uyduları görüntü ve ölçüm toplar; bazı uydular bilimsel gözlem veya konum belirleme sistemlerinde kullanılır.",
-        "Araştırma bir merak sorusuyla başlar. Örneğin “Bulutlar hangi yönde ilerliyor?” sorusu, görüntü veya ölçüm verisinin ne zaman ve nerede toplanacağını belirlemeye yardım eder. Araştırmacı uygun araçla veri toplar, gözlemleri kaydeder, benzer verileri karşılaştırır ve açıklamasını kanıtla sınar; yeni kanıt önceki fikri değiştirebilir. Bir gözlem uydusu Dünya yüzeyinden belirli türde veri toplar ve bu veriyi yer istasyonlarına gönderir. Uzmanlar farklı tarihlerde alınan görüntüleri karşılaştırarak arazi, bulut, tarım alanı ya da afet bölgesindeki değişimleri inceleyebilir. Görüntünün çözünürlüğü, zamanı ve ölçtüğü özellik, hangi soruya yanıt verebileceğini sınırlar.",
-        "Kitabın ilk sayfaları daha önce öğrenilen yansıma bilgisini hatırlatır; ardından Türksat 6A haberiyle uzay çalışmalarının haberleşme, hava gözlemi ve konum bulma gibi alanlardaki yerini sorar. Uzay teknolojilerine geçmeden önce “bu araştırma hangi soruya yanıt arıyor?” diye düşünmek, araç seçimini anlamlı kılar. Kitap Türksat uydularını haberleşme; Göktürk ve İMECE örneklerini yüksek çözünürlüklü Dünya gözlemiyle ilişkilendirir. İMECE görüntüleri doğal afet, tarım ve hedef belirleme gibi uygulamalara katkı sağlayabilir; Türksat 6A ise yerli ve millî haberleşme uydusu olarak tanıtılır. Bunlar görev türlerinin farklı olduğuna örnektir.",
-        "Bir görüntüde doğrudan seçilebilen özelliği gözlem, o özelliğin nedenine ilişkin açıklamayı çıkarım olarak yaz. Uydu görüntüsü yeryüzünün belirli bir andaki görünüşüne kanıt sağlar; tek başına bütün nedenleri açıklamaz. Görselin tarihi, kaynağı ve ölçüm türü de yorumun parçasıdır. Bir uyduyu anlatırken yalnızca adını değil; hangi yörüngede çalıştığını, hangi veriyi topladığını veya ilettiğini ve bu verinin kimlerce nasıl kullanıldığını da belirt. Kitaptaki uydu çizimleri görevleri açıklayan temsili görsellerdir; ekranda görülen uydu fotoğrafı, uydunun topladığı verinin kendisi değildir."
+        "**Uzay**, Dünya atmosferinin dışında kalan ve gök cisimlerinin bulunduğu ortamdır. **Evren** ise uzayı, içindeki bütün gök cisimlerini, gaz-toz bulutlarını ve galaksileri kapsayan bütünü ifade eder; bu yüzden uzay evrenin yalnızca bir parçasıdır. Gök cisimleri arasındaki uzaklıklar günlük ölçülerle anlatılamayacak kadar büyük olduğu için astronomide **ışık yılı** gibi birimler kullanılır. **Yapay uydu**, Dünya'nın ya da başka bir gök cisminin çevresinde belirli bir **yörünge** üzerinde görev yapmak üzere insanlar tarafından üretilip uzaya gönderilen araçtır. Ay gibi doğal cisimler uydu değil, doğal uydudur; iki kavram karıştırılmamalıdır. Uyduların çoğu güneş panelleriyle elektrik üretir, komutlarını yer istasyonlarından alır ve topladığı veriyi yine bu istasyonlara iletir. **Gözlem**, bir olayın duyu organları ya da ölçüm aletleriyle doğrudan kaydedilmesidir; **veri**, bu kayıtların sayı, görüntü veya ölçüm biçimindeki hâlidir. **Kanıt** ise bir açıklamayı desteklemek için kullanılan veridir. Gözlem ile çıkarım arasındaki ayrım burada başlar: görüntüde kıyı çizgisinin yer değiştirmesi gözlem, bunun erozyondan kaynaklandığı düşüncesi çıkarımdır.",
+        "Bilimsel bir uzay araştırması merak sorusuyla başlar: “Bu bölgede bitki örtüsü son beş yılda değişti mi?” sorusu, hangi verinin, hangi aralıkla ve hangi araçla toplanacağını belirler. Araştırmacı uygun aracı seçer, ölçümleri kaydeder, aynı ölçümü farklı tarihlerde yineler ve sonuçları karşılaştırır. Karşılaştırmada bulutluluk, mevsim ve gölge gibi etkenlerin görüntüyü değiştirebileceği hesaba katılır; bu yüzden tek görüntü yerine düzenli aralıklarla alınan görüntü dizisi kullanılır. Yeni kanıt önceki açıklamayı destekliyorsa açıklama güçlenir, çelişiyorsa değiştirilir. Uyduların görevleri de bu sorulara göre ayrılır: **haberleşme** uyduları televizyon, telefon ve internet sinyallerini alıp güçlendirerek yeniden iletir; **gözlem uydusu** ise yüzeyden görüntü ve ölçüm toplayarak tarım, orman, kuraklık ve afet izlemeye veri sağlar. Bir uydunun alçak ya da yüksek yörüngede bulunması, hedef bölgenin ne sıklıkla ve hangi çözünürlükle görüntüleneceğini belirler.",
+        "Türkiye'nin uzay çalışmaları bu iki görev türünü açıkça ayırır. **Türksat 6A**, 8 Temmuz 2024'te fırlatılan yerli ve millî haberleşme uydusudur ve yayın ile internet trafiğini geniş bir coğrafyaya taşır. **Göktürk-2** (2012) ve **Göktürk-1** (2016) yüksek çözünürlüklü görüntü sağlayan Dünya gözlem uydularıdır. **İMECE**, 15 Nisan 2023'te yörüngeye yerleşen ve metre altı çözünürlükte görüntü alabilen gözlem uydusudur; afet sonrası hasar tespiti, tarım alanlarının izlenmesi ve haritalama çalışmalarında kullanılır. **Rasat** (2011) ve **Bilsat** (2003) daha önceki gözlem uydularıdır. Bu veriler yalnızca fotoğraf üretmez: bir orman yangınının sınırı, bir baraj gölündeki seviye değişimi ya da bir kentin büyümesi, aynı bölgenin farklı tarihlerdeki görüntüleri karşılaştırılarak izlenir. Uydu sinyalleri hava araçlarının konum bulmasına, gemi ve kamyon takibine, navigasyon uygulamalarına da temel sağlar; bu nedenle bir haberleşme uydusundaki kesinti günlük yaşamda fark edilmeyen birçok hizmeti etkileyebilir.",
+        "Uzay çağı, 4 Ekim 1957'de Sputnik 1 adlı ilk yapay uydunun yörüngeye yerleştirilmesiyle başladı. 12 Nisan 1961'de **Yuri Gagarin** Vostok 1 aracıyla uzaya çıkan ilk insan oldu; 20 Temmuz 1969'da Apollo 11 göreviyle insanlar Ay'a ayak bastı. Türkiye'nin astronomi tarihinde **Nüzhet Gökdoğan** önemli bir yer tutar: İstanbul Üniversitesi Gözlemevi'nin kuruluşunda çalışmış, astronomi ve matematik dersleri vermiş, bu alanda akademik kadroya giren ilk Türk kadınlarından biri olmuştur. Ocak 2024'te **Alper Gezeravcı**, Axiom-3 göreviyle Uluslararası Uzay İstasyonu'na giderek Türkiye'nin ilk astronotu oldu ve istasyonda 13 bilimsel deney gerçekleştirdi. Bu örnekler, uzay araştırmalarının yalnızca teknik değil, merak ve uluslararası iş birliğiyle ilerleyen bir süreç olduğunu gösterir."
+      ],
+      "blockLabels": [
+        "UZAY, EVREN VE UYDU",
+        "ARAŞTIRMA SÜRECİ",
+        "TÜRKİYE’NİN UZAY ÇALIŞMALARI",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Araştırma sorusu gözlenebilir bir özelliğe odaklanır.",
-        "Gözlem ile gözleme dayalı çıkarım farklıdır.",
-        "Verinin kaynağını belirtmek açıklamayı güçlendirir.",
-        "Haberleşme ve gözlem uydularının amaçları farklıdır.",
-        "Yörünge ve araç donanımı görevi etkiler.",
-        "Uydu verisi değerlendirilir; tek başına açıklama değildir."
+        "Uzay, evrenin yalnızca bir parçasıdır; gök cisimleri arası uzaklıklar ışık yılıyla ifade edilir.",
+        "Uydu, yörüngesinde görev yapar; haberleşme ve gözlem uydularının amaçları farklıdır.",
+        "Araştırma sorusu, toplanacak veriyi ve seçilecek aracı belirler.",
+        "Gözlem doğrudan kaydedilen özellik, çıkarım ise bu özelliğe getirilen açıklamadır.",
+        "Türksat haberleşme, Göktürk ve İMECE Dünya gözlemi görevini temsil eder."
       ],
       "terms": [
         "uzay araştırması",
@@ -66,10 +74,10 @@
         "gözlem uydusu"
       ],
       "tasks": [
-        "Üniteye giriş bölümünü incele; bildiğin ve merak ettiğin uzay konularını ayır.",
+        "Uzay konusunda bildiklerini ve merak ettiklerini iki ayrı listeye ayır.",
         "Bir uydu veya teleskop görüntüsünde gözlemleyebileceğin iki özelliği yaz.",
         "Bir gözlem cümlesi ile ona ait olası bir çıkarımı ayrı ayrı kur.",
-        "Kitaptaki Türkiye uzay çalışmaları başlığını oku ve görev türlerini not et.",
+        "Türkiye'nin uzay çalışmalarını haberleşme ve görev türlerine göre sınıflandır.",
         "Haberleşme ile gözlem amaçlı bir uyduyu kullanım amacı bakımından karşılaştır."
       ],
       "quiz": {
@@ -109,21 +117,26 @@
       "topic": "Uzay araçları ve gözlem teknolojileri · Teleskoplar, gözlem yerleri ve gökyüzü gözlemi",
       "pages": "16–25",
       "visual": "spaceVehicles",
-      "visualNote": "Görseldeki uyduyu araştırma araçlarından biri olarak düşün; roket, sonda ve teleskopun görevleri bundan farklıdır. Kitaptaki TUG ve DAG örneklerinde olduğu gibi yüksek, kuru ve kent ışıklarından uzak gözlem yerleri daha net gökyüzü görüntülerine katkı sağlar.",
-      "focus": "Roket, uydu, uzay sondası, uzay istasyonu ve teleskopu kullanım amaçlarına göre ayırt et. Teleskop türü, atmosfer ve çevredeki yapay ışığın gökyüzü gözlemini nasıl etkilediğini açıkla.",
+      "visualNote": "Görsel, aynı görevin farklı araçlarını yan yana getirir: roket yükü taşır, sonda uzaktaki bir cismi inceler, uydu yörüngede çalışır, istasyon astronotlara yaşam ve deney ortamı sağlar, teleskop ise ışık toplar.",
+      "focus": "Roket, uydu, sonda, mekik, istasyon ve teleskopu görevlerine göre ayırt eder; teleskop türlerini ve gözlem yerinin niteliklerini açıklar.",
       "summary": [
-        "Uzay araştırmalarında kullanılan araçlar görevlerine göre ayrılır. Roket bir taşıma sistemidir; uzay aracı ve yükü yeryüzünden yörüngeye veya daha uzağa götürür. Yapay uydu yörüngede çalışır, uzay sondası robotik ölçüm yapar, teleskop gök cisimlerinden gelen ışığı toplar; uzay istasyonu ise astronotların araştırma yaptığı yörünge laboratuvarıdır. Teleskop, gök cisimlerinden gelen ışığı veya başka elektromanyetik dalgaları toplayıp incelenebilir hâle getirir. Yer tabanlı teleskoplar yeryüzündeki gözlemevlerinde, uzay teleskopları atmosferin üzerinde çalışır. Araç türü araştırma sorusuna göre seçilir; her teleskop her dalga boyunu ölçmez.",
-        "Araştırma sorusu önce belirlenir; ardından gerekli veri seçilir. Yakın bir gök cisminin yüzeyini incelemek için sonda, iletişim kurmak için haberleşme uydusu, gökyüzü ışığını toplamak için teleskop gerekir. Roket bu araçları hedeflerine taşır. İnsanlı görevde mekik veya istasyon, astronot ve malzemenin güvenli taşınması/çalışması için kullanılır. Atmosfer bazı ışınları soğurur veya dağıtır; bulut, su buharı ve hava koşulları da gözlemi etkiler. Kent aydınlatmasının gökyüzüne saçılması sönük yıldızları seçmeyi zorlaştırır. Bu nedenle yer gözlemevleri için yüksek, kuru, açık ve yapay ışıklardan uzak bölgeler tercih edilebilir.",
-        "Kitapta sondanın Dünya’dan uzaktan kontrol edilebildiği ve çoğunlukla güneş panelleriyle elektrik aldığı; roketin yakıt ve motorla çalıştığı; bazı yeni roketlerin yeniden kullanılabildiği belirtilir. Uzay mekiği insan ve ekipman taşıyabilir; istasyon düşük yer çekimli ortamda deney yapılmasını sağlar. Bu tanımlar, araçları işlevleriyle karşılaştırmanın sonucudur. Kitap Hubble ve James Webb’i uzay teleskoplarına; TUG ve Doğu Anadolu Gözlemevi’ni (DAG) yer tabanlı gözlem örneklerine verir. Uzay teleskobu atmosfer etkisini azaltır, yer teleskobu ise bakım ve yenileme kolaylığı gibi avantajlar taşıyabilir. Gözlemevlerinin yeri, teleskopun topladığı sinyal kadar önemlidir.",
-        "Araçların şekillerini değil, yaptıkları işi eşleştir. Roket bir teleskop değildir; teleskop gözlem için ışık toplar. Sonda uzaktaki cisme veri toplamak üzere gider, uydu yörüngede kalır. Kitabın TÜRKSAT, Göktürk ve İMECE örneklerini de bu görev ayrımıyla oku; bir görev birden fazla araç ve yer istasyonu gerektirebilir. Teleskopla Güneş’e doğrudan, filtresiz bakılmaz; bu gözlere kalıcı zarar verebilir. Bir gözlem yeri seçerken karanlık gökyüzü kadar hava, güvenli erişim ve ölçüm amacını da değerlendir. Kent ışığının fotoğrafta oluşturduğu parlaklık gerçek gök cisimlerinin sayısını artırmaz; yalnızca görünürlüğü değiştirir."
+        "Uzay araştırmalarında kullanılan araçlar, yaptıkları işe göre birbirinden ayrılır. **Roket** bir taşıma sistemidir; uzay aracını ve yükünü yerden yörüngeye ya da daha uzağa götürür, yakıt ile oksijen karışımını yakarak itme kuvveti üretir. **Uzay sondası** uzaktaki bir gök cismine ya da uzay olayına gönderilen, çoğunlukla güneş panelleriyle çalışan robotik araçtır; yüzeye yaklaşır, ölçüm yapar, görüntü gönderir ve gerektiğinde örnek toplar. **Yapay uydu** yörüngede kalır, **uzay istasyonu** astronotların aylarca yaşayıp deney yapabildiği yörünge laboratuvarıdır. **Uzay mekiği** kanatlı, yeniden kullanılabilen ve insanla birlikte yük taşıyabilen bir araçtır. **Teleskop** ise gök cisimlerinden gelen ışığı toplayıp odaklayarak görüntü oluşturur; uzay teleskobu atmosferin dışında, yer teleskobu ise yeryüzünde çalışır. Bir görev çoğu zaman birden çok aracı birlikte kullanır: roket teleskobu yörüngeye taşır, uydu topladığı veriyi yer istasyonuna iletir, sonda bir gezegenin yörüngesine girip yüzeye iniş aracı bırakabilir.",
+        "Teleskopun ayırt edici özelliği, açıklığının (ana aynasının ya da merceğinin) büyüklüğüdür; açıklık büyüdükçe daha sönük ve daha ayrıntılı görüntü elde edilir. Yer teleskopları için en büyük engel atmosferdir: hava katmanları yıldız ışığını kırar ve titretir, su buharı kızılötesi ışığın bir bölümünü yutar. Bu nedenle gözlemevleri yüksek, kuru, bulutsuz, ışık kirliliğinin az olduğu ve kent ışıklarından uzak yerlere kurulur; atmosferin üstündeki uzay teleskopları ise bu engellerden kurtulur. **Hubble** uzay teleskobu 1990'da yörüngeye yerleştirildi ve görünür ışıkta bugüne kadar çok sayıda derin uzay görüntüsü üretti. **James Webb** uzay teleskobu 2021'de fırlatıldı, kızılötesi ışıkla çalışır ve Güneş ile Dünya'dan yaklaşık 1,5 milyon kilometre uzakta, gölge sağlayan bir noktada durur. Türkiye'de **TUG** (TÜBİTAK Ulusal Gözlemevi) Antalya Saklıkent'teki Bakırlıtepe'de, **DAG** (Doğu Anadolu Gözlemevi) ise Erzurum'da yüksek ve kuru bir konumda kurulmuştur; ikisi de atmosferin gözleme etkisini azaltmak için seçilmiş yerlerdir.",
+        "Teleskopların çoğu gözle görülen ışığı toplar; ancak gök cisimleri radyo dalgalarından gama ışınlarına kadar geniş bir aralıkta ışıma yapar. Radyo teleskoplar çanak antenlerle bu dalgaları toplar, kızılötesi teleskoplar soğuk gaz ve toz bulutlarını, X-ışını teleskopları çok sıcak ortamları inceler. Aynı gök cismi farklı dalga boylarında farklı görünür: tozun içine gömülü genç yıldızlar görünür ışıkta görünmezken kızılötesinde belirginleşir. Gözlem yerinin nitelikleri de sonucu değiştirir: bulutsuz ve sakin hava daha keskin görüntü, karanlık gökyüzü daha sönük cisimlerin görülmesi anlamına gelir. Teleskop görüntüsü doğrudan gözlem değildir; sensörlerin kaydettiği ışık, işlenerek renklendirilir ve bilimsel olarak yorumlanır. Bu nedenle bir gök ada fotoğrafındaki renklerin bir bölümü, insan gözünün göremeyeceği dalga boylarının temsili olabilir.",
+        "Teleskopun tarihi, gökyüzüne bakışı değiştiren bir dizi buluşla ilerledi. 1608'de Hollanda'da yapılan ilk teleskobu 1609'da **Galileo Galilei** geliştirerek Ay'ın kraterlerini, Jüpiter'in dört uydusunu ve Venüs'ün evrelerini gözledi; bu gözlemler gök cisimlerinin kusursuz ve değişmez olduğu görüşünü sarstı. 1668'de **Isaac Newton** ayna kullanan yansıtmalı teleskobu yaptı; bugünkü büyük teleskopların çoğu bu ilkeyle çalışır. 20. yüzyılda **Edwin Hubble**, büyük teleskoplarla yaptığı ölçümlerde başka galaksilerin varlığını ve evrenin genişlediğini gösterdi; onun adı bugün yörüngedeki teleskoba verilmiştir. Türkiye'de gözlemevi geleneği Cumhuriyet döneminde başladı; İstanbul Üniversitesi Gözlemevi'nin kuruluşunda çalışan **Nüzhet Gökdoğan** gibi bilim insanları, gökyüzü gözlemlerinin üniversite düzeyinde kurumsallaşmasına öncülük etti. Bugün amatör astronomlar da küçük teleskoplarla değişen yıldızları ve Güneş lekelerini izleyerek bilime katkı sağlayabilir."
+      ],
+      "blockLabels": [
+        "UZAY ARAÇLARI",
+        "TELESKOPLAR VE GÖZLEM YERLERİ",
+        "FARKLI DALGA BOYLARI",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Roket taşıma, sonda uzaktaki cisimleri inceleme amacı taşır.",
-        "Uydu yörüngede görev yapar; istasyon araştırma ortamı sağlar.",
-        "Teleskop gözlem için ışık toplar.",
-        "Teleskop gök cisimlerinden gelen ışığı toplar.",
-        "Atmosfer, hava koşulları ve yapay ışık gözlemi etkileyebilir.",
-        "Gözlem aracını araştırma sorusuna göre seç; Güneş’e doğrudan bakma."
+        "Roket taşır, sonda uzaktan inceler, uydu yörüngede çalışır, istasyon araştırma ortamı sağlar.",
+        "Uzay mekiği insan ve yük taşıyabilen, yeniden kullanılabilen bir araçtır.",
+        "Teleskopun gücü açıklığına bağlıdır; atmosfer görüntü kalitesini düşürür.",
+        "Uzay teleskopları atmosferin soğurma ve titretme etkisinden kurtulur.",
+        "Gözlemevleri yüksek, kuru, karanlık ve bulutsuz yerlere kurulur."
       ],
       "terms": [
         "uzay sondası",
@@ -178,21 +191,26 @@
       "topic": "Uzay teknolojilerinin günlük yaşama katkıları · Uzay kirliliği ve sorumlu uzay çalışmaları",
       "pages": "24–33",
       "visual": "debris",
-      "visualNote": "Uydu görüntüsünün yeryüzüne ilişkin hangi veriyi sağlayabileceğini düşün; görüntüden çıkarılan yorumun ayrıca kanıtla desteklenmesi gerekir. Çalışan uydu ile işlevini yitirmiş parça farklıdır; yörüngedeki parçalar yüksek hız nedeniyle çarpışma riski yaratabilir.",
-      "focus": "Uzay araştırmalarında geliştirilen ölçüm ve iletişim teknolojilerinin yeryüzündeki kullanım alanlarını örnekle. İşlevini yitirmiş uydu ve araç parçalarının yörüngede oluşturabileceği çarpışma riskini ve önleme yollarını açıkla.",
+      "visualNote": "Görsel, alçak yörüngede biriken işlevini yitirmiş uydu gövdelerini ve roket parçalarını, aralarından geçen çalışan bir uyduyla birlikte gösterir; yoğunluk arttıkça çarpışma riski de artar.",
+      "focus": "Uzay teknolojilerinin günlük yaşama aktarımını örneklerle açıklar; uzay kirliliğinin oluşumunu, çarpışma riskini ve önleme yollarını değerlendirir.",
       "summary": [
-        "Uzay çalışmaları için geliştirilen algılayıcılar, görüntüleme ve iletişim yöntemleri yeryüzündeki farklı ihtiyaçlarda da kullanılabilir. Bir teknolojinin yararı, hangi sorunu çözdüğüne ve hangi ölçümü yaptığına bağlıdır. Uzaydan Dünya’yı izlemek; hava, arazi, afet ve tarım çalışmaları için düzenli veri sağlayabilir. Uzay kirliliği, görevini tamamlamış veya işlevini yitirmiş yapay uyduların, roket aşamalarının ve yörüngede kalan parçaların oluşturduğu insan kaynaklı atık sorunudur. Bu nesneler doğal gök cisimleri değil, insanın uzay faaliyetleri sonucunda yörüngede bulunan parçalardır.",
-        "Uydu görüntüsü belli bir zaman, konum ve çözünürlüğe ait kayıttır. Aynı bölgenin farklı tarihlerdeki görüntüleri karşılaştırıldığında değişim görülebilir; ancak görüntü tek başına nedenini açıklamaz. Uzmanlar görüntüyü saha bilgisi, ölçüm ve başka kaynaklarla birlikte yorumlar. Yörüngedeki parçalar yüksek hızla hareket edebilir. Küçük bir parça bile çalışan uyduya veya uzay aracına çarparsa donanıma zarar verebilir; çarpışma yeni parçalar oluşturup izleme ve görev planlamasını zorlaştırabilir. Bu nedenle yörüngedeki nesneleri izlemek ve görevleri çarpışma riskini gözeterek planlamak gerekir.",
-        "Ders kitabının s. 25’teki araştırma örnekleri sağlıkta MR/tomografi/ultrason, dijital termometre ve dayanıklı malzemeleri; enerjide güneş panellerini; ulaşımda GPS’i; iletişimde veri aktarımını; gıdada saklama ve su filtrelerini sayar. Bunlar kitapta uzay çalışmalarından günlük yaşama aktarılan uygulama örnekleridir. Kitap, uzay enkazını izleme ağlarından söz eder; çözüm olarak görev sonu planlaması, parçaları izleme/yakalama veya güvenli biçimde yörüngeden çıkarma gibi fikirlerin araştırılmasını ister. Önerilerin uygulanabilirliği, güvenlik, maliyet ve uzun vadeli etkilerle birlikte değerlendirilmelidir.",
-        "Bu örnekleri “uzay araştırması → geliştirilen ölçüm/malzeme/yazılım → günlük gereksinim” zinciriyle açıkla. Ürünün tam olarak nerede ve hangi amaçla icat edildiği ayrı bir tarihsel sorudur; kitabın örneğini, tek bir icat öyküsü gibi genelleme. Görselde görülen veri ile o veriden çıkarılan kararı da birbirinden ayır. Dünya görselinde her küçük nokta gerçek ölçekteki boyutu göstermez; çizim temsilîdir. Çalışan uyduyla işlevsiz parçayı ayır, bir önerinin hangi riski azalttığını belirt ve sonucunu ölçülebilir bir ölçütle açıkla. Uzay kirliliği şu an doğrudan yerdeki çöpler gibi görünmese de haberleşme, gözlem ve gelecekteki araştırmaları etkileyebilir."
+        "Uzay araştırmaları sırasında geliştirilen birçok teknoloji, zamanla günlük yaşamın parçası olur; bu sürece **teknoloji aktarımı** denir. Uyduların yeryüzünü görüntülemesi için geliştirilen algılayıcılar, hastanelerdeki **görüntüleme** cihazlarının temelini oluşturur: MR/tomografi/ultrason cihazları dokudan gelen sinyalleri işleyerek görüntü üretir. Konum belirleme sistemleri (GPS) uydu sinyalleriyle çalışır ve iletişim, navigasyon, harita, kargo takibi, tarım makinesi yönlendirmesi gibi hizmetleri mümkün kılar. Uzay araçlarında elektrik üretmek için geliştirilen güneş panelleri, çatılardaki sistemlerin verimliliğini artırdı. Isı yalıtımı, su filtreleme, hafızalı köpük, çizilmeye dayanıklı mercek kaplamaları ve dondurularak kurutulmuş gıda da uzay çalışmalarından aktarılan örnekler arasındadır. **Uydu verisi** bu aktarımın en geniş alanıdır: hava tahmini, kuraklık izleme, deniz yüzeyi sıcaklığı, şehir planlaması ve afet yönetimi aynı görüntü arşivinden yararlanır.",
+        "Uydular yörüngede kaldıkları sürece birer hizmet aracıdır; görevleri bittiğinde ise yeni bir sorunun parçası olabilir. Yakıtı biten uydular, ayrılan roket aşamaları ve çarpışmalarda kopan parçalar yörüngede birikerek **uzay kirliliği** oluşturur. Alçak yörüngede cisimler saniyede yaklaşık 7-8 kilometre hızla hareket eder; bu hızda birkaç milimetrelik bir parça bile güneş paneline ya da gövdeye ciddi zarar verebilir. **Çarpışma riski** yalnızca çarpışmanın kendisinden değil, çarpışma sonrası ortaya çıkan binlerce yeni parçadan kaynaklanır: her çarpışma yeni enkaz üretir ve zincirleme bir artış başlatabilir. 2009'da kullanım dışı bir Rus uydusu ile çalışan bir Amerikan haberleşme uydusu çarpıştı ve binlerce izlenebilir parça oluştu; bu olay sorunun gerçekliğini gösteren en bilinen örnektir. Bugün 10 santimetreden büyük on binlerce cisim düzenli izlenmekte, daha küçük milyonlarca parça ise yalnızca istatistiksel olarak tahmin edilmektedir.",
+        "Uzay kirliliğini azaltmanın en etkili yolu, yeni enkaz üretmemektir. Bunun için uyduların görev bitiminde yakıtının bir bölümünü yörüngeden çıkmaya ayırması, alçak yörüngedeki araçların 25 yıl içinde atmosfere girip yanmasını sağlayacak biçimde tasarlanması, yüksek yörüngedeki araçların ise kullanılmayan bir “mezarlık yörüngeye” taşınması gerekir. Batarya ve yakıt tanklarının boşaltılması, patlamaları önlediği için ayrıca önemlidir. Bu önlemlerin tümü **görev sonu planı** başlığı altında toplanır ve fırlatmadan önce tasarıma eklenir. Mevcut enkaz için ise onu izleme, yörünge değiştirmesini sağlayacak temaslar kurma ve büyük parçaları güvenli biçimde yakalayıp atmosfere yönlendirme yöntemleri geliştirilmektedir. Tek bir temizleme görevi pahalıdır; bu nedenle uluslararası iş birliği ve ortak standartlar zorunlu hâle gelir. Bir sorunun çözümü aranırken altı şapkalı düşünme gibi yöntemler, konuyu olgular, duygular, riskler, yararlar, yaratıcı fikirler ve süreç açısından ayrı ayrı ele almayı kolaylaştırır.",
+        "Uzay kirliliği kavramını bilim dünyasına kazandıran kişi **Donald Kessler**'dir; 1978'de yayımladığı çalışmada, belirli bir yoğunluğa ulaşıldığında çarpışmaların kendi kendini besleyerek zincirleme bir enkaz artışına yol açabileceğini öngördü. Bu öngörü bugün “Kessler sendromu” olarak anılır. Uzay teknolojilerinin gündelik yaşama aktarımı ise farklı bir tarihsel çizgide ilerledi: 1960'larda haberleşme uyduları kıtalar arası telefon görüşmesini mümkün kıldı, 1970'lerde görüntüleme algılayıcıları tıbbi cihazlara uyarlandı, 1990'larda konum belirleme sistemleri sivil kullanıma açıldı. Türkiye'de **TÜBİTAK UZAY** uydu teknolojileri araştırmalarını yürütür, **TUSAŞ** hava ve uzay araçları geliştirir, **TEKNOFEST** ise öğrencilerin model uydu ve roket projelerini sergilediği bir ortam sunar. Bu ekosistem, bir araştırmanın üründen çok daha fazlasını ürettiğini; ölçüm, yazılım ve malzeme bilgisinin başka alanlara yayıldığını gösterir."
+      ],
+      "blockLabels": [
+        "TEKNOLOJİ AKTARIMI",
+        "UZAY KİRLİLİĞİ",
+        "ÖNLEME VE GÖREV SONU PLANI",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Uydu verileri yeryüzünü gözlemlemeye yardımcı olabilir.",
-        "Görüntü doğru tarih ve bağlamla birlikte yorumlanır.",
-        "Teknoloji, belirli bir ihtiyaca göre seçilir.",
-        "Uzay kirliliği insan yapımı atıklarla ilişkilidir.",
-        "Yüksek hızlı parçalar etkin araçlar için risk oluşturabilir.",
-        "Görev öncesi planlama, izleme ve görev sonu yönetimi birlikte düşünülür."
+        "Teknoloji aktarımı, uzay araştırmalarında geliştirilen bilginin günlük kullanıma geçmesidir.",
+        "MR, tomografi ve ultrason görüntüleme yöntemleri uzay algılayıcılarıyla aynı ilkeleri paylaşır.",
+        "Uzay kirliliği, işlevini yitirmiş araç ve parçaların yörüngede birikmesidir.",
+        "Yüksek hız nedeniyle küçük parçalar bile büyük hasar verebilir; çarpışmalar yeni enkaz üretir.",
+        "Görev sonu planı, enkaz oluşumunu kaynağında önleyen tasarım önlemidir."
       ],
       "terms": [
         "uydu verisi",
@@ -239,7 +257,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Uzay araştırmalarının yol açabileceği sorunlar: uzay enkazı",
-        "intro": "Kitabın s. 31’deki performans görevi, uzay çalışmalarının doğurabileceği sorunları belirleyip birine çözüm önermeyi ister. Bu araştırma sonucu, ders kitabında açıklanan uzay enkazı sorununa odaklanır.",
+        "intro": "Uzay çalışmalarının doğurabileceği sorunları belirleyip bunlardan birine çözüm önermek bu haftanın araştırma görevidir. Aşağıdaki sonuç, uzay enkazı sorununu kaynağı, önemi ve çözüm yollarıyla birlikte ele alır.",
         "items": [
           {
             "name": "Sorun nedir?",
@@ -258,8 +276,7 @@
             "role": "En etkili yaklaşım iki işi birlikte yürütür: var olan parçaları takip edip çarpışmaları önlemeye çalışmak ve yeni araçların görev bittikten sonra enkaz bırakmasını önceden planlamak."
           }
         ],
-        "takeaway": "Ders kitabının örneklerinden çıkan sonuç, uzay araştırmalarını durdurmak değil; yörüngedeki atıkları azaltan, görevleri izleyen ve uzun vadeli güvenliği gözeten teknolojiler geliştirmektir.",
-        "source": "Kaynak özeti: ders kitabı s. 30–33; “Uzayda Neler Oluyor?” performans görevi ve uzay kirliliği çözüm örnekleri."
+        "takeaway": "Araştırmanın sonucu, uzay araştırmalarını durdurmak değil; yörüngedeki atıkları azaltan, görevleri izleyen ve uzun vadeli güvenliği gözeten teknolojiler geliştirmektir."
       },
       "sourceWeeks": [
         5,
@@ -273,23 +290,26 @@
       "topic": "Işık kirliliği ve gökyüzünü koruma · Yıldızların oluşumu: bulutsu ve önyıldız · Yıldızların yaşam döngüsü ve kütleye bağlı sonlar",
       "pages": "24–43",
       "visual": "stars",
-      "visualNote": "Kent ışığının gökyüzüne saçılması yıldızların görünürlüğünü azaltabilir; aşağı yöneltilmiş ışık bu saçılmayı sınırlar. Görselin solundaki bulutsu ve yoğunlaşmadan yıldız oluşumuna ilerle; alttaki iki yol yıldızın başlangıç kütlesine göre farklılaşır. İki olası yaşam yolunu başlangıç kütlesiyle karşılaştır; tüm yıldızların aynı biçimde sonlanmadığını hatırla.",
-      "focus": "Gereksiz veya yanlış yönlendirilmiş yapay ışığın gökyüzü gözlemini ve çevreyi nasıl etkilediğini değerlendir. Bulutsudaki gaz ve tozun kütle çekimiyle yoğunlaşarak önyıldız evresine ilerlemesini açıkla. Yıldızların yaşam yollarının başlangıç kütlesine göre nasıl farklılaşabildiğini karşılaştır.",
+      "visualNote": "Görsel, yıldızların doğduğu gaz ve toz bulutsusundan başlayıp kütleye göre ayrılan iki sona uzanır: küçük kütlede kırmızı dev, gezegenimsi bulutsu ve beyaz cüce; büyük kütlede süpernova, nötron yıldızı ya da kara delik.",
+      "focus": "Işık kirliliğinin gökyüzü gözlemine etkisini değerlendirir; bulutsudan önyıldıza, kütleye bağlı yıldız sonlarına kadar yıldız oluşumunu ve evrimini açıklar.",
       "summary": [
-        "Işık kirliliği, yapay aydınlatmanın gereğinden fazla kullanılması, yanlış yöne çevrilmesi veya gereksiz zamanda açık kalmasıyla gece gökyüzünün doğal karanlığının bozulmasıdır. Gökyüzüne saçılan ışık, sönük yıldızların ve bazı gök cisimlerinin görülmesini zorlaştırır. Bulutsu, uzayda gaz ve toz içeren geniş bir yapıdır; yıldızların oluşabildiği bölgelerden bazıları bulutsulardır. Bulutsunun her noktası aynı yoğunlukta değildir. Bazı bölgelerde madde, kütle çekiminin etkisiyle bir araya gelerek yoğun ve sıcak bir yapı oluşturur. Yıldızlar oluşur, uzun süre enerji yayar ve yaşamlarının sonuna doğru değişir. Başlangıç kütlesi, yıldızın ne kadar süre yaşayacağını ve hangi evrelerden geçebileceğini etkiler. Bu nedenle yıldızların hepsini tek bir sonla anlatmak doğru değildir; bilimsel şemada farklı kütleler için dallanan yollar bulunur.",
-        "Bir lambanın ışığı yalnızca yeri aydınlatmaz; yukarı ve yana saçılan bölüm atmosferde dağılarak gökyüzünde parlama oluşturabilir. Işığı aşağı yönlendirmek, sadece ihtiyaç duyulan alanı aydınlatmak ve kullanılmayan ışıkları kapatmak saçılmayı azaltır. Güvenli aydınlatma ile gereksiz parlaklık aynı şey değildir. Gaz ve toz yoğunlaşırken merkezde sıcaklık artar; bu erken oluşum aşamasına önyıldız denir. Zamanla merkez koşulları yıldızın enerji üretmesini sağlayan çekirdek tepkimelerinin başlamasına elverişli hâle gelir. Bu uzun süreç, tek bir anda gerçekleşmez; görsel bir model aşamaları kısaltarak gösterir. Kitaptaki modele göre Güneş’in kütlesinin yaklaşık sekiz katından daha az başlangıç kütlesine sahip yıldızlar kırmızı dev evresine ilerleyip gezegenimsi bulutsu oluşturabilir; geride beyaz cüce kalabilir. Daha büyük kütleli yıldızlar kırmızı süperdev ve süpernova evrelerine ulaşabilir; kalan çekirdek nötron yıldızı veya kara delik olabilir.",
-        "Kitap, kent merkezindeki gökyüzü gözlemiyle karanlık/yüksek bölgelerdeki gözlemi karşılaştırır. TUG ve DAG gibi gözlemevlerinin konumu, açık hava ve az çevre ışığı gibi koşulların önemini gösterir. Işık kirliliği yalnızca astronomi için değil, doğal gece-gündüz döngüsüne bağlı canlılar için de çevresel bir etkendir. Kitap Atbaşı, Orion ve Tarantula bulutsularını gerçek gözlem örnekleri olarak tanıtır; yıldız oluşumunu araştırma görevi de “bulutsu, önyıldız ve sonraki aşamalar” arasında bağlantı kurmayı ister. Fotoğrafta görülen renkler, teleskopla toplanan ışığın işlenmiş gösterimi olabilir; her bulutsu gözle aynı renkte görünmez. Süpernova, büyük kütleli yıldızların yaşamlarının sonuna doğru gerçekleşebilen çok güçlü bir olaydır; gezegenimsi bulutsu ise küçük kütleli yıldızların dış katmanlarıyla ilişkili başka bir evredir. Beyaz cüce, nötron yıldızı ve kara delik aynı şey değildir; farklı koşullarda kalan yıldız çekirdeğiyle ilişkilidir.",
-        "Bir fotoğrafta fazla parlak gökyüzü, yıldızların gerçekten yok olduğunu kanıtlamaz; onların ışığının kent parlamasında seçilemediğini gösterir. Gözlem planında güvenliği korurken ışığı doğru yönde ve gerektiği kadar kullan. Çözüm önerini “hangi ışığı, nerede, ne zaman ve ne kadar süreyle?” sorularıyla somutlaştır. Şemada bulutsu → yoğunlaşma → önyıldız → yıldız sırasını izle ve her oka nedenini ekle. Kütle çekimi maddenin bir araya gelmesini sağlar; ısınma ve merkez koşulları sonraki değişimlere katkı verir. Bir bulutsu fotoğrafı oluşum sürecini tek başına kaydetmez; süreç açıklaması gözlem ve bilimsel modellere dayanır. Yaşam döngüsü diyagramındaki oklar zaman içindeki evreleri gösterir; bir yıldızın gerçek yaşamı milyonlarca veya milyarlarca yıl sürebilir. Kütle bilgisini ve şemanın temsilî olduğunu not et. Evrim şemasında dallanmalar, başlangıç kütlesi farklı olan yıldızların olası sonlarını birbirinden ayırır."
+        "**Işık kirliliği**, gereksiz ya da yanlış yönlendirilmiş **yapay ışık** kaynaklarının gökyüzünü aydınlatmasıdır. Dört biçimde ortaya çıkar: kentlerin üzerinde oluşan turuncu parlaklık (gökyüzü parlaması), göz kamaştıran aşırı parlak kaynaklar, komşu alanları aydınlatan taşan ışık ve gereksiz reklam ışıkları. Yukarı yönelen ışık atmosferdeki moleküller ve toz tarafından saçılır; bu parlaklık sönük yıldızların görülmesini engeller ve **gökyüzü gözlemi** için gereken karanlığı yok eder. Etkisi yalnızca astronomlarla sınırlı değildir: gece yön bulmak için yıldızlardan yararlanan kuşlar ve deniz kaplumbağaları yollarını şaşırabilir, bitkilerin mevsim döngüleri bozulabilir, insanlarda uyku düzeni etkilenebilir. Çözüm basittir: ışığı yalnızca gereken yere ve gereken miktarda vermek. Aşağı yönlendirilmiş, yansıtıcı başlıklı, düşük renk sıcaklığına sahip ve zaman ayarlı **aydınlatma** kullanmak, aynı güvenlik düzeyini korurken gökyüzünü karartır.",
+        "Yıldızlar, uzaydaki gaz ve toz bulutlarının içinde doğar. **Bulutsu**, hidrojen ve helyum gazı ile toz taneciklerinden oluşan geniş buluttur; ışığı kendisi üretmiyorsa karanlık bulutsu, yakınındaki sıcak yıldızları yansıtıyorsa yansıma bulutsusu, kendi ışıması varsa ışıma bulutsusu olarak adlandırılır. Bir bulutsunun her bölgesi aynı yoğunlukta değildir. Yoğun bir bölgede **kütle çekimi**, gaz ve tozu merkeze doğru çeker; madde sıkıştıkça merkez ısınır ve basınç artar. Bu sıkışmış, henüz çekirdek kaynaşması başlamamış cisme **önyıldız** denir. Önyıldızın çevresinde kalan madde bir disk oluşturur; merkezde sıcaklık yaklaşık 10 milyon kelvin düzeyine ulaştığında hidrojen çekirdekleri kaynaşarak helyuma dönüşür ve açığa çıkan enerji yıldızı dengeli bir evreye taşır. **Yıldız oluşumu** bu nedenle tek bir anda değil, milyonlarca yıl süren bir süreçte gerçekleşir; aynı bulutsuda farklı evrelerdeki yıldızlar bir arada bulunabilir.",
+        "Bir yıldızın sonu, doğarken sahip olduğu kütleye bağlıdır. Güneş'in kütlesinin yaklaşık sekiz katından küçük yıldızlar, yakıtlarını tükettiklerinde genişleyerek **kırmızı dev** evresine girer. Dış katmanlarını uzaya atarak bir gezegenimsi bulutsu oluşturur; geride kalan sıcak, yoğun ve küçük çekirdek **beyaz cüce** olur. Beyaz cüce artık kaynaşma yapmaz, yalnızca kalan ısısını yavaşça yayar. Güneş'ten belirgin biçimde büyük kütleli yıldızlar ise kırmızı süperdev evresine kadar şişer ve çekirdekleri çöktüğünde **süpernova** adı verilen çok parlak bir patlamayla dağılır. Patlama sonrası geriye kalan çekirdek, kütlesine göre **nötron yıldızı** ya da **kara delik** olur. Nötron yıldızı bir kent büyüklüğünde olmasına karşın Güneş'ten daha ağırdır ve dönerek düzenli radyo sinyalleri yayabilir. Kara deliğin çekim alanı o kadar güçlüdür ki ışık bile kaçamaz. Bu iki yol, tüm yıldızların aynı biçimde sonlanmadığını gösterir.",
+        "Gökyüzünün en tanınmış bulutsuları, yıldız oluşumunun farklı aşamalarını gözlemeye imkân verir. **Avcı Bulutsusu** (Orion), Dünya'dan yaklaşık 1.300 ışık yılı uzaklıkta genç yıldızların doğduğu parlak bir bölgedir; **Atbaşı Bulutsusu** karanlık bir toz bulutunun parlayan gazın önünde durmasıyla tanınır; **Tarantula Bulutsusu** ise Büyük Macellan Bulutu'nda yer alan, çok sayıda büyük kütleli yıldızın oluştuğu bir bölgedir. Yıldızların kütlesine göre farklı sonlarını ilk kez ayrıntılı biçimde hesaplayan bilim insanlarından biri **Subrahmanyan Chandrasekhar**'dır; beyaz cücelerin belirli bir kütlenin (yaklaşık 1,4 Güneş kütlesi) üzerine çıkamayacağını gösteren bu sınıra onun adı verilmiştir. **Cecilia Payne** ise 1925'te yıldızların büyük ölçüde hidrojen ve helyumdan oluştuğunu ortaya koydu; bugün yıldızların iç yapısı bu bilgiye dayanarak modellenir. Atmosferin gözleme etkisini anlamak da bu zincirin parçasıdır: yeryüzünden bakıldığında yıldızların titremesi, atmosferdeki sıcaklık farklarının ışığı kırmasından kaynaklanır."
+      ],
+      "blockLabels": [
+        "IŞIK KİRLİLİĞİ VE GÖZLEM",
+        "YILDIZ OLUŞUMU",
+        "YILDIZLARIN SONU",
+        "BULUTSULAR VE BİLİM İNSANLARI"
       ],
       "points": [
-        "Yapay ışığın yönü, şiddeti ve süresi önemlidir.",
-        "Gökyüzü parlaması sönük gök cisimlerinin gözlemini zorlaştırır.",
-        "Gereken alanı güvenli ve ölçülü biçimde aydınlat.",
-        "Bulutsular gaz ve toz içeren uzay yapılarıdır.",
-        "Kütle çekimi maddenin bir araya gelmesine katkı sağlar.",
-        "Önyıldız, yıldız oluşum sürecinin erken evresidir.",
-        "Yıldızın başlangıç kütlesi yaşam yolunu etkiler.",
-        "Daha küçük kütleli yıldızların son yolu büyük kütlelilerden farklıdır."
+        "Işık kirliliği, yukarı yönelen yapay ışığın atmosferde saçılmasıyla oluşur.",
+        "Aşağı yönlü, başlıklı ve zaman ayarlı aydınlatma gökyüzünü korur.",
+        "Bulutsudaki yoğun bölgeler kütle çekimiyle çöker, merkez ısınır ve önyıldız oluşur.",
+        "Küçük kütleli yıldızlar kırmızı dev, gezegenimsi bulutsu ve beyaz cüce evrelerinden geçer.",
+        "Büyük kütleli yıldızlar süpernova ile dağılır; geriye nötron yıldızı ya da kara delik kalır."
       ],
       "terms": [
         "ışık kirliliği",
@@ -341,7 +361,7 @@
       "researchBrief": {
         "label": "KEŞİF NOKTASI · ARAŞTIRMA SONUCU",
         "title": "Keşif Noktası: Yıldızlar nasıl oluşur?",
-        "intro": "Basılı s. 35’teki Keşif Noktası, yıldızların oluşum basamaklarını kaynaklarla araştırıp ilişkilendirmeyi ister. Araştırmanın sonucu, birbiriyle bağlantılı aşamaları gösterir.",
+        "intro": "Yıldızların oluşum basamaklarını kaynaklarla araştırıp birbiriyle ilişkilendirmek bu haftanın keşif görevidir. Aşağıdaki sonuç, süreci oluşturan aşamaları sırayla gösterir.",
         "items": [
           {
             "name": "Bulutsu",
@@ -360,8 +380,7 @@
             "role": "Merkez yeterince sıcak ve yoğun hâle geldiğinde çekirdekte enerji üreten tepkimeler başlayabilir; yıldız enerji yayar. Başlangıç kütlesi sonraki yaşam yolunu etkiler."
           }
         ],
-        "takeaway": "Araştırma sonucu: bulutsu → kütle çekimiyle yoğunlaşma ve ısınma → önyıldız → enerji üretmeye başlayan yıldız. Bu süreç çok uzun sürer; şemalar aşamaları anlaşılır kılmak için sadeleştirir.",
-        "source": "Kaynak özeti: ders kitabı s. 35–36; Keşif Noktası “Yıldızların Oluşumunu Araştırın”."
+        "takeaway": "Araştırma sonucu: bulutsu → kütle çekimiyle yoğunlaşma ve ısınma → önyıldız → enerji üretmeye başlayan yıldız. Bu süreç çok uzun sürer; şemalar aşamaları anlaşılır kılmak için sadeleştirir."
       },
       "sourceWeeks": [
         7,
@@ -376,23 +395,26 @@
       "topic": "Yıldızların özellikleri, takımyıldızlar ve uzaklık · Galaksiler, evren ve kavramlar arası ilişki · Uzay Çağı ünitesi: model, rapor ve tekrar",
       "pages": "31–52",
       "visual": "spaceReview",
-      "visualNote": "Farklı renklerdeki yıldızları karşılaştır; takımyıldız gökyüzündeki görünür örüntüdür ve yıldızların gerçek uzay uzaklıklarını tek başına göstermez. Sarmal kolları olan galaksiye bakarken Güneş Sistemi’nin Samanyolu içinde, evrenin ise galaksilerden daha büyük ölçekte olduğunu düşün. Galeri araştırma aracı, yörünge güvenliği, yıldız yaşamı ve galaksi ölçeğini yan yana getirir; her görsel farklı bir kavramı temsil eder.",
-      "focus": "Yıldız rengi, takımyıldız görünüşü ve ışık yılını gözlem ve uzaklık kavramlarıyla açıkla. Yıldız, galaksi ve evren kavramlarını ölçeklerine göre ilişkilendir; Samanyolu’nun yerini belirt. Uzay araçları, uzay çevresi ve gök cisimleri konularını kanıt ve model sınırlarıyla birleştir.",
+      "visualNote": "Görsel, uzay çağının ana fikirlerini bir arada tutar: araştırma uydusu, yörünge güvenliği, yıldızların yaşamı ve sarmal bir galaksinin ölçeği aynı sayfada karşılaştırılır.",
+      "focus": "Yıldızların renk, parlaklık ve uzaklık özelliklerini; takımyıldız kavramını; galaksi, Samanyolu ve evren ölçeklerini ilişkilendirir.",
       "summary": [
-        "Yıldızların rengi yüzey sıcaklığı hakkında ipucu verir: mavi-beyaz görünenler daha sıcak, sarı tonlular orta, turuncu-kırmızı tonlular daha soğuk olabilir. Renk, yıldızın tek özelliği değildir; parlaklık ve uzaklık da gökyüzünde nasıl göründüğünü etkiler. Galaksi (gök ada), çok sayıda yıldız ve yıldız sistemi ile gaz ve toz gibi maddelerin kütle çekimiyle bir arada bulunduğu büyük yapıdır. Galaksiler sarmal, eliptik veya düzensiz gibi farklı görünüşlerde olabilir. Bir galaksi tek bir yıldız veya gezegen değildir; çok daha büyük bir ölçektir. Uzay ünitesinde öğrendiğin başlıklar farklı ölçekleri ve araştırma yollarını bir araya getirir: roketler araç taşır, uydular yörüngede görev yapar, teleskoplar ışık toplar; yıldızlar ve galaksiler ise çok daha büyük uzay yapılarıdır. Her kavramı bir araştırma sorusu ve kanıt türüyle ilişkilendirmek tekrar etmeyi anlamlı kılar.",
-        "Takımyıldız, Dünya’dan bakıldığında belirli bir şekil oluşturuyormuş gibi görünen yıldız örüntüsüdür. O örüntüdeki yıldızlar uzayda birbirine yakın veya aynı uzaklıkta olmak zorunda değildir. Kutup Yıldızı’nı bulmaya yardım eden Büyükayı örneği, yön bulma için gökyüzü desenlerinin nasıl kullanıldığını gösterir. Güneş Sistemi, Dünya ve Güneş’le birlikte Samanyolu Galaksisi’nin içindedir; kitap bunu Avcı (Orion) koluyla ilişkilendirir. Andromeda, Samanyolu’na yakın büyük galaksilerden biridir. Ölçek sırası Dünya → Güneş Sistemi → Samanyolu → galaksiler ve evren olarak genişler. Yıldız yaşamı başlangıç kütlesine göre farklı dallara ayrılır; uzay kirliliği ise insanın yörünge kullanımıyla ortaya çıkan ve planlamayla azaltılabilecek bir sorundur. Bilimsel model, gerçek sistemi sadeleştirerek temel ilişkileri gösterir; modelin hangi özellikleri dışarıda bıraktığını da bilmek gerekir.",
-        "Işık yılı, ışığın bir yılda aldığı uzaklıktır; zaman değil, mesafe birimidir. Örneğin yakın yıldızlarla aramızdaki uzaklıklar kilometreyle yazıldığında çok büyük sayılara ulaşır; ışık yılı bu uzaklıkları anlatmayı kolaylaştırır. Kitaptaki yıldız büyüklüğü çizimleri de gerçek ölçeğe göre değil, karşılaştırma amacıyla hazırlanmıştır. Kitap yıldız, galaksi ve evren kavramlarını birbirini kapsayan yapılar olarak kavram haritasına taşır. Hubble’ın galaksiler üzerine çalışmaları da tarihsel bağlamda anılır. Gök cisimleri arasındaki gerçek uzaklıklar, ders kitabındaki görseldeki aralıklardan çok daha büyüktür; bu görseller kavram ilişkisini anlatmak için küçültülmüştür. Kitaptaki görevler uzay aracı karşılaştırma, yıldız yaşamı posteri, galaksi kavram haritası ve uzay kirliliğine çözüm raporunu kapsar. Teknoloji araştırmasının sonucu; araç adı, görevi, topladığı veri ve günlük yaşamla ilişkisi birlikte yazıldığında daha açıklayıcı olur. Kaynak ve kanıt belirtilmesi, bilginin yeniden kontrol edilebilmesini sağlar.",
-        "Yıldız renklerini sıcaklıkla, takımyıldızı görünür örüntüyle, ışık yılını uzaklıkla eşleştir. Gökyüzünde yan yana görünen iki yıldız için “uzayda komşular” sonucunu hemen çıkarma; gerçek konum bilgisi gerekir. Çizimdeki çizgiler yıldızlar arasında fiziksel bağ bulunduğunu değil, gözlemcinin oluşturduğu deseni gösterir. Kavram haritasında yalnızca isimleri sıralama; “içinde bulunur”, “oluşur” veya “kapsar” gibi ilişki sözcüklerini okların üzerine yaz. Dünya’nın bir şehirde/ülkede bulunduğu konumla Güneş Sistemi’nin galaksideki konumu arasında ölçek benzetmesi kurulabilir, ancak benzetmenin gerçek büyüklükleri bire bir göstermediğini belirt. Bir tekrar görselini incelerken her panelin hangi kavramı temsil ettiğini ayrı ayrı söyle. Galaksi çizimi uzaklığı, yıldız döngüsü evreleri, enkaz görseli ise yörünge riskini sadeleştirir; hiçbir çizim uzayın gerçek ölçekte fotoğrafı değildir. İddian, gözlemin ve çıkarımın arasındaki ayrımı koru."
+        "Bir **yıldız**, kendi ışığını üreten, çok sıcak gazdan oluşan gök cismidir. Yıldızın rengi yüzey sıcaklığını verir: mavi-beyaz yıldızlar en sıcak (yaklaşık 25.000 K ve üzeri), sarı yıldızlar orta sıcaklıkta (Güneş yaklaşık 5.800 K), turuncu ve kırmızı yıldızlar ise daha soğuktur (3.000 K civarı). Renk ile sıcaklık ilişkisi günlük yaşamdaki bir deneyimle de tutarlıdır: ısınan bir metal önce kırmızı, sonra sarı, en sonunda mavi-beyaz ışır. Yıldızların parlaklığı ise hem gerçek ışıma gücüne hem de uzaklığına bağlıdır; bu nedenle gökyüzünde en parlak görünen yıldız, gerçekte en güçlü olan değildir. Yıldızlar arasındaki uzaklık **ışık yılı** ile ölçülür: ışığın bir yılda aldığı yol yaklaşık 9,46 trilyon kilometredir. Güneş'e en yakın yıldız olan **Proxima Centauri** yaklaşık 4,24 ışık yılı uzaklıktadır; bu, ışığın bile 4 yıldan fazla yol aldığı anlamına gelir. Gök bilimciler yakın yıldızların uzaklığını, Dünya'nın yörüngedeki hareketi nedeniyle oluşan küçük açı kaymasından (**ıraklık açısı**) yararlanarak ölçer.",
+        "**Takımyıldız**, gökyüzünde birbirine yakın görünen yıldızların oluşturduğu örüntüdür. Bu yakınlık yalnızca bakış açımızdan kaynaklanır; aynı takımyıldızdaki yıldızlar birbirinden çok farklı uzaklıklarda bulunur ve fiziksel olarak bir arada değildir. Gökyüzü, tarih boyunca bu örüntülerle adlandırılmıştır: Büyükayı, Küçükayı, Avcı, Başak, Ejderha ve Çoban en bilinenler arasındadır. Büyükayı'nın kepçe biçimindeki son iki yıldızı, yaklaşık beş katı uzatıldığında **Kutup Yıldızı**'nı gösterir; Kutup Yıldızı neredeyse dönme ekseninin üzerinde bulunduğu için gece boyunca yerini korur ve kuzeyi bulmada kullanılır. Kuzey yarımkürede yıldızlar Kutup Yıldızı çevresinde döner; bu görünür hareket, Dünya'nın kendi ekseni etrafında dönmesinden kaynaklanır. Takımyıldız bir yıldız kümesi değildir: kümeler gerçekten birbirine yakın ve aynı bulutsudan doğmuş yıldız gruplarıdır.",
+        "Yıldızlar galaksiler içinde toplanır. **Galaksi**, milyarlarca yıldız, gaz, toz ve karanlık maddeden oluşan, kütle çekimiyle bir arada tutulan dev sistemdir. Biçimlerine göre sarmal, eliptik ve düzensiz olarak sınıflandırılır. İçinde bulunduğumuz **Samanyolu**, yaklaşık 100.000 ışık yılı çapında sarmal bir galaksidir ve Güneş, merkezden yaklaşık 26.000 ışık yılı uzaklıkta bir kolda yer alır. Samanyolu'nu gece gökyüzünde bant biçiminde görürüz; çünkü disk içinden, kendi galaksimizin düzlemine bakıyoruz. En yakın büyük galaksi olan **Andromeda**, yaklaşık 2,5 milyon ışık yılı uzaklıktadır ve Samanyolu'na doğru yaklaşmaktadır. **Evren**, bütün galaksileri ve aralarındaki boşluğu kapsayan bütünlüktür; gözlenebilir evrenin çapı yaklaşık 93 milyar ışık yılı, yaşı ise 13,8 milyar yıldır. Ölçek sıralaması şöyledir: gezegen, yıldız, güneş sistemi, galaksi, galaksi kümeleri, evren. Bir yıldızın doğumundan sonuna kadar geçirdiği evrelerin bütünü **yıldız yaşam döngüsü** olarak adlandırılır.",
+        "Bu büyük ölçekleri anlamamızı sağlayan gözlemler yirminci yüzyılda yapıldı. 1920'lere kadar Samanyolu'nun evrenin tamamı olduğu düşünülüyordu; **Edwin Hubble**, Andromeda'daki değişen yıldızları ölçerek bunun çok uzak bir galaksi olduğunu gösterdi ve galaksilerin bizden uzaklaşma hızının uzaklıkla arttığını buldu. Bu bulgu, evrenin genişlediği fikrinin temelini attı. **Albert Einstein**'ın genel görelilik kuramı, kütle çekiminin uzay-zamanı bükmesini açıklayarak kara deliklerin ve galaksi kümelerinin anlaşılmasını sağladı. **Robert Goddard**, 1926'da sıvı yakıtlı ilk roketi uçurarak uzay çağının teknolojik temelini hazırladı. Gökyüzüyle ilgili bu bilgiler yüzyıllar boyunca gözlem ve model kurma ile ilerledi: bir model, gözlemle çeliştiğinde değiştirilir, yeni gözlemler yeni modelleri doğurur. Uzay Çağı ünitesinin bütünü bu ilkeyi izler; uydular, teleskoplar ve sondalar gibi **uzay teknolojisi** ürünleri aynı gökyüzünü farklı araçlarla okumayı sağlar. Her model, gözlemden elde edilen **kanıt** ile sınanır ve kanıtla çelişen açıklama değiştirilir."
+      ],
+      "blockLabels": [
+        "YILDIZLARIN ÖZELLİKLERİ",
+        "TAKIMYILDIZLAR",
+        "GALAKSİLER VE EVREN",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Yıldız rengi sıcaklık hakkında bilgi verebilir.",
-        "Takımyıldızdaki yıldızlar uzayda aynı uzaklıkta olmak zorunda değildir.",
-        "Işık yılı uzaklık birimidir, zaman birimi değildir.",
-        "Samanyolu, Güneş Sistemi’nin bulunduğu galaksidir.",
-        "Galaksiler farklı biçim ve yapılara sahip olabilir.",
-        "Evren, galaksileri de kapsayan daha geniş ölçektir.",
-        "Araçları görevleriyle eşleştir.",
-        "Yıldız yaşam yollarını başlangıç kütlesine göre karşılaştır."
+        "Yıldız rengi yüzey sıcaklığını gösterir; mavi-beyaz sıcak, kırmızı serindir.",
+        "Işık yılı bir uzaklık birimidir; Proxima Centauri 4,24 ışık yılı uzaktadır.",
+        "Takımyıldız, farklı uzaklıktaki yıldızların gökyüzünde oluşturduğu örüntüdür.",
+        "Samanyolu sarmal bir galaksidir; Güneş merkezden yaklaşık 26.000 ışık yılı uzaktadır.",
+        "Evren bütün galaksileri kapsar; ölçek gezegenden evrene doğru genişler."
       ],
       "terms": [
         "yıldız",
@@ -452,21 +474,28 @@
       "topic": "Kuvvet, hareket ve fiziksel anlamda iş · Kuvvet ve yer değiştirmeyi örneklerle değerlendirme",
       "pages": "58–64",
       "visual": "energy",
-      "visualNote": "Eğri yol üzerindeki bilyenin hareketini izlerken, fiziksel iş için kuvvetin yönü ve yer değiştirmenin yönünü birlikte düşün. Bilyenin yoldaki yüksek ve alçak konumlarına bakarken, kuvvet ile hareket yönünün her örnekte aynı olup olmadığını sorgula.",
-      "focus": "Fizikte iş yapılması için kuvvetin cisimde kuvvet doğrultusunda yer değiştirme oluşturması gerektiğini açıkla. Fiziksel iş kararını kuvvetin yönü ve cismin yer değiştirmesini karşılaştırarak ver.",
+      "visualNote": "Görsel, yatay yönde itilen ağır bir yükü gösterir: uygulanan kuvvet ile cismin kuvvet yönünde aldığı yolun çarpımı fiziksel işi verir; kuvvet ile yer değiştirme aynı doğrultuda değilse iş yapılmaz.",
+      "focus": "Kuvvetin hareketi nasıl değiştirdiğini; işin kuvvet ile yolun çarpımı olduğunu; iş biriminin joule olduğunu ve günlük yaşamdaki karşılıklarını açıklar.",
       "summary": [
-        "Günlük dilde “iş yapmak” çaba harcamak anlamına gelir; fizikte iş, bir cisme kuvvet uygulanması ve cismin kuvvet doğrultusunda yer değiştirmesiyle tanımlanır. Bu nedenle yorulmak, tek başına fiziksel anlamda iş yapıldığını göstermez. Fiziksel ölçüt kişinin hissi değil, cisim üzerindeki kuvvet ve hareket ilişkisidir. Bir cisme kuvvet uygulanması, cismin mutlaka hareket ettiği anlamına gelmez. Fiziksel iş için kuvvetle birlikte yer değiştirme gerekir; ayrıca yer değiştirmenin yönü kuvvetin uygulandığı yönle karşılaştırılır. Bu koşullar, günlük yaşamdaki taşıma, itme ve kaldırma örneklerine aynı ölçütü uygulamamızı sağlar.",
-        "Önce hangi cisme kuvvet uygulandığını belirle, sonra cisimde yer değiştirme olup olmadığına bak. Cismin yer değiştirmesi kuvvetin doğrultusundaysa fiziksel iş yapılır. Kuvvet uygulanıp cisim hiç hareket etmiyorsa iş yapılmış sayılmaz; kuvvet ile hareket birbirine dik doğrultudaysa kuvvetin hareket yönünde etkisi yoktur. Bir kitabı yukarı kaldırırken uygulanan kuvvet ve yer değiştirme aynı yöndedir; kitap yükselir. Yerde duran duvarı itmek kuvvet uygulamasıdır ama duvarın yer değiştirmesi yoksa iş yapılmaz. Yatay yolda yük taşırken kuvvetin hangi cisme, hangi yönde uygulandığını açıklamak gerekir; taşıyan kişinin yorulması fiziksel tanımın yerine geçmez.",
-        "Kitabın sınıf öyküsünde öğretmen masayı iterek hareket ettirir, kalemleri yerden kaldırır ve bilgisayar çantasını taşır. Her sahnede aynı karar verilmez: masada yatay hareket, kalemleri kaldırmada yukarı hareket vardır; çantayı yatay taşırken destek kuvvetinin yönüyle hareket yönünü ayrıca karşılaştırmak gerekir. Kitap, çağrı merkezi çalışanının bilgisayar başındaki çalışması ile duvar örerken tuğlayı hareket ettirme örneğini karşılaştırır. Fizikte değerlendirme kişinin meslek ya da çaba düzeyine göre değil, kuvvet ve yer değiştirmenin ilişkisine göre yapılır. Bir cisme daha büyük kuvvet uygulanıp daha fazla yol aldırılırsa yapılan iş de artabilir.",
-        "Bir örneği değerlendirirken kuvvet oku ile yer değiştirme okunu çiz ve ikisinin yönünü karşılaştır. Duvarı itmek, duvar hareket etmediğinde fiziksel iş değildir; buna rağmen kişi enerji harcayabilir ve yorulabilir. “Fiziksel iş yok” sonucu, hiçbir kuvvet uygulanmadığı anlamına gelmez. İşin büyüklüğünü karşılaştırırken cisme etki eden kuvveti ve kuvvet doğrultusunda alınan yolu aynı tabloya yaz. Birimler newton ve metredir; iş birimi joule’dür. Şemadaki okları izlemeden “hareket etti, demek iş yapıldı” deme; hareketin kuvvete göre yönü de önemlidir."
+        "**Kuvvet**, bir cismin hareketini değiştiren, yönünü ya da biçimini etkileyen itme veya çekmedir. Birimini, adını kendisi koymasa da büyük ölçüleri ona dayanan **Isaac Newton**'dan alan newton (N) ile ifade edilir; 1 N, 1 kilogramlık bir kütleye saniyede 1 metre/saniye hızlanma kazandıran kuvvettir. Kuvvetler temas gerektiren ve uzaktan etki eden kuvvetler olarak ikiye ayrılır: sürtünme, hava direnci, itme-çekme ve yay kuvveti temas sonucu; kütle çekimi, manyetik kuvvet ve elektrik kuvveti belirli bir uzaklıktan etki eder. Kuvvetin üç özelliği vardır: büyüklüğü, **kuvvet yönü** ve uygulama noktası. Bu üçü değiştiğinde etki de değişir; aynı büyüklükte iki kuvvet farklı yönlerde uygulandığında sonuç aynı olmaz. Cisimlerin hareket durumunu inceleyen **dinamik**, kuvvet ile hareket arasındaki ilişkiyi kurar.",
+        "Bir cismin hızı, yönü ya da ikisi birden değişiyorsa hareket değişiyor demektir. Duran bir cismi hareket ettiren, hızlanan bir aracı yavaşlatan, dönen bir cismin yönünü değiştiren ve biçimini bozan her etki kuvvetin sonucudur. Cisme etki eden kuvvetler dengede olduğunda cisim durur ya da sabit hızla hareketine devam eder; yani dengelenmiş kuvvetler hareketi değiştirmez. Dengelenmemiş kuvvet ise harekette mutlaka bir değişiklik oluşturur. Bu ilke **Newton'ın birinci hareket yasası** olarak bilinir ve **eylemsizlik** olarak adlandırılan direnci açıklar: otobüs ani fren yaptığında ayakta duran yolcuların öne savrulması, aracın yavaşlamasına karşın gövdenin hareketini sürdürmesinden kaynaklanır. Emniyet kemeri bu eylemsizliğin zarar vermesini engeller. İkinci yasa ise kuvvet ile ivme arasındaki ilişkiyi verir: aynı kuvvet daha küçük kütleye daha büyük ivme kazandırır. Bu nedenle kütlesi fazla olan bir cismi aynı hıza çıkarmak daha zordur.",
+        "**İş**, bir kuvvetin bir cismi kendi yönünde hareket ettirmesiyle yapılır. Ölçütü nettir: uygulanan kuvvet ile cismin kuvvet **doğrultusunda** aldığı yol, yani **yer değiştirme** çarpılır. Bu nedenle iş, kuvvetin ve yolun büyüklüğüne bağlıdır; kuvvet uygulanmasına rağmen cisim yerinde kalıyorsa fiziksel anlamda iş yapılmamıştır. Bir çantayı havada sabit tutmak kaslarımızı yorar ama **fiziksel iş** olarak sayılmaz, çünkü çantanın **yer değiştirme yönü**nde aldığı yol sıfırdır. İşin birimi **joule**'dür (J) ve 1 joule, 1 newtonluk kuvvetle 1 metrelik yol alındığında yapılan iştir. 1800'lü yıllarda ısı ve mekanik iş arasındaki ilişkiyi ölçümlerle ortaya koyan **James Prescott Joule**'un adı bu birime verilmiştir. Bir kitabı rafa kaldırmak, çekmeceyi açmak, market arabasını itmek iş yapılan durumlara örnektir; duvara kuvvet uygulamak ya da ağırlığı kucağımızda sabit tutmak iş yapılmayan durumlardır.",
+        "İşin günlük yaşamdaki karşılığını hesaplayarak görmek mümkündür. 20 kilogramlık bir çuvalı 1 metre yükseğe kaldırmak için yer çekimine karşı yaklaşık 196 N kuvvet uygulanır ve yaklaşık 196 J iş yapılır; aynı çuval 5 metre yukarı taşındığında iş beş katına çıkar. Bir cismi eğik bir yüzeyden (rampadan) çıkarmak, aynı yüksekliğe dik olarak kaldırmaktan daha az kuvvet gerektirir; çünkü kuvvet daha uzun bir yola dağılır. İki farklı rampanın gerektirdiği kuvveti **karşılaştırmak**, eğimin işi nasıl dağıttığını gösterir. Bu nedenle engelli rampaları, merdiven yerine eğik geçişler ve tekerlekli taşıma araçları işi kolaylaştırır; bu düzeneklere **basit makine** denir. Kaldıraç, makara, eğik düzlem ve dişli çark, uygulanan kuvveti ya da kuvvetin yönünü değiştirerek işi kolaylaştıran araçlardır. Hiçbiri işi yoktan var etmez; yalnızca daha küçük kuvvetle daha uzun yolda çalışmayı sağlar. Bu denge, enerji konusunun da temelini oluşturur.",
+        "Kuvvet ve hareket üzerine düşünceler, günlük deneyimlerin ötesine geçen ölçümlerle olgunlaştı. **Aristoteles**, cisimlerin doğal yerlerine dönmeye çalıştığını ve hareketin sürmesi için sürekli bir kuvvet gerektiğini savundu; bu görüş yüzyıllarca kabul gördü. **Galileo Galilei**, 17. yüzyılın başında eğik düzlemlerle yaptığı deneylerde sürtünmenin azaltıldığı ortamda hareketin kendiliğinden sürdüğünü gösterdi ve serbest düşmenin kütleden bağımsız olduğunu öne sürdü. Efsaneye göre Pisa Kulesi'nden farklı ağırlıkta cisimler bırakarak bu düşünceyi sınamıştır. **Isaac Newton**, 1687'de yayımlanan çalışmasında hareketin üç yasasını ve genel çekim yasasını bir araya getirerek kuvvet, kütle ve ivme arasındaki ilişkiyi tek bir çerçevede topladı. Bu çerçeve bugün de mühendislik hesaplarında kullanılır. Ülkemizde **Cezerî**, 12. yüzyılda su saatleri, otomatik düzenekler ve kaplar tasarlayarak kuvvet aktarımı ve denge üzerine uygulamalı bilgiyi belgelemiştir; onun çizimleri, mekanik düzeneklerin işleyişini anlatan erken mühendislik örnekleri arasındadır."
+      ],
+      "blockLabels": [
+        "KUVVET",
+        "HAREKET VE DENGE",
+        "İŞ VE JOULE",
+        "BASİT MAKİNELER",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Fiziksel iş için kuvvet uygulanması gerekir.",
-        "Cisim kuvvet doğrultusunda yer değiştirmelidir.",
-        "Günlük “çaba” ile fiziksel iş kavramı aynı değildir.",
-        "Kuvvet ile yer değiştirmenin yönünü karşılaştır.",
-        "Kuvvet uygulanması tek başına fiziksel iş anlamına gelmez.",
-        "Kararını günlük çabaya değil fiziksel ölçüte dayandır."
+        "Kuvvet, hareketi ya da biçimi değiştiren itme veya çekmedir; birimi newtondur.",
+        "Dengelenmiş kuvvetler hareketi değiştirmez; dengelenmemiş kuvvetler değiştirir.",
+        "İş, kuvvet ile kuvvet yönünde alınan yolun çarpımıdır.",
+        "İşin birimi joule'dür; yol almayan cisme uygulanan kuvvet iş yapmaz.",
+        "Basit makineler işi kolaylaştırır, işi yoktan var etmez."
       ],
       "terms": [
         "kuvvet",
@@ -522,21 +551,28 @@
       "topic": "Enerji çeşitleri ve kinetik enerji · Potansiyel enerji: yükseklik ve esneklik",
       "pages": "64–70",
       "visual": "energy",
-      "visualNote": "Bilye en alçak noktadan geçerken hareket enerjisini düşün; bir deneyde kütle ile hızı ayrı ayrı karşılaştır. Yüksek konum ile alçak konumu karşılaştır; esnek cisimlerde enerji depolanmasının farklı bir durum olduğunu hatırla.",
-      "focus": "Hareketli cisimlerin kinetik enerjiye sahip olduğunu ve kütle-hız karşılaştırmalarının bu enerjiyle ilişkisini açıkla. Çekim potansiyel enerjisini kütle ve yükseklikle; esneklik potansiyel enerjisini cismin gerilme veya sıkışma durumuyla ilişkilendir.",
+      "visualNote": "Görsel, hareket eden cisimlerin kinetik enerjisini ve yüksekte duran cisimlerin depoladığı potansiyel enerjiyi karşılaştırır; kütle ve hız arttıkça kinetik enerji, yükseklik arttıkça potansiyel enerji büyür.",
+      "focus": "Enerjinin varlığını iş yapabilme yeteneği olarak tanımlar; kinetik ve potansiyel enerjiyi hesaplama mantığıyla ilişkilendirir, enerji çeşitlerini örneklendirir.",
       "summary": [
-        "Enerji, iş yapabilme yeteneği olarak tanımlanır. Hareket hâlindeki cisimler kinetik enerjiye sahiptir; hareket etmeyen bir cisim de konumundan veya esnekliğinden dolayı potansiyel enerji depolayabilir. Bir cismin enerji türünü belirlerken onun hareketine, konumuna ve şekil değişimine bakılır. Potansiyel enerji, cismin konumu veya durumuna bağlı olarak depolanmış kabul edilen enerjidir. Çekim potansiyel enerjisi cismin ağırlığı ve yüksekliğiyle ilişkilidir: aynı cisim daha yüksek noktadayken veya aynı yükseklikte daha ağır bir cisimken bu enerji daha büyük olabilir.",
-        "Kinetik enerjiyi karşılaştırırken kütle ve hız önemlidir. Aynı koşullarda daha büyük kütleli ya da daha hızlı hareket eden cismin kinetik enerjisi daha fazla olabilir. Kütlenin etkisini araştırmak için hızı, hızın etkisini araştırmak için kütleyi sabit tutmak gerekir; böylece karşılaştırma adil olur. Esnek bir cisim gerildiğinde veya sıkıştırıldığında, eski şekline dönme eğilimi nedeniyle enerji depolayabilir. Yayın sıkıştırılması ya da lastiğin gerilmesi bunun örneğidir. Serbest bırakıldığında depolanan enerji cismin hareket etmesine veya başka bir değişime yol açabilir.",
-        "Kitapta koşan çocuklar, yarış arabası, barajda biriken su ve denizde ilerleyen tekne gibi örnekler bulunur. Hareket eden çocuk/araç/tekne kinetik enerjiyle, yüksekte tutulan su ise çekim potansiyel enerjisiyle ilişkilidir. Bir örnek bazen birden fazla enerji türü taşıyabilir; soruda hangi enerjiye bakıldığı açık olmalıdır. Kitapta barajdaki su, yüksek bir konum, yay ve gerilmiş lastik gibi örnekler karşılaştırılır. Barajda yükseltilmiş su çekim potansiyel enerjisiyle, sıkıştırılmış yay esneklik potansiyel enerjisiyle ilişkilidir. Bu iki türün ortak yanı enerji depolamasıdır; kaynağı ve değişkenleri farklıdır.",
-        "Kinetik enerji yalnızca hareket ederken anlam kazanır. Duran bir arabanın kinetik enerjisi yoktur; fakat yüksek bir konumdaysa potansiyel enerjisi olabilir. Görsellerden çıkarım yaparken kütle ve hız hakkında verilen bilgileri ara; sadece cismin büyük görünmesi veya fotoğrafta hızlıymış gibi görünmesi ölçüm değildir. Bir cismin yüksekliğini veya ağırlığını değiştirerek çekim potansiyel enerjisini karşılaştır; esnek cisimde ise gerilme/sıkışma miktarını incele. Yükseklik arttı diye her durumda enerji türü yalnızca potansiyel olmaz: cisim hareket ediyorsa kinetik enerji de bulunabilir. Model ve çizimde varsayılan koşulları belirt."
+        "**Enerji**, bir sistemin iş yapabilme yeteneğidir. Enerji de iş gibi joule ile ölçülür; ancak enerji bir cisimde bulunan, iş ise bir süreçte gerçekleşen niceliktir. Bir cismin enerjisi varsa uygun koşullarda iş yapabilir: yüksekte duran bir taş düştüğünde, gerilmiş bir yay serbest bırakıldığında, hareket eden bir araba çarpıştığında iş yapılır. Enerji, **kinetik** ve **potansiyel** olmak üzere iki temel biçimde incelenir. Kinetik enerji hareketten, potansiyel enerji ise konumdan veya biçim değişikliğinden kaynaklanır. Günlük dilde kullanılan ısı, ışık, ses ve elektrik enerjisi de bu iki temel biçimin farklı görünümleridir; örneğin ısı, taneciklerin kinetik enerjisinin toplam etkisidir. Enerji skaler bir büyüklüktür, yani yönü yoktur; yalnızca miktarı ve türü vardır.",
+        "**Kinetik enerji**, hareket eden her cismin sahip olduğu enerjidir. Bir cismin kütlesi arttıkça ve hızı arttıkça kinetik enerjisi artar; ancak hızın etkisi daha büyüktür, çünkü kinetik enerji hızın karesiyle birlikte büyür. Bu nedenle hız iki katına çıktığında kinetik enerji dört katına çıkar. Aynı hızla giden bir kamyonun otomobilden çok daha fazla kinetik enerjiye sahip olması kütle etkisidir; aynı aracın hızının iki katına çıkması ise durma mesafesini belirgin biçimde uzatır. Bu ilişki trafik güvenliğinin temelini oluşturur: hız sınırları, fren mesafesi ve çarpışma şiddeti doğrudan kinetik enerjiyle ilgilidir. Hareket eden bir cismin kinetik enerjisi, kütlesi ile hızının karesinin çarpımının yarısı olarak hesaplanır. 2 kilogramlık bir cismin 3 m/s hızla kinetik enerjisi bu bağıntıyla 9 joule bulunur; aynı cisim 6 m/s ile hareket ettiğinde enerjisi 36 joule olur.",
+        "**Potansiyel enerji**, bir cismin konumu ya da biçimi nedeniyle depoladığı enerjidir. Yer çekimi potansiyel enerjisi, cismin kütlesine, yer çekimi ivmesine ve **yükseklik** değerine bağlıdır; bu nedenle bir cismi yukarı kaldırmak enerji depolamak demektir. 2 kilogramlık bir cismi 3 metre yükseğe kaldırdığınızda, yer çekimi ivmesi yaklaşık 10 m/s² alındığında 60 joule enerji depolanır. **Esneklik potansiyel enerjisi** ise gerilen ya da sıkıştırılan yay, lastik ve okçuluk yayı gibi esnek cisimlerde birikir; yayın sertliği ve ne kadar gerildiği bu enerjiyi belirler. Salıncakta sallanan bir çocuk bu iki biçim arasında sürekli geçiş yapar: en yüksek noktada hız sıfıra yaklaşır, potansiyel enerji en büyüktür; en alt noktada ise potansiyel enerji en küçük, kinetik enerji en büyüktür. Sarkaç da aynı salınımı gösterir ve bu düzenek, enerji dönüşümünü gözlemek için en sade araçtır.",
+        "Enerji çeşitleri, aynı dönüşüm zincirinin farklı halkalarıdır. **Isı enerjisi**, taneciklerin hareketinden kaynaklanır ve sıcaklık farkı olan iki ortam arasında aktarılır. **Işık enerjisi**, elektromanyetik dalgalarla taşınır ve bitkilerde fotosentez için gereklidir. **Ses enerjisi**, bir ortamda titreşimlerin yayılmasıyla oluşur; boşlukta yayılmaz. **Elektrik enerjisi**, yüklü taneciklerin hareketinden doğar ve evlerde ısıtma, aydınlatma ve hareket için kullanılır. **Kimyasal enerji**, atomlar arasındaki bağlarda depolanır; besinlerde, yakıtlarda ve pillerde bulunur. **Nükleer enerji**, atom çekirdeğindeki bağlardan açığa çıkar ve Güneş'in enerji kaynağıdır. Bu çeşitler birbirine dönüşebilir: yakıttaki kimyasal enerji motorlarda ısı ve harekete, elektrik enerjisi ampulde ışık ve ısıya, güneş panellerinde ışık enerjisi elektrik enerjisine dönüşür. Enerjinin korunumu ilkesi, dönüşümlerin toplamının değişmediğini söyler.",
+        "Enerji kavramının bilimsel temeli, ısı ile iş arasındaki ilişkinin ölçülmesiyle kuruldu. **James Prescott Joule**, 1840'larda yaptığı deneylerde düşen ağırlıkların bir çarkı döndürerek suyu ısıttığını gösterdi ve mekanik iş ile ısı arasında sabit bir oran olduğunu ortaya koydu; böylece ısının ayrı bir “madde” değil, enerji aktarımı olduğu anlaşıldı. **Hermann von Helmholtz**, 1847'de enerjinin korunumu ilkesini genel bir yasa olarak formüle etti. **William Rankine** ise buhar makinelerinin verimini incelerken enerji kavramının mühendislikte yerleşmesine katkı sağladı. **Galileo Galilei**, sarkacın salınım süresinin genliğe çok az bağlı olduğunu gözleyerek salınım hareketinin düzenliliğini gösterdi; bu gözlem saat yapımından enerji dönüşümlerinin ölçülmesine kadar geniş bir alanda kullanıldı. Bugün enerji hesapları bu birikimin üzerine kurulur: bir cismin kütlesi, hızı ve yüksekliği bilindiğinde enerjisi hesaplanabilir; hesaplanan değer, dönüşümler sırasında kaybolmaz, yalnızca biçim değiştirir."
+      ],
+      "blockLabels": [
+        "ENERJİ VE BİRİMİ",
+        "KİNETİK ENERJİ",
+        "POTANSİYEL ENERJİ",
+        "ENERJİ ÇEŞİTLERİ",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Hareketli cisimler kinetik enerjiye sahiptir.",
-        "Kütle ve hız kinetik enerji karşılaştırmasını etkiler.",
-        "Adil karşılaştırmada diğer değişkenler sabit tutulur.",
-        "Çekim potansiyel enerjisi kütle ve yükseklikle ilişkilidir.",
-        "Gerilen veya sıkışan esnek cisim enerji depolayabilir.",
-        "Farklı potansiyel enerji türlerinin dayandığı durumlar farklıdır."
+        "Enerji, iş yapabilme yeteneğidir ve joule ile ölçülür.",
+        "Kinetik enerji harekete, potansiyel enerji konum veya biçime bağlıdır.",
+        "Kinetik enerji hızın karesiyle artar; hız iki katına çıkınca enerji dört katına çıkar.",
+        "Yer çekimi potansiyel enerjisi kütle ve yükseklikle artar.",
+        "Enerji çeşitleri birbirine dönüşür; toplam enerji korunur."
       ],
       "terms": [
         "enerji",
@@ -592,23 +628,28 @@
       "topic": "Kinetik ve potansiyel enerji dönüşümleri · Enerjinin korunumu ve sürtünmenin etkisi · Kuvvet ve enerji ünitesi: günlük yaşam ve tekrar",
       "pages": "59–81",
       "visual": "energy",
-      "visualNote": "Bilyenin yüksek noktadan en alt noktaya inişini izle; konum ve hareket değiştikçe enerji türlerinin nasıl değiştiğini düşün. Bilye hareket ederken sürtünmenin etkisini de düşün; yavaşlaması enerjinin yok olduğu anlamına gelmez. Aynı modelde yüksekliği, hareketi ve sürtünmeyi ayrı ayrı inceleyerek ünite kavramlarını ilişkilendir.",
-      "focus": "Bir cismin konumu ve hareketi değişirken kinetik enerji ile çekim potansiyel enerjisinin dönüşümünü açıkla. Enerjinin yok olmadığını, tür değiştirebildiğini ve sürtünmeyle çevreye aktarılabildiğini örnekle. Fiziksel iş, enerji türleri ve enerji dönüşümlerini günlük bir hareket örneğinde ilişkilendir.",
+      "visualNote": "Görsel, pürüzlü zeminde yavaşlayan bir top ile tekerlekten çevreye yayılan ısıyı bir araya getirir; sürtünme hareket enerjisinin bir bölümünü ısıya dönüştürür, toplam enerji korunur.",
+      "focus": "Enerji dönüşümlerini ve korunumunu örnekler üzerinden açıklar; sürtünme kuvvetinin enerjiye etkisini ve sürtünmeyi artırıp azaltma yollarını değerlendirir.",
       "summary": [
-        "Enerji dönüşümü, bir enerji türünün başka bir türe dönüşmesidir. Salıncak veya sarkaç yukarıdayken yüksekliği ve çekim potansiyel enerjisi daha fazla, hareketi yavaş olabilir; aşağı inerken hızlanır ve kinetik enerjisi artabilir. En alt noktada hız çoğu zaman en büyük, yükseklik en küçüktür. Enerjinin korunumu, enerjinin yoktan var olmadığı ve var olan enerjinin bütünüyle yok olmadığı ilkesidir. Enerji, sistem içinde tür değiştirebilir veya sistem ile çevre arasında aktarılabilir. Bu yüzden hareket azaldığında “enerji kayboldu” demek yerine hangi enerji biçimlerine dönüştüğünü ya da çevreye geçtiğini araştırırız. Kuvvet-enerji ünitesindeki temel kavramlar birbirine bağlıdır ama aynı anlama gelmez. Fiziksel iş için kuvvet ve kuvvet doğrultusunda yer değiştirme gerekir; kinetik enerji hareketle, potansiyel enerji ise konum veya esneklikle ilişkilidir. Bir olayı açıklarken hangi kavramı kullandığını açıkça adlandır.",
-        "Sarkaç karşı tarafa yükselirken kinetik enerjisinin bir bölümü yeniden çekim potansiyel enerjisine dönüşebilir. Başlangıç ve uç noktalarda topuz bir an için yavaşlar; en altta ise hareketi hızlanır. Bu, cismin konumu ile hareketinin birlikte enerji değişimine yol açtığını gösterir. Sürtünmesiz bir modelde top yokuş aşağı inerken çekim potansiyel enerjisi azalır, kinetik enerjisi artar; yukarı çıkarken bunun tersi görülebilir. Sürtünme varsa mekanik enerjinin bir bölümü ısıya, bazen sese dönüşür. Topun yavaşlaması hareket enerjisinin başka türlere aktarılmasıyla açıklanır. Bir bisiklet yokuş yukarı çıkarken pedala uygulanan kuvvet bisikleti hareket ettirir; bisikletin hızı ve yüksekliği değiştikçe kinetik ve çekim potansiyel enerjisi de değişebilir. Yokuş aşağı inerken enerji dönüşümü farklı yönde görünür. Sürtünme tekerlek, yol ve havayla etkileşerek enerji aktarımına yol açar.",
-        "Kitap öğrencilere salıncak öyküsü verir ve sarkaç, basketbol topu, maket araba, yay ve eğik düzlemle gözlem yapmalarını önerir. Her düzende başlangıç, en alt ve en üst gibi konumlar belirlenir; kinetik ve potansiyel enerji karşılaştırılır. Sürtünmenin ihmal edilip edilmediği sonucu etkiler. Kitap eğik düzlem, sarkaç, basketbol topu ve yaylı araba deneyleriyle bu değişimleri karşılaştırır; bazı yönergelerde sürtünme kuvvetinin ihmal edilmesini özellikle söyler. Bu, öğrencinin ideal koşulla gerçek gözlem arasındaki farkı görmesi içindir. Ölçüm yapılırken sistemin nerede başlayıp nerede bittiği açık olmalıdır. Kitabın kaykay yarım borusu, sarkaç, top, yay ve eğik düzlem örnekleri bu ilişkileri farklı durumlarda tekrar ettirir. Her soruda cisme uygulanan kuvveti, hareket yönünü, hızı, yüksekliği ve sürtünme varsayımını sırayla belirlemek çözümün dayanağını kurar.",
-        "Enerji grafiğinde bir tür artarken diğeri azalabilir; bu, toplam enerjinin kaybolduğu anlamına gelmez. Gerçek salıncak zamanla durur çünkü sürtünme ve hava direnci hareket enerjisinin bir bölümünü ısı ve ses gibi biçimlere aktarır. İdeal modelde bu etkiler bazen özellikle yok sayılır. Enerji grafiğinde yalnızca kinetik ve potansiyel sütunlara bakarsan, sürtünmede ortaya çıkan ısıyı gözden kaçırabilirsin. Model varsayımlarını, ölçüm sınırlarını ve çevreye aktarılan enerjiyi yaz. Enerji tür değiştirir; toplamı izlemek için sisteme ve çevresine ilişkin tüm dönüşümleri hesaba katmak gerekir. Bir açıklama oluştururken önce gözlenen hareketi yaz, sonra enerji türlerini ve olası dönüşümleri ilişkilendir. Grafik veya çizimdeki renkler yalnızca temsil anahtarıdır; kitap görseli gerçek ölçekte enerji miktarını ölçmez. Başlangıç ve son durumları aynı ölçütle karşılaştır, eksik değişken varsa bunu belirt."
+        "**Enerji dönüşümü**, enerjinin bir biçimden başka bir biçime geçmesidir. Bir elektrikli su ısıtıcısında elektrik enerjisi ısıya, bir ampulde ışık ve ısıya, bir mikserde harekete dönüşür. Bir bisikletli pedal çevirdiğinde kaslarındaki kimyasal enerji hareket enerjisine, yokuş çıkarken bu enerji **çekim potansiyel enerjisine** dönüşür; inişte ise potansiyel enerji yeniden kinetik enerjiye geçer. Dönüşümler her zaman aynı yönde ve tek adımda gerçekleşmez; bir zincir içinde birkaç kez biçim değiştirebilir. Kömürle çalışan bir termik santralde yakıttaki kimyasal enerji ısıya, ısı buharın hareketine, hareket türbinin dönmesine, türbin jeneratörü çevirmesiyle elektrik enerjisine dönüşür. Her adımda enerjinin bir bölümü ortama ısı olarak yayılır; bu nedenle bir dönüşüm zincirinin verimi hiçbir zaman yüzde yüz değildir.",
+        "**Enerjinin korunumu**, bir sistemdeki toplam enerjinin dönüşümler sırasında değişmediğini söyler: enerji yoktan var olmaz, var olan enerji yok olmaz. Bu ilke, “kaybolan” enerjinin aslında başka bir biçime geçtiğini anlamamızı sağlar. Sürtünmeli bir yüzeyde kayan bir blok yavaşlar; kinetik enerjisi azalır, ancak bu enerji yok olmaz, blok ve yüzey taneciklerinin hareketine yani ısıya dönüşür. Bir **salıncak** ya da sarkaç salınırken genliği her turda biraz azalır; kaybedilen mekanik enerji hava direnci ve sürtünme nedeniyle ısıya geçer. Bu nedenle gerçek sistemlerde mekanik enerji korunumu yaklaşıktır; toplam enerji ise her zaman korunur. Korunum ilkesi, enerji hesaplarında bir denetim aracı olarak kullanılır: başlangıçtaki ve sonundaki enerji toplamları karşılaştırılarak dönüşümün tutarlılığı sınanır.",
+        "**Sürtünme kuvveti**, iki yüzey birbirine göre hareket ederken ya da hareket etmeye çalışırken oluşan, harekete zıt yönde etki eden kuvvettir. Yüzeylerin pürüzlülüğü, birbirine bastıran kuvvet ve yüzeylerin türü sürtünmenin büyüklüğünü etkiler. Sürtünme çoğu zaman istenmeyen bir kayıp gibi görünse de hayatın sürmesi için zorunludur: yürürken ayakkabının yere tutunmasını, aracın fren yapmasını, kalemin kâğıda iz bırakmasını, düğümün çözülmemesini sağlar. Sürtünme olmasaydı bir yüzeyde yürümek, bir bardağı tutmak bile mümkün olmazdı. Öte yandan makine parçalarında **ısı enerjisi** olarak kayba ve aşınmaya, hareketin yavaşlamasına yol açar; gıcırdayan bir kapı menteşesinde duyulan **ses enerjisi** de aynı dönüşümün parçasıdır. Bu nedenle mühendislikte sürtünmeyi azaltmak için yağlama, rulmanlı yataklar, cilalı yüzeyler ve kaygan kaplamalar kullanılır; artırmak gerektiğinde ise dişli yüzeyler, kauçuk kaplama ve fren balataları tercih edilir.",
+        "Sürtünmenin yönü ve etkisi, hareketin türüne göre değişir. Bir cismi iterek hareket ettirmeye çalışırken sürtünme harekete ters yönde etki eder; cisim hareket etmeye başladığında ise **kayma sürtünmesi** devreye girer ve genellikle başlangıçtaki **statik sürtünmeden** daha küçüktür. Bu yüzden ağır bir dolabı yerinden kımıldatmak, kımıldadıktan sonra itmeye devam etmekten daha zordur. Tekerlekli araçlarda ise yuvarlanma sürtünmesi devreye girer ve kayma sürtünmesinden çok daha küçüktür; tekerleğin bulunması bu nedenle taşımacılıkta devrim yarattı. Hava ve suda hareket eden cisimlerde ise **direnç kuvveti** oluşur; bu kuvvet cismin biçimine, yüzey alanına ve hızına bağlıdır. Paraşüt bu direnci artırarak düşüşü yavaşlatır; uçak ve yarış arabaları ise aerodinamik biçimleriyle direnci azaltır. Yüzey alanı ile basınç ilişkisi de burada devreye girer: aynı kuvvet küçük bir alana uygulandığında basınç artar, bu nedenle kar ayakkabısı geniş tabanıyla batmayı engeller.",
+        "Enerji ve sürtünme üzerine bilgi, ölçüm yapan bilim insanlarının katkısıyla birikti. **Galileo Galilei**, eğik düzlemde bırakılan cismin hızının yoldan bağımsız olarak yalnızca yükseklik değişimine bağlı olduğunu göstererek enerji dönüşümünün temel bir özelliğini ortaya koydu. **James Prescott Joule**, 1840'larda mekanik iş ile ısı arasındaki eşdeğerliği ölçtü; düşen ağırlıklarla döndürülen çarkın suyu ısıttığını gösteren düzeneği, sürtünmenin enerjiyi yok etmediğini kanıtlayan en açık deneylerden biridir. **Hermann von Helmholtz**, enerjinin korunumunu tüm fiziksel süreçlere yayarak genel bir ilke hâline getirdi. **William Rankine**, ısı makinelerinin verimini incelerken enerjinin kullanılabilirliği kavramına öncülük etti. Bu birikim, bugün enerji verimliliği dediğimiz yaklaşımın temelini oluşturur: aynı işi daha az enerjiyle yapmak, kayıpların büyük bölümünün sürtünme ve ısı olarak ortaya çıktığını bilmek demektir. Evlerde yalıtım, ulaşımda toplu taşıma, sanayide atık ısı geri kazanımı bu ilkenin uygulamalarıdır."
+      ],
+      "blockLabels": [
+        "ENERJİ DÖNÜŞÜMÜ",
+        "ENERJİNİN KORUNUMU",
+        "SÜRTÜNME KUVVETİ",
+        "SÜRTÜNME VE DİRENÇ",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Yukarı çıkarken kinetik enerji potansiyel enerjiye dönüşebilir.",
-        "Aşağı inerken potansiyel enerji kinetik enerjiye dönüşebilir.",
-        "Sürtünme enerji dönüşümünü etkileyebilir.",
-        "Enerji tür değiştirebilir veya sistemle çevre arasında aktarılabilir.",
-        "Sürtünme mekanik enerjinin bir bölümünü ısı ve sese dönüştürebilir.",
-        "Model varsayımları açıkça belirtilmelidir.",
-        "Fiziksel iş, kuvvet ve yer değiştirme ölçütleriyle incelenir.",
-        "Kinetik enerji hareketle; potansiyel enerji konum veya esneklikle ilişkilidir."
+        "Enerji dönüşümü, enerjinin biçim değiştirmesidir; her adımda bir bölümü ısıya geçer.",
+        "Enerjinin korunumu ilkesine göre enerji yoktan var olmaz, yok olmaz.",
+        "Sürtünme harekete zıt yönde etki eder ve mekanik enerjinin bir bölümünü ısıya dönüştürür.",
+        "Sürtünme yürüme ve frenleme için gereklidir; makine parçalarında ise azaltılır.",
+        "Yağlama, rulman ve aerodinamik biçim sürtünme kaybını azaltır."
       ],
       "terms": [
         "enerji dönüşümü",
@@ -667,21 +708,28 @@
       "topic": "Sindirim sistemine giriş ve besinlerin izlediği yol · Sindirim sistemini oluşturan organlar ve görevleri",
       "pages": "88–95",
       "visual": "digestion",
-      "visualNote": "Şemada ağızdan başlayan yolu takip et; besinlerin parçalanmasıyla sindirilmiş maddelerin emilmesini ayrı basamaklar olarak düşün. Besin yolunu ağızdan başlayarak izlerken karaciğer ve pankreasın yardımcı organ olduğunu, besinin içinden geçmediğini ayırt et.",
-      "focus": "Sindirim sisteminin besinleri parçalama ve vücudun yararlanabileceği hâle getirme rolünü açıkla. Sindirim kanalındaki organların sırasını ve yardımcı organların katkısını model üzerinde ayırt et.",
+      "visualNote": "Görsel, ağızdan başlayıp mide, ince bağırsak ve kalın bağırsağa uzanan sindirim kanalını dengeli bir öğünle birlikte gösterir; kanal organları sırayla çalışır.",
+      "focus": "Sindirim sisteminin görevini, sindirim türlerini ve organların sıralı işleyişini; mekanik ve kimyasal sindirimin farkını açıklar.",
       "summary": [
-        "Sindirim, besinlerin vücudun yararlanabileceği küçük yapı taşlarına ayrılmasıdır. Canlılar besinlerden enerji ve büyüme-gelişme için gerekli maddeleri alır. Büyük besin parçaları hücrelere doğrudan geçemez; sindirim süreci onları daha küçük hâle getirir, ardından bazı yapı taşları kana emilir. Sindirim kanalındaki besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüs şeklindedir. Ağız besini alır ve çiğner; yutak ile yemek borusu geçişi sağlar; mide besinleri karıştırır. Organların adını doğru sıra ve görevle öğrenmek, sistemi bir bütün olarak anlamayı kolaylaştırır.",
-        "Besinler ağızdan alınır ve sindirim kanalında ilerler. Dişlerin çiğnemesi fiziksel parçalanmayı başlatır; tükürükteki enzimler bazı besinlerin kimyasal sindirimine katkı verir. Yutma, mide hareketleri, bağırsaklarda sindirim ve emilim farklı basamaklardır; tek bir organ bütün görevleri üstlenmez. İnce bağırsakta sindirim tamamlanır ve yapı taşlarının önemli bölümü kana emilir. Kalın bağırsak suyun geri kazanılmasına ve sindirilmeyen kalıntının ilerlemesine katkı sağlar; anüs atığın vücuttan çıktığı son kısımdır. Her organdaki olay aynı değildir ve sindirimin bazı türleri belirli organlarda gerçekleşir.",
-        "Kitap Burçak’ın elmayı ısırıp yutmasıyla besinin vücudundaki yolunu sorar. Bu öykü, ağızdan başlayıp yutak, yemek borusu, mide ve bağırsaklara uzanan yolu incelemek için giriş sağlar. Sindirilemeyen kalıntılar sonunda vücuttan uzaklaştırılır; sindirilmiş besinlerin yapı taşları ise hücrelere taşınabilir. Karaciğer ve pankreas sindirime yardımcı organlardır; salgıları sindirime katkı verir ancak besinler bu organların içinden geçmez. Kitabın s. 95’teki büyük diyagramı, kanal üzerindeki organlarla yardımcı organları birlikte gösterir. Poster veya model hazırlarken bu iki grubu farklı renk/etiketle ayırmak yararlıdır.",
-        "Besin yolunu haritada gösterirken sindirim kanalı ile yardımcı organları ayır. Sindirim, besinleri parçalama; emilim, sindirilmiş maddelerin kana geçmesi; boşaltım ise vücuttaki bazı atıkların uzaklaştırılmasıdır. Bunlar birbiriyle bağlantılı olsa da farklı süreçlerdir. Modelinde besin akışını oklarla, yardımcı organları ayrı göster. Şemayı izlerken “besin nereden geçiyor?”, “nerede parçalanıyor?” ve “nerede kana geçiyor?” sorularını ayrı sor. Yemek borusunda besin taşınır; sindirim burada gerçekleşmez. Karaciğer veya pankreası besin yolu üzerinde bir durak gibi çizmek, yapı ile işlevi karıştırır."
+        "**Sindirim**, besinlerin vücudun kullanabileceği kadar küçük moleküllere parçalanmasıdır. Bu süreç iki temel biçimde gerçekleşir. **Fiziksel (mekanik) sindirim**, besinlerin çiğneme, öğütme, karıştırma ve parçalama ile daha küçük parçalara ayrılmasıdır; burada besinin kimyasal yapısı değişmez, yalnızca yüzey alanı artar. **Kimyasal sindirim** ise **enzim** adı verilen salgıların etkisiyle besin moleküllerinin bağlarının koparılmasıdır; besin, emilebilecek küçük moleküllere dönüşür. Fiziksel sindirim kimyasal sindirimi kolaylaştırır: daha küçük parçalara ayrılan besinin yüzey alanı arttığı için enzimler daha etkili çalışır. Sindirim sonucu oluşan küçük moleküllerin kana geçmesine **emilim** denir. Sindirimin amacı, alınan besini hücrelerin kullanabileceği hâle getirmek ve atık maddeleri ayırmaktır.",
+        "Sindirim kanalı ağızda başlar. Dişler besini keser, yırtar ve öğütür; dil besini karıştırıp yutmayı sağlar. **Tükürük bezleri** nişastanın bir bölümünü parçalayan enzim içeren tükürük salgılar; bu nedenle ekmek uzun süre çiğnendiğinde tatlılaşır. Lokma **yutaktan** geçerek yemek borusuna ulaşır; **yemek borusu**, kasılma hareketleriyle besini mideye iletir. Bu hareket **peristaltik hareket** olarak adlandırılır ve yer çekiminden bağımsız çalışır. **Mide**, kaslı bir torba olarak besini çalkalar, fiziksel olarak parçalar ve içerdiği asit ile proteinlerin sindirimini başlatır. Mide asidi besinlerle gelen mikropların bir bölümünü de etkisiz hâle getirir. Mideden sonra besin, ince bağırsağa geçer ve burada sindirimin en yoğun bölümü gerçekleşir.",
+        "**İnce bağırsak**, sindirimin tamamlandığı ve besinlerin büyük bölümünün emildiği organdır. Yüzeyi **villus** adı verilen milyonlarca küçük çıkıntıyla kaplıdır; bu yapı emilim yüzeyini çok büyütür. Villusların içinde kılcal damarlar bulunur ve emilen besinler buradan kana geçer. Sindirime **pankreas** ve **karaciğer** gibi yardımcı organlar katkı verir: pankreas, karbonhidrat, protein ve yağları parçalayan enzimleri ince bağırsağa gönderir; **karaciğer** ise **safra** salgılayarak yağların küçük damlacıklara ayrılmasını sağlar, yani yağların fiziksel sindirimine yardımcı olur. Safra, yağları kimyasal olarak parçalamaz; yalnızca yüzey alanını artırarak enzimlerin işini kolaylaştırır. **Kalın bağırsak** ise su ve minerallerin geri emilimini yapar, sindirilemeyen artıkları yoğunlaştırarak dışarı atılmaya hazırlar. Bu bölümde yaşayan yararlı bakteriler bazı vitaminlerin üretimine de katkı sağlar.",
+        "Organların sıralı çalışması, besinin izlediği yolun anlaşılmasıyla görülür: ağız, yemek borusu, mide, ince bağırsak, kalın bağırsak ve anüs. Bu sıralamada her organın salgısı bir sonraki aşamaya hazırlık yapar; örneğin ağızda başlayan nişasta sindirimi midede asit nedeniyle durur, ince bağırsakta ise pankreas enzimleriyle sürer. Sindirim sistemi sinirler ve hormonlar tarafından düzenlenir; besin geldiğinde salgılar otomatik olarak artar. Sindirim sağlığı için besinleri iyi çiğnemek, öğünleri düzenli tutmak, yeterli su içmek ve lifli besinler tüketmek önemlidir. Lifli besinler sindirilmez ancak bağırsak hareketlerini düzenler. Aşırı yağlı ve işlenmiş gıdalar, düzensiz yemek ve yetersiz su sindirim sistemi üzerinde olumsuz etki yapar; uzun süreli dengesiz beslenme obezite ve sindirim rahatsızlıkları riskini artırır.",
+        "Sindirim üzerine bilgi, yüzyıllar süren gözlem ve deneyle birikti. 11. yüzyılda yaşayan **İbn Sina**, tıp alanındaki kapsamlı eserinde sindirim organlarını ve beslenmenin bedene etkisini sistemli biçimde ele aldı; yüzyıllar boyunca tıp eğitiminde temel kaynak olarak kullanıldı. 17. yüzyılda **William Harvey**, kan dolaşımını deneylerle açıklayarak organların birbirine nasıl bağlı çalıştığını gösterdi; bu yaklaşım sindirim sisteminin damar yoluyla ilişkisinin anlaşılmasına da katkı sağladı. 18. yüzyılda **Lazzaro Spallanzani**, mide özsuyunun besinleri kimyasal olarak parçaladığını deneylerle gösterdi. 19. yüzyılda **Claude Bernard**, karaciğerin kan şekeri dengesindeki rolünü ortaya koydu. Bu birikim, bugün sindirimin hem mekanik hem kimyasal bir süreç olduğu bilgisinin temelini oluşturur. Besinlerin içerdiği enerjinin ölçülmesi de aynı çizgide gelişti: besinlerin joule cinsinden enerji değerleri, kalorimetre deneyleriyle belirlenir."
+      ],
+      "blockLabels": [
+        "SİNDİRİM VE ENZİM",
+        "SİNDİRİM KANALI",
+        "İNCE BAĞIRSAK VE YARDIMCI ORGANLAR",
+        "SİNDİRİM SAĞLIĞI",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Sindirim besinleri küçük yapı taşlarına ayırır.",
-        "Sindirim kanalındaki organlar farklı görevler üstlenir.",
-        "Sindirim ve emilim birbirinden ayrı süreçlerdir.",
-        "Besinlerin sindirim kanalındaki sırası korunmalıdır.",
-        "İnce bağırsak sindirim ve emilimde önemli rol oynar.",
-        "Yardımcı organlar kanaldan geçiş yolu değildir."
+        "Sindirim, besinlerin kullanılabilir küçük moleküllere parçalanmasıdır.",
+        "Fiziksel sindirim yüzey alanını artırır, kimyasal sindirim bağları koparır.",
+        "Enzimler kimyasal sindirimi gerçekleştirir; emilim ince bağırsakta yoğunlaşır.",
+        "Karaciğer safra üretir, pankreas enzim salgılar; ikisi de yardımcı organdır.",
+        "Sindirim ağızda başlar ve kalın bağırsakta su emilimiyle sürer."
       ],
       "terms": [
         "sindirim",
@@ -729,7 +777,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Sindirim sistemi organları: görev paylaşımı",
-        "intro": "Basılı s. 94’teki “Sindirim Sistemini Tanıyalım” performans görevi organların görevlerine ilişkin bilgi toplamayı ister. Sonuç, besin yolunu ve yardımcı organları birlikte açıklıyor.",
+        "intro": "Sindirim organlarının görevlerini araştırıp besin yolunu bir bütün olarak açıklamak bu haftanın görevidir. Sonuç, kanal organlarını yardımcı organlarla birlikte ele alır.",
         "items": [
           {
             "name": "Ağız, yutak ve yemek borusu",
@@ -752,8 +800,7 @@
             "role": "Bu yardımcı organlar salgılarıyla sindirime katkı verir; besinler bu organların içinden geçmez. Böylece sindirim kanalı ile yardımcı organların görevi birbirinden ayrılır."
           }
         ],
-        "takeaway": "Besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüstür. Sindirim, emilim ve atıkların uzaklaştırılması farklı basamaklardır; organlar görev paylaşımıyla çalışır.",
-        "source": "Kaynak özeti: ders kitabı s. 91–95; “Sindirim Sistemini Tanıyalım” performans görevi ve organ şemaları."
+        "takeaway": "Besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüstür. Sindirim, emilim ve atıkların uzaklaştırılması farklı basamaklardır; organlar görev paylaşımıyla çalışır."
       },
       "sourceWeeks": [
         20,
@@ -767,21 +814,28 @@
       "topic": "Fiziksel ve kimyasal sindirim; emilim · Sindirim sisteminin sağlığı ve dengeli alışkanlıklar",
       "pages": "90–100",
       "visual": "digestion",
-      "visualNote": "Organların sırası kadar, besinin parçalanması ile yapı taşlarının kana geçişini de ayrı süreçler olarak izle. Sindirim organlarının görevlerini incelerken sağlık önerilerini genel bilgi ve güvenilir kaynakla sınırla; tek bir belirti tanı değildir.",
-      "focus": "Fiziksel sindirim, kimyasal sindirim ve emilimi örneklerle karşılaştır. Sindirim sağlığını destekleyen genel alışkanlıkları güvenilir bilgi ve kişisel farklılıklarla birlikte değerlendir.",
+      "visualNote": "Görsel, ince bağırsak yüzeyindeki villusları ve besin moleküllerinin kılcal damara geçişini gösterir; emilim yüzeyi villuslarla genişler ve sindirilmiş besinler burada kana karışır.",
+      "focus": "Fiziksel ve kimyasal sindirimin besin gruplarına göre işleyişini, emilimi ve sindirim sağlığını korumaya yönelik davranışları açıklar.",
       "summary": [
-        "Fiziksel sindirim, besinlerin kimyasal yapısı değişmeden daha küçük parçalara ayrılmasıdır; çiğneme buna örnektir. Bu parçalanma besinin yüzey alanını artırır. Kimyasal sindirimde enzimler büyük besin moleküllerini hücrelerin kullanabileceği daha küçük yapı taşlarına ayırır. Sindirim sisteminin sağlığı; çeşitli ve dengeli beslenme, yeterli sıvı, gıda temizliği, düzenli hareket ve kişisel hijyen gibi genel alışkanlıklarla ilişkilidir. Her bireyin gereksinimi yaş, günlük hareket ve sağlık durumuna göre değişir; bu nedenle tek bir yiyeceği herkes için aynı biçimde sınıflandırmak doğru değildir.",
-        "Sindirim kanalının farklı bölümlerinde farklı besinlerin sindirimi gerçekleşir. Ağızda çiğneme ve tükürükteki enzimler çalışmaya başlar; midede kas hareketleri ve mide öz suyu özellikle proteinlerin sindirimine katkı verir. İnce bağırsakta sindirim devam eder; sindirilmiş maddelerin kana geçmesine emilim denir. Beslenme günlüğü, kişinin öğün saatlerini, yeme biçimini ve seçimlerini fark etmesine yardım eder; tek başına hastalık tanısı koymaz. Yiyecekleri temiz ellerle tüketmek, güvenli koşullarda saklamak, çeşitli besin gruplarını almak ve hareketli kalmak genel sağlığı destekleyen örnek davranışlardır.",
-        "Karaciğer ve pankreas gibi yardımcı organların salgıları kimyasal sindirime yardım eder. Kitabın organ diyagramı besinin içinden geçtiği kanal ile bu salgıları üreten yardımcı yapıları ayrı çizmiştir. Böylece “sindirilen madde hangi organdan geçiyor?” ve “hangi salgı sürece yardım ediyor?” soruları birbirinden ayrılır. Kitap düzensiz öğün, hızlı yeme, hazır gıda ve uzun süre ekranda oturma örnekleri üzerinden alışkanlıkları düşündürür. Dengeli beslenme; karbonhidrat, protein, yağ, vitamin, mineral ve suyu uygun çeşitlilikte almaktır. Sağlıkla ilgili özel gereksinimlerde güvenilir yetişkin ve sağlık uzmanının görüşü önemlidir.",
-        "Fiziksel sindirim, kimyasal sindirim ve emilimi üç basamak olarak düşün: parçaların küçülmesi → moleküllerin yapı taşlarına ayrılması → yapı taşlarının kana geçmesi. Bir besinin çiğnenmesi tek başına tüm sindirim sürecini tamamlamaz. Şema çizerken her basamak için farklı ok ya da renk kullan. Bir öğün tablosunu incelerken tek bir güne bakıp kesin sonuç çıkarma; düzeni ve çeşitliliği fark etmeye çalış. Ders etkinliği tıbbi öneri yerine öz gözlem ve kaynak araştırması sağlar. Uzun süren veya kaygı veren belirtiler varsa bunu tek başına yorumlamak yerine güvenilir bir yetişkine ve sağlık uzmanına bildir."
+        "Besinler karbonhidrat, protein, yağ, vitamin, mineral ve su olarak gruplandırılır. **Karbonhidratlar** öncelikle enerji kaynağıdır; ekmek, pirinç, makarna ve patateste bulunur. Sindirimleri ağızda başlar, ince bağırsakta glikoz gibi basit şekerlere kadar sürer. **Proteinler** yapıcı ve onarıcı besinlerdir; et, süt, yumurta, kuru baklagillerde bulunur ve midede başlayan sindirimleri ince bağırsakta **amino asitlere** kadar tamamlanır. **Yağlar** enerji deposu olarak görev yapar ve yağda çözünen vitaminlerin taşınmasını sağlar; sindirimleri ince bağırsakta safranın yardımıyla gerçekleşir ve **yağ asidi** ile **gliserol**e ayrılır. **Vitaminler** ve **mineraller** ise enerji vermez, düzenleyici görev yapar; sindirime uğramadan doğrudan emilir. **Su**, besinlerin taşınması ve vücut sıcaklığının düzenlenmesi için gereklidir.",
+        "Fiziksel ve kimyasal sindirim, besin grubuna göre farklı yerlerde ve farklı yoğunlukta gerçekleşir. Çiğneme, mide kaslarının çalkalaması ve safranın yağ damlacıklarını küçültmesi fiziksel sindirimdir; tükürük, mide özsuyu, pankreas özsuyu ve bağırsak özsuyundaki enzimler ise kimyasal sindirimi yürütür. Her enzim belirli bir besine etki eder; bu nedenle sindirim tek bir salgıyla değil, bir dizi salgının sırayla devreye girmesiyle tamamlanır. Enzimler sıcaklık ve asitlikten etkilenir; mide asidinin çok yüksek olması ince bağırsaktaki enzimlerin çalışmasını engelleyeceği için pankreas salgısı asitliği dengeler. Bu düzenek, sindirim sisteminin birbirini tamamlayan bölümlerden oluştuğunu gösterir. Sindirimin tamamlanması saatler alır; besinlerin midede kalma süresi içeriğe göre değişir, yağlı besinler daha uzun süre kalır.",
+        "**Emilim**, sindirilmiş besin moleküllerinin bağırsak duvarından kana geçmesidir. İnce bağırsağın yüzeyindeki villuslar bu iş için özelleşmiştir; her villusun içinde kan ve lenf kılcalları bulunur. Glikoz ve amino asitler doğrudan kana geçerken yağların büyük bölümü lenf yoluna geçer ve oradan kana karışır. Kalın bağırsakta ise su ve mineral emilimi yapılır; emilmeyen artıklar dışkı olarak atılır. Emilim verimliliği, bağırsak yüzeyinin sağlığına bağlıdır; iltihaplı ya da hasarlı bir bağırsakta emilim azalır ve besinler yeterince kullanılamaz. Bu nedenle sindirim sağlığı yalnızca mide rahatsızlığıyla değil, besinlerden yararlanma düzeyiyle de ilgilidir. Emilim tamamlandığında besin molekülleri kan yoluyla hücrelere taşınır ve enerji üretimi ya da yapı onarımı için kullanılır.",
+        "Sindirim sağlığını korumak günlük alışkanlıklarla doğrudan ilişkilidir. **Dengeli beslenme**, öğünleri düzenli tutmak, besinleri yavaş ve iyi çiğnemek, yeterli su içmek ve lifli besinleri ihmal etmemek sindirim sisteminin yükünü azaltır. Aşırı yağlı, çok tuzlu ve işlenmiş gıdalar, gazlı içecekler ve düzensiz yemek alışkanlığı sindirim şikâyetlerini artırır. Yemekten hemen sonra yoğun egzersiz yapmak mide rahatsızlığına yol açabilir; buna karşılık düzenli hareket bağırsak hareketlerini destekler. **Hijyen** kuralları gereği sebze ve meyveler yıkanmalı, et ürünleri iyice pişirilmeli, açıkta satılan gıdalardan kaçınılmalıdır. Uzun süreli karın ağrısı, şişkinlik veya kilo kaybı gibi belirtiler bir sağlık kuruluşuna başvurmayı gerektirir.",
+        "Beslenme ve sindirim üzerine bilgi, farklı dönemlerde yapılan gözlemlerle birikti. 11. yüzyılda **İbn Sina**, besinlerin niteliği ve sindirim süreci üzerine ayrıntılı değerlendirmeler yaptı; eserleri Orta Çağ boyunca hem Doğu'da hem Avrupa'da okutuldu. 17. yüzyılda **William Harvey**, kanın dolaştığını göstererek besinlerin bağırsaktan dokulara nasıl taşındığı sorusuna zemin hazırladı. 18. yüzyılda **Lazzaro Spallanzani**, mide salgısının besinleri kimyasal olarak değiştirdiğini deneylerle kanıtladı. 19. yüzyılda **Claude Bernard**, vücudun iç dengesini koruyan süreçleri inceledi ve karaciğerin rolünü ortaya koydu. 20. yüzyılda vitaminlerin keşfi, eksiklik hastalıklarının beslenmeyle ilişkisini açıkladı; **Casimir Funk**'un 1912'de öne sürdüğü “vitamin” kavramı bu alanın adını belirledi. Bugün sindirim ve beslenme bilgisi, hem bireysel sağlık hem de toplum sağlığı politikalarının temelini oluşturur."
+      ],
+      "blockLabels": [
+        "BESİN GRUPLARI",
+        "FİZİKSEL VE KİMYASAL SİNDİRİM",
+        "EMİLİM",
+        "SİNDİRİM SAĞLIĞI",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Fiziksel sindirim parçaların boyutunu küçültür.",
-        "Kimyasal sindirim enzimlerle yapı taşlarına ayırır.",
-        "Emilim sindirilmiş maddelerin kana geçişidir.",
-        "Çeşitli beslenme, hijyen ve hareket genel sağlığı destekler.",
-        "Sağlık önerileri kişiye göre değişebilir.",
-        "Belirti üzerinden kendi kendine tanı koyma."
+        "Karbonhidratlar enerji, proteinler yapı ve onarım, yağlar depo ve taşıma görevi yapar.",
+        "Protein sindirimi midede başlar, ince bağırsakta amino asitlere tamamlanır.",
+        "Safra yağları küçük damlacıklara ayırır; kimyasal parçalanmayı enzimler yapar.",
+        "Glikoz ve amino asitler doğrudan, yağların büyük bölümü lenf yoluyla emilir.",
+        "Düzenli öğün, yeterli su ve lifli besin sindirim sağlığını korur."
       ],
       "terms": [
         "fiziksel sindirim",
@@ -828,7 +882,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Sindirim sağlığını destekleyen günlük alışkanlıklar",
-        "intro": "Basılı s. 98’deki performans görevi sindirim sisteminin sağlığını korumak için bilgi toplamayı ister. Aşağıdaki sonuçlar ders kitabındaki önerileri genel eğitim bilgisi olarak bir araya getirir.",
+        "intro": "Sindirim sağlığını koruyan günlük alışkanlıkları güvenilir kaynaklardan derlemek bu haftanın görevidir. Aşağıdaki sonuçlar, tek tek öneriler yerine birbirini destekleyen davranışları bir araya getirir.",
         "items": [
           {
             "name": "Dengeli ve çeşitli beslenme",
@@ -847,8 +901,7 @@
             "role": "Yiyecekleri temiz biçimde hazırlamak ve uygun koşullarda saklamak bazı sağlık risklerini azaltır. Kişisel belirtiler veya hastalık şüphesi için genel sınıf bilgisi tanı yerine geçmez."
           }
         ],
-        "takeaway": "Araştırma sonucu: tek bir yiyecek ya da alışkanlık sindirim sağlığını tek başına belirlemez. Çeşitli beslenme, sıvı, hareket ve hijyen birlikte değerlendirilir; kişiye özel sağlık sorusunda bir yetişkin ve sağlık uzmanına danışılır.",
-        "source": "Kaynak özeti: ders kitabı s. 96–99; “Sindirim Sisteminin Sağlığını Koruyalım” performans görevi ve bilgi metni."
+        "takeaway": "Araştırma sonucu: tek bir yiyecek ya da alışkanlık sindirim sağlığını tek başına belirlemez. Çeşitli beslenme, sıvı, hareket ve hijyen birlikte değerlendirilir; kişiye özel sağlık sorusunda bir yetişkin ve sağlık uzmanına danışılır."
       },
       "sourceWeeks": [
         22,
@@ -862,21 +915,28 @@
       "topic": "Dolaşım sisteminin yapı ve organları · Küçük ve büyük kan dolaşımı",
       "pages": "101–109",
       "visual": "circulation",
-      "visualNote": "Kırmızı ve mavi damar yolları görsel bir modeldir; damar adlarını kalbe göre akış yönüyle tanımla. Kalp ile akciğerler arasındaki yolu ve kalp ile vücut arasındaki yolu iki ayrı döngü olarak zihninde izle.",
-      "focus": "Kalp, kan ve damarların dolaşım sistemindeki görevlerini birbirinden ayır. Küçük ve büyük kan dolaşımının kalp, akciğerler ve vücut arasındaki yollarını karşılaştır.",
+      "visualNote": "Görsel, kalbi merkeze alarak atardamar, toplardamar ve kılcal damarlarla vücuda yayılan dolaşım ağını gösterir; küçük dolaşım akciğerlere, büyük dolaşım vücuda uzanır.",
+      "focus": "Kalp, damar ve kanın yapısını ve görevlerini; küçük ve büyük dolaşımın izlediği yolu ve aralarındaki farkı açıklar.",
       "summary": [
-        "Dolaşım sistemi kalp, kan ve damarlardan oluşur; hücrelere oksijen ve besin taşınmasına, hücrelerde oluşan bazı atıkların uzaklaştırılmasına yardım eder. Kalp kasılıp gevşeyerek kanı damarlar boyunca hareket ettirir. Kan, vücut içinde farklı maddelerin taşınmasını sağlayan dokudur. Küçük kan dolaşımı, kanın kalpten akciğerlere gidip gaz alışverişinden sonra kalbe dönmesidir. Büyük kan dolaşımı, kalpten çıkan kanın vücudun diğer dokularına ulaşması ve yeniden kalbe gelmesidir. Bu iki yol birlikte çalışarak hücrelere oksijen ve besin taşınmasına, karbondioksit gibi atıkların uzaklaştırılmasına yardım eder.",
-        "Atardamarlar kanı kalpten uzaklaştırır; toplardamarlar vücuttan kalbe getirir. Kılcal damarlar bu iki damar türünü birbirine bağlayan çok ince damarlardır ve kan ile hücreler arasında madde alışverişine olanak verir. Damar adları oksijen miktarından değil, kanın kalbe göre gidiş yönünden gelir. Akciğerlerde kan ile alveol havası arasında gaz alışverişi olur: oksijen kana geçer, karbondioksit kandan alveollere geçer. Büyük dolaşımda oksijence zengin kan vücuda gönderilir; hücrelerde maddeler kullanılır ve kan kalbe geri döner. Dolaşım şemasındaki oklar, kanın izlediği yolu gösterir.",
-        "Kitabın s. 104’teki insan dolaşım şeması kalp ile bütün vücuda uzanan damar ağını gösterir; büyütülmüş damar çizimlerinde atardamar, toplardamar ve kılcal damar ayrımı yapılır. Kanın taşıdığı maddeler hücrelere ulaşır; atık maddeler de ilgili organlara taşınır. Kitap küçük ve büyük dolaşımı ayrı renkli devrelerle gösterir; İbnü’n Nefîs’in küçük dolaşım açıklamasını ve Harvey’nin kan dolaşımı çalışmalarını da bilim tarihi kutusunda anar. Modelde kalp, akciğer ve vücut dokularını doğru sıraya yerleştirmek, kanın iki döngüde nasıl hareket ettiğini anlamayı kolaylaştırır.",
-        "Bir görselde damarları kırmızı/mavi çizmek kanın oksijen miktarını temsil edebilir; bu renk gerçek kanın damar içinde gözle görüldüğü renk değildir. Akciğere giden atardamarın oksijence düşük, akciğerden kalbe gelen toplardamarın oksijence yüksek kan taşıyabildiğini unutma. Sınıflandırmayı yön üzerinden yap. Renkli şemalar öğretim modelidir; kanın rengi gerçek damar görüntüsünde kırmızı/mavi iki ayrı renk gibi görünmez. Ayrıca atardamar ve toplardamar adları kalbe göre yönü belirtir; oksijen miktarı bu adların tanımı değildir. İki devreyi karşılaştırırken başlangıç-dönüş noktası, geçtiği organ ve gaz alışverişini ayrı ayrı yaz."
+        "**Dolaşım sistemi**, besin ve oksijenin hücrelere taşınmasını, atık maddelerin uzaklaştırılmasını sağlayan sistemdir. Üç temel öğeden oluşur: **kalp**, **damarlar** ve **kan**. Kalp, kasılıp gevşeyerek kanı damarlara pompalayan kaslı organdır; göğüs boşluğunun ortasında, hafifçe sola yerleşmiştir. Dört odacığı vardır: üstteki iki küçük odacık **kulakçık**, alttaki iki büyük odacık **karıncık** olarak adlandırılır. Kulakçıklar kanı toplar, karıncıklar pompalar. Kalbin sol tarafı daha kalın kaslıdır; çünkü kanı tüm vücuda göndermek zorundadır. Kalp kapakçıkları **kan akışını** tek yönde tutar ve kanın geri kaçmasını engeller. Kalbin kasılması sırasında oluşan basınç dalgası nabız olarak hissedilir; dinlenme hâlinde dakikada yaklaşık 60-100 atış normal kabul edilir.",
+        "**Damarlar** üç türdür. **Atardamarlar** kanı kalpten organlara taşır; duvarları kalın ve esnektir, çünkü yüksek basınca dayanmaları gerekir. **Toplardamarlar** kanı organlardan kalbe getirir; duvarları daha incedir ve içlerinde kanın geri akmasını engelleyen kapakçıklar bulunur. **Kılcal damarlar** ise atardamar ve toplardamarları birbirine bağlayan, tek katman hücreden oluşan çok ince damarlardır; madde alışverişi burada gerçekleşir. Besin, oksijen ve atık maddeler kılcal damar duvarından geçerek hücrelere ulaşır ya da hücrelerden uzaklaştırılır. Bu üç damar türü birlikte bir ağ oluşturur: atardamarlar organa kan getirir, kılcal damarlar dokuyu besler, toplardamarlar kanı geri taşır. Damar yapısındaki bu farklılık, görev farklılığının doğrudan sonucudur.",
+        "**Kan**, plazma adı verilen sıvı içinde dağılmış hücrelerden oluşur. **Alyuvarlar** (kırmızı kan hücreleri) oksijen taşır; içlerindeki **hemoglobin** demir içeren bir protein olup oksijene bağlanarak kana kırmızı rengini verir. **Akyuvarlar** (beyaz kan hücreleri) vücudu mikroplara karşı savunur ve bağışıklıkta görev alır. **Kan pulcukları** (trombositler) ise kanamayı durduran pıhtılaşmayı sağlar. Plazma; su, besin maddeleri, hormonlar, atık ürünler ve proteinler taşır. Kanın görevleri arasında oksijen ve besin taşımak, karbondioksit ve üre gibi atıkları boşaltım organlarına götürmek, vücut sıcaklığını düzenlemeye yardımcı olmak ve hastalıklara karşı savunma yapmak sayılabilir. Yetişkin bir insanda yaklaşık 4,5-6 litre kan bulunur ve bu kanın yaklaşık yarısından fazlası plazmadır.",
+        "Dolaşım iki ayrı devreden oluşur. **Küçük kan dolaşımı** (akciğer dolaşımı), kalbin sağ karıncığından çıkan kanın akciğerlere gidip orada oksijen alması ve kalbin sol kulakçığına dönmesiyle tamamlanır. Bu devre kısa ve düşük basınçlıdır; amacı kanın temizlenmesi, yani oksijen kazanması ve karbondioksitten arınmasıdır. **Büyük kan dolaşımı** (sistemik dolaşım), kalbin sol karıncığından çıkan temiz kanın tüm vücuda dağılıp organlarda oksijen ve besin bırakması, kirlenen kanın toplardamarlarla kalbin sağ kulakçığına dönmesiyle tamamlanır. Bu devre uzun ve yüksek basınçlıdır. İki devrenin birleştiği nokta kalptir; kan bir devreyi bitirip diğerine geçerken iki kez kalpten geçer. Bu düzen, oksijenden zengin ve yoksun kanın karışmasını büyük ölçüde önler.",
+        "Kan dolaşımının keşfi, tıp tarihinin en önemli dönüm noktalarından biridir. 2. yüzyılda **Galen**, kanın karaciğerde üretilip vücutta tüketildiğini ve kalpte gözenekler aracılığıyla geçtiğini öne sürmüştü; bu görüş 1400 yıl boyunca kabul gördü. 13. yüzyılda yaşayan **İbnü'n Nefîs**, kalbin septumunda gözenek bulunmadığını ve kanın akciğerler üzerinden geçtiğini açıklayarak küçük dolaşımı tanımladı; bu, deneysel değil gözleme dayalı bir açıklamaydı ancak modern bilgiyle uyuşur. 1628'de **William Harvey**, damarların yönünü ve kalbin pompalama işlevini deneylerle göstererek kanın sürekli dolaştığını kanıtladı. 1661'de **Marcello Malpighi**, mikroskopla kılcal damarları görerek atardamar ve toplardamar arasındaki bağı doğruladı. Bu zincir, bir görüşün nasıl ölçüm ve gözlemle değiştiğini gösterir; İbnü'n Nefîs'in gözlemi ile Harvey'in deneyi aynı sorunun farklı aşamalarında ilerledi."
+      ],
+      "blockLabels": [
+        "KALBİN YAPISI",
+        "DAMARLAR",
+        "KANIN GÖREVLERİ",
+        "KÜÇÜK VE BÜYÜK DOLAŞIM",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Kalp kanın dolaşmasına yardım eder.",
-        "Atardamar ve toplardamar adları akış yönüyle ilgilidir.",
-        "Kılcal damarlar madde alışverişinde görev alır.",
-        "Küçük dolaşım kalp ile akciğerler arasındadır.",
-        "Büyük dolaşım kalp ile vücut dokuları arasındadır.",
-        "Damar adlandırmasında akış yönü esas alınır."
+        "Dolaşım sistemi kalp, damarlar ve kandan oluşur.",
+        "Kalpte kulakçıklar kanı toplar, karıncıklar pompalar; sol karıncık daha kalın kaslıdır.",
+        "Atardamarlar kalpten, toplardamarlar kalbe taşır; alışveriş kılcal damarlarda olur.",
+        "Küçük dolaşım akciğerlerde temizlenmeyi, büyük dolaşım vücuda dağıtımı sağlar.",
+        "İbnü'n Nefîs küçük dolaşımı, Harvey kanın sürekli dolaştığını göstermiştir."
       ],
       "terms": [
         "kalp",
@@ -933,21 +993,28 @@
       "topic": "Kan bağışının toplumsal dayanışmadaki yeri · Dolaşım sisteminin sağlığını koruma",
       "pages": "109–116",
       "visual": "circulation",
-      "visualNote": "Kan dolaşımı görseli, kanın vücuttaki taşınma yolunu gösterir; bağışla ilgili koşullar için yetkili sağlık kaynaklarına başvurulur. Damar ağının bütün vücuda ulaştığını gözlemle; sağlıklı yaşam önerilerini güvenilir kaynak ve kişisel farklılıklarla değerlendir.",
-      "focus": "Kan bağışının sağlık hizmetleri ve toplumsal dayanışma açısından önemini güvenilir kaynaklarla açıkla. Dolaşım sağlığını destekleyen günlük alışkanlıkları ve sağlık iddialarının kaynağını değerlendir.",
+      "visualNote": "Görsel, sağlık çalışanının gözetiminde alınan bir kan bağışını gösterir; alınan kan bileşenlerine ayrılarak farklı hastalarda kullanılır.",
+      "focus": "Kan bağışının toplumsal yararını ve sürecini; dolaşım sistemi sağlığını korumaya yönelik davranışları ve risk etkenlerini açıklar.",
       "summary": [
-        "Kan; oksijen ve besin taşınması, bazı atıkların ilgili organlara iletilmesi, vücudun savunması ve yaralanmalarda pıhtılaşmaya katkı gibi görevleri olan sıvı dokudur. Kan plazma ve farklı hücre/bileşenlerden oluşur; her bileşenin işi farklıdır. Bu yüzden kanı yalnızca kırmızı renkli bir sıvı olarak düşünmemek gerekir. Dolaşım sistemi sağlığı, vücudun ihtiyaç duyduğu maddelerin taşınmasıyla ilişkilidir. Düzenli hareket, yeterli dinlenme, çeşitli beslenme ve tütün ürünlerinden uzak durma genel sağlığı destekleyen davranışlardır. Bu alışkanlıklar tek başına hastalıkları önleyeceğine dair garanti değildir; bireyin gereksinimi ve sağlık durumu farklı olabilir.",
-        "Gönüllü kan bağışı, ihtiyaç duyan hastalara kan veya kan bileşeni sağlanmasına yardımcı olan toplumsal dayanışma davranışıdır. Bağış süreci sağlık personeli tarafından yürütülür; kan uygun testlerden geçirilir, güvenli koşullarda saklanır ve gerektiğinde sağlık kurumlarına ulaştırılır. Fiziksel etkinlik sırasında kasların oksijen ve besin ihtiyacı artar; kalp ve solunum daha hızlı çalışabilir. Dinlenme, uyku ve günlük hareket düzeni birlikte ele alınmalıdır. Uzun süre hareketsiz kalma alışkanlığını azaltmak için günlük rutine uygun hareket araları planlanabilir.",
-        "Kitap, kan bağışında kayıt, görüşme, sağlık değerlendirmesi/test ve bağış adımlarını gösterir. Ayrıca Türk Kızılay’ın gönüllü bağışçı çalışmasını örnek verir. Bağış için yaş, sağlık durumu ve aralık gibi koşullar zamanla güncellenebilir; bağış uygunluğu yalnızca yetkili sağlık kurumlarınca belirlenir. Kitap dolaşım sağlığı için bilgi toplama ve rapor hazırlama görevi verir; uyku, su, beslenme, spor ve ekran süresi gibi örnekler sunar. Öneriler genel eğitim bilgisi olarak okunmalıdır. Kişiye özel sağlık sorusunda güncel ve yetkin bir sağlık kaynağı ya da uzman görüşü gerekir.",
-        "Kan bağışı hakkında bilgilendirme yaparken kişiyi zorlamadan, doğru ve güncel kaynağa yönlendir. Öğrenciler bilimsel farkındalık mesajı hazırlayabilir; kendi ya da başka bir kişinin bağış yapıp yapamayacağına karar veremez. Toplumsal dayanışma, güvenli sağlık hizmeti ve gönüllülük kavramları birlikte düşünülmelidir. Bir sağlık iddiasını değerlendirirken kaynağı kim hazırlamış, hangi kanıta dayanıyor ve ne zaman güncellenmiş diye sor. Bir belirtiyi doğrudan bir hastalığa bağlama; ders kitabı tanı koyma aracı değildir. Şemada hareket, dinlenme ve beslenmeyi ayrı etkenler olarak göster, sonra aralarındaki ilişkiyi açıkla."
+        "Kan, laboratuvarda tam olarak üretilemeyen bir dokudur; bu nedenle tedavi için gereken kan yalnızca bağış yoluyla sağlanır. **Kan bağışı**, sağlıklı bir yetişkinden belirli aralıklarla kan alınmasıdır. Bağışın temeli **gönüllülüktür**; hiç kimse bağışa zorlanamaz. Bir bağış işlemi yaklaşık 10-15 dakika sürer, alınan miktar yaklaşık 450 mililitredir ve vücut bu sıvıyı birkaç gün içinde yerine koyar. Bağıştan önce bağışçının sağlık durumu, hemogram değerleri ve bulaşıcı hastalık riskleri değerlendirilir; bu tarama hem bağışçının hem alıcının güvenliğini korur. Alınan kanın **kan bileşenleri** ayrı ayrı kullanılır: alyuvarlar, plazma ve trombositler farklı hastalara verilebilir. Böylece tek bir bağış birden çok hastaya yarar sağlar. Kanın raf ömrü sınırlıdır; alyuvarlar yaklaşık 35-42 gün saklanabildiği için bağışın düzenli olması gerekir.",
+        "Kan bağışı, acil durumlardan kronik hastalıklara kadar geniş bir alanda hayat kurtarır. Trafik kazası, ameliyat, doğum sonrası kanama ve yanık gibi durumlarda hızlı kan ihtiyacı doğar. Lösemi, talasemi ve bazı kansızlık türlerinde ise hastalar düzenli transfüzyona bağımlıdır. Kan ürünleri ayrıca pıhtılaşma bozuklukları ve bağışıklık yetersizliği tedavisinde kullanılır. Türkiye'de kan temini **Kızılay** aracılığıyla yürütülür; bağışçı sayısının artması, acil durumlarda kan bulunabilirliğini doğrudan etkiler. Bağış yapmak bağışçı için de yararlıdır: işlem öncesi yapılan sağlık taraması, kişinin kan değerlerini ve genel sağlığını öğrenmesini sağlar. Ancak asıl kazanç toplumsaldır; kan bağışı **toplumsal dayanışmanın** en somut örneklerinden biridir ve düzenli bağış alışkanlığı kan stoklarının yıl boyunca yeterli kalmasını sağlar.",
+        "Dolaşım sağlığını korumak, kalp ve damar hastalıklarının riskini azaltır. Bu hastalıkların başlıca etkenleri arasında hareketsiz yaşam, aşırı tuz ve doymuş yağ tüketimi, sigara, aşırı kilo, stres ve düzensiz uyku bulunur. **Hipertansiyon** (yüksek tansiyon) damarlara sürekli baskı uygulayarak zamanla hasar verir; çoğu zaman belirti vermeden ilerlediği için düzenli ölçüm önemlidir. **Ateroskleroz**, damar içinde yağ ve kolesterol birikmesiyle damarın daralmasıdır ve kalp krizi ile inme riskini artırır. Düzenli hareket kalbi güçlendirir, tuz alımını sınırlamak kan basıncını dengeler, sigara bırakmak damar sağlığını hızla iyileştirir. Sebze, meyve, tam tahıl ve balık ağırlıklı beslenme; şekerli içeceklerden ve işlenmiş gıdalardan uzak durmak koruyucudur. Bu değişiklikler ilaç tedavisi gerektiren durumlarda bile sürecin parçasıdır. Sağlıkla ilgili bilgiler **güvenilir kaynaklardan**, özellikle Sağlık Bakanlığı ve yetkili sağlık kuruluşlarının yayınlarından edinilmelidir.",
+        "Dolaşım sağlığını izlemenin basit göstergeleri vardır: dinlenme nabzı, kan basıncı, bel çevresi ve düzenli kan değerleri. Nabzın dinlenmede sürekli yüksek olması ya da kan basıncının 140/90 mmHg'nin üzerinde seyretmesi bir sağlık kuruluşuna başvurmayı gerektirir. Göğüs ağrısı, nefes darlığı, bacaklarda şişme ve ani baş dönmesi gibi belirtiler ihmal edilmemelidir. İlk yardım açısından da dolaşım bilgisi kritiktir: bilinci kapalı ve solunumu durmuş bir kişide erken **kalp masajı** ve suni solunum, beyin hasarını önlemede belirleyicidir. Türkiye'de 112 acil hattı aranarak profesyonel yardım istenmelidir. Toplumda temel yaşam desteği eğitiminin yaygınlaşması, ani kalp durması vakalarında hayatta kalma oranını artırır.",
+        "Dolaşım sisteminin anlaşılması, anatomik gözlem ile deneysel yöntemin birleşmesiyle ilerledi. 13. yüzyılda **İbnü'n Nefîs**, küçük dolaşımı tanımlayarak kanın akciğerlerden geçtiğini gösterdi. 1628'de **William Harvey**, kanın miktarı ve dolaşım süresi üzerine yaptığı hesaplarla kanın sürekli dolaştığını kanıtladı. 1661'de **Marcello Malpighi**, mikroskopla kılcal damarları görüntüledi. 17. yüzyılda **Jean-Baptiste Denys** hayvan kanıyla ilk nakil denemelerini yaptı; bu denemeler başarısız oldu ancak kan grupları bilinmediği için neden başarısız oldukları ancak 20. yüzyılda anlaşıldı. 1901'de **Karl Landsteiner**, kan gruplarını (A, B, AB, 0) keşfederek güvenli naklin önünü açtı; bu buluş için 1930'da Nobel Ödülü aldı. Bu zincir, bir uygulamanın (kan nakli) ancak temel bir bilgi (kan grupları) elde edildikten sonra güvenli hâle gelebildiğini gösterir."
+      ],
+      "blockLabels": [
+        "KAN BAĞIŞI",
+        "BAĞIŞIN TOPLUMSAL YARARI",
+        "DOLAŞIM SAĞLIĞI",
+        "İZLEME VE İLK YARDIM",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Kan farklı görevleri olan bileşenlerden oluşur.",
-        "Gönüllü bağış sağlık hizmetlerine katkı sağlayabilir.",
-        "Bağış koşullarını yetkili sağlık kurumları belirler.",
-        "Hareket, dinlenme ve dengeli beslenme birlikte düşünülür.",
-        "Sağlık iddialarını güvenilir kaynakla kontrol et.",
-        "Kişisel sağlık kararları uzmana danışılarak verilir."
+        "Kan laboratuvarda üretilemez; tedavi için gereken kan bağışla sağlanır.",
+        "Bağış öncesi sağlık taraması hem bağışçıyı hem alıcıyı korur.",
+        "Kan bileşenlerine ayrılarak birden çok hastada kullanılabilir.",
+        "Hareketsizlik, tuzlu beslenme ve sigara dolaşım hastalığı riskini artırır.",
+        "Landsteiner kan gruplarını keşfederek güvenli kan naklini mümkün kılmıştır."
       ],
       "terms": [
         "kan bağışı",
@@ -994,7 +1061,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Kan ve organ bağışı: dayanışma ve güvenli süreç",
-        "intro": "Basılı s. 112’deki “Gönüllü Bağışçılar İş Başında” performans görevi bağış konusunda farkındalık oluşturmayı amaçlar. Araştırma sonucu, bağışın toplumsal katkısını ve güvenli işleyişini özetler.",
+        "intro": "Bağış konusunda farkındalık oluşturmak için kan ve organ bağışının toplumsal katkısını ve güvenli işleyişini araştırmak bu haftanın görevidir. Sonuç, sürecin gönüllülük ve güvenlik üzerine kurulu olduğunu gösterir.",
         "items": [
           {
             "name": "Kan bağışı",
@@ -1002,7 +1069,7 @@
           },
           {
             "name": "Uygunluk ve güvenlik",
-            "role": "Bağış yapıp yapamayacağına kişinin sağlık durumu ve güncel resmî ölçütler doğrultusunda sağlık personeli karar verir. Kitaptaki yaş/kilo bilgileri güncel başvuru koşulları yerine geçmez; başvuru sırasında yetkili kurumun bilgisi kontrol edilir."
+            "role": "Bağış yapıp yapamayacağına kişinin sağlık durumu ve güncel resmî ölçütler doğrultusunda sağlık personeli karar verir. Yaş ve kilo ölçütleri zaman içinde değişebildiği için başvuru sırasında yetkili kurumun güncel bilgisi esas alınır."
           },
           {
             "name": "Organ bağışı",
@@ -1013,8 +1080,7 @@
             "role": "Bağış, gönüllülük ve güvene dayalı bir dayanışma sürecidir. Doğru bilgi paylaşmak, kişilerin mahremiyetine saygı göstermek ve kararları yetkili sağlık kurumlarına bırakmak gerekir."
           }
         ],
-        "takeaway": "Farkındalık çalışmasının temel sonucu: bağış yaşam kurtarabilir; güvenli tarama, güncel resmî bilgi, gönüllülük ve adil tıbbi değerlendirme sürecin vazgeçilmez parçalarıdır.",
-        "source": "Kaynak özeti: ders kitabı s. 109–112; kan bağışı adımları, Kızılay bilgilendirmesi ve “Gönüllü Bağışçılar İş Başında” performans görevi."
+        "takeaway": "Farkındalık çalışmasının temel sonucu: bağış yaşam kurtarabilir; güvenli tarama, güncel resmî bilgi, gönüllülük ve adil tıbbi değerlendirme sürecin vazgeçilmez parçalarıdır."
       },
       "sourceWeeks": [
         26,
@@ -1028,23 +1094,28 @@
       "topic": "Solunum sisteminin organları ve hava yolu · Soluk alıp verme, diyafram ve gaz alışverişi · Solunum sisteminin sağlığı ve temiz hava",
       "pages": "117–128",
       "visual": "respiration",
-      "visualNote": "Görsel ana solunum organlarını gösterir; alveollerde gaz alışverişini alttaki hava yolu şeması ve konu anlatımıyla birlikte incele. Diyaframın akciğerlerin altında bulunduğunu ve hareket ettiğini gözlemle; görsel bir şemadır, nefes alışverişini gerçek zamanlı göstermez. Akciğer görseli organların yapısını gösterir; temiz hava ve havalandırma gibi çevresel etkenler de sistemi etkiler.",
-      "focus": "Havanın burundan akciğerlere izlediği yolu ve solunum organlarının temel görevlerini sırala. Diyafram ve göğüs boşluğu hareketlerini soluk alma-verme ile; gazların yönünü alveollerdeki alışverişle ilişkilendir. Temiz hava ve uygun havalandırmanın solunum sağlığına katkısını, gözlem sınırlarını da gözeterek açıkla.",
+      "visualNote": "Görsel, burundan başlayıp yutak, gırtlak, soluk borusu ve bronşlarla akciğerlere ulaşan hava yolunu gösterir; gaz alışverişi akciğerlerin içindeki alveollerde yapılır.",
+      "focus": "Solunum sisteminin organlarını, diyaframın görevini ve gaz alışverişinin alveollerde gerçekleşmesini; solunum sağlığını koruma yollarını açıklar.",
       "summary": [
-        "Solunum sistemi, vücuda oksijen alınmasına ve hücrelerde oluşan karbondioksitin dışarı verilmesine yardım eder. Hava burundan girer; yutak ve gırtlaktan geçerek soluk borusuna ulaşır. Soluk borusu iki bronşa, bronşlar daha ince bronşçuklara ayrılır; bu yollar havayı akciğerdeki alveollere taşır. Soluk alma sırasında diyafram kasılarak aşağı doğru düzleşir; kaburgalar arasındaki kasların hareketiyle göğüs boşluğu genişler. Akciğerlerin hacmi artar ve hava içeri girer. Soluk verme sırasında diyafram gevşer, göğüs boşluğu daralır ve akciğerlerdeki hava dışarı çıkar. Solunum sistemi sağlığı için temiz hava, uygun havalandırma, tütün dumanından kaçınma ve tozlu/kirli ortamları azaltma önemlidir. Havadaki bazı kirleticiler görünmez ve kokusuz olabilir; bu nedenle ortamın güvenliğini yalnızca gözle veya koklayarak kesin belirleyemeyiz.",
-        "Burun içindeki kıllar ve mukus, havadaki bazı tozları tutmaya; burun içindeki damarlar havayı ısıtmaya, mukus ise nemlendirmeye yardım eder. Akciğerler göğüs boşluğunda bulunur; diyafram göğüs ve karın boşluklarını ayıran, soluk alıp vermeye katkıda bulunan kastır. Alveollerde oksijen, solunan havadan kılcal damarlardaki kana geçer; karbondioksit kandan alveol havasına geçerek soluk vermeyle vücuttan uzaklaştırılır. Göğüs boşluğunun hacim değişimi havanın giriş-çıkışını sağlar; alveol-kılcal damar geçişi ise gaz alışverişidir. Bunlar bağlantılı ama farklı basamaklardır. Hava kalitesini etkileyen kaynaklar arasında araç trafiği, sanayi, duman ve kapalı alanlarda hava dolaşımının yetersizliği bulunabilir. Pencere açmak her durumda yeterli değildir; dış hava koşulları da dikkate alınır. Şüpheli durumlarda yetişkinlere ve ilgili yetkililere haber verilir.",
-        "Kitabın solunum sistemi modelinde burun, yutak, gırtlak, soluk borusu, bronşlar, akciğerler ve diyafram etiketlenir. Bronşçukların uçlarındaki alveoller kılcal damarlarla çevrilidir; gaz alışverişi burada gerçekleşir. Ağaç dallarına benzeyen bronş dallanması, havanın iki akciğere dağılmasını zihinde canlandırabilir. Kitap bu hareketleri akciğer diyagramı, soluk alma/verme şeması ve balonlu maketle inceler. Balonlar akciğerlerin genişleyip daralmasını, alttaki esnek zar diyafram hareketini temsil edebilir. Modelin görevi belirli bir ilişkiyi görünür kılmaktır; gerçek akciğerler balon gibi çalışmaz. Kitap, Elif’in yaşadığı yoğun trafik/fabrika çevresini örnek olay olarak sunar ve çözüm yolları araştırılmasını ister. Ayrıca solunum sağlığını koruma posteri görevi verir. Bu örnekler bireysel alışkanlığın yanında çevre koşullarının da solunum sağlığını etkileyebildiğini gösterir.",
-        "Hava yolunu sırayla çiz ve her yapının görevini kısa notla açıkla. Soluk borusuyla yemek borusunu karıştırma: biri havayı akciğerlere, diğeri besini mideye taşır. Maket, organların konum ve bağlantısını gösterir; gerçek dokuların esnekliğini ve gazların mikroskobik hareketini bütünüyle göstermez. Maketin zarını aşağı çekince modeldeki balonların nasıl değiştiğini gözlemle; bu değişimi göğüs boşluğunun hacmiyle ilişkilendir. Model alveollerde oksijen ve karbondioksitin kılcal damarlardan geçişini göstermez. Bilimsel açıklamada hem hava akışını hem gaz alışverişini ayrı ayrı anlat. Kirliliği azaltma önerisini açık bir eylemle yaz: kaynağı azaltma, ortamı uygun biçimde havalandırma, dumandan uzak durma veya temiz hava alanı seçme. Belirtiyi tek başına çevreye bağlayıp tanı koyma; hastalık şüphesi sağlık uzmanının değerlendirmesini gerektirir."
+        "**Solunum sistemi**, vücuda oksijen alınmasını ve karbondioksitin dışarı verilmesini sağlar. Hava sırasıyla **burun**, **yutak**, **gırtlak**, **soluk borusu**, **bronşlar** ve **akciğerler**den geçer. Burun boşluğundaki kıllar ve salgılar havayı temizler, nemlendirir ve ısıtır. Gırtlak, ses tellerini barındırır ve soluk borusunu korur; yutma sırasında gırtlak kapağı (epiglot) soluk yolunu kapatarak besinin yemek borusuna gitmesini sağlar. Soluk borusu, C biçimindeki kıkırdak halkalarla desteklenir ve iç yüzeyindeki tüylerle toz tutar. **Bronşlar** soluk borusunu ikiye ayırarak akciğerlere girer; her akciğerde bronşlar giderek incelen **bronşçuklara** ayrılır ve sonunda milyonlarca hava kesesine ulaşır. Bu keselere **alveol** denir; çevreleri kılcal damarlarla sarılıdır ve duvarları tek katman hücreden oluşur. Gaz alışverişi burada gerçekleşir: oksijen alveolden kana, karbondioksit kandan alveole geçer.",
+        "Soluk alıp verme, kasların ve **diyaframın** çalışmasıyla gerçekleşir. Diyafram, göğüs boşluğunu karın boşluğundan ayıran kubbemsi kastır. Soluk alırken diyafram kasılır ve düzleşir, kaburgalar arası kaslar göğüs kafesini genişletir; göğüs boşluğunun hacmi artar, iç basınç düşer ve hava akciğerlere dolar. Soluk verirken diyafram gevşeyerek kubbeleşir, göğüs kafesi daralır ve hava dışarı çıkar. Bu nedenle soluk alma aktif, soluk verme büyük ölçüde pasif bir süreçtir. Dinlenme hâlinde dakikada yaklaşık 12-20 soluk alınır; egzersiz sırasında hem solunum hızı hem derinliği artar. Solunum hızı, kandaki karbondioksit düzeyine göre beyin sapındaki merkez tarafından düzenlenir; bu yüzden nefesimizi bir süre tuttuğumuzda kendiliğinden derin bir soluk alma isteği duyarız.",
+        "Gaz alışverişinin verimliliği, alveollerin toplam yüzey alanına bağlıdır. Yaklaşık 300 milyon alveol, bir tenis kortu büyüklüğüne yakın bir yüzey oluşturur; bu geniş alan, oksijenin kana hızla geçmesini sağlar. Alveol duvarı ile kılcal damar duvarı arasındaki geçiş bölgesi çok incedir, bu da difüzyonu kolaylaştırır. Oksijen kanda büyük ölçüde hemoglobinle taşınırken karbondioksit plazmada ve alyuvarlarda taşınır. Akciğerlerin kendisi kasılmaz; hareketi sağlayan göğüs kafesi ve diyaframdır. Akciğer dokusunun esnekliği, soluk verme sırasında akciğerlerin kendiliğinden büzülmesine yardımcı olur. Sigara dumanı alveollerin esnekliğini bozar, tüylerin temizleme işini felce uğratır ve zamanla **amfizem** ile **kronik bronşit** gibi hastalıklara yol açar.",
+        "Solunum sağlığını korumak için **zararlı madde** içeren tütün ürünlerinden uzak durmak ve **temiz hava** solumak ilk adımdır; pasif içicilik de aynı derecede zararlıdır. Hava kirliliğinin yoğun olduğu günlerde açık havada uzun süre kalmamak, kapalı ortamları düzenli havalandırmak ve maske kullanmak koruyucudur. Düzenli egzersiz, solunum kaslarını güçlendirir ve akciğer kapasitesini artırır. Üst solunum yolu enfeksiyonları sık görüldüğü için el temizliği ve kalabalık ortamlarda önlem önemlidir. Astım gibi kronik hastalıklarda tetikleyicilerden (toz, polen, kimyasal buhar) kaçınmak ve ilaçları düzenli kullanmak gerekir. Sürekli öksürük, nefes darlığı, göğüste sıkışma ya da balgamda kan gibi belirtiler vakit kaybetmeden değerlendirilmelidir. Bağımlılık yapan maddelerle mücadelede **Yeşilay**, koruyucu eğitim ve danışmanlık hizmetleri sunar.",
+        "Solunumun anlaşılması, gazların ölçülmesine dayanan deneylerle ilerledi. 17. yüzyılda **Robert Boyle**, gazların hacim ve basınç ilişkisini ortaya koyarak solunumun fiziksel temelini hazırladı. 18. yüzyılda **Joseph Priestley**, oksijeni elde ederek yanma ve solunumun aynı gazla ilişkili olduğunu gösterdi. **Antoine Lavoisier**, solunumun yavaş bir yanmaya benzediğini ve karbondioksit ürettiğini ölçümlerle açıkladı; bu, solunumun kimyasal bir süreç olduğunu ortaya koydu. 19. yüzyılda **Claude Bernard**, iç ortamın dengede tutulmasında gaz alışverişinin rolünü inceledi. 20. yüzyılda **Willem Einthoven**'ın geliştirdiği ölçüm yöntemleri ve görüntüleme teknikleri, göğüs hastalıklarının tanısını ilerletti. Bugün solunum fonksiyon testleri, akciğer kapasitesini sayısal olarak ölçerek tanı ve tedaviye yol gösterir."
+      ],
+      "blockLabels": [
+        "SOLUNUM ORGANLARI",
+        "SOLUK ALIP VERME",
+        "GAZ ALIŞVERİŞİ",
+        "SOLUNUM SAĞLIĞI",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Hava solunum yolları boyunca akciğerlere ilerler.",
-        "Gaz alışverişi alveoller ile kılcal damarlar arasında gerçekleşir.",
-        "Model gerçek organların yalnızca seçilmiş özelliklerini gösterir.",
-        "Diyaframın hareketi göğüs boşluğunun hacmini değiştirir.",
-        "Oksijen ve karbondioksit alveollerde zıt yönlerde geçer.",
-        "Soluk alıp verme ile gaz alışverişi bağlantılı ama ayrı süreçlerdir.",
-        "Temiz hava ve uygun havalandırma önemlidir.",
-        "Koku ve görünüş havadaki tüm kirleticileri göstermez."
+        "Solunum yolu burun, yutak, gırtlak, soluk borusu, bronşlar ve akciğerlerden oluşur.",
+        "Diyafram kasılınca düzleşir, göğüs hacmi artar ve hava içeri girer.",
+        "Gaz alışverişi alveollerde gerçekleşir; alveol yüzeyi çok geniştir.",
+        "Oksijen hemoglobinle, karbondioksit plazma ve alyuvarlarla taşınır.",
+        "Sigara alveol esnekliğini bozar; pasif içicilik de zararlıdır."
       ],
       "terms": [
         "soluk borusu",
@@ -1096,7 +1167,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Solunum sistemini korumak için neler yapılabilir?",
-        "intro": "Basılı s. 124’teki performans görevi solunum sağlığını koruma yollarını araştırmayı ister. Sonuçlar, kişisel alışkanlıkları ve çevre koşullarını birlikte ele alır.",
+        "intro": "Solunum sağlığını koruma yollarını araştırmak bu haftanın görevidir. Sonuçlar, kişisel alışkanlıkları ve çevre koşullarını birlikte ele alır.",
         "items": [
           {
             "name": "Temiz ve dumansız hava",
@@ -1115,8 +1186,7 @@
             "role": "Belirtiyi tek başına hava kirliliğine bağlayıp tanı koyma. Sağlıkla ilgili kişisel kaygı ve öneriler güvenilir yetişkin ve sağlık uzmanıyla değerlendirilmelidir."
           }
         ],
-        "takeaway": "Araştırma sonucu: solunum sağlığı için temiz hava, dumansız ortam, uygun havalandırma ve çevresel kirleticilerin azaltılması birlikte ele alınmalıdır.",
-        "source": "Kaynak özeti: ders kitabı s. 123–124; “Solunum Sisteminin Sağlığını Koruyalım” performans görevi."
+        "takeaway": "Araştırma sonucu: solunum sağlığı için temiz hava, dumansız ortam, uygun havalandırma ve çevresel kirleticilerin azaltılması birlikte ele alınmalıdır."
       },
       "sourceWeeks": [
         28,
@@ -1131,23 +1201,28 @@
       "topic": "Bağımlılık yapıcı maddelerin vücut sistemlerine etkisi · Boşaltım sistemi: böbrekler ve idrar yolu · Böbreklerde süzülme ve boşaltımın önemi",
       "pages": "123–134",
       "visual": "excretion",
-      "visualNote": "Solunum sistemi görseli organları gösterir; zararlı maddelerin etkileri hakkında bilgi verirken kişiyi suçlamadan, güvenilir kaynağa dayan. Bu görsel idrar yoluna odaklanır; deri, akciğer ve karaciğerin boşaltıma katkısı konu anlatımında ayrıca açıklanır. Görseldeki böbrek, üreter ve idrar kesesini sırayla eşleştir; böbrekte süzülme idrarın depolanmasından farklıdır.",
-      "focus": "Bağımlılık yapıcı maddelerin sağlığa etkilerini doğru bilgiyle, destekleyici ve yargılamayan bir dille açıkla. Böbrekler, üreterler, idrar kesesi ve üretranın görevlerini idrarın izlediği sırayla açıkla. Böbreklerde kanın süzülmesi ile idrarın taşınması ve depolanması arasındaki farkı açıkla.",
+      "visualNote": "Görsel, böbrekleri, üreterleri, idrar kesesini ve üretrayı gösterir; kan böbreklerde süzülür, oluşan idrar üreterle keseye taşınır ve üretradan dışarı atılır.",
+      "focus": "Bağımlılık yapan maddelerin solunum ve dolaşım üzerindeki etkilerini; boşaltım sisteminin organlarını ve süzülme sürecini açıklar.",
       "summary": [
-        "Bağımlılık, bir maddenin veya davranışın kişiye fiziksel, ruhsal ya da sosyal sorunlar yaşatmasına rağmen sürmesi ve bırakma isteğine karşın kontrol edilememesi durumudur. Bu konu yargılayıcı etiketlerle değil, bilimsel bilgi ve destek yollarıyla ele alınmalıdır. Boşaltım, hücrelerde oluşan bazı atıkların ve vücuttaki fazla maddelerin uzaklaştırılmasına yardım eder. Böbrekler kanı süzer, atıkların bir bölümünü ve fazla suyu idrara aktarır. Boşaltım sistemi böbrekler, üreterler, idrar kesesi ve üretradan oluşur; bu yapılar idrarı oluşturma, taşıma, depolama ve dışarı atma görevlerini paylaşır. Böbrekler, kanı süzerek bazı atık maddeleri ve vücuttaki fazla suyu idrara aktarır; yararlı maddelerin bir bölümü yeniden kana dönebilir. Böylece kanın bileşimi ve vücudun iç dengesi korunmaya çalışılır. İdrarın oluşması, taşınması, depolanması ve atılması birbirinden ayrı aşamalardır.",
-        "Tütün dumanı ve bağımlılık yapıcı maddeler solunum yollarını etkileyebilir; dolaşım sistemi ve genel sağlık da zarar görebilir. Etkiler kişiden kişiye değişebilir. Bir kişide bağımlılık bulunduğunu öğrenciler belirleyemez; tanı ve destek planı sağlık uzmanlarının işidir. İdrar böbreklerde oluşur, üreter adı verilen borularla idrar kesesine taşınır ve burada geçici olarak depolanır. İdrar kesesi dolduğunda idrar üretradan vücut dışına çıkar. Dolaşım sistemi kanı böbreklere getirir; böylece sistemler birlikte çalışır. Oluşan idrar üreterlerle idrar kesesine gelir; mesane idrarı depolar, üretra dışarı taşır. Bu sırada kan dolaşımı böbreğe madde taşımayı sürdürür. Terleme, soluk verme ve karaciğerin bazı maddeleri dönüştürmesi de kitapta boşaltıma yardımcı süreçlerle ilişkilendirilir.",
-        "Kitap Yeşilay’ın bağımlılıkla mücadele ve toplum bilincini artırma çalışmalarını örnek verir. Farkındalık posteri hazırlarken doğrulanmış bilgi, açık destek mesajı ve yardım alınabilecek güvenilir yetişkin/kurum türünü belirtmek, yalnızca korkutucu slogan yazmaktan daha yararlıdır. Kitap, Bora’nın spor sonrası terlemesi ve idrara çıkma ihtiyacını sorgulayan öyküyle konuya başlar. İdrar miktarı yalnızca içilen suya bağlı değildir; terleme, ortam sıcaklığı ve vücudun durumu da sıvı dengesini etkiler. Deri ve akciğer gibi yapılar da boşaltım bağlamında ele alınır. Kitabın s. 132–134 çizimleri böbrekleri, üreterleri, idrar kesesini ve üretrayı etiketler; organ-görev tablosu ise deri, akciğer ve kalın bağırsağın katkısını sorar. Bu örnekler “vücuttan atık uzaklaştırma” kavramının yalnızca tuvalete çıkma ile sınırlı olmadığını gösterir.",
-        "Bir mesajda kişiyi suçlama, küçümseme veya özel bilgisini paylaşma. Bilimsel bilgiyi güncel ve yetkili kaynaktan kontrol et; kendin ya da bir yakın için kaygı varsa güvenilir yetişkin ve sağlık uzmanından destek al. Yardım istemek güvenli bir davranıştır. İdrar yolunu böbrek → üreter → idrar kesesi → üretra sırasıyla çiz; kanın böbreğe gelişini ayrı okla göster. Böbrek idrarı süzer/oluşturur, idrar kesesi depolar; bu iki görevi karıştırma. Bir günlük örnek olay, böbreklerin vücuttaki bütün atıkları tek başına attığı anlamına gelmez. Şemada önce kanın böbreğe gelişini, sonra süzülmeyi, idrarın üreter boyunca taşınmasını ve vücuttan çıkışını göster. İdrar kesesi kanı süzmez; böbrek idrarı depolamaz. Bol veya az su içme gibi kişisel tavsiyeler vermek yerine genel süreci açıkla ve sağlık bilgisi için uzman kaynağına yönel."
+        "**Bağımlılık**, bir maddenin ya da davranışın kullanımının kontrolünü yitirme, onsuz yapamama ve olumsuz sonuçlara rağmen sürdürme durumudur. Sigara, alkol ve uyuşturucu maddeler bağımlılık yapar; bunların ortak özelliği, beyindeki ödül sistemini doğrudan etkileyerek tekrarlama isteği oluşturmasıdır. Sigara dumanında nikotin, katran ve karbonmonoksit bulunur. **Nikotin** bağımlılığın temel nedenidir ve damarları daraltarak kalp hızını ve tansiyonu yükseltir. **Katran** solunum yollarında birikerek tüylerin temizleme işini bozar ve akciğer kanseri riskini artırır. **Karbonmonoksit** hemoglobinin oksijen taşıma kapasitesini azaltır; bu nedenle sigara içenlerin dokuları daha az oksijen alır. Alkol, karaciğer ve sinir sistemi üzerinde kalıcı hasar bırakabilir; uyuşturucular ise bilinç, algı ve davranış üzerinde denetimi kaybettirir. Sigara hem **solunum sağlığını** hem **dolaşım sağlığını** bozar. Bağımlılık bir irade sorunu değil, tedavi edilebilir bir sağlık sorunudur.",
+        "Bağımlılıkla mücadelede önleme, tedaviden daha etkilidir. Merak ve arkadaş baskısı, ergenlik döneminde başlamanın en yaygın nedenleri arasındadır; bu nedenle “hayır” demeyi öğrenmek, riskli ortamlardan uzak durmak ve güvenilir yetişkinlerle konuşmak koruyucudur. Türkiye'de **Yeşilay**, bağımlılık türleriyle ilgili eğitim, danışmanlık ve rehabilitasyon desteği sunar; 115 hattı üzerinden danışmanlık alınabilir. Sigarayı bırakmada ilk günlerde yoksunluk belirtileri görülebilir; bu belirtiler zamanla azalır ve vücut kendini onarmaya başlar. Kan dolaşımı bırakmadan sonraki saatlerde, akciğer kapasitesi ise haftalar içinde belirgin biçimde iyileşir. Bağımlılığın tedavisinde tıbbi destek, psikolojik danışmanlık ve sosyal destek birlikte kullanılır; tek başına iradeye bırakılan bırakma denemeleri daha sık başarısız olur.",
+        "**Boşaltım sistemi**, hücrelerde oluşan atık maddelerin vücuttan uzaklaştırılmasını sağlar. En önemli organ **böbreklerdir**; karın boşluğunun arka duvarında, bel hizasında iki tanedir. Böbrekler kanı sürekli süzer; günde yaklaşık 180 litre sıvı süzülür, bunun büyük bölümü geri emilir ve yaklaşık 1,5 litre **idrar** oluşur. **Nefron**, böbreğin süzme birimidir; her böbrekte yaklaşık bir milyon nefron bulunur. Nefronlarda önce süzülme, sonra geri emilim ve son olarak salgılama gerçekleşir. Bu üç aşama sayesinde vücut, su ve tuz dengesini korurken üre ve fazla iyonları uzaklaştırır. Oluşan idrar, **üreter** ile idrar kesesine (**mesane**) taşınır ve **üretra** yoluyla dışarı atılır.",
+        "Boşaltıma yardımcı organlar da katkı sağlar. **Akciğerler** karbondioksit ve bir miktar suyu, **deri** terle su ve tuzu, **karaciğer** ise protein yıkımı sonucu oluşan amonyağı daha az zararlı olan **üreye** çevirerek böbreklere gönderir; safra yoluyla da atık maddeleri bağırsağa iletir. Bu nedenle boşaltım yalnızca idrar üretmek değildir; birden çok organın paylaştığı bir görevdir. **Homeostazi**, yani **iç denge**, vücudun iç ortamının (su, tuz, sıcaklık, pH) belirli sınırlar içinde tutulmasıdır ve boşaltım sistemi bunun merkezindedir. Yeterli su içmemek idrarı yoğunlaştırır, böbrek taşı ve idrar yolu enfeksiyonu riskini artırır. Aşırı tuzlu beslenme ise kan basıncını yükselterek böbrekleri yorar.",
+        "Boşaltım ve sağlık bilgisi, anatomi gözlemlerinden modern fizyolojiye uzanan bir çizgide gelişti. 10. yüzyılda yaşayan **Zehrâvî**, cerrahi aletleri ve yöntemleri tanımlayan eserinde idrar yollarına ilişkin uygulamaları da ele aldı; eserleri yüzyıllarca Avrupa'da temel başvuru kaynağı olarak okutuldu. 15. yüzyılda **Sabuncuoğlu Şerefeddin**, Anadolu'da yazdığı cerrahi kitabında aletleri resimlerle gösterdi ve uygulamaları ayrıntılı biçimde anlattı. 17. yüzyılda **Marcello Malpighi**, mikroskopla böbrek yapısını inceleyerek süzme birimlerinin varlığını gösterdi. 19. yüzyılda **William Bowman**, böbrekteki süzme yapısını tanımladı ve bugün onun adıyla anılan kapsül, nefronun temel parçası olarak bilinir. Bu katkılar, bir organın işlevinin ancak yapısının ayrıntılı biçimde görülmesiyle anlaşılabildiğini gösterir; mikroskop bu geçişin en belirleyici aracı oldu."
+      ],
+      "blockLabels": [
+        "BAĞIMLILIK",
+        "BAĞIMLILIKLA MÜCADELE",
+        "BOŞALTIM SİSTEMİ",
+        "BOŞALTIMA YARDIMCI ORGANLAR",
+        "BİLİM İNSANLARI VE TARİH"
       ],
       "points": [
-        "Bağımlılık fiziksel, ruhsal ve sosyal yaşamı etkileyebilir.",
-        "Tütün dumanı solunum ve dolaşım sağlığına zarar verebilir.",
-        "Destek aramak yargılanma değil, yardım alma sürecidir.",
-        "Böbrekler kanın süzülmesi ve idrar oluşumunda görev alır.",
-        "İdrar böbrek → üreter → idrar kesesi yolunu izler.",
-        "Üretra idrarın vücuttan çıkış yoludur.",
-        "Böbrekler kandaki bazı atıkları süzer.",
-        "İdrar oluşumu ile idrarın depolanması farklı işlemlerdir."
+        "Bağımlılık, kullanım denetiminin yitirilmesi ve olumsuz sonuçlara rağmen sürmesidir.",
+        "Nikotin damarları daraltır, katran solunum yollarını bozar, karbonmonoksit oksijen taşınmasını azaltır.",
+        "Böbrekler kanı süzerek üre ve fazla iyonları idrarla uzaklaştırır.",
+        "Nefronda süzülme, geri emilim ve salgılama aşamaları gerçekleşir.",
+        "Karaciğer amonyağı üreye çevirir; deri ve akciğerler de boşaltıma katkı verir."
       ],
       "terms": [
         "bağımlılık",
@@ -1198,7 +1273,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Solunum sağlığı için farkındalık: güvenilir ve destekleyici bilgi",
-        "intro": "Basılı s. 127’deki performans görevi solunum sisteminin sağlığını koruma konusunda farkındalık oluşturmayı ister. Bu araştırma sonucu, bağımlılık ve dumansız yaşam başlıklarını bilgi temelli biçimde ele alır.",
+        "intro": "Solunum sağlığını koruma konusunda farkındalık oluşturmak bu haftanın görevidir. Bu araştırma sonucu, bağımlılık ve dumansız yaşam başlıklarını bilgi temelli biçimde ele alır.",
         "items": [
           {
             "name": "Bağımlılık nedir?",
@@ -1210,15 +1285,14 @@
           },
           {
             "name": "Farkındalık ve destek",
-            "role": "Farkındalık çalışması doğru bilgiyi, dumansız ortamları ve yardım alınabilecek güvenilir yetişkin/kurumları tanıtır. Yeşilay, kitapta bağımlılıkla mücadele ve bilgilendirme örneği olarak verilir."
+            "role": "Farkındalık çalışması doğru bilgiyi, dumansız ortamları ve yardım alınabilecek güvenilir yetişkin/kurumları tanıtır. Yeşilay, bağımlılıkla mücadele ve bilgilendirme alanında başvurulabilecek kurumlardan biridir."
           },
           {
             "name": "İletişim ilkesi",
             "role": "Kişiyi suçlayan veya damgalayan dil yardım istemeyi zorlaştırabilir. Saygılı, kanıta dayalı ve destekleyici iletişim hem bilgiyi anlaşılır kılar hem de mahremiyeti korur."
           }
         ],
-        "takeaway": "Araştırma sonucu: etkili farkındalık, korkutucu ya da yargılayıcı sloganlar yerine doğrulanmış bilgi, dumansız ortam ve güvenilir destek yollarını birlikte sunar.",
-        "source": "Kaynak özeti: ders kitabı s. 125–127; bağımlılık bilgisi, Yeşilay ve “Solunum Sisteminin Sağlığı İçin Neler Yapabiliriz?” performans görevi."
+        "takeaway": "Araştırma sonucu: etkili farkındalık, korkutucu ya da yargılayıcı sloganlar yerine doğrulanmış bilgi, dumansız ortam ve güvenilir destek yollarını birlikte sunar."
       },
       "sourceWeeks": [
         31,
@@ -1233,23 +1307,30 @@
       "topic": "Boşaltım sisteminin sağlığını koruma · Vücudumuzdaki sistemlerin birlikte çalışması · Vücudumuzdaki sistemler: bilim insanları ve sentez · Yıl sonu: sistemler, modeller ve öz değerlendirme",
       "pages": "89–148",
       "visual": "systemsReview",
-      "visualNote": "Böbrek ve idrar yolu şeması yapıyı gösterir; sağlık önerileri kişiye göre değiştiği için uzmana danışılmalıdır. Dört görsel ayrı sistemleri gösterir; besin, oksijen ve atıkların sistemler arasında nasıl taşındığını kendi şemanda birleştir. Sistem görsellerini incelerken modellerin bilim insanlarının gözlem ve araştırmalarıyla gelişen açıklamaları temsil ettiğini hatırla. Dört sistem görselini karşılaştır; öğrendiklerini uzay ve enerji ünitelerindeki model-kavram ilişkileriyle birlikte değerlendir.",
-      "focus": "Boşaltım sağlığını destekleyen genel alışkanlıkları kişisel farklılık ve güvenilir kaynaklarla birlikte değerlendir. Sindirim, dolaşım, solunum ve boşaltım sistemlerinin madde alışverişi üzerinden ilişkisini açıkla. Kitaptaki bilim insanı örneklerini tarihsel bağlam, araştırma yöntemi ve kanıt üzerinden değerlendir. Üç üniteden öğrendiklerini model, kanıt ve öz değerlendirme yoluyla bir araya getir.",
+      "visualNote": "Görsel, sindirim, dolaşım, solunum ve boşaltım sistemlerini bir arada gösterir; besin, oksijen ve atıklar bu dört sistemin ortak dolaşımıyla taşınır.",
+      "focus": "Boşaltım sağlığını koruma yollarını; sindirim, dolaşım, solunum ve boşaltım sistemlerinin birlikte çalışmasını ve bu bilginin sağlıklı yaşamla ilişkisini açıklar.",
       "summary": [
-        "Boşaltım sisteminin sağlığını desteklemek için genel hijyen, dengeli beslenme, hareket ve vücudun gereksinimlerine uygun sıvı alımı önemlidir. Sıvı gereksinimi yaş, etkinlik, hava sıcaklığı ve sağlık durumuna göre değişebilir; herkes için geçerli tek bir miktar önerisi vermek doğru değildir. Vücut sistemleri birlikte çalışır. Sindirim sistemi besinleri yapı taşlarına ayırıp kana geçmesine yardım eder; solunum sistemi oksijeni kana kazandırır ve karbondioksitin atılmasını sağlar; dolaşım sistemi maddeleri hücrelere ve ilgili organlara taşır; boşaltım sistemi bazı atıkları uzaklaştırır. Vücut yapılarıyla ilgili bilimsel açıklamalar gözlem, inceleme, çizim, model ve kanıt birikimiyle gelişmiştir. Kitaptaki “İz Bırakanlar” sayfaları, farklı dönemlerde yaşayan bilim insanlarının anatomi, dolaşım, cerrahi ve tıp alanlarındaki katkılarını örnekler. Yıl boyunca uzay, kuvvet-enerji ve vücudumuzdaki sistemler konularını farklı içeriklerle öğrendin; ortak bilimsel beceriler ise gözlem yapmak, kavramı tanımlamak, kanıtı açıklamak ve model kurmaktır. Bir kavramı ezberden söylemek yerine yeni bir örnekte kullanmak öğrenmeyi güçlendirir.",
-        "Böbreklerin işi kanı süzmek ve iç dengenin korunmasına yardım etmektir. Gereksiz ilaç kullanımı, aşırı tuz tüketimi veya kişisel hijyene dikkat etmemek sağlık riskleri oluşturabilir. Her durumda doğru değerlendirme, kişiye özgü bilgiyi sağlık uzmanıyla konuşmayı gerektirir. Örneğin kas hücresi çalışırken besin ve oksijen kullanır. Bu maddeler sindirim ve solunum sistemlerinde alınır, dolaşım sistemiyle hücreye taşınır. Hücrelerde oluşan karbondioksit kanla akciğerlere, bazı atıklar böbreklere taşınır. Bu iş birliği, her sistemin ayrı görevi olduğu hâlde diğerlerine bağlı olduğunu gösterir. Bir tarihsel çalışmayı incelerken araştırmacının hangi soruyu ele aldığını, hangi gözlem veya araçtan yararlandığını ve hangi açıklamayı geliştirdiğini sor. Bilimsel bilgi yeni kanıtlar ve yöntemlerle ayrıntılanabilir; günümüzdeki model ile geçmişteki çizim aynı teknolojiyle hazırlanmış olmayabilir. Bir bilimsel açıklama; hangi soruya yanıt verdiğini, hangi kanıta dayandığını ve süreçte nelerin değiştiğini açıklar. Model, karmaşık gerçekliği sadeleştirerek anlaşılır kılar; modelin sınırlılıklarını da belirtmek gerekir. Gözlem, çıkarım ve sonuç birbiriyle ilişkili ama farklı düşünme adımlarıdır.",
-        "Kitap örnek olay, araştırma raporu ve doğru-yanlış sorularıyla alışkanlıkları sorgulatır; ekran başında uzun süre kalma, hareket ve su tüketimi gibi konuları ele alır. Bu sayfalar genel eğitim amaçlıdır; kişiye özel teşhis, ilaç veya sıvı miktarı belirlemez. Kitabın ünite sonu soruları sindirim organlarını, kan dolaşımını, solunum sağlığını, böbrekleri, organ bağışını ve bağımlılık konusunu birlikte değerlendirir. Sistemler arası ilişkiyi bir kavram haritasında göstermek, tek tek organ adlarını ezberlemekten daha açıklayıcıdır. Kitapta İbnü’n Nefîs’in küçük kan dolaşımına ilişkin açıklaması; Zehrâvî ve Sabuncuoğlu Şerefeddin’in cerrahi çalışmaları; İbn Sina ve Malpighi gibi kişilerin tıp tarihindeki katkıları yer alır. Bu örnekler, bilginin farklı kültür ve dönemlerdeki araştırmacılarla birikerek geliştiğini gösterir. Kitabın son sayfaları sindirim, dolaşım, solunum ve boşaltım sistemlerini test soruları, şemalar, günlük yaşam örnekleri ve bulmacalarla tekrar ettirir. Sözlük, kaynakça ve haritalar başvuru amacıyla eklenmiştir. Kendi çalışma portföyünde uzay teknolojisi, enerji dönüşümü ve sistemler arası madde akışı için birer kanıtlı örnek seçebilirsin.",
-        "Bir çevrim içi öneriyi paylaşmadan önce kaynağın yetkinliğini, kanıtını ve güncelliğini kontrol et. Bir belirti varsa kendi kendine tanı koyma veya başkasına tedavi önerme; güvenilir bir yetişkin ve sağlık uzmanına danış. Sağlık iletişiminde doğru bilgi kadar kişinin mahremiyetini ve saygınlığını korumak da önemlidir. Dört sistemi tek çizimde gösterirken besin, oksijen, karbondioksit ve atık maddeleri ayrı renkli oklarla belirt. Okların yönünü doğru kur; sindirimden gelen yapı taşı kana geçer, kan onu hücreye taşır. Şema gerçek vücuttaki bütün damar ve kimyasal tepkimeleri çizmez; yalnızca temel madde akışını sadeleştirir. Bir biyografi özeti yazarken kanıtlanmamış alıntı veya abartılı “ilk kişi” iddiası ekleme. Kişinin katkısını bir güvenilir kaynakla doğrula, yaşadığı dönemi belirt ve kendi çalışmasının sonraki bilgiyle ilişkisini açıkla. Portre bir bilimsel kanıt değil, kişiyi tanıtan görseldir; bilimsel katkı metindeki yöntem ve kaynakla değerlendirilir. Öz değerlendirmede yalnızca doğru cevaba değil, hangi kavramı daha iyi açıklayabildiğine, hangi modelinin işe yaradığına ve neyi yeniden araştırman gerektiğine bak. Bir şema hazırlarken okların anlamını ve görselin temsilî olduğunu açıkla. Güvenilir kaynak kullandıysan adını yaz; öğrendiğin bilgiyi yeni bir örneğe aktar."
+        "**Böbrek sağlığını** korumak, böbreklerin yükünü azaltan günlük alışkanlıklarla başlar. Günde yaklaşık 1,5-2 litre su içmek idrarın yoğunlaşmasını önler ve böbrek taşı riskini azaltır; sıcak havada ve egzersiz sırasında bu miktar artar. Aşırı tuzlu beslenme kan basıncını yükselterek böbrek damarlarını yorar; bu nedenle tuz alımını sınırlamak koruyucudur. Ağrı kesici ve benzeri ilaçların doktor önerisi olmadan, özellikle uzun süre kullanılması böbreklere zarar verebilir. İdrarı uzun süre tutmak idrar yolu enfeksiyonu riskini artırır; düzenli boşaltım alışkanlığı edinmek gerekir. İdrar rengindeki koyulaşma, idrarda kan, yanma, sık idrara çıkma ve bel ağrısı gibi belirtiler değerlendirilmelidir. **Organ bağışı**, böbrek yetmezliği gibi durumlarda nakil imkânı sağladığı için boşaltım sağlığıyla doğrudan ilişkilidir; Türkiye'de beyin ölümü gerçekleşen kişilerden aile onayıyla nakil yapılabilmektedir.",
+        "Vücut, tek tek organların toplamı değil, birbirine bağımlı sistemlerin bütünüdür. Sindirim sistemi besinleri küçük moleküllere ayırır ve kana verir; dolaşım sistemi bu molekülleri ve oksijeni hücrelere taşır; solunum sistemi kanı oksijenle yükler ve karbondioksiti uzaklaştırır; boşaltım sistemi ise hücrelerde oluşan atıkları kandan süzer. Hücrelerle kan arasındaki **madde alışverişi** kılcal damarlarda gerçekleşir; **atık madde**ler ise boşaltım organlarına taşınır. Bir sistemdeki aksama diğerlerini etkiler: sindirim yeterli olmadığında hücrelere besin gitmez ve enerji üretimi düşer; solunum yetersiz olduğunda kan yeterince oksijen taşıyamaz ve dolaşım zorlanır; böbrekler çalışmadığında kanda biriken atıklar tüm organları etkiler. Bu karşılıklı bağımlılık, sağlığın bir bütün olarak ele alınması gerektiğini gösterir. **Homeostazi** dediğimiz iç denge, bu sistemlerin eşgüdümüyle korunur.",
+        "Sistemlerin eşgüdümünü bir gün içindeki sıradan bir olayla izlemek mümkündür. Yemek yendiğinde sindirim başlar, kana geçen glikoz düzeyi yükselir; pankreas hormon salgılayarak bu düzeyi dengeler. Yürüyüşe çıkıldığında kaslar daha çok oksijen ister, solunum hızlanır ve kalp daha hızlı pompalar; terleme ile vücut sıcaklığı düzenlenir ve kaybedilen su böbreklerin idrar miktarını azaltmasıyla dengelenir. Bu düzenlemeler bilinçli çabayla değil, sinir ve hormon sistemlerinin geri bildirimiyle gerçekleşir. Geri bildirim, bir değişikliğin algılanıp düzeltici yanıt üretilmesidir. Sistemler arası bu denge, dış koşullar değişse bile iç ortamın belirli sınırlarda kalmasını sağlar; dengenin bozulması hastalık belirtilerinin ortaya çıkmasıyla sonuçlanır.",
+        "Sağlıklı yaşam, bu bilginin günlük davranışa dönüşmesidir. Dengeli beslenme, düzenli hareket, yeterli uyku, yeterli su, tütün ve alkolden uzak durmak ve **hijyen** kurallarına (el ile gıda temizliğine) özen göstermek dört sistemi birlikte korur. Egzersiz hem solunum kapasitesini hem kalp gücünü artırır, sindirim ve boşaltım işleyişini destekler. Aşılanma, bulaşıcı hastalıklara karşı toplumsal koruma sağlar. Sağlık okuryazarlığı da en az bu alışkanlıklar kadar önemlidir: belirtileri tanımak, ne zaman sağlık kuruluşuna başvurulacağını bilmek ve **sağlık kaynağı** olarak yetkili kurumların bilgisine ulaşmak gerekir. Bu ünitede öğrenilenler, bedenin bir makine gibi değil, sürekli dengelenen bir sistemler bütünü olduğunu gösterir.",
+        "Bu bilgi birikimi, farklı çağlarda ve coğrafyalarda çalışan hekimlerin ve bilim insanlarının katkısıyla oluştu. 10. yüzyılda **Zehrâvî**, cerrahi aletleri çizimleriyle tanıtarak uygulamalı tıbbın temelini attı. 11. yüzyılda **İbn Sina**, tıbbı sistemli bir bütün olarak ele alan eseriyle yüzyıllarca temel kaynak oldu. 13. yüzyılda **İbnü'n Nefîs**, küçük dolaşımı tanımladı. 15. yüzyılda **Sabuncuoğlu Şerefeddin**, Anadolu'da cerrahi bilgisini resimli bir eserle kayda geçirdi. 17. yüzyılda **William Harvey** kan dolaşımını, **Marcello Malpighi** ise mikroskopla kılcal damarları ve böbrek yapısını gösterdi. 19. yüzyılda **Karl Landsteiner** kan gruplarını keşfederek güvenli nakli mümkün kıldı. Türkiye'den **Nüzhet Gökdoğan**, Cumhuriyet döneminde astronomi alanında akademik çalışmalarıyla bilime kurumsal katkı sağladı; **Alper Gezeravcı** ise 2024'te uzayda deney yapan ilk Türk astronot oldu. Bu isimler, bilimin kuşaklar boyunca biriken ve her kuşağın kendi sorusunu eklediği bir süreç olduğunu gösterir.",
+        "Bu yıl boyunca uzay, kuvvet-enerji ve vücut sistemleri ünitelerinde aynı bilgi üretme yolu izlendi: önce **gözlem** yapılır, ölçümler kaydedilir ve bu kayıtlardan **kanıt** elde edilir. Kanıt, bir **açıklama**yı desteklemek ya da çürütmek için kullanılır; açıklama yeni kanıtla çeliştiğinde değiştirilir. Karmaşık sistemleri anlamak için **bilimsel model** kurulur; model, gerçeğin kendisi değil, temel ilişkileri öne çıkaran sadeleştirilmiş bir temsildir. Dolaşım şeması da bir modeldir, bir gezegenin yörünge çizimi de; her modelin hangi ayrıntıyı dışarıda bıraktığını bilmek yorumu güvenilir kılar. **Bilim tarihi**, bu modellerin nasıl değiştiğini gösterir: kanın vücutta tüketildiği görüşü, İbnü’n Nefîs’in gözlemi ve Harvey’in deneyleriyle yerini dolaşım bilgisine bıraktı. Aynı yöntem kendi öğrenmemizi değerlendirmek için de kullanılır: bir açıklamayı hangi kanıta dayandırdığımızı yazmak, **öz değerlendirme** yapmanın en somut yoludur."
+      ],
+      "blockLabels": [
+        "BÖBREK SAĞLIĞI",
+        "SİSTEMLERİN BİRLİKTE ÇALIŞMASI",
+        "GÜN İÇİNDE DENGE",
+        "SAĞLIKLI YAŞAM",
+        "BİLİM İNSANLARI VE TARİH",
+        "BİLİMSEL BİLGİ VE YIL SONU"
       ],
       "points": [
-        "Hijyen ve genel sağlıklı alışkanlıklar önemlidir.",
-        "Su gereksinimi kişiye ve koşullara göre değişebilir.",
-        "Sağlık önerilerini güvenilir kaynakla doğrula.",
-        "Dolaşım maddelerin hücrelere taşınmasına yardım eder.",
-        "Solunum oksijen-karbondioksit alışverişine katkı verir.",
-        "Boşaltım bazı atıkların uzaklaştırılmasını sağlar.",
-        "Bilimsel bilgi yeni kanıtlarla gelişebilir.",
-        "Araştırmacının yöntemi ve dönemi önemlidir."
+        "Yeterli su, sınırlı tuz ve düzenli boşaltım alışkanlığı böbrek sağlığını korur.",
+        "İlaçların doktor önerisi olmadan kullanılması böbreklere zarar verebilir.",
+        "Sindirim, dolaşım, solunum ve boşaltım sistemleri birbirine bağımlı çalışır.",
+        "Homeostazi, iç ortamın geri bildirimle dengede tutulmasıdır.",
+        "Dengeli beslenme, hareket ve temizlik dört sistemi birlikte korur."
       ],
       "terms": [
         "böbrek sağlığı",
@@ -1303,7 +1384,7 @@
       "researchBrief": {
         "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
         "title": "Boşaltım sisteminin sağlığını nasıl destekleriz?",
-        "intro": "Basılı s. 136’daki “Boşaltım Sisteminin Sağlığını Koruyalım” performans görevi güvenilir kaynaklardan bilgi toplamayı ve raporlaştırmayı ister. Kitabın s. 137–138’deki açıklamalarıyla birlikte temel bulgular şöyledir:",
+        "intro": "Boşaltım sisteminin sağlığını korumayı güvenilir kaynaklardan araştırıp raporlaştırmak bu haftanın görevidir. Temel bulgular şöyledir:",
         "items": [
           {
             "name": "Sıvı dengesi",
@@ -1322,8 +1403,7 @@
             "role": "Raporunda bilginin kaynağını, uzmanlığını ve güncelliğini kontrol et; farklı güvenilir kaynakları karşılaştır. Kişisel bir sağlık sorusunda kendi kendine tanı koymak yerine güvenilir bir yetişkin ve sağlık uzmanına danış."
           }
         ],
-        "takeaway": "Araştırma sonucu: boşaltım sistemi sağlığı tek bir yiyecek ya da su miktarına bağlanmaz; dengeli yaşam, kişiye uygun sıvı dengesi, hareket, hijyen ve güvenilir sağlık desteği birlikte düşünülür.",
-        "source": "Kaynak özeti: ders kitabı s. 136–138; “Boşaltım Sisteminin Sağlığını Koruyalım” performans görevi."
+        "takeaway": "Araştırma sonucu: boşaltım sistemi sağlığı tek bir yiyecek ya da su miktarına bağlanmaz; dengeli yaşam, kişiye uygun sıvı dengesi, hareket, hijyen ve güvenilir sağlık desteği birlikte düşünülür."
       },
       "sourceWeeks": [
         34,
