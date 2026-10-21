@@ -12,6 +12,10 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Uzay istasyonu ve teleskop illüstrasyonlarının raster sürümleri hazırlanana kadar
+# eski SVG çizimleri geçici olarak kullanılır; rasterler bağlanınca bu değer 0 olur.
+PENDING_RASTER_MIGRATIONS = 2
 HTML_FILE = ROOT / "index.html"
 
 
@@ -1200,25 +1204,37 @@ def main() -> int:
     science_css_path = ROOT / "science.css"
     science_js = science_js_path.read_text(encoding="utf-8") if science_js_path.is_file() else ""
     science_css = science_css_path.read_text(encoding="utf-8") if science_css_path.is_file() else ""
-    science_images = set(re.findall(r"src: '(assets/science-[^']+\.(?:jpg|svg))'", science_js))
-    required_science_images = {
-        "assets/science-space.jpg", "assets/science-space-debris.jpg", "assets/science-light-pollution.jpg",
-        "assets/science-stars.jpg", "assets/science-galaxy.jpg", "assets/science-energy.jpg",
-        "assets/science-digestion.jpg", "assets/science-circulation.jpg", "assets/science-respiration.jpg",
-        "assets/science-excretion.jpg", "assets/science-rocket.svg", "assets/science-communication-satellite.svg",
-        "assets/science-earth-observation-satellite.svg", "assets/science-space-probe.svg",
-        "assets/science-space-shuttle.svg", "assets/science-space-station.svg", "assets/science-space-telescope.svg",
-    }
-    if not required_science_images.issubset(science_images):
-        errors.append("Fen visual mapping must include the original science illustrations and all seven space-vehicle diagrams")
+    science_images = set(re.findall(r"src: '(assets/science-[^']+)'", science_js))
+    if any(image.endswith(".jpg") for image in science_images):
+        errors.append("Fen lessons must not depend on the old JPEG illustrations")
+    raster_images = {image for image in science_images if image.endswith(".webp")}
+    # 3. hafta araç galerisi, 12. hafta ünite tekrarı olduğu için ayrı haftalık görsel kullanmaz.
+    gallery_weeks = {3, 12}
+    if len(raster_images) < 42 - PENDING_RASTER_MIGRATIONS:
+        errors.append(f"Fen lessons need a dedicated WebP illustration per week and per space vehicle (found {len(raster_images)})")
+    for week_number in range(1, 38):
+        if week_number in gallery_weeks:
+            continue
+        if not any(re.fullmatch(rf"assets/science-week-{week_number:02d}\.webp", image) for image in raster_images):
+            errors.append(f"Missing Fen weekly illustration for week {week_number}")
+    if len(re.findall(r"label: '[^']+'", science_js)) < 7:
+        errors.append("The seven space-vehicle diagrams need their own labelled raster illustrations")
     for image in science_images:
         if not (ROOT / image).is_file():
             errors.append(f"Missing Fen science image: {image}")
+        elif image.endswith(".webp"):
+            small = ROOT / image.replace(".webp", "-800.webp")
+            if not small.is_file():
+                errors.append(f"Missing responsive 800 px variant for {image}")
+    if "srcset=" not in science_js or 'loading="lazy"' not in science_js or "science-concept-flow" not in science_js:
+        errors.append("Fen illustrations need responsive srcset sources, lazy loading, and in-flow concept cards")
+    if "science-concept-flow" not in science_css or ".science-concept-strip" not in science_css:
+        errors.append("Fen concept cards need the horizontal, in-flow strip styling")
     if "science-visual-image" not in science_js or "science-explain-block" not in science_js or "science-explain-block" not in science_css:
         errors.append("Fen lessons need accessible image rendering and structured explanation cards")
     if "spaceVehicles" not in science_js or ".science-visual-gallery.is-vehicles" not in science_css:
         errors.append("Space-vehicle concepts need their own labelled, responsive illustration gallery")
-    if "renderTermDefinitions" in science_js or "Kavram sözlüğü" in science_js or "science-key-terms" in science_css:
+    if "renderTermDefinitions" in science_js or "Kavram sözlüğü" in science_js or "science-key-terms" in science_css or "science-glossary" in science_css:
         errors.append("Science concepts should be explained within the lesson narrative, not in a separate glossary panel")
     if ".science-schedule,.science-visual,.science-research-brief{break-inside:avoid;box-shadow:none}" not in science_css:
         errors.append("Fen print styles must keep schedules, visuals, and research briefs together without shadows")

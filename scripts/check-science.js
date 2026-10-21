@@ -210,7 +210,12 @@ assert.match(mockElements.scienceWeekContent.innerHTML, /Büyük kütleli yol/);
 assert.match(mockElements.scienceWeekContent.innerHTML, /Gezegenimsi bulutsu/);
 assert.match(mockElements.scienceWeekContent.innerHTML, /science-visual-routes/);
 assert.match(mockElements.scienceWeekContent.innerHTML, /loading="lazy"/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /alt="Özgün bilim illüstrasyonu/);
+const lessonImages = mockElements.scienceWeekContent.innerHTML.match(/<img [^>]*class="science-visual-image"[^>]*>/g) || [];
+assert.ok(lessonImages.length > 0, 'The focused week should render its own lesson illustration.');
+assert.ok(lessonImages.every((tag) => /alt="[^"]{40,}"/.test(tag) && !/alt="(Görsel|Resim|Fotoğraf)"/.test(tag)), 'Every lesson illustration needs a descriptive, meaningful alternative text.');
+assert.ok(lessonImages.every((tag) => tag.includes('loading="lazy"') && tag.includes('decoding="async"')), 'Lesson illustrations should lazy-load asynchronously.');
+assert.ok(lessonImages.every((tag) => tag.includes('srcset=') && tag.includes('sizes=') && tag.includes('width=') && tag.includes('height=')), 'Lesson illustrations should ship responsive srcset/sizes and explicit dimensions.');
+assert.ok(lessonImages.every((tag) => /\.webp"/.test(tag)), 'Lesson illustrations should be served as optimized WebP raster images.');
 
 const assessment = science.safeScienceAssessment(JSON.stringify({
   state: 'partial', issue: 'completeness', hint: 'recheck', freeText: 'This must never appear to the learner.',
