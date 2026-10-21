@@ -80,11 +80,17 @@ Aynı konu ve beceri, uygulamada yedi etkileşim türüne dağıtıldı. Bir kon
 
 ## 4. Değerlendirme ilkeleri
 
-- Seçimli etkinliklerde (eşleştirme, boşluk doldurma, sınıflandırma, sıralama, doğru–yanlış, çoktan seçmeli) kontrol yereldir; doğru yanıt gösterilmez, yalnızca kaç maddenin doğru olduğu ve hangi maddelerin yeniden incelenmesi gerektiği söylenir.
-- Metin yazma etkinliklerinde ölçüt listesi görünür kalır; kontrol, yanıtın en az uzunluğa ulaşıp ulaşmadığını bildirir ve öğrenciyi ölçütlerle yeniden karşılaştırmaya yönlendirir.
-- Boşluk doldurmada küçük yazım farkları (büyük–küçük harf, noktalama, Türkçe karakter) kabul edilir.
-- Etkinlik yanıtları haftalık ilerleme kaydının içinde, Fen Bilimleri alanında saklanır; Türkçe ve Sosyal Bilgiler kayıtları etkilenmez.
+- **Çoktan seçmeli** etkinlikler yerel olarak kontrol edilir; doğru seçenek gösterilmez.
+- **Eşleştirme, boşluk doldurma, sürükle-bırak sınıflandırma, sıralama, doğru–yanlış ve yazılı yanıt** etkinlikleri Türkçe çalışma alanındaki yöntemle **Groq üzerinden** değerlendirilir. Öğretmen anahtarı ve ölçütler modele iç bağlam olarak verilir; modelden yalnızca kapalı kodlar istenir: `status` (correct · partial · wrong · incomplete · unverified), `issues` ve `hint`.
+- Öğrenciye gösterilen metni uygulama kendi kurar: `DURUM`, `HATA/EKSİK` ve `İPUCU` satırları. **Doğru yanıt, doğru eşleşme, doğru sıra ya da hangi maddenin yanlış olduğu hiçbir koşulda yazılmaz.** Böylece iki gruplu sürükle-bırak etkinliklerinde “şu karta yeniden bak” denilerek cevabın ima edilmesi önlenir.
+- Boşluk doldurma alanlarında **ipucu metni (placeholder) yoktur**; ipucu, cevabı ele vermemek için kaldırılmıştır.
+- Anahtar yoksa kapalı yanıtlı etkinliklerde güvenli yerel özet gösterilir ve ayarlar açılır; yazılı yanıtta değerlendirme için anahtar gerekir.
+- Etkinlik yanıtları ve son değerlendirme haftalık ilerleme kaydının içinde, Fen Bilimleri alanında saklanır; Türkçe ve Sosyal Bilgiler kayıtları etkilenmez.
 - Yazdırma sırasında kapalı etkinlikler otomatik açılır, yazdırma bitince eski hâline döner.
+
+## 4a. Arayüz
+
+Etkinlik alanı, Türkçe çalışma alanındaki kart diliyle uyumludur: etkinlik türüne göre ikon madalyonu, “Görev yolu” üç adımlı şerit, biçim–miktar–beceri çipleri, `Yanıt alanı` kutusu, `✦ Kontrol et` düğmesi, durum rozeti ve durum renkleriyle geri bildirim kutusu. Renkler derse özgü tutulmuştur: Fen Bilimleri gül-ahududu paleti, etkinlik türüne göre yumuşak tonlu vurgu (eşleştirme mor, boşluk mavi, sınıflandırma menekşe, sıralama amber, doğru–yanlış yeşil, çoktan seçmeli mavi, yazma gül). Setin başında tamamlanma ölçeri bulunur.
 
 ## 5. Sonraki adım
 

@@ -418,13 +418,61 @@
 
 
   /* ---------------------------------------------------------------------------
-     Konu bazlı etkinlik seti. İlk iki haftanın etkinlikleri science-activities.js
-     içinde tanımlıdır: eşleştirme, boşluk doldurma, doğru-yanlış, süreç sıralama,
-     sürükle-bırak sınıflandırma, çoktan seçmeli ve kısa metin yazma.
+     Konu bazlı etkinlik seti. Etkinlikler science-activities.js içinde tanımlıdır:
+     eşleştirme, boşluk doldurma, doğru-yanlış, süreç sıralama, sürükle-bırak
+     sınıflandırma, çoktan seçmeli ve kısa metin yazma. Çoktan seçmeli dışındaki
+     etkinlikler, Türkçe çalışma alanındaki gibi Groq ile güvenli kodlar üzerinden
+     değerlendirilir; öğrenciye doğru yanıt gösterilmez.
      --------------------------------------------------------------------------- */
   const ACTIVITY_DATA = window.SCIENCE_ACTIVITIES || { weeks: {} };
   const EXAM_DATES_BY_WEEK = Object.freeze({ 8: '3 Kasım 2026' });
   const PRACTICE_FOLD = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
+  const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+
+  const PRACTICE_STATES = Object.freeze({
+    correct: 'TAM DOĞRU',
+    partial: 'KISMEN DOĞRU',
+    incomplete: 'YANIT EKSİK',
+    wrong: 'YANLIŞ',
+    unverified: 'DOĞRULANAMADI',
+    unrated: 'SINIFLANDIRILAMADI',
+  });
+
+  const PRACTICE_ISSUES = Object.freeze({
+    selection: 'Seçimlerinden en az biri konuyla uyuşmuyor.',
+    accuracy: 'Yanıtın bilimsel doğruluk açısından yeniden kontrol edilmeli.',
+    completeness: 'İstenen yanıtın bir bölümü eksik.',
+    reasoning: 'Gerekçe ile yanıt arasındaki bağ net değil.',
+    evidence: 'Yanıtı destekleyen gözlem, ölçüm ya da örnek eksik.',
+    relevance: 'Yanıtın sorunun odağını tam karşılamıyor.',
+    source: 'Yanıtın verilen bilgiyle doğrulanamıyor.',
+  });
+
+  const PRACTICE_HINTS = Object.freeze({
+    reread: 'Haftanın konu anlatımında ilgili tanıma dön ve yanıtını oradaki bilgiyle karşılaştır.',
+    match: 'Her maddeyi tek tek ele al: kavramın tanımı, kartın ait olduğu grup ya da adımın sırası tutarlı mı?',
+    sequence: 'Hangi adımın diğerlerinden önce geldiğini düşün; sürecin başlangıcını ve sonucunu belirle.',
+    count: 'İstenen madde sayısını say; eksik bıraktığın yeri tamamla.',
+    context: 'Terimin haftanın anlatımında hangi cümlede geçtiğine dön ve anlamını o cümlede dene.',
+    connect: 'Seçtiğin yanıtla bilimsel kavram arasındaki bağı kendi cümlenle açıkla.',
+    evidence: 'Yanıtını bir gözlem, ölçüm ya da günlük yaşam örneğiyle destekle.',
+    explain: 'Yanıtına kısa bir gerekçe cümlesi ekle: neden bu yanıt doğru?',
+    justify: 'Yanıtının nedenini etkinliğin ölçütleriyle ilişkilendir.',
+    compare: 'İki durumu aynı ölçüte göre karşılaştır ve farkı belirt.',
+    keyword: 'Yanıtında konunun temel kavramlarından en az birini kullan.',
+    unit: 'Büyüklükleri ve birimleri kontrol et.',
+    recheck: 'Yanıtının her parçasını soru köküyle yeniden karşılaştır.',
+  });
+
+  const PRACTICE_ACTIVITY_META = Object.freeze({
+    match: { icon: '🔗', label: 'Eşleştirme', path: [['👀', 'Kavramları oku'], ['🔗', 'Tanımı eşleştir'], ['✓', 'Kontrol et']] },
+    fill: { icon: '📝', label: 'Boşluk doldurma', path: [['📖', 'Cümleyi oku'], ['📝', 'Boşluğu doldur'], ['✓', 'Kontrol et']] },
+    sort: { icon: '🧩', label: 'Sürükle-bırak', path: [['📋', 'Kartları oku'], ['🧩', 'Gruplara taşı'], ['✓', 'Kontrol et']] },
+    order: { icon: '🔢', label: 'Sıralama', path: [['📋', 'Adımları oku'], ['🔢', 'Numaralandır'], ['✓', 'Kontrol et']] },
+    tf: { icon: '⚖️', label: 'Doğru–yanlış', path: [['📖', 'Yargıyı oku'], ['⚖️', 'Karar ver'], ['✓', 'Kontrol et']] },
+    choice: { icon: '🎯', label: 'Çoktan seçmeli', path: [['👀', 'Soruyu oku'], ['🎯', 'Seçimini yap'], ['✓', 'Kontrol et']] },
+    text: { icon: '✍️', label: 'Yazılı yanıt', path: [['💭', 'Düşün'], ['🗺️', 'Planla'], ['✍️', 'Kendi sözlerinle yaz']] },
+  });
 
   function normalizePracticeValue(value) {
     return String(value ?? '')
@@ -437,6 +485,17 @@
       .trim();
   }
 
+  function normalizeAssessment(raw) {
+    if (!isRecord(raw)) return null;
+    const state = String(raw.state || '');
+    if (!Object.hasOwn(PRACTICE_STATES, state)) return null;
+    const issues = Array.isArray(raw.issues)
+      ? raw.issues.map((code) => String(code)).filter((code) => Object.hasOwn(PRACTICE_ISSUES, code)).slice(0, 2)
+      : [];
+    const hint = Object.hasOwn(PRACTICE_HINTS, raw.hint) ? String(raw.hint) : 'recheck';
+    return { state, issues, hint, text: typeof raw.text === 'string' ? raw.text.slice(0, 1200) : '', checkedAt: typeof raw.checkedAt === 'string' ? raw.checkedAt.slice(0, 40) : '' };
+  }
+
   function normalizeActivities(raw) {
     const out = {};
     if (!isRecord(raw)) return out;
@@ -447,7 +506,7 @@
           .filter(([key, value]) => /^(m|s|b|o|c|t|x)[:a-z0-9]*$/i.test(key) && typeof value === 'string')
           .map(([key, value]) => [key, value.slice(0, 5000)]))
         : {};
-      out[id] = { values, checked: entry.checked === true };
+      out[id] = { values, checked: entry.checked === true, assessment: normalizeAssessment(entry.assessment) };
     }
     return out;
   }
@@ -462,14 +521,14 @@
   }
 
   function practiceEntry(saved, activityId, create = false) {
-    if (!saved) return { values: {} };
+    if (!saved) return { values: {}, assessment: null };
     if (!isRecord(saved.activities)) {
-      if (!create) return { values: {} };
+      if (!create) return { values: {}, assessment: null };
       saved.activities = {};
     }
     if (!isRecord(saved.activities[activityId])) {
-      if (!create) return { values: {} };
-      saved.activities[activityId] = { values: {}, checked: false };
+      if (!create) return { values: {}, assessment: null };
+      saved.activities[activityId] = { values: {}, checked: false, assessment: null };
     }
     const entry = saved.activities[activityId];
     if (!isRecord(entry.values)) entry.values = {};
@@ -477,41 +536,52 @@
   }
 
   function evaluateActivity(activity, values = {}) {
-    const wrong = [];
-    const note = (label) => { if (wrong.length < 6) wrong.push(label); };
     if (activity.type === 'text') {
       const length = String(values.x || '').trim().length;
-      const enough = length >= activity.minChars;
-      return { total: 1, correct: enough ? 1 : 0, wrong: enough ? [] : [`Yanıtın ${length}/${activity.minChars} karakter`], text: true, length };
+      return { total: 1, correct: length >= activity.minChars ? 1 : 0, text: true, length };
     }
     if (activity.type === 'fill') {
       let correct = 0;
       activity.blanks.forEach((blank, index) => {
         const value = normalizePracticeValue(values[`b:${index}`]);
         if (value && blank.answers.some((answer) => normalizePracticeValue(answer) === value)) correct += 1;
-        else note(`${index + 1}. boşluk`);
       });
-      return { total: activity.blanks.length, correct, wrong };
+      return { total: activity.blanks.length, correct, text: false };
     }
     const list = activity.items || activity.questions || activity.statements || [];
     let correct = 0;
-    list.forEach((item, index) => {
+    list.forEach((item) => {
       let ok = false;
       if (activity.type === 'match') ok = values[`m:${item.id}`] === activity.answers[item.id];
       else if (activity.type === 'sort') ok = values[`s:${item.id}`] === item.answer;
-      else if (activity.type === 'order') ok = values[`o:${item.id}`] === String(index + 1);
+      else if (activity.type === 'order') ok = values[`o:${item.id}`] === String(list.indexOf(item) + 1);
       else if (activity.type === 'tf') ok = values[`t:${item.id}`] === (item.answer ? 'D' : 'Y');
       else if (activity.type === 'choice') ok = values[`c:${item.id}`] === String(item.answer);
       if (ok) correct += 1;
-      else note(activity.type === 'tf' ? item.text : activity.type === 'choice' ? `${index + 1}. soru` : item.label);
     });
-    return { total: list.length, correct, wrong };
+    return { total: list.length, correct, text: false };
   }
 
   function activityDone(activity, entry) {
     if (!entry) return false;
-    const result = evaluateActivity(activity, entry.values || {});
+    const values = entry.values || {};
+    if (activity.type === 'text') return String(values.x || '').trim().length >= activity.minChars;
+    const result = evaluateActivity(activity, values);
     return result.total > 0 && result.correct === result.total;
+  }
+
+  function practiceAnswered(activity, values = {}) {
+    if (activity.type === 'text') return String(values.x || '').trim().length > 0;
+    if (activity.type === 'fill') return activity.blanks.some((_, index) => String(values[`b:${index}`] || '').trim().length > 0);
+    const list = activity.items || activity.questions || activity.statements || [];
+    return list.some((item) => {
+      if (activity.type === 'match') return Boolean(values[`m:${item.id}`]);
+      if (activity.type === 'sort') return Boolean(values[`s:${item.id}`]);
+      if (activity.type === 'order') return Boolean(values[`o:${item.id}`]);
+      if (activity.type === 'tf') return Boolean(values[`t:${item.id}`]);
+      if (activity.type === 'choice') return Boolean(values[`c:${item.id}`]);
+      return false;
+    });
   }
 
   function practiceSummary(item) {
@@ -521,22 +591,379 @@
     return { activities, done, total: activities.length };
   }
 
-  function practiceFeedbackText(activity, result) {
-    if (result.text) {
-      if (result.correct === result.total) {
-        return `<b>Yanıtın yeterli uzunlukta.</b> ${result.length} karakter yazdın (en az ${activity.minChars}). Şimdi ölçütleri yeniden okuyup somut bir örnek ekleyerek güçlendir.`;
-      }
-      return `<b>Yanıtını genişlet.</b> ${result.length}/${activity.minChars} karakter. Ölçütlerden birini seç ve somut bir örnek ekle.`;
-    }
-    if (result.correct === result.total) {
-      return `<b>Hepsi doğru.</b> ${result.correct}/${result.total} · Yanıtların ölçütlerle örtüşüyor.`;
-    }
-    const list = result.wrong.length
-      ? `<ul>${result.wrong.slice(0, 4).map((label) => `<li>${escapeHTML(label)}</li>`).join('')}</ul>`
-      : '';
-    return `<b>Yeniden bak.</b> ${result.correct}/${result.total} doğru. Doğru yanıtı doğrudan söylemiyorum; şu bölümleri yeniden incele:${list}`;
+  function practiceStateOf(activityId) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return '';
+    const saved = progress.weeks[String(week.id)];
+    return saved?.activities?.[activityId]?.assessment?.state || '';
   }
 
+  /* --- Güvenli geri bildirim: yalnızca kapalı kodlar kullanılır, doğru yanıt söylenmez --- */
+  function practiceFeedbackText(state, issues = [], hint = 'recheck') {
+    if (state === 'system' || state === 'pending') return '';
+    const label = PRACTICE_STATES[state] || PRACTICE_STATES.unrated;
+    if (state === 'correct') {
+      return `DURUM: ${label}\nYanıtın istenen ölçütleri karşılıyor. Bir sonraki etkinliğe geçebilirsin.`;
+    }
+    const safeIssues = issues.filter((code) => Object.hasOwn(PRACTICE_ISSUES, code)).slice(0, 2);
+    const fallback = {
+      partial: 'Yanıtın bir bölümü ölçütleri karşılıyor; en az bir bölümü yeniden gözden geçir.',
+      incomplete: 'İstenen yanıt parçalarının bir bölümü eksik.',
+      wrong: 'Yanıtın konuyla uyuşmuyor.',
+      unverified: 'Yanıtın bu bölümü verilen bilgiyle doğrulanamıyor.',
+      unrated: 'Kontrol sonucu güvenli biçimde sınıflandırılamadı.',
+    };
+    const issueText = safeIssues.length ? safeIssues.map((code) => PRACTICE_ISSUES[code]).join(' ') : fallback[state] || fallback.unrated;
+    const hintCode = Object.hasOwn(PRACTICE_HINTS, hint) ? hint : 'recheck';
+    return `DURUM: ${label}\nHATA/EKSİK: ${issueText}\nİPUCU: ${PRACTICE_HINTS[hintCode]}`;
+  }
+
+  function localVerdictText(activity, result) {
+    if (activity.type === 'text') {
+      if (result.correct === result.total) return practiceFeedbackText('correct');
+      return `DURUM: ${PRACTICE_STATES.incomplete}\nHATA/EKSİK: Yanıtın ${result.length}/${activity.minChars} karakter; ölçütlerdeki her başlığı karşılayacak kadar yazmadın.\nİPUCU: ${PRACTICE_HINTS.count} Somut bir örnek ve gerekçe ekle.`;
+    }
+    if (result.correct === result.total) return practiceFeedbackText('correct');
+    const state = result.correct === 0 ? 'wrong' : 'partial';
+    return `DURUM: ${PRACTICE_STATES[state]} · ${result.correct}/${result.total}\nHATA/EKSİK: ${result.correct === 0 ? PRACTICE_ISSUES.selection : 'Yanıtının bir bölümü ölçütleri karşılıyor; en az bir maddeyi yeniden gözden geçir.'}\nİPUCU: ${PRACTICE_HINTS[activity.type === 'fill' ? 'context' : activity.type === 'order' ? 'sequence' : 'match']}`;
+  }
+
+  /* --- Yapay zekâ değerlendirmesi: yalnızca JSON kodları istenir ------------------------- */
+  const PRACTICE_AI_SYSTEM = [
+    'Sen 7. sınıf Fen Bilimleri dersi için adil, kanıta dayalı ve ölçütleri tutarlı uygulayan bir değerlendiricisin. Bağlam: MEB 7. sınıf Fen Bilimleri; bilimsel doğruluk, gerekçe ve kanıt esastır.',
+    'Öğrencinin gerçek yanıtını soruyla, öğretmen değerlendirme anahtarıyla ve etkinliğin ölçütleriyle karşılaştır. Anahtar ve ölçütler yalnızca iç değerlendirme içindir; öğrenciye aktarılmamalıdır.',
+    'Kapalı yanıtlı etkinliklerde (eşleştirme, boşluk doldurma, sınıflandırma, sıralama, doğru–yanlış) her maddeyi ayrı denetle ve toplam doğruluğu buna göre belirle. Yazılı yanıtta soruya uygunluk, bilimsel doğruluk, kapsam ve gerekçeyi ayrı değerlendir.',
+    'Küçük yazım farkları (büyük–küçük harf, noktalama, Türkçe karakter) ve eş anlamlı ama bilimsel olarak doğru ifadeler yanlış sayılmaz. Birim ve büyüklük hatalarını doğruluk sorunu say.',
+    'Tam doğru: tüm doğrulanabilir ölçütler karşılanır. Kısmen doğru: anlamlı/doğru bir bölüm vardır ama ölçütlerden biri eksik veya hatalıdır. Yanlış: temel yanıt ilgisiz ya da bilgiyle çelişir. Eksik: istenen yanıt parçalarından biri veya birkaçı yoktur. Doğrulanamadı: yanıtın olgusal iddiası verilen bilgiyle denetlenemiyordur.',
+    'GİZLİ CEVAP KORUMASI: Doğru cevabı, doğru seçeneği, cevap anahtarını, anahtarın parafrazını, doğru eşleşmeyi ya da doğru sırayı hiçbir koşulda yazma. Hangi maddenin yanlış olduğunu tek tek söyleme. Yalnızca aşağıdaki kapalı kodlardan seçim yap; öğrenciye gösterilecek güvenli mesajı uygulama kendisi oluşturur.',
+    'İpucu, cevabın kendisini ya da eş anlamlısını söylemeden öğrencinin bir sonraki düşünme adımını açıklasın. Doğru yanıtlara ipucu verme.',
+    'ÇIKTI SÖZLEŞMESİ: Yalnızca geçerli bir JSON nesnesi döndür; Markdown, açıklama, başlık veya ek metin yazma. Şema: {"status":"correct|partial|wrong|incomplete|unverified","issues":["selection|accuracy|completeness|reasoning|evidence|relevance|source"],"hint":"reread|match|sequence|count|context|connect|evidence|explain|justify|compare|keyword|unit|recheck"}. issues en çok iki kod içersin; hint yalnızca izinli bir kod olsun. Başka alan ekleme.',
+    'Tüm yanıt doğruysa status=correct ve issues=[] döndür.',
+  ].join('\n');
+
+  function practiceAnswerForAI(activity, values = {}) {
+    if (activity.type === 'fill') {
+      const lines = activity.blanks.map((blank, index) => {
+        const value = String(values[`b:${index}`] || '').trim();
+        return `${index + 1}. boşluk — öğrenci: ${value || '(boş)'} · gizli anahtar: ${blank.answers[0]}`;
+      });
+      return lines.join('\n');
+    }
+    if (activity.type === 'match') {
+      const optionLabel = new Map((activity.options || []).map((option) => [option.id, option.label]));
+      return activity.items.map((item) => {
+        const chosen = values[`m:${item.id}`];
+        return `${item.label} — öğrenci: ${chosen ? optionLabel.get(chosen) || chosen : '(boş)'} · gizli anahtar: ${optionLabel.get(activity.answers[item.id]) || activity.answers[item.id]}`;
+      }).join('\n');
+    }
+    if (activity.type === 'sort') {
+      const categoryLabel = new Map((activity.categories || []).map((category) => [category.id, category.label]));
+      return activity.items.map((item) => {
+        const chosen = values[`s:${item.id}`];
+        return `${item.label} — öğrenci: ${chosen ? categoryLabel.get(chosen) || chosen : '(yerleştirilmedi)'} · gizli anahtar: ${categoryLabel.get(item.answer) || item.answer}`;
+      }).join('\n');
+    }
+    if (activity.type === 'order') {
+      return activity.items.map((item, index) => {
+        const chosen = values[`o:${item.id}`];
+        return `${item.label} — öğrenci: ${chosen ? `${chosen}. sıra` : '(boş)'} · gizli anahtar: ${index + 1}. sıra`;
+      }).join('\n');
+    }
+    if (activity.type === 'tf') {
+      return activity.statements.map((statement) => {
+        const chosen = values[`t:${statement.id}`];
+        return `${statement.text} — öğrenci: ${chosen === 'D' ? 'Doğru' : chosen === 'Y' ? 'Yanlış' : '(boş)'} · gizli anahtar: ${statement.answer ? 'Doğru' : 'Yanlış'}`;
+      }).join('\n');
+    }
+    if (activity.type === 'text') {
+      return `Öğrencinin yazdığı yanıt (${String(values.x || '').trim().length} karakter, en az ${activity.minChars}):\n${String(values.x || '').trim() || '(boş)'}\nDeğerlendirme ölçütleri:\n${(activity.criteria || []).map((criterion) => `- ${criterion}`).join('\n')}`;
+    }
+    return '';
+  }
+
+  function parsePracticeAssessment(content) {
+    let source = String(content || '').trim();
+    const fenced = source.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    if (fenced) source = fenced[1].trim();
+    const first = source.indexOf('{');
+    const last = source.lastIndexOf('}');
+    if (first >= 0 && last > first) source = source.slice(first, last + 1);
+    let parsed;
+    try { parsed = JSON.parse(source); } catch (_error) { return null; }
+    if (!isRecord(parsed)) return null;
+    const state = String(parsed.status || '').trim().toLowerCase();
+    if (!Object.hasOwn(PRACTICE_STATES, state)) return null;
+    const issues = Array.isArray(parsed.issues)
+      ? [...new Set(parsed.issues.map((code) => String(code).trim().toLowerCase()))].filter((code) => Object.hasOwn(PRACTICE_ISSUES, code)).slice(0, 2)
+      : [];
+    const hint = String(parsed.hint || '').trim().toLowerCase();
+    return { state, issues, hint: Object.hasOwn(PRACTICE_HINTS, hint) ? hint : 'recheck' };
+  }
+
+  function groqRetryDelay(response, payload) {
+    const message = String(payload?.error?.message || '');
+    if (Number(response?.status) !== 429 && !/rate limit|tokens per minute|\bTPM\b/i.test(message)) return 0;
+    const headerSeconds = Number(response?.headers?.get?.('retry-after'));
+    const match = message.match(/(?:try again in|retry after)\s+([\d.]+)\s*s(?:ec(?:ond)?s?)?/i);
+    const seconds = Number.isFinite(headerSeconds) && headerSeconds > 0 ? headerSeconds : (match ? Number(match[1]) : 0);
+    if (!Number.isFinite(seconds) || seconds <= 0 || seconds > 15) return 0;
+    return Math.max(750, Math.ceil(seconds * 1000) + 250);
+  }
+
+  function openGroqSettings() {
+    const settings = document.getElementById('apiSettings');
+    if (settings) settings.open = true;
+    const input = document.getElementById('apiKey');
+    if (input) input.focus?.({ preventScroll: true });
+    settings?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+  }
+
+  function practiceNode(activityId, suffix) {
+    return document.getElementById(`science-${suffix}-${activityId}`);
+  }
+
+  function paintPracticeFeedback(activityId, text, state) {
+    const node = practiceNode(activityId, 'feedback');
+    if (node) {
+      node.textContent = text || '';
+      node.hidden = !text;
+      node.dataset.state = state || 'none';
+    }
+    const pill = practiceNode(activityId, 'pill');
+    if (pill) {
+      const label = PRACTICE_STATES[state] || '';
+      pill.textContent = label;
+      pill.dataset.state = state || 'none';
+      pill.hidden = !label;
+    }
+    const card = practiceNode(activityId, 'card');
+    if (card) {
+      if (state) card.dataset.checkState = state;
+      else delete card.dataset.checkState;
+    }
+  }
+
+  function refreshPracticeState(activityId, activity) {
+    if (!activity) return;
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const entry = practiceEntry(progress.weeks[String(week.id)], activityId);
+    const done = activityDone(activity, entry);
+    const state = practiceNode(activityId, 'state');
+    if (state) {
+      state.textContent = done ? '✓' : '';
+      state.classList.toggle('is-done', done);
+      state.setAttribute('aria-label', done ? 'Tamamlandı' : 'Tamamlanmadı');
+    }
+    const button = practiceNode(activityId, 'check');
+    if (button) button.classList.toggle('is-done', done);
+    refreshPracticeProgress(week.id);
+  }
+
+  function refreshPracticeProgress(weekId) {
+    const item = WEEK_BY_ID.get(Number(weekId));
+    if (!item) return;
+    const summary = practiceSummary(item);
+    const text = `${summary.done} / ${summary.total} etkinlik tamamlandı`;
+    const label = document.getElementById(`science-practice-progress-${item.id}`);
+    if (label) label.textContent = text;
+    const bar = document.getElementById(`science-practice-bar-${item.id}`);
+    if (bar) {
+      const percent = summary.total ? Math.round((summary.done / summary.total) * 100) : 0;
+      bar.style.width = `${percent}%`;
+      bar.parentElement?.setAttribute?.('aria-valuenow', String(percent));
+    }
+    refreshPracticeSetState(item.id);
+  }
+
+  async function askPracticeAssessment(activity, values) {
+    const keyInput = document.getElementById('apiKey');
+    const modelInput = document.getElementById('model');
+    const apiKey = keyInput?.value?.trim?.() || '';
+    if (!apiKey) throw Object.assign(new Error('missing-key'), { code: 'missing-key' });
+    const model = modelInput?.value || DEFAULT_MODEL;
+    const userPrompt = [
+      'Ders: Fen Bilimleri · 7. sınıf',
+      `Etkinlik: ${activity.title} (${activity.format})`,
+      `Beceri: ${activity.skill}`,
+      `Yönerge: ${activity.instruction}`,
+      activity.sourceText ? `Kaynak metin:\n${activity.sourceText}` : '',
+      `Öğrencinin yanıtı ve gizli anahtar:\n${practiceAnswerForAI(activity, values)}`,
+      'Yanıtı gizli anahtar ve ölçütlerle karşılaştır; yalnızca system mesajındaki kapalı JSON sözleşmesini uygula.',
+    ].filter(Boolean).join('\n');
+    const request = (jsonMode) => fetch(GROQ_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model,
+        temperature: 0.1,
+        max_completion_tokens: jsonMode ? 320 : 420,
+        ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
+        messages: [
+          { role: 'system', content: PRACTICE_AI_SYSTEM },
+          { role: 'user', content: userPrompt },
+        ],
+        ...(model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low', reasoning_format: 'hidden' } : {}),
+      }),
+    });
+    let result = await request(true);
+    let payload = await result.json().catch(() => ({}));
+    const retryDelay = result.ok ? 0 : groqRetryDelay(result, payload);
+    if (retryDelay > 0) {
+      await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
+      result = await request(true);
+      payload = await result.json().catch(() => ({}));
+    }
+    if (!result.ok && /failed to validate json|failed_generation/i.test(String(payload?.error?.message || ''))) {
+      result = await request(false);
+      payload = await result.json().catch(() => ({}));
+    }
+    if (!result.ok) throw new Error(payload?.error?.message || `Groq isteği başarısız oldu (HTTP ${result.status}).`);
+    const content = payload.choices?.[0]?.message?.content?.trim();
+    if (!content) throw new Error('Groq yanıtında değerlendirme bulunamadı.');
+    const assessment = parsePracticeAssessment(content);
+    if (!assessment) throw new Error('Groq değerlendirmesi güvenli biçimde okunamadı.');
+    return assessment;
+  }
+
+  async function checkPractice(activityId, button) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const activity = activityList(week).find((item) => item.id === activityId);
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    if (!practiceAnswered(activity, entry.values)) {
+      paintPracticeFeedback(activityId, 'Önce yanıtını gir; sonra yeniden kontrol et.', 'incomplete');
+      return;
+    }
+    const previousText = button?.textContent || '✦ Kontrol et';
+    const setPending = (message) => {
+      if (button) {
+        button.disabled = true;
+        button.textContent = message;
+      }
+      paintPracticeFeedback(activityId, '', 'pending');
+      const node = practiceNode(activityId, 'feedback');
+      if (node) {
+        node.hidden = false;
+        node.textContent = 'Yanıtın ölçütlere göre inceleniyor…';
+      }
+    };
+    const result = evaluateActivity(activity, entry.values);
+
+    // Çoktan seçmeli etkinlikler yerel olarak kontrol edilir; diğerleri yapay zekâ ile değerlendirilir.
+    if (activity.type === 'choice') {
+      const text = localVerdictText(activity, result);
+      const state = result.correct === result.total ? 'correct' : result.correct === 0 ? 'wrong' : 'partial';
+      const issues = state === 'correct' ? [] : ['selection'];
+      const hint = state === 'correct' ? 'recheck' : 'recheck';
+      entry.checked = true;
+      entry.assessment = { state, issues, hint, text, checkedAt: new Date().toISOString() };
+      persist();
+      paintPracticeFeedback(activityId, text, state);
+      refreshPracticeState(activityId, activity);
+      return;
+    }
+
+    const apiKey = document.getElementById('apiKey')?.value?.trim?.() || '';
+    if (!apiKey) {
+      if (activity.type === 'text') {
+        paintPracticeFeedback(activityId, 'Yazılı yanıtı değerlendirmek için önce üstteki ortak Groq ayarlarına API anahtarını gir. Anahtar GitHub’a gönderilmez; yanıtın bu tarayıcıda kayıtlı kalır.', 'system');
+        openGroqSettings();
+        return;
+      }
+      // Anahtar yoksa kapalı yanıtlı etkinliklerde güvenli yerel özet gösterilir.
+      const text = localVerdictText(activity, result);
+      const state = result.correct === result.total ? 'correct' : result.correct === 0 ? 'wrong' : 'partial';
+      entry.checked = true;
+      entry.assessment = { state, issues: state === 'correct' ? [] : ['selection'], hint: 'recheck', text, checkedAt: new Date().toISOString() };
+      persist();
+      paintPracticeFeedback(activityId, `${text}\n\nAyrıntılı yapay zekâ ipucu için ortak Groq ayarlarına API anahtarı ekle.`, state);
+      openGroqSettings();
+      refreshPracticeState(activityId, activity);
+      return;
+    }
+
+    setPending('Ölçütlere göre inceleniyor…');
+    try {
+      const assessment = await askPracticeAssessment(activity, entry.values);
+      const text = practiceFeedbackText(assessment.state, assessment.issues, assessment.hint);
+      entry.checked = true;
+      entry.assessment = { ...assessment, text, checkedAt: new Date().toISOString() };
+      persist();
+      paintPracticeFeedback(activityId, text, assessment.state);
+      refreshPracticeState(activityId, activity);
+    } catch (error) {
+      const message = String(error?.message || error || 'Bilinmeyen hata');
+      const friendly = error?.code === 'missing-key'
+        ? 'Yanıtı değerlendirmek için önce ortak Groq ayarlarına API anahtarını gir.'
+        : /failed to fetch|networkerror|load failed|cors/i.test(message)
+          ? 'Groq’a ağ bağlantısı kurulamadı. İnternet erişimini kontrol edip yeniden dene; yanıtın kayıtlı.'
+          : /rate limit|tokens per minute|\bTPM\b|HTTP 429/i.test(message)
+            ? 'Groq geçici hız sınırına ulaştı. Birkaç saniye bekleyip yeniden dene; yanıtın kayıtlı.'
+            : `Kontrol tamamlanamadı: ${message}`;
+      paintPracticeFeedback(activityId, friendly, 'system');
+      if (error?.code === 'missing-key') openGroqSettings();
+      refreshPracticeState(activityId, activity);
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = previousText;
+      }
+    }
+  }
+
+  function setPracticeValue(activityId, key, value) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    const next = String(value ?? '').slice(0, 5000);
+    if (entry.values[key] === next) return;
+    entry.values[key] = next;
+    entry.checked = false;
+    entry.assessment = null;
+    persist();
+    paintPracticeFeedback(activityId, '', '');
+    refreshPracticeState(activityId, activityList(week).find((activity) => activity.id === activityId));
+  }
+
+  function movePracticeCard(activityId, itemId, zoneId) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    entry.values[`s:${itemId}`] = zoneId === 'bank' ? '' : zoneId;
+    entry.checked = false;
+    entry.assessment = null;
+    persist();
+    paintPracticeFeedback(activityId, '', '');
+    const root = document.getElementById('scienceWorkspace');
+    const zone = root?.querySelector?.(`[data-practice-zone="${activityId}:${zoneId}"]`);
+    const cards = zone?.querySelector?.('.science-sort-cards');
+    const card = root?.querySelector?.(`[data-practice-card="${activityId}:${itemId}"]`);
+    if (cards && card) {
+      cards.querySelector('.science-sort-empty')?.remove();
+      cards.append(card);
+      card.classList.remove('is-picked');
+      card.setAttribute('aria-pressed', 'false');
+      root.querySelectorAll?.(`[data-practice-zone^="${activityId}:"]`).forEach((other) => {
+        const container = other.querySelector('.science-sort-cards');
+        if (container && !container.querySelector('[data-practice-card]')) {
+          container.innerHTML = '<span class="science-sort-empty">Kartı buraya bırak</span>';
+        }
+      });
+    }
+    const status = document.getElementById(`science-sort-status-${activityId}`);
+    const activity = activityList(week).find((entryItem) => entryItem.id === activityId);
+    if (status && activity) {
+      const placed = Object.entries(entry.values).filter(([entryKey, entryValue]) => entryKey.startsWith('s:') && entryValue).length;
+      status.textContent = `${placed} / ${activity.items.length} kart yerleştirildi`;
+    }
+    refreshPracticeState(activityId, activity);
+  }
+
+  /* --- Görünüm ------------------------------------------------------------------------- */
   function renderMatch(activity, entry) {
     const options = activity.options.map((option) => `<option value="${escapeHTML(option.id)}">${escapeHTML(option.label)}</option>`).join('');
     return `<div class="science-practice-match">${activity.items.map((item) => {
@@ -553,7 +980,7 @@
       const number = Number(token);
       const id = `practice-${activity.id}-b-${number}`;
       const value = entry.values[`b:${number - 1}`] || '';
-      return `<span class="science-fill-blank"><label class="visually-hidden" for="${id}">${number}. boşluk</label><input id="${id}" type="text" inputmode="text" autocomplete="off" spellcheck="false" data-practice-input="${activity.id}" data-practice-key="b:${number - 1}" placeholder="${escapeHTML(activity.blanks[number - 1]?.hint || '')}" value="${escapeHTML(value)}"><span class="science-fill-index" aria-hidden="true">${number}</span></span>`;
+      return `<span class="science-fill-blank"><label class="visually-hidden" for="${id}">${number}. boşluk</label><input id="${id}" type="text" inputmode="text" autocomplete="off" spellcheck="false" data-practice-input="${activity.id}" data-practice-key="b:${number - 1}" value="${escapeHTML(value)}"><span class="science-fill-index" aria-hidden="true">${number}</span></span>`;
     }).join('');
     return `<p class="science-practice-fill">${body}</p>`;
   }
@@ -568,8 +995,7 @@
       const cards = inZone(zoneId);
       return `<section class="science-sort-zone" data-practice-zone="${activity.id}:${zoneId}" tabindex="0" role="group" aria-label="${escapeHTML(label)}"><h5>${escapeHTML(label)}</h5>${description ? `<p class="science-sort-hint">${escapeHTML(description)}</p>` : ''}<div class="science-sort-cards">${cards.length ? cards.map(card).join('') : '<span class="science-sort-empty">Kartı buraya bırak</span>'}</div></section>`;
     };
-    const assignedCount = placed.size;
-    return `<div class="science-practice-sort"><div class="science-sort-bank-wrap">${zone('bank', 'Kartlar', 'Taşınacak kartlar burada bekler.')}</div><div class="science-sort-zones">${activity.categories.map((category) => zone(category.id, category.label, category.description)).join('')}</div><p class="science-sort-status" id="science-sort-status-${activity.id}" role="status" aria-live="polite">${assignedCount} / ${activity.items.length} kart yerleştirildi</p></div>`;
+    return `<div class="science-practice-sort"><div class="science-sort-bank-wrap">${zone('bank', 'Kartlar', 'Taşınacak kartlar burada bekler.')}</div><div class="science-sort-zones">${activity.categories.map((category) => zone(category.id, category.label, category.description)).join('')}</div><p class="science-sort-status" id="science-sort-status-${activity.id}" role="status" aria-live="polite">${placed.size} / ${activity.items.length} kart yerleştirildi</p></div>`;
   }
 
   function renderOrder(activity, entry) {
@@ -594,16 +1020,21 @@
   }
 
   function renderTextAnswer(activity, entry) {
-    return `<textarea class="science-response science-practice-text" rows="6" maxlength="5000" data-practice-text="${activity.id}" data-practice-key="x" placeholder="${escapeHTML(activity.placeholder || 'Yanıtını yaz…')}">${escapeHTML(entry.values.x || '')}</textarea>`;
+    return `<textarea class="science-response science-practice-text" rows="6" maxlength="5000" data-practice-text="${activity.id}" data-practice-key="x" placeholder="Yanıtını kendi cümlelerinle yaz…">${escapeHTML(entry.values.x || '')}</textarea>`;
   }
 
-  function renderPracticeActivity(activity, entry, weekId) {
-    const result = evaluateActivity(activity, entry.values);
-    const done = result.total > 0 && result.correct === result.total;
-    const criteria = Array.isArray(activity.criteria)
-      ? `<ul class="science-criteria">${activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>`
-      : '';
-    const source = activity.sourceText ? `<blockquote class="science-activity-source">${escapeHTML(activity.sourceText)}</blockquote>` : '';
+  function renderQuestPath(activity) {
+    const meta = PRACTICE_ACTIVITY_META[activity.type] || PRACTICE_ACTIVITY_META.text;
+    return `<nav class="science-quest-path" aria-label="Etkinlik adımları"><span class="science-quest-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol>${meta.path.map(([icon, label], index) => `<li><span class="science-quest-icon" aria-hidden="true">${icon}</span><span class="science-quest-number">${index + 1}</span><span>${escapeHTML(label)}</span></li>`).join('')}</ol></nav>`;
+  }
+
+  function renderPracticeActivity(activity, entry, weekId, groupTitle) {
+    const meta = PRACTICE_ACTIVITY_META[activity.type] || PRACTICE_ACTIVITY_META.text;
+    const done = activityDone(activity, entry);
+    const assessment = entry.assessment || null;
+    const state = assessment?.state || '';
+    const label = PRACTICE_STATES[state] || '';
+    const feedback = assessment?.text || '';
     let body = '';
     if (activity.type === 'match') body = renderMatch(activity, entry);
     else if (activity.type === 'fill') body = renderFill(activity, entry);
@@ -612,16 +1043,33 @@
     else if (activity.type === 'tf') body = renderTrueFalse(activity, entry);
     else if (activity.type === 'choice') body = renderChoice(activity, entry);
     else if (activity.type === 'text') body = renderTextAnswer(activity, entry);
-    const feedback = entry.checked ? practiceFeedbackText(activity, result) : '';
-    return `<details class="science-activity" id="science-activity-${activity.id}" data-practice-week="${weekId}">
-      <summary><span class="science-activity-no" aria-hidden="true">${escapeHTML(activity.no)}</span><span class="science-activity-summary"><strong>${escapeHTML(activity.title)}</strong><small>${escapeHTML(activity.format)} · ${escapeHTML(activity.count)}</small></span><span class="science-activity-state${done ? ' is-done' : ''}" id="science-activity-state-${activity.id}" aria-label="${done ? 'Tamamlandı' : 'Tamamlanmadı'}">${done ? '✓' : ''}</span></summary>
-      <div class="science-activity-body">
-        <p class="science-activity-instruction">${escapeHTML(activity.instruction)}</p>
-        ${source}${body}${criteria}
-        <div class="science-activity-actions"><button type="button" class="science-check-button" data-practice-check="${activity.id}">Kontrol et</button><span class="science-activity-skill">${escapeHTML(activity.skill)}</span></div>
-        <div class="science-practice-feedback${entry.checked ? ` is-checked${done ? ' is-correct' : ''}` : ''}" id="science-practice-feedback-${activity.id}" role="status" aria-live="polite">${feedback}</div>
-      </div>
-    </details>`;
+    const criteria = Array.isArray(activity.criteria)
+      ? `<ul class="science-criteria">${activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>`
+      : '';
+    const source = activity.sourceText ? `<blockquote class="science-activity-source">${escapeHTML(activity.sourceText)}</blockquote>` : '';
+    const checkLabel = activity.type === 'choice' ? '✓ Kontrol et' : '✦ Kontrol et';
+    const helper = activity.type === 'choice'
+      ? 'Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.'
+      : 'Yanıtın ortak Groq ayarlarıyla değerlendirilir; doğru cevap gösterilmez.';
+    return `<article class="science-activity-card" id="science-activity-${activity.id}" data-kind="${activity.type}" data-practice-week="${weekId}"${state ? ` data-check-state="${state}"` : ''}>
+      <details>
+        <summary class="science-activity-summary-row">
+          <span class="science-activity-icon" aria-hidden="true">${meta.icon}</span>
+          <span class="science-activity-heading"><small>${escapeHTML(groupTitle)} · Etkinlik ${escapeHTML(activity.no)}</small><strong>${escapeHTML(activity.title)}</strong><span class="science-activity-chips"><b>${escapeHTML(activity.format)}</b><b>${escapeHTML(activity.count)}</b><b>${escapeHTML(activity.skill)}</b></span></span>
+          <span class="science-activity-pill" id="science-pill-${activity.id}" data-state="${state || 'none'}"${label ? '' : ' hidden'}>${escapeHTML(label)}</span>
+          <span class="science-activity-state${done ? ' is-done' : ''}" id="science-state-${activity.id}" aria-label="${done ? 'Tamamlandı' : 'Tamamlanmadı'}">${done ? '✓' : ''}</span>
+        </summary>
+        <div class="science-activity-body">
+          <p class="science-activity-instruction">${escapeHTML(activity.instruction)}</p>
+          ${renderQuestPath(activity)}
+          ${source}
+          <div class="science-answer-box"><p class="science-answer-title">Yanıt alanı</p>${body}${criteria}</div>
+          <div class="science-question-actions"><button type="button" class="science-check-button science-practice-check" id="science-check-${activity.id}" data-practice-check="${activity.id}">${checkLabel}</button><span class="science-save-note">Yanıt otomatik kaydedilir.</span></div>
+          <p class="science-practice-hint">${escapeHTML(helper)}</p>
+          <div class="science-feedback" id="science-feedback-${activity.id}" data-state="${state || 'none'}" role="status" aria-live="polite"${feedback ? '' : ' hidden'}>${escapeHTML(feedback)}</div>
+        </div>
+      </details>
+    </article>`;
   }
 
   function renderPracticeSet(item, saved) {
@@ -629,9 +1077,14 @@
     if (!groups.length) return '';
     const data = ACTIVITY_DATA.weeks[item.id];
     const summary = practiceSummary(item);
+    const percent = summary.total ? Math.round((summary.done / summary.total) * 100) : 0;
     return `<section class="card science-activity-set" aria-labelledby="scienceActivitySetTitle-${item.id}">
-      <div class="science-section-heading"><div class="tag">ETKİNLİK SETİ</div><h3 id="scienceActivitySetTitle-${item.id}">Konu etkinlikleri: ${escapeHTML(data.topic)}</h3><p>${escapeHTML(data.note)}</p><p class="science-practice-progress" id="science-practice-progress-${item.id}" role="status" aria-live="polite">${summary.done} / ${summary.total} etkinlik tamamlandı</p></div>
-      ${groups.map((group) => `<div class="science-activity-group"><h4>${escapeHTML(group.title)}</h4>${group.activities.map((activity) => renderPracticeActivity(activity, practiceEntry(saved, activity.id), item.id)).join('')}</div>`).join('')}
+      <div class="science-section-heading"><div class="tag">ETKİNLİK SETİ</div><h3 id="scienceActivitySetTitle-${item.id}">Konu etkinlikleri: ${escapeHTML(data.topic)}</h3><p>${escapeHTML(data.note)}</p></div>
+      <div class="science-practice-meter">
+        <div class="science-practice-meter-top"><span id="science-practice-progress-${item.id}" role="status" aria-live="polite">${summary.done} / ${summary.total} etkinlik tamamlandı</span><span>${groups.length} bölüm · ${summary.total} etkinlik</span></div>
+        <div class="science-practice-track" role="progressbar" aria-label="Etkinlik ilerlemesi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span class="science-practice-bar" id="science-practice-bar-${item.id}" style="width:${percent}%"></span></div>
+      </div>
+      ${groups.map((group) => `<div class="science-activity-group"><h4>${escapeHTML(group.title)}</h4>${group.activities.map((activity) => renderPracticeActivity(activity, practiceEntry(saved, activity.id), item.id, group.title)).join('')}</div>`).join('')}
     </section>`;
   }
 
@@ -639,96 +1092,15 @@
     return WEEKS.find((week) => activityList(week).some((activity) => activity.id === activityId)) || null;
   }
 
-  function refreshPracticeProgress(weekId) {
+  function refreshPracticeSetState(weekId) {
     const item = WEEK_BY_ID.get(Number(weekId));
-    if (!item) return;
+    const section = document.getElementById(`scienceActivitySetTitle-${weekId}`);
+    if (!item || !section) return;
     const summary = practiceSummary(item);
-    const node = document.getElementById(`science-practice-progress-${item.id}`);
-    if (node) node.textContent = `${summary.done} / ${summary.total} etkinlik tamamlandı`;
+    const host = section.closest?.('.science-activity-set');
+    if (host) host.dataset.done = summary.done === summary.total && summary.total > 0 ? 'all' : 'some';
   }
 
-  function refreshPracticeState(activityId, activity) {
-    const entry = practiceEntry(ensureWeekProgress(practiceWeekFor(activityId)?.id), activityId);
-    const done = activityDone(activity, entry);
-    const state = document.getElementById(`science-activity-state-${activityId}`);
-    if (state) {
-      state.textContent = done ? '✓' : '';
-      state.classList.toggle('is-done', done);
-      state.setAttribute('aria-label', done ? 'Tamamlandı' : 'Tamamlanmadı');
-    }
-  }
-
-  function checkPractice(activityId) {
-    const week = practiceWeekFor(activityId);
-    if (!week) return;
-    const activity = activityList(week).find((entry) => entry.id === activityId);
-    const saved = ensureWeekProgress(week.id);
-    const entry = practiceEntry(saved, activityId, true);
-    const result = evaluateActivity(activity, entry.values);
-    entry.checked = true;
-    persist();
-    const feedback = document.getElementById(`science-practice-feedback-${activityId}`);
-    if (feedback) {
-      feedback.innerHTML = practiceFeedbackText(activity, result);
-      feedback.classList.add('is-checked');
-      feedback.classList.toggle('is-correct', result.total > 0 && result.correct === result.total);
-    }
-    refreshPracticeState(activityId, activity);
-    refreshPracticeProgress(week.id);
-  }
-
-  function setPracticeValue(activityId, key, value) {
-    const week = practiceWeekFor(activityId);
-    if (!week) return;
-    const saved = ensureWeekProgress(week.id);
-    const entry = practiceEntry(saved, activityId, true);
-    const next = String(value ?? '').slice(0, 5000);
-    if (entry.values[key] === next) return;
-    entry.values[key] = next;
-    entry.checked = false;
-    persist();
-    const feedback = document.getElementById(`science-practice-feedback-${activityId}`);
-    if (feedback) {
-      feedback.textContent = '';
-      feedback.classList.remove('is-checked', 'is-correct');
-    }
-    refreshPracticeState(activityId, activityList(week).find((activity) => activity.id === activityId));
-    refreshPracticeProgress(week.id);
-  }
-
-  function movePracticeCard(activityId, itemId, zoneId) {
-    const week = practiceWeekFor(activityId);
-    if (!week) return;
-    const saved = ensureWeekProgress(week.id);
-    const entry = practiceEntry(saved, activityId, true);
-    entry.values[`s:${itemId}`] = zoneId === 'bank' ? '' : zoneId;
-    entry.checked = false;
-    persist();
-    const root = document.getElementById('scienceWorkspace');
-    const zone = root?.querySelector?.(`[data-practice-zone="${activityId}:${zoneId}"]`);
-    const cards = zone?.querySelector?.('.science-sort-cards');
-    const card = root?.querySelector?.(`[data-practice-card="${activityId}:${itemId}"]`);
-    if (cards && card) {
-      cards.querySelector('.science-sort-empty')?.remove();
-      cards.append(card);
-      card.classList.remove('is-picked');
-      card.setAttribute('aria-pressed', 'false');
-      root.querySelectorAll?.(`[data-practice-zone^="${activityId}:"]`).forEach((other) => {
-        const container = other.querySelector('.science-sort-cards');
-        if (container && !container.querySelector('[data-practice-card]')) {
-          container.innerHTML = '<span class="science-sort-empty">Kartı buraya bırak</span>';
-        }
-      });
-    }
-    const status = document.getElementById(`science-sort-status-${activityId}`);
-    const activity = activityList(week).find((entryItem) => entryItem.id === activityId);
-    if (status) {
-      const placed = Object.entries(entry.values).filter(([entryKey, entryValue]) => entryKey.startsWith('s:') && entryValue).length;
-      status.textContent = `${placed} / ${activity.items.length} kart yerleştirildi`;
-    }
-    refreshPracticeState(activityId, activity);
-    refreshPracticeProgress(week.id);
-  }
 
   // Kavramlar konu anlatımının hemen ardından tek bir yatay şeritte akar; her kart o kavramı
   // anlatan cümlenin kendisine bağlanır, böylece ayrı bir sözlük bloğu oluşmaz.
@@ -1045,7 +1417,7 @@
       const target = event.target?.closest?.('[data-science-week-select], [data-science-quiz-check], [data-science-ai-check], [data-science-reset], [data-science-print], [data-practice-check]');
       if (!target) return;
       if (target.dataset.practiceCheck) {
-        checkPractice(target.dataset.practiceCheck);
+        checkPractice(target.dataset.practiceCheck, target);
       } else if (target.dataset.scienceWeekSelect) {
         const weekId = Number(target.dataset.scienceWeekSelect);
         if (!WEEK_BY_ID.has(weekId)) return;
@@ -1187,7 +1559,7 @@
   // Yazdırma sırasında kapalı etkinlikler de kâğıda aktarılsın.
   if (typeof window.addEventListener === 'function') {
     window.addEventListener('beforeprint', () => {
-      const nodes = document.querySelectorAll?.('details.science-activity') || [];
+      const nodes = document.querySelectorAll?.('.science-activity-card > details, details.science-activity') || [];
       window.__scienceClosedActivities = [];
       nodes.forEach((node) => {
         if (!node.open) { window.__scienceClosedActivities.push(node); node.open = true; }
@@ -1215,6 +1587,7 @@
     safeScienceFeedbackText,
     runAICheck: runScienceAICheck,
     activitiesFor: (weekId) => activityList(WEEK_BY_ID.get(Number(weekId)) || {}),
+    checkActivity: checkPractice,
     practiceSummaryFor: (weekId) => practiceSummary(WEEK_BY_ID.get(Number(weekId)) || {}),
     examDateFor: (weekId) => EXAM_DATES_BY_WEEK[Number(weekId)] || '',
   };

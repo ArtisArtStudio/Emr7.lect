@@ -157,6 +157,14 @@ assert.ok(activityHTML.includes('science-practice-fill'), 'The set should includ
 assert.ok(activityHTML.includes('data-practice-text='), 'The set should include a writing activity.');
 assert.ok(activityHTML.includes('1 / 14 etkinlik tamamlandı') || activityHTML.includes('1 / 14'), 'The set should show its completion count.');
 assert.ok(!activityHTML.includes('<svg'), 'Activity widgets should be HTML controls, not drawings.');
+const fillInputs = activityHTML.match(/<input[^>]*data-practice-input[^>]*>/g) || [];
+assert.ok(fillInputs.length >= 5, 'Fill-in-the-blank activities should render text inputs.');
+assert.ok(fillInputs.every((tag) => !tag.includes('placeholder=')), 'Fill inputs must not carry hint text that gives the answer away.');
+assert.equal((activityHTML.match(/science-activity-icon/g) || []).length, 14, 'Every activity card should carry its type icon.');
+assert.equal((activityHTML.match(/science-quest-path/g) || []).length, 14, 'Every activity card should show its three-step path.');
+assert.ok(activityHTML.includes('science-practice-meter') && activityHTML.includes('science-practice-bar'), 'The set should show a completion meter.');
+
+
 science.importProgress({ selectedWeek: null, weeks: {} });
 
 const links = science.getProviderLinks(science.weeks[0]);
@@ -356,7 +364,48 @@ async function checkAICheckAndStaleResponse() {
   console.log('Fen Bilimleri 15-week first-term calendar with merged topics, four-part in-context explanations, task-gated research results, original seven-vehicle gallery and weekly visuals, rose-berry palette, unchanged tasks/quizzes/activities, safe Groq checks, progress isolation, completion rules, and backup API passed.');
 }
 
-checkAICheckAndStaleResponse().catch((error) => {
+
+async function checkActivityAssessment() {
+
+const feedbackElement = new MockElement('science-feedback-f1-a04');
+const pillElement = new MockElement('science-pill-f1-a04');
+mockElements['science-feedback-f1-a04'] = feedbackElement;
+mockElements['science-pill-f1-a04'] = pillElement;
+mockElements['science-card-f1-a04'] = new MockElement('science-card-f1-a04');
+mockElements['science-state-f1-a04'] = new MockElement('science-state-f1-a04');
+mockElements.apiKey.value = 'test-anahtar';
+let capturedPracticeRequest = null;
+const previousFetch = global.fetch;
+global.fetch = async (_url, options) => {
+  capturedPracticeRequest = JSON.parse(options.body);
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify({ status: 'partial', issues: ['selection'], hint: 'match' }) } }] }),
+  };
+};
+science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { 'f1-a04': { values: { 's:c1': 'goz', 's:c2': 'goz' } } } } } });
+await science.checkActivity('f1-a04', new MockElement('check-button'));
+global.fetch = previousFetch;
+assert.ok(capturedPracticeRequest, 'Non-multiple-choice activities should be assessed through Groq.');
+assert.equal(capturedPracticeRequest.temperature, 0.1);
+assert.match(capturedPracticeRequest.messages[0].content, /Fen Bilimleri/);
+assert.match(capturedPracticeRequest.messages[0].content, /GİZLİ CEVAP KORUMASI/);
+assert.match(capturedPracticeRequest.messages[0].content, /"status"/);
+assert.match(capturedPracticeRequest.messages[1].content, /gizli anahtar/);
+assert.match(feedbackElement.textContent, /KISMEN DOĞRU/);
+assert.match(feedbackElement.textContent, /İPUCU/);
+assert.equal(feedbackElement.dataset.state, 'partial');
+assert.equal(pillElement.textContent, 'KISMEN DOĞRU');
+for (const leak of ['Haberleşme uydusu', 'Gözlem uydusu', 'Televizyon yayını iletmek', 'Orman yangını alanını görüntülemek']) {
+  assert.ok(!feedbackElement.textContent.includes(leak), 'Safe feedback must not name the correct card or the wrong card.');
+}
+assert.equal(science.exportProgress().weeks['1'].activities['f1-a04'].assessment.state, 'partial', 'The AI verdict should persist with the activity answers.');
+  mockElements.apiKey.value = '';
+  console.log('Fen konu etkinlikleri: boşluklarda ipucu yok, çoktan seçmeli dışındaki etkinlikler güvenli Groq değerlendirmesiyle kontrol ediliyor.');
+}
+
+checkAICheckAndStaleResponse().then(checkActivityAssessment).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
