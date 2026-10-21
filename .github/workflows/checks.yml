@@ -1,0 +1,27 @@
+name: Security and static checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Check for accidental API keys
+        run: python3 scripts/check-secrets.py
+
+      - name: Validate GitHub Pages files and JavaScript
+        run: python3 scripts/check-static.py
