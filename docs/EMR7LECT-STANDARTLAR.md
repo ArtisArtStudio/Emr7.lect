@@ -117,6 +117,22 @@ Ayrıntı: `docs/science-concept-definitions.md`.
 
 ---
 
+## 5c. Şema standardı (adım adım akış)
+
+Bir süreç anlatılıyorsa (yıldızın yaşam döngüsü, enerji dönüşümü, besinin yolu) metinde
+"aşağıdaki şema" deniyorsa **o şema gerçekten çizilmelidir**. Var olmayan görsele gönderme yapmak
+yasaktır; `check-science.js` bunu denetler.
+
+Kurallar:
+- Şema, sıralı bir listedir (`<ol>`) ve her adımda **görsel + tek cümlelik açıklama** taşır.
+- Adımlar arasında **yön oku** bulunur (`→` yatay, `↓` dikey). Oklar `aria-hidden` olur.
+- Ayrışan dallar (ör. kütleye göre iki yıldız yolu) **ayrı şeritler** olarak yan yana gösterilir;
+  ortak başlangıç ayrı bir blokta durur.
+- Şema sadeleştiriyorsa bunu kendi notunda söyler: "Evreler milyonlarca yıl sürer ve keskin
+  çizgilerle ayrılmaz; şema, sırayı görebilmek için aşamaları sadeleştirir."
+- Mobilde tek sütuna iner, yazdırmada bölünmez (`break-inside: avoid`).
+- Veri koddan ayrı tutulur (`STAR_START`, `STAR_PATHS`), görsel anahtarları `CONCEPT_IMAGES` içinden gelir.
+
 ## 6. Görsel standardı
 
 - **Raster zorunlu** (WebP); SVG yasak. Tek konu, tek stil, tercihen fotogerçekçi.
@@ -258,6 +274,9 @@ eden metin, odak cümlesine düşen kart, `iş`/`değiştiren` tipi kelime içi 
 - Bu ortamda tarayıcı yok; CSS değişikliği **kod + smoke test** ile doğrulanır, ekran görüntüsü alınamaz.
 - `git stash -u` + `reset --hard` çalışmıyor → `reset --hard origin/<dal>` + değişikliği yeniden uygula.
 - Kavram eşleştirmesinde `includes()` kullanmak "iş" ↔ "değiştiren" hatasını geri getirir.
+- Metinde "şema" demek yetmez; şema render edilmezse içerik var olmayan bir görsele işaret eder.
+- Görsel notu (`visualNote`) ile görselin `alt` metni aynı sahneyi anlatmalı; ikisi ayrı yazıldığında sık sık çelişir.
+- Ders kitabı/sayfa atfı arayüzde de yasak: hafta rozeti ve alt bilgi artık kitap/sayfa içermez.
 
 ---
 

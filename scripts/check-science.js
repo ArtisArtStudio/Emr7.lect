@@ -98,6 +98,8 @@ assert.ok(science.weeks.every((week) => week.date && week.topic && week.focus &&
 assert.ok(science.weeks.every((week) => week.summary.length >= 4 && week.summary.length <= 6 && week.summary.join(' ').length >= 2800 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
 assert.ok(science.weeks.every((week) => !Array.isArray(week.blockLabels) || week.blockLabels.length === week.summary.length), 'Per-week block headings should match the number of explanation blocks.');
 assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(science.weeks)), 'Lesson texts should explain the topic directly instead of citing the textbook or page numbers.');
+assert.ok(!/ders kitab|MEB Fen Bilimleri|s\. \d+–\d+|kitabın (vurguladığı|anlattığı|belirttiği)/i.test(JSON.stringify(science.weeks)), 'Lesson texts must not cite the textbook: the everyday phrase "bir kitabı rafa kaldırmak" is allowed, citations are not.');
+
 assert.ok(science.weeks.every((week) => week.terms.every((term) => week.summary.join(' ').toLocaleLowerCase('tr').includes(term.toLocaleLowerCase('tr')))), 'Every concept should be defined inside the weekly narrative, not only in the concept strip.');
 assert.equal(new Set(science.weeks.flatMap((week) => week.terms.map((term) => term.toLocaleLowerCase('tr')))).size, 132, 'Every concept should still appear in the merged weekly flow.');
 assert.equal(science.weeks.filter((week) => week.researchBrief).length, 8, 'Research results should be limited to the Keşif Noktası and suitable performance-task topics.');
@@ -327,10 +329,46 @@ science.importProgress({ selectedWeek: 15, weeks: {} });
 assert.equal((mockElements.scienceWeekContent.innerHTML.match(/class="science-visual-image"/g) || []).length, 4, 'The systems review should show four separate anatomy illustrations.');
 assert.match(mockElements.scienceWeekContent.innerHTML, /Boşaltım/);
 science.importProgress({ selectedWeek: 4, weeks: {} });
-assert.match(mockElements.scienceWeekContent.innerHTML, /Büyük kütleli yol/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /Gezegenimsi bulutsu/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /science-visual-routes/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /loading="lazy"/);
+const starHTML = mockElements.scienceWeekContent.innerHTML;
+assert.match(starHTML, /science-star-map/, 'The star week should render a real step diagram, not only an arrow sentence.');
+assert.match(starHTML, /Bulutsudan yıldızın sonuna: iki yol/);
+assert.match(starHTML, /Küçük kütleli yol/);
+assert.match(starHTML, /Büyük kütleli yol/);
+assert.equal((starHTML.match(/class="science-star-step"/g) || []).length, 10, 'Two shared stages plus four stages per path should render as ten diagram steps.');
+assert.equal((starHTML.match(/class="science-star-path is-/g) || []).length, 2, 'The diagram should split into two mass-dependent lanes.');
+assert.equal((starHTML.match(/class="science-star-arrow"[^>]*>[→↓]</g) || []).length, 7, 'Every stage except the last of each chain needs an arrow.');
+const starImages = starHTML.match(/<img [^>]*class="science-star-image"[^>]*>/g) || [];
+assert.equal(starImages.length, 10, 'Each diagram stage should carry its own illustration.');
+assert.ok(starImages.every((tag) => tag.includes('srcset=') && tag.includes('loading="lazy"') && /\.webp/.test(tag) && /alt="[^"]{40,}"/.test(tag)), 'Diagram illustrations need responsive WebP sources and descriptive alternative text.');
+const smallLane = starHTML.slice(starHTML.indexOf('is-small'), starHTML.indexOf('is-large'));
+['Kırmızı dev', 'Gezegenimsi bulutsu', 'Beyaz cüce'].reduce((previous, name) => {
+  const at = smallLane.indexOf(name);
+  assert.ok(at > previous, `The small-mass lane should order ${name} after the previous stage.`);
+  return at;
+}, -1);
+assert.ok(!smallLane.includes('Süpernova'), 'The small-mass lane must not borrow the supernova ending.');
+assert.ok(starHTML.indexOf('Ortak başlangıç') < starHTML.indexOf('Kütle belirleyici'), 'The shared start should come before the split into two paths.');
+assert.match(starHTML, /şema, sırayı görebilmek için aşamaları sadeleştirir/);
+assert.ok(!starHTML.includes('science-visual-routes'), 'The diagram replaces the old duplicate arrow-text row.');
+
+// Metin bir şemaya gönderme yapıyorsa o hafta gerçekten şema render etmeli; aksi hâlde metin
+// var olmayan bir görsele işaret eder.
+for (const week of science.weeks) {
+  const prose = [...week.summary, ...week.points, week.focus, week.researchBrief?.takeaway || '', week.researchBrief?.intro || ''].join(' ');
+  if (/aşağıdaki şema|şemada|bu şema/i.test(prose)) {
+    science.importProgress({ selectedWeek: week.id, weeks: {} });
+    assert.match(mockElements.scienceWeekContent.innerHTML, /science-star-map/, `Week ${week.id} promises a diagram in its text but renders none.`);
+  }
+}
+// Arayüzde ders kitabı ya da sayfa numarası atfı görünmemeli.
+for (const weekId of [1, 4, 8, 15]) {
+  science.importProgress({ selectedWeek: weekId, weeks: {} });
+  const weekHTML = mockElements.scienceWeekContent.innerHTML;
+  assert.ok(!/Ders kitabı|MEB Fen Bilimleri|s\. \d+–\d+/i.test(weekHTML), `Week ${weekId} must not cite the textbook or page ranges in the interface.`);
+  assert.match(weekHTML, /Haftada 4 ders saati/, 'The week badge should describe the schedule, not a textbook page.');
+  assert.match(weekHTML, /kazanımlara göre özgün/, 'The footer must describe the content without attributing it to the textbook.');
+}
+assert.match(starHTML, /loading="lazy"/);
 const lessonImages = mockElements.scienceWeekContent.innerHTML.match(/<img [^>]*class="science-visual-image"[^>]*>/g) || [];
 assert.ok(lessonImages.length > 0, 'The focused week should render its own lesson illustration.');
 assert.ok(lessonImages.every((tag) => /alt="[^"]{40,}"/.test(tag) && !/alt="(Görsel|Resim|Fotoğraf)"/.test(tag)), 'Every lesson illustration needs a descriptive, meaningful alternative text.');

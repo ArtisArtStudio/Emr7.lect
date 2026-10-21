@@ -92,7 +92,7 @@
     8: {
       'enerji dönüşümü': 'Enerji dönüşümü, enerjinin bir biçimden başka bir biçime geçmesidir. Bir bisikletli pedal çevirdiğinde kaslarındaki kimyasal enerji hareket enerjisine, yokuş çıkarken bu enerji çekim potansiyel enerjisine dönüşür; inişte ise potansiyel enerji yeniden kinetik enerjiye geçer.',
       'kinetik enerji': 'Kinetik enerji, hareket hâlindeki cismin enerjisidir; dönüşümler boyunca sürekli el değiştirir. Kaykay parkındaki rampanın en alt noktasında kaykaycının kinetik enerjisi en yüksektir.',
-      'çekim potansiyel enerjisi': 'Çekim potansiyel enerjisi, cismin yerden yüksekliği nedeniyle depoladığı enerjidir; kütle, yer çekimi ivmesi ve yüksekliğin çarpımıyla hesaplanır. 2 kg’lık bir top 3 metre yükseklikte yaklaşık 59 J enerji depolar.',
+      'çekim potansiyel enerjisi': 'Çekim potansiyel enerjisi, cismin yerden yüksekliği nedeniyle depoladığı enerjidir; kütle, yer çekimi ivmesi ve yüksekliğin çarpımıyla hesaplanır. 2 kg’lık bir top 3 metre yükseklikte, yer çekimi ivmesi 10 m/s² alındığında yaklaşık 60 J enerji depolar.',
       'salıncak': 'Salıncak, enerjinin sürekli el değiştirdiği bir düzenektir: en yüksek noktada potansiyel, en alt noktada kinetik enerji en büyüktür. Salınım her seferinde biraz alçalır; kaybolan mekanik enerji hava direnci ve sürtünmeyle ısıya dönüşür.',
       'enerjinin korunumu': 'Enerjinin korunumu, enerjinin yoktan var olmadığı ve yok olmadığı, yalnızca biçim değiştirdiği ilkesidir. Bir sarkaçta azalan mekanik enerji, ortama verilen ısı ve ses enerjisi kadardır.',
       'sürtünme': 'Sürtünme, iki yüzey arasında harekete zıt yönde etki eden kuvvettir; mekanik enerjinin bir bölümünü ısıya dönüştürür. Kışın buzlu yolda ayakkabıya takılan çivi, sürtünmeyi artırarak kaymayı önler.',
@@ -130,7 +130,7 @@
       'kılcal damar': 'Kılcal damar, atardamar ile toplardamar arasında uzanan, duvarı tek kat hücreli en ince damardır; madde alışverişi burada olur. Parmak ucunun iğneyle hafifçe kanatılabilmesi kılcalların bu inceliğindendir.',
       'küçük kan dolaşımı': 'Küçük kan dolaşımı, kanın kalbin sağ karıncığından akciğerlere gidip oksijenlenerek sol kulakçığa dönmesidir. Bu döngüde kan akciğerde oksijen alır, karbondioksit verir.',
       'büyük kan dolaşımı': 'Büyük kan dolaşımı, temiz kanın sol karıncıktan tüm vücuda dağılıp kirli kan olarak sağ kulakçığa dönmesidir. Kılcal damarlarda kana verilen oksijen dokulara geçer, dokulardan alınan karbondioksit kana aktarılır.',
-      'akciğer': 'Akciğer, göğüs boşluğunda yer alan ve kanın oksijenlenmesini sağlayan süngerimsi organdır; gaz alışverişi alveollerde olur. Alveollerin toplam yüzeyi yaklaşık yarım tenis kortu büyüklüğündedir.',
+      'akciğer': 'Akciğer, göğüs boşluğunda yer alan ve kanın oksijenlenmesini sağlayan süngerimsi organdır; gaz alışverişi alveollerde olur. Alveollerin toplam yüzeyi yaklaşık 70 metrekaredir; bu, bir sınıfın taban alanından geniştir.',
       'kan akışı': 'Kan akışı, kanın damarlar içinde kalpten vücuda ve geriye doğru sürekli hareketidir. Egzersiz sırasında kaslar daha çok oksijen istediği için kalbin atış hızı artar.'
     },
     12: {

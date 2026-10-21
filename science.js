@@ -60,14 +60,45 @@
     ] },
   };
 
+  /* Yıldızların yaşam döngüsü şeması. İki yol da aynı bulutsu ve önyıldız evresinden geçer;
+     ayrım çekirdekte toplanan kütlede başlar. Şema bu ortak başlangıcı ve ardından ayrılan
+     iki yolu, her adımda bir görsel ve tek cümlelik açıklamayla gösterir. */
+  const STAR_START = [
+    { name: 'Bulutsu', key: 'bulutsu', text: 'Gaz ve tozdan oluşan soğuk bulut; yoğun bölgeleri çökmeye başlar.' },
+    { name: 'Önyıldız', key: 'onyildiz', text: 'Çöken madde merkezde toplanır ve ısınır; henüz kendi ışığını üretmez.' },
+  ];
+
+  const STAR_PATHS = [
+    {
+      id: 'small',
+      title: 'Küçük kütleli yol',
+      sample: 'Güneş gibi yıldızlar',
+      final: 'Son durak: beyaz cüce',
+      steps: [
+        { name: 'Ana dizi yıldızı', key: 'yildiz', text: 'Çekirdekte enerji üretimi başlar; yıldız milyarlarca yıl dengede parlar.' },
+        { name: 'Kırmızı dev', key: 'kirmizi-dev', text: 'Yakıt azalınca dış katmanlar genişler, yüzey soğur ve kızıllaşır.' },
+        { name: 'Gezegenimsi bulutsu', key: 'gezegenimsi-bulutsu', text: 'Dış katmanlar uzaya atılır; merkezde sıcak çekirdek kalır.' },
+        { name: 'Beyaz cüce', key: 'beyaz-cuce', text: 'Dünya boyutunda, çok yoğun bir çekirdek kalır ve yavaşça soğur.' },
+      ],
+    },
+    {
+      id: 'large',
+      title: 'Büyük kütleli yol',
+      sample: 'Güneş’in 8 katından ağır yıldızlar',
+      final: 'Son durak: nötron yıldızı ya da kara delik',
+      steps: [
+        { name: 'Mavi dev yıldız', key: 'mavi-dev', text: 'Yüksek sıcaklıkta çok parlak yanar; yakıtını hızla tüketir.' },
+        { name: 'Kırmızı süperdev', key: 'kirmizi-superdev', text: 'Katmanlar aşırı genişler; yarıçap Güneş’inkinin yüzlerce katına çıkar.' },
+        { name: 'Süpernova', key: 'supernova', text: 'Çekirdek çöker, yıldız şiddetle patlar ve maddeyi uzaya saçar.' },
+        { name: 'Nötron yıldızı / kara delik', key: 'notron-yildizi', text: 'Kalan kütle küçükse nötron yıldızı, çok büyükse kara delik oluşur.' },
+      ],
+    },
+  ];
+
   const VISUAL_ROUTES = {
     telescope: [{ label: 'Gözlem için uygun yer', text: 'Yüksek · kuru · açık · kent ışıklarından uzak' }],
     debris: [{ label: 'Risk ilişkisi', text: 'İşlevini yitiren cisimler → yörünge atıkları → etkin araçlar için çarpışma riski' }],
     light: [{ label: 'Gözlem ilişkisi', text: 'Yukarı saçılan yapay ışık → gökyüzü parlaması → sönük yıldızları görmek zorlaşır' }],
-    stars: [
-      { label: 'Daha küçük kütleli yol', text: 'Bulutsu → Önyıldız → Kırmızı dev → Gezegenimsi bulutsu → Beyaz cüce' },
-      { label: 'Büyük kütleli yol', text: 'Bulutsu → Önyıldız → Kırmızı süperdev → Süpernova → Nötron yıldızı / kara delik' },
-    ],
     galaxy: [{ label: 'Ölçek', text: 'Yıldız → Güneş Sistemi → Samanyolu → Evren' }],
     energy: [
       { label: 'Aşağı inerken', text: 'Çekim potansiyel enerjisi azalabilir · kinetik enerji artabilir' },
@@ -200,6 +231,9 @@
     'aydinlatma': { src: 'assets/science-concept-aydinlatma.webp', small: 'assets/science-concept-aydinlatma-450.webp', width: 896, height: 672, alt: "Aşağı yönlendirilmiş başlıklı lambalar yolu aydınlatırken gökyüzüne ışık kaçırmaz; doğru aydınlatmanın örneği." },
     'yildiz-olusumu': { src: 'assets/science-concept-yildiz-olusumu.webp', small: 'assets/science-concept-yildiz-olusumu-450.webp', width: 896, height: 672, alt: "Gaz ve toz sütununun ucunda yeni doğan yıldızlar: bulutsudaki yoğun bölgeler çökerek yıldız oluşumunu başlatır." },
     'kirmizi-dev': { src: 'assets/science-concept-kirmizi-dev.webp', small: 'assets/science-concept-kirmizi-dev-450.webp', width: 896, height: 672, alt: "Kırmızı dev: yakıtını tüketen yıldız şişer, yüzeyi soğuyarak kırmızı-turuncu bir renk alır." },
+    'kirmizi-superdev': { src: 'assets/science-concept-kirmizi-superdev.webp', small: 'assets/science-concept-kirmizi-superdev-450.webp', width: 896, height: 672, alt: "Kırmızı süperdev: katmanları çok genişlemiş, yüzeyi benekli ve turuncu-kızıl parlayan dev yıldız." },
+    'mavi-dev': { src: 'assets/science-concept-mavi-dev.webp', small: 'assets/science-concept-mavi-dev-450.webp', width: 896, height: 672, alt: "Mavi dev yıldız: çok sıcak yüzeyi mavi-beyaz parlayan, çevresine ince bir yıldız rüzgârı savuran büyük kütleli yıldız." },
+    'gezegenimsi-bulutsu': { src: 'assets/science-concept-gezegenimsi-bulutsu.webp', small: 'assets/science-concept-gezegenimsi-bulutsu-450.webp', width: 896, height: 672, alt: "Gezegenimsi bulutsu: merkezde sıcak beyaz cüce, çevresinde halkalar hâlinde genişleyen turkuaz ve pembe gaz kabuğu." },
     'isi-enerjisi': { src: 'assets/science-concept-isi-enerjisi.webp', small: 'assets/science-concept-isi-enerjisi-450.webp', width: 896, height: 672, alt: "Isı enerjisi: elin duvarda bıraktığı sıcaklık, termal görüntüde turuncu-sarı olarak görünür." },
     'ses-enerjisi': { src: 'assets/science-concept-ses-enerjisi.webp', small: 'assets/science-concept-ses-enerjisi-450.webp', width: 896, height: 672, alt: "Ses enerjisi: davul derisi titreştiğinde üzerindeki toz tanecikleri havaya sıçrar; titreşim enerji taşır." },
     'atik-madde': { src: 'assets/science-concept-atik-madde.webp', small: 'assets/science-concept-atik-madde-450.webp', width: 896, height: 672, alt: "Atık su arıtma tesisinde dinlendirme havuzları; evlerden gelen atık maddeler arıtılarak doğaya geri verilir." },
@@ -392,6 +426,38 @@
       ${routes.length ? `<div class="science-visual-routes">${routes.map((route) => `<div class="science-visual-route"><span>${escapeHTML(route.label)}</span><strong>${escapeHTML(route.text)}</strong></div>`).join('')}</div>` : ''}
       <p class="science-visual-note">${escapeHTML(item.visualNote || '')}</p>
     </figure>`;
+  }
+
+  // Yıldızların yaşam döngüsü şeması: ortak başlangıç (bulutsu → önyıldız), ardından
+  // kütleye göre ayrılan iki yol. Her adım görsel + tek cümle; oklar yönü gösterir.
+  function renderStarStep(step, index, total, arrow) {
+    const image = CONCEPT_IMAGES[conceptKey(step.key)];
+    return `<li class="science-star-step">
+      <span class="science-star-index" aria-hidden="true">${index + 1}</span>
+      ${image ? responsiveImage(image, 'science-star-image', '(max-width: 700px) 30vw, 84px') : ''}
+      <span class="science-star-copy"><strong>${escapeHTML(step.name)}</strong><em>${escapeHTML(step.text)}</em></span>
+      ${index < total - 1 ? `<span class="science-star-arrow" aria-hidden="true">${arrow}</span>` : ''}
+    </li>`;
+  }
+
+  function renderStarDiagram(item) {
+    if (item.visual !== 'stars') return '';
+    const startSteps = STAR_START.map((step, index) => renderStarStep(step, index, STAR_START.length, '→')).join('');
+    const lanes = STAR_PATHS.map((path) => `<div class="science-star-path is-${escapeHTML(path.id)}">
+        <div class="science-star-path-head"><span>${escapeHTML(path.title)}</span><strong>${escapeHTML(path.sample)}</strong></div>
+        <ol class="science-star-steps">${path.steps.map((step, index) => renderStarStep(step, index + STAR_START.length, STAR_START.length + path.steps.length, '↓')).join('')}</ol>
+        <p class="science-star-final">${escapeHTML(path.final)}</p>
+      </div>`).join('');
+    return `<section class="card science-star-map" aria-labelledby="scienceStarMapTitle-${item.id}">
+      <div class="science-section-heading"><div class="tag">ŞEMA · YILDIZIN YAŞAM ÇİZGİSİ</div><h3 id="scienceStarMapTitle-${item.id}">Bulutsudan yıldızın sonuna: iki yol</h3><p>İki yol da aynı iki evreyle başlar. Ayrım, çekirdekte toplanan kütlede ortaya çıkar; oklar sürecin yönünü gösterir.</p></div>
+      <div class="science-star-start">
+        <p class="science-star-label">Ortak başlangıç</p>
+        <ol class="science-star-start-list">${startSteps}</ol>
+      </div>
+      <p class="science-star-split"><span aria-hidden="true">↓</span> Kütle belirleyici: az kütle küçük kütleli yola, çok kütle büyük kütleli yola gider.</p>
+      <div class="science-star-paths">${lanes}</div>
+      <p class="science-star-note">Evreler milyonlarca yıl sürer ve keskin çizgilerle ayrılmaz; şema, sırayı görebilmek için aşamaları sadeleştirir. Güneş’in kütlesi küçük kütleli yola uyduğu için sonunun beyaz cüce olması beklenir.</p>
+    </section>`;
   }
 
   const CONCEPT_FOLD = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
@@ -1239,13 +1305,14 @@
     const unit = UNIT_BY_ID.get(item.unitId);
     const links = getProviderLinks(item);
     const complete = isWeekComplete(item, saved);
-    const source = `MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap (2026), ${unit.number}. Ünite “${unit.title}”, s. ${item.pages}.`;
+    const source = `${unit.number}. Ünite “${unit.title}” · ${item.id}. hafta · haftada 4 ders saati`;
     content.innerHTML = `
       <header class="card science-week-heading">
-        <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p>${EXAM_DATES_BY_WEEK[item.id] ? `<aside class="science-exam-notice" role="note" aria-label="Birinci sınav tarihi"><span>1. sınav</span><strong>${escapeHTML(EXAM_DATES_BY_WEEK[item.id])}</strong></aside>` : ''}<h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Ders kitabı: s. ${escapeHTML(item.pages)}</span></div>
+        <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p>${EXAM_DATES_BY_WEEK[item.id] ? `<aside class="science-exam-notice" role="note" aria-label="Birinci sınav tarihi"><span>1. sınav</span><strong>${escapeHTML(EXAM_DATES_BY_WEEK[item.id])}</strong></aside>` : ''}<h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Haftada 4 ders saati</span></div>
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
       ${renderVisual(item)}
+      ${renderStarDiagram(item)}
       <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${renderRichText(point)}</li>`).join('')}</ul></div></div></section>
       ${renderConceptFlow(item)}
       ${renderResearchBrief(item.researchBrief)}
@@ -1258,7 +1325,7 @@
         <td><a class="science-provider-link" href="${escapeHTML(links.tonguc)}" target="_blank" rel="noopener noreferrer">Tonguç konu araması ↗</a><small class="science-provider-note">${escapeHTML(item.topic)} için video araması</small><label class="science-provider-check"><input type="checkbox" data-science-provider="tonguc" data-science-week="${item.id}" ${saved.providers.tonguc ? 'checked' : ''}><span>Tonguç çalışmam bitti</span></label></td>
         <td><a class="science-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ ↗</a><small class="science-provider-note">Portaldan Fen Bilimleri çalışmalarını seç.</small><label class="science-provider-check"><input type="checkbox" data-science-provider="mebi" data-science-week="${item.id}" ${saved.providers.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
       </tr></tbody></table></div></section>
-      <p class="science-source-note">${escapeHTML(source)} Haftalık dağılım öneri niteliğindedir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Konu anlatımları ilgili ders kitabı sayfaları esas alınarak özgün biçimde yazılmıştır; görseller uygulama için yapay zekâ destekli üretilmiş özgün dijital illüstrasyonlardır; ders kitabındaki metinler, sorular ve şekiller kopyalanmamıştır.</p>`;
+      <p class="science-source-note">${escapeHTML(source)}. Haftalık dağılım öneri niteliğindedir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Konu anlatımları ve şemalar kazanımlara göre özgün biçimde yazılmış; görseller uygulama için yapay zekâ destekli üretilmiş özgün dijital illüstrasyonlardır.</p>`;
   }
 
   function refreshProgressUI() {
