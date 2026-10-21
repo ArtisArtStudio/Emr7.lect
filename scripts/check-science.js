@@ -52,6 +52,7 @@ global.document = {
 };
 
 require('../science-content.js');
+require('../science-term-notes.js');
 require('../science-activities.js');
 require('../science.js');
 const science = global.window.SCIENCE;
@@ -255,6 +256,49 @@ const conceptImages = conceptHTML.match(/<img [^>]*class="science-concept-image"
 assert.ok(conceptImages.length >= 1, 'Concepts with illustrations should show them inside their card.');
 assert.ok(conceptImages.every((tag) => tag.includes('srcset=') && tag.includes('loading="lazy"') && /alt="[^"]{40,}"/.test(tag)), 'Concept illustrations need responsive, lazy-loaded images with meaningful alternative text.');
 assert.ok(conceptHTML.includes('science-concept-image'), 'The vehicle week should reuse concept illustrations where available.');
+
+// Kavram kartları: her kavram kendi tanımını ve tek bir örneğini göstermeli. Aynı cümlenin
+// iki karta birden düşmesi ve kelime içinde eşleşme ("iş" ↔ "değiştiren") gerilemesi burada yakalanır.
+const termNotes = global.window.SCIENCE_TERM_NOTES;
+assert.ok(termNotes && typeof termNotes === 'object', 'Concept definitions should come from the dedicated science-term-notes module.');
+for (const week of science.weeks) {
+  const map = termNotes[week.id] || {};
+  for (const term of week.terms) {
+    const note = map[term];
+    assert.ok(note, `Week ${week.id} is missing a dedicated definition for "${term}".`);
+    assert.ok(note.length >= 90, `The definition for "${term}" is too short to define the concept and give an example.`);
+    assert.ok((note.match(/[.!?]/g) || []).length >= 2, `"${term}" needs a definition sentence plus its own example.`);
+    assert.notEqual(note, week.focus, `"${term}" must not fall back to the weekly focus line.`);
+    assert.match(note, /[çğıöşüÇĞİÖŞÜ]/, `The definition for "${term}" should read as Turkish.`);
+  }
+  const weekNotes = week.terms.map((term) => map[term]);
+  assert.equal(new Set(weekNotes).size, weekNotes.length, `Week ${week.id} shows the same text on more than one concept card.`);
+  assert.deepEqual(Object.keys(map).filter((term) => !week.terms.includes(term)), [], `Week ${week.id} defines concepts that are not in its strip.`);
+}
+const allConceptNotes = science.weeks.flatMap((week) => week.terms.map((term) => termNotes[week.id][term]));
+assert.equal(allConceptNotes.length, 146, 'Every concept card in the fifteen weeks should be covered.');
+assert.equal(new Set(allConceptNotes).size, 146, 'No two concept cards anywhere should share the same definition text.');
+
+const decodeCardText = (value) => value
+  .replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+const readConceptCards = (html) => [...html.matchAll(/<li class="science-concept-card[^"]*">[\s\S]*?<strong>([^<]+)<\/strong>\s*<p>([^<]+)<\/p>/g)]
+  .map(([, term, text]) => ({ term: decodeCardText(term), text: decodeCardText(text) }));
+for (const weekId of [6, 7, 8]) {
+  science.importProgress({ selectedWeek: weekId, weeks: {} });
+  const cards = readConceptCards(mockElements.scienceWeekContent.innerHTML);
+  const week = science.weeks.find((item) => item.id === weekId);
+  assert.equal(cards.length, week.terms.length, `Week ${weekId} should render one card per concept.`);
+  assert.deepEqual(cards.map((card) => card.text), week.terms.map((term) => termNotes[weekId][term]), `Week ${weekId} cards should print their own definitions.`);
+  assert.equal(new Set(cards.map((card) => card.text)).size, cards.length, `Week ${weekId} cards should not repeat text.`);
+}
+science.importProgress({ selectedWeek: 6, weeks: {} });
+const workCard = readConceptCards(mockElements.scienceWeekContent.innerHTML).find((card) => card.term === 'iş');
+assert.ok(workCard && workCard.text.startsWith('İş, uygulanan kuvvet'), 'The "iş" card must define work, not match the syllable inside "değiştiren".');
+assert.ok(!workCard.text.includes('değiştiren'), 'Concept matching must respect word boundaries.');
+science.importProgress({ selectedWeek: 7, weeks: {} });
+const kineticCards = readConceptCards(mockElements.scienceWeekContent.innerHTML);
+assert.ok(kineticCards.every((card) => card.text !== science.weeks[6].focus), 'Kinetik/potansiyel week cards must each carry their own definition.');
+assert.equal(new Set(kineticCards.map((card) => card.text)).size, 8, 'The kinetic and potential energy week should show eight different concept texts.');
 
 science.importProgress({ selectedWeek: 3, weeks: {} });
 const mergedTechnologyHTML = mockElements.scienceWeekContent.innerHTML;

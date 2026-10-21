@@ -403,16 +403,67 @@
       .replace(/^-|-$/g, '');
   }
 
-  function conceptContext(item, term) {
-    const needle = String(term).toLocaleLowerCase('tr');
-    const blocks = [...(item.summary || []), ...(item.points || []), item.focus || ''];
+  // Kavram şeridindeki her kart, science-term-notes.js içinde o kavrama ayrılmış tanımı
+  // gösterir. Tanım yoksa konu anlatımındaki cümlecik kullanılır; eşleşme Türkçe harf
+  // katlaması ve kelime sınırıyla yapılır, böylece "iş" kavramı "değiştiren" sözcüğüne
+  // bağlanmaz. Bir cümlede iki kavram geçtiğinde cümlecikler ; ve : noktalarından bölünür.
+  const TERM_NOTES = window.SCIENCE_TERM_NOTES || {};
+  const TERM_FOLD = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', '’': "'", '‘': "'", '“': '"', '”': '"', '–': '-', '—': '-' };
+
+  function foldTerm(value) {
+    return String(value).toLocaleLowerCase('tr').replace(/[çğıöşü’‘“”–—]/g, (letter) => TERM_FOLD[letter] || letter);
+  }
+
+  function isWordLetter(letter) {
+    return letter !== '' && /[a-z0-9]/.test(letter);
+  }
+
+  // "iş" kavramı "değiştiren", "kan" kavramı "kanıt" içinde eşleşmesin diye iki yanda
+  // harf ya da rakam bulunmayan tam kelime eşleşmesi aranır.
+  function hasWholeTerm(clause, term) {
+    const haystack = foldTerm(clause);
+    const needle = foldTerm(term);
+    if (!needle) return false;
+    for (let from = 0; from <= haystack.length - needle.length; from += 1) {
+      const at = haystack.indexOf(needle, from);
+      if (at < 0) return false;
+      const before = at === 0 ? '' : haystack[at - 1];
+      const after = haystack.charAt(at + needle.length);
+      if (!isWordLetter(before) && !isWordLetter(after)) return true;
+      from = at;
+    }
+    return false;
+  }
+
+  function conceptClauses(block) {
+    return String(block)
+      .replace(/\*\*/g, '')
+      .split(/(?<=[.!?])\s+|\s*;\s*|\s*:\s+/)
+      .map((part) => part.replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+  }
+
+  function conceptFromNarrative(item, term) {
+    const blocks = [...(item.summary || []), ...(item.points || [])];
     for (const block of blocks) {
-      const sentence = String(block).split(/(?<=[.!?])\s+/).find((part) => part.toLocaleLowerCase('tr').includes(needle));
-      if (sentence) {
-        const clean = sentence.replace(/\*\*/g, '');
-        return clean.length > 260 ? `${clean.slice(0, 257).trimEnd()}…` : clean;
+      const clause = conceptClauses(block).find((part) => hasWholeTerm(part, term));
+      if (clause) return clause;
+    }
+    const words = foldTerm(term).split(/\s+/).filter((word) => word.length > 3);
+    if (words.length > 1) {
+      for (const block of blocks) {
+        const clause = conceptClauses(block).find((part) => words.every((word) => hasWholeTerm(part, word)));
+        if (clause) return clause;
       }
     }
+    return '';
+  }
+
+  function conceptContext(item, term) {
+    const note = (TERM_NOTES[item.id] || {})[term];
+    if (note) return note;
+    const clause = conceptFromNarrative(item, term);
+    if (clause) return clause.length > 260 ? `${clause.slice(0, 257).trimEnd()}…` : clause;
     return item.focus || '';
   }
 
@@ -1108,7 +1159,7 @@
     const terms = Array.isArray(item.terms) ? item.terms : [];
     if (terms.length === 0) return '';
     return `<section class="card science-concept-flow" aria-labelledby="scienceConceptTitle-${item.id}">
-      <div class="science-section-heading"><div class="tag">KAVRAMLAR</div><h3 id="scienceConceptTitle-${item.id}">Bu haftanın kavramları</h3><p>Her kart, kavramın konu anlatımında geçtiği cümleye bağlanır; tanımlar anlatının içinde kalır.</p></div>
+      <div class="science-section-heading"><div class="tag">KAVRAMLAR</div><h3 id="scienceConceptTitle-${item.id}">Bu haftanın kavramları</h3><p>Her kartta kavramın tanımı ve onu somutlaştıran tek bir örnek vardır; aynı örnek iki kavramda tekrarlanmaz.</p></div>
       <ul class="science-concept-strip">${terms.map((term) => {
         const image = CONCEPT_IMAGES[conceptKey(term)];
         return `<li class="science-concept-card${image ? ' has-image' : ''}">
