@@ -62,8 +62,8 @@
     { src: 'assets/science-vehicle-space-probe.webp', small: 'assets/science-vehicle-space-probe-800.webp', width: 1600, height: 1073, alt: "Güneş panelli robotik uzay sondası, uzaktaki bir gök cismine doğru ölçüm yapıyor.", label: "Uzay sondası · uzaktan inceler" },
     { src: 'assets/science-vehicle-rocket.webp', small: 'assets/science-vehicle-rocket-800.webp', width: 1600, height: 1073, alt: "Fırlatma rampasından yükselerek yükünü yörüngeye taşıyan çok kademeli uzay roketi.", label: "Uzay roketi · taşır" },
     { src: 'assets/science-vehicle-space-shuttle.webp', small: 'assets/science-vehicle-space-shuttle-800.webp', width: 1600, height: 1073, alt: "Kanatlı uzay mekiği yörüngede; yük bölümü insan ve malzeme taşımak üzere tasarlanmış.", label: "Uzay mekiği · insan ve malzeme taşır" },
-    { src: 'assets/science-space-station.svg', small: null, width: 1073, height: 800, alt: "Güneş panelleri ve modülleriyle Dünya yörüngesinde araştırma ortamı sağlayan uzay istasyonu.", label: "Uzay istasyonu · araştırma ortamı" },
-    { src: 'assets/science-space-telescope.svg', small: null, width: 1073, height: 800, alt: "Uzaktaki gök cisimlerinden gelen ışığı toplayan, güneş panelli uzay teleskobu.", label: "Teleskop · ışık toplar" },
+    { src: 'assets/science-vehicle-space-station.webp', small: 'assets/science-vehicle-space-station-800.webp', width: 1600, height: 1073, alt: "Güneş panelleri ve modülleriyle Dünya yörüngesinde araştırma ortamı sağlayan uzay istasyonu.", label: "Uzay istasyonu · araştırma ortamı" },
+    { src: 'assets/science-vehicle-space-telescope.webp', small: 'assets/science-vehicle-space-telescope-800.webp', width: 1600, height: 1073, alt: "Uzaktaki gök cisimlerinden gelen ışığı toplayan, güneş panelli uzay teleskobu.", label: "Teleskop · ışık toplar" },
   ];
 
   // Ünite ve sistem tekrarlarında haftalık görseller yeniden kullanılır.
@@ -102,9 +102,18 @@
     excretion: [{ label: 'İdrarın yolu', text: 'Böbrek → Üreter → İdrar kesesi → Üretra' }],
   };
 
-  // Kavram şeridi görselleri: kavram anahtarı → raster görsel. Görseli henüz üretilmemiş
+  // Kavram şeridi görselleri: conceptKey(terim) → raster görsel. Görseli henüz üretilmemiş
   // kavramlar aynı şeritte metin kartı olarak akar; sayfa uzayan bir sözlük oluşmaz.
-  const CONCEPT_IMAGES = Object.freeze({});
+  const CONCEPT_IMAGES = Object.freeze({
+    'yapay-uydu': { src: 'assets/science-concept-yapay-uydu.webp', small: 'assets/science-concept-yapay-uydu-450.webp', width: 896, height: 672, alt: "Yörüngede görev yapan, güneş panelli bir yapay uydu; aşağıda Dünya’nın eğrilen ufku ve kıyı çizgisi." },
+    'roket': { src: 'assets/science-concept-roket.webp', small: 'assets/science-concept-roket-450.webp', width: 896, height: 672, alt: "Mavi gökyüzünde yükselen roket; egzoz alevi ve arkasında bıraktığı buhar izi." },
+    'uzay-sondasi': { src: 'assets/science-concept-uzay-sondasi.webp', small: 'assets/science-concept-uzay-sondasi-450.webp', width: 896, height: 672, alt: "Güneş panelli robotik uzay sondası, örnekleme kolu uzanmış hâlde küçük bir asteroide yaklaşıyor." },
+    'uzay-istasyonu': { src: 'assets/science-concept-uzay-istasyonu.webp', small: 'assets/science-concept-uzay-istasyonu-450.webp', width: 896, height: 672, alt: "Uzay istasyonunun laboratuvar modülünde, yuvarlak pencereden Dünya görünürken deney düzeneğiyle çalışan astronot." },
+    'teleskop': { src: 'assets/science-concept-teleskop.webp', small: 'assets/science-concept-teleskop-450.webp', width: 896, height: 672, alt: "Gözlemevi kubbesi içindeki büyük optik teleskop; açık ağız, ana ayna ve gece göğüne bakan tüp." },
+    'gozlemevi': { src: 'assets/science-concept-gozlemevi.webp', small: 'assets/science-concept-gozlemevi-450.webp', width: 896, height: 672, alt: "Alacakaranlıkta bir tepe üzerindeki kubbeli gözlemevi binası; gökyüzünde ilk yıldızlar beliriyor." },
+    'bulutsu': { src: 'assets/science-concept-bulutsu.webp', small: 'assets/science-concept-bulutsu-450.webp', width: 896, height: 672, alt: "Kızıl ve turkuaz gazlardan oluşan parlak bulutsu; karanlık toz şeritleri ve merkezde yeni doğmuş yıldızlar." },
+    'kara-delik': { src: 'assets/science-concept-kara-delik.webp', small: 'assets/science-concept-kara-delik-450.webp', width: 896, height: 672, alt: "Kara deliğin kara gölgesi, ince ışık halkası ve yerçekimiyle bükülen turuncu-beyaz yığılma diski." },
+  });
   const STATE_LABELS = Object.freeze({
     correct: 'TAM DOĞRU', partial: 'KISMEN DOĞRU', wrong: 'YENİDEN DÜŞÜN',
     incomplete: 'YANIT EKSİK', unverified: 'KAYNAKLA DOĞRULANAMADI',
@@ -262,8 +271,13 @@
     </figure>`;
   }
 
+  const CONCEPT_FOLD = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
+
   function conceptKey(term) {
-    return String(term).toLocaleLowerCase('tr').replace(/[^a-zçğıöşü0-9]+/g, '-').replace(/^-|-$/g, '');
+    return String(term).toLocaleLowerCase('tr')
+      .replace(/[çğıöşü]/g, (letter) => CONCEPT_FOLD[letter])
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
   }
 
   function conceptContext(item, term) {

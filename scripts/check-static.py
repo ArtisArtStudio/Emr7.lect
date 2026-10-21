@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # Uzay istasyonu ve teleskop illüstrasyonlarının raster sürümleri hazırlanana kadar
 # eski SVG çizimleri geçici olarak kullanılır; rasterler bağlanınca bu değer 0 olur.
-PENDING_RASTER_MIGRATIONS = 2
+PENDING_RASTER_MIGRATIONS = 0
 HTML_FILE = ROOT / "index.html"
 
 
@@ -1223,9 +1223,9 @@ def main() -> int:
         if not (ROOT / image).is_file():
             errors.append(f"Missing Fen science image: {image}")
         elif image.endswith(".webp"):
-            small = ROOT / image.replace(".webp", "-800.webp")
-            if not small.is_file():
-                errors.append(f"Missing responsive 800 px variant for {image}")
+            variants = [ROOT / image.replace(".webp", suffix) for suffix in ("-800.webp", "-450.webp")]
+            if not any(variant.is_file() for variant in variants):
+                errors.append(f"Missing responsive variant for {image}")
     if "srcset=" not in science_js or 'loading="lazy"' not in science_js or "science-concept-flow" not in science_js:
         errors.append("Fen illustrations need responsive srcset sources, lazy loading, and in-flow concept cards")
     if "science-concept-flow" not in science_css or ".science-concept-strip" not in science_css:

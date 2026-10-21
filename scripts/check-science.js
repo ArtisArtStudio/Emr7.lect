@@ -178,6 +178,18 @@ assert.equal((visualHTML.match(/class="science-visual-image"/g) || []).length, 7
 for (const label of ['Uzay roketi', 'Haberleşme uydusu', 'Dünya gözlem uydusu', 'Uzay sondası', 'Uzay mekiği', 'Uzay istasyonu', 'Teleskop']) assert.ok(visualHTML.includes(label), `The vehicle gallery should show ${label}.`);
 assert.ok(!visualHTML.includes('science-research-brief'), 'The vehicle-model performance task should not be turned into a research brief.');
 assert.match(visualHTML, /Görsel galerisine dön/);
+science.importProgress({ selectedWeek: 3, weeks: {} });
+const conceptHTML = mockElements.scienceWeekContent.innerHTML;
+const conceptCards = conceptHTML.match(/class="science-concept-card[^"]*"/g) || [];
+assert.equal(conceptCards.length, science.weeks[2].terms.length, 'Each concept should appear once in the in-flow concept strip.');
+assert.ok(conceptHTML.indexOf('science-topic-summary') < conceptHTML.indexOf('science-concept-flow'), 'Concept cards should follow the lesson narrative they explain.');
+assert.ok(conceptHTML.indexOf('science-concept-flow') < conceptHTML.indexOf('science-practice-card'), 'Concept cards should stay inside the lesson flow, before the practice card.');
+assert.ok(!/science-glossary|Kavram sözlüğü/.test(conceptHTML), 'Concepts must not become a separate glossary block.');
+const conceptImages = conceptHTML.match(/<img [^>]*class="science-concept-image"[^>]*>/g) || [];
+assert.ok(conceptImages.length >= 1, 'Concepts with illustrations should show them inside their card.');
+assert.ok(conceptImages.every((tag) => tag.includes('srcset=') && tag.includes('loading="lazy"') && /alt="[^"]{40,}"/.test(tag)), 'Concept illustrations need responsive, lazy-loaded images with meaningful alternative text.');
+assert.ok(conceptHTML.includes('science-concept-image'), 'The vehicle week should reuse concept illustrations where available.');
+
 science.importProgress({ selectedWeek: 5, weeks: {} });
 assert.ok(!mockElements.scienceWeekContent.innerHTML.includes('ARAŞTIRMA SONUCU'), 'Daily-life technology examples should remain part of the ordinary lesson narrative.');
 assert.match(mockElements.scienceWeekContent.innerHTML, /MR\/tomografi\/ultrason/);
