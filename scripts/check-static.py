@@ -1184,7 +1184,7 @@ def main() -> int:
         errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v="):
         if asset not in html:
             errors.append(f"Client assets need a cache-busting version: {asset}")
     for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "science.hidden=!isScience", "window.SCIENCE?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "science:window.SCIENCE?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SCIENCE?.importProgress(obj.science)", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
