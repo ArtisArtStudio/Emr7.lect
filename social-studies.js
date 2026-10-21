@@ -787,7 +787,7 @@
     const feedback = saved.aiFeedback?.[activityItem.id]?.[reviewKey];
     const feedbackText = typeof feedback?.text === 'string' ? feedback.text : '';
     const fieldIds = openFields.map((field) => field.id);
-    return `<div class="social-ai-actions"><button type="button" class="social-ai-check" data-social-ai-check="true" data-social-week="${item.id}" data-social-activity="${escapeHTML(activityItem.id)}" data-social-ai-key="${escapeHTML(reviewKey)}" data-social-ai-fields="${escapeHTML(JSON.stringify(fieldIds))}" data-social-ai-prompt="${escapeHTML(prompt || '')}" aria-describedby="${feedbackId}">✦ Kontrol et</button><span class="social-ai-caption">Açık yanıtın üstteki Groq ayarlarıyla değerlendirilir.</span><div class="social-ai-feedback" id="${feedbackId}" data-state="${escapeHTML(feedback?.state || 'none')}" role="status" aria-live="polite" ${feedbackText ? '' : 'hidden'}>${escapeHTML(feedbackText)}</div></div>`;
+    return `<div class="social-ai-actions"><button type="button" class="social-ai-check" data-social-ai-check="true" data-social-week="${item.id}" data-social-activity="${escapeHTML(activityItem.id)}" data-social-ai-key="${escapeHTML(reviewKey)}" data-social-ai-fields="${escapeHTML(JSON.stringify(fieldIds))}" data-social-ai-prompt="${escapeHTML(prompt || '')}" aria-describedby="${feedbackId}">✦ Kontrol et</button><span class="social-ai-caption">Açık yanıtın üstteki Groq ayarlarıyla değerlendirilir.</span><div class="social-ai-feedback" id="${feedbackId}" data-state="${escapeHTML(feedback?.state || 'none')}" role="status" aria-live="polite" ${feedbackText ? '' : 'hidden'}>${escapeHTML(feedbackText)}</div><div class="social-tts-actions" id="${feedbackId}-tts"${feedbackText ? '' : ' hidden'}><button type="button" class="social-tts-button" data-tts-read="${feedbackId}" data-tts-status="${feedbackId}-tts-status">🔊 Geri bildirimi sesli oku</button><button type="button" class="social-tts-stop" data-tts-stop>Durdur</button><span class="social-tts-status" id="${feedbackId}-tts-status" role="status" aria-live="polite"></span></div></div>`;
   }
 
   const SOCIAL_AI_STATE_LABELS = Object.freeze({
@@ -895,6 +895,8 @@
     node.textContent = text;
     node.dataset.state = state;
     node.hidden = !text;
+    const tts = document.getElementById(`${socialAIFeedbackNodeId(weekId, activityId, reviewKey)}-tts`);
+    if (tts) tts.hidden = !text;
   }
 
   function saveSocialAIFeedback(saved, weekId, activityItem, reviewKey, fields, state, text) {

@@ -846,6 +846,8 @@
       node.hidden = !text;
       node.dataset.state = state || 'none';
     }
+    const tts = practiceNode(activityId, 'tts');
+    if (tts) tts.hidden = !text;
     const pill = practiceNode(activityId, 'pill');
     if (pill) {
       const label = PRACTICE_STATES[state] || '';
@@ -1184,6 +1186,7 @@
           <div class="science-question-actions"><button type="button" class="science-check-button science-practice-check" id="science-check-${activity.id}" data-practice-check="${activity.id}">${checkLabel}</button><span class="science-save-note">Yanıt otomatik kaydedilir.</span></div>
           <p class="science-practice-hint">${escapeHTML(helper)}</p>
           <div class="science-feedback" id="science-feedback-${activity.id}" data-state="${state || 'none'}" role="status" aria-live="polite"${feedback ? '' : ' hidden'}>${escapeHTML(feedback)}</div>
+          ${activity.type === 'text' ? `<div class="science-tts-actions" id="science-tts-${activity.id}"${feedback ? '' : ' hidden'}><button type="button" class="science-tts-button" data-tts-read="science-feedback-${activity.id}" data-tts-status="science-tts-status-${activity.id}">🔊 Geri bildirimi sesli oku</button><button type="button" class="science-tts-stop" data-tts-stop>Durdur</button><span class="science-tts-status" id="science-tts-status-${activity.id}" role="status" aria-live="polite"></span></div>` : ''}
         </div>
       </details>
     </article>`;

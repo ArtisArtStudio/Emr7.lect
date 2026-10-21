@@ -56,6 +56,12 @@
 .science-workspace .tag{color:#7a4054}
 .science-section-heading h3{margin:0;color:#102238;font-size:18px;line-height:1.35}
 .science-section-heading p{margin:4px 0 0;color:#46576b;font-size:13px;line-height:1.6}
+.science-tts-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:9px}
+.science-tts-button{padding:7px 12px;border:1px solid #c9d9e6;border-radius:999px;background:#f3f9fd;color:#1f4a63;font:inherit;font-size:11.5px;font-weight:800;cursor:pointer}
+.science-tts-button:hover{background:#e6f2fa}
+.science-tts-button:focus-visible{outline:2px solid #2f6f95;outline-offset:2px}
+.science-tts-stop{padding:7px 11px;border:1px solid #e2d5da;border-radius:999px;background:#fff;color:#6b3a52;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
+.science-tts-status{color:#51636f;font-size:11px;line-height:1.5}
 .science-star-map{display:grid;gap:14px;border-color:#d9dcec;background:#fbfcff}
 .science-star-start{display:grid;gap:8px;padding:12px;border:1px dashed #c9d2e6;border-radius:14px;background:#fff}
 .science-star-label{margin:0;color:#5a6580;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
