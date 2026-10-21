@@ -120,6 +120,8 @@ Yani haftada **8–10 etkinlik + 6 soruluk quiz**; 9 eksik hafta için yaklaşı
 
 ---
 
+> Karekodla açılan içeriklerin ayrıntılı dökümü ve uygulama kapsamı: [`turkce-qr-envanteri.md`](turkce-qr-envanteri.md).
+
 ## 5b. Uygulanan ilk adım: Tema 1 ek okuma ve etkinlikler
 
 Tema 1'in ana metinlerinden **sonra** gösterilen ayrı bir ek bölüm eklendi (`theme1-extras.js`, `theme1-extras-app.js`). Mevcut Tema 1 etkinlik alanı (`theme1-practice.js`, `theme1-practice-app.js`) değiştirilmedi; ek bölüm onun altında ayrı bir kart olarak duruyor.
