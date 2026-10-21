@@ -1180,6 +1180,8 @@ def main() -> int:
         errors.append("The shared MEBİ mock-exam link or gear-based AI settings panel is missing")
     if "const EXAM_DATES_BY_WEEK=Object.freeze({9:'10 Kasım 2026'});" not in html or "[9,'9–13 Kas'" not in html or '1. sınav (${examDate})' not in html or 'id="weekExamNotice"' not in html:
         errors.append("Turkish first-term exam notices must map to the user-provided date inside week nine only")
+    if html.count('class="term-exam-plan"') != 3 or "4–8 Ocak 2027" not in html or "22 Ocak 2027’de bitiyor" not in html or ".term-exam-plan{" not in html:
+        errors.append("All three courses must show the tentative second-exam window (two weeks before 22 January)")
     if html.index('id="apiSettings"') > html.index('<section class="hero">'):
         errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
