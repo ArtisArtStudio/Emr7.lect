@@ -1,13 +1,13 @@
 # 7. Sınıf Öğrenme Rotası
 
-Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler için 37 haftalık, Fen Bilimleri için 15 haftalık, ders kitabı temelli konu planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
+Türkçe için tema bazlı okuma rotası ve etkinlik paketleri; Sosyal Bilgiler ve Türkçe için 15 haftalık (1. dönem), Fen Bilimleri için 15 haftalık, ders kitabı temelli konu planı ve özgün etkinlikler sunan statik bir öğrenme uygulaması.
 
 **Yayımlanan uygulama:** <https://artisartstudio.github.io/Emr7.lect/>
 
 ## Neler var?
 
 - 2026–2027 taslak haftalık plana dayalı Türkçe çalışma rotası.
-- MEB 2026 7. sınıf Sosyal Bilgiler kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı 37 haftalık ayrı rota.
+- MEB 2026 7. sınıf Sosyal Bilgiler kitabındaki **Birlikte Yaşamak**, **Evimiz Dünya** ve **Ortak Mirasımız** öğrenme alanlarına dayalı, 1. döneme sığdırılmış 15 haftalık ayrı rota.
 - Google Drive’dan incelenen MEB 7. sınıf Fen Bilimleri **1. Kitap** içindeki **Uzay Çağı**, **Kuvvet ve Enerjiyi Keşfedelim** ve **Vücudumuzdaki Sistemler** üniteleri için 15 haftalık öneri (haftada 4 ders saati, 14–18 Eylül – 28–31 Aralık). Konu/sayfa eşleştirmesi [`docs/science-week-topic-map.md`](docs/science-week-topic-map.md), kitaptaki etkinlik biçimleriyle özgün görevlerin eşleştirmesi [`docs/science-activity-inventory.md`](docs/science-activity-inventory.md) içindedir; yıllık dağılım öneridir, öğretmen planı önceliklidir.
 - Sosyal Bilgilerde her hafta konu özeti, anahtar kavramlar ve konuya göre değişen etkinlik akışı vardır. İlk iki iletişim haftası özgün okumalar, sohbet, trafik örneği, gözlem/merak, araştırma sorusu ve kaynak incelemesiyle ilerler. 3–12. haftalar ben dili ve empati sınıflandırması, “arkası yarın” tahmini, fırsat eşitliği için beyin yazımı, erişilebilirlik eşleştirmesi, proje taslağı/kontrol listesi, kelime bulutu, ulusal bayram/anma günü kartları, Millî Mücadele kaynak incelemesi, dayanışma örneği karşılaştırması ve öğrenme alanı tekrarıyla yenilendi. 13–18. haftalar da Evimiz Dünya için kelime bulutu ve küreselleşme tanımı, etki örnekleri/tablosu, kaynak-iddia değerlendirme, bölgesel/küresel ölçek sınıflandırması, paydaş-çözüm haritası, komşularla iş birliği ve Türkiye’nin katkısını kaynakla değerlendirme etkinlikleriyle yenilendi; 19. hafta ve sonrası değiştirilmedi. Sürükle-bırak etkinlikleri dokunmatik ve klavyeyle de kullanılabilir; seçim, çoklu seçim, açık yanıt ve kontrol listeleri konuya göre karıştırılır. Ders kitabı metinleri, görselleri veya soruları kopyalanmaz.
 - Fen Bilimleri haftalık listesinde 3 Kasım 2026 birinci sınav tarihi kırmızı olarak işaretlenir.
@@ -62,7 +62,7 @@ python3 scripts/check-secrets.py
 python3 scripts/check-static.py
 ```
 
-`check-static.py`, yerel yolları, JavaScript sözdizimini, sınav haftası notlarını, ortak ders araçlarını ve masaüstü/mobil navigasyonu; 43 Türkçe etkinliğini; Sosyal Bilgilerdeki 37 haftalık ve Fen Bilimlerindeki 15 haftalık konu verilerini, Fen kitap/sayfa eşleştirmesini, 3 Kasım sınav bildirimini ve ilk iki haftanın konu etkinliklerini; ayrı ilerleme/yedek geçişlerini ve bağlantıları; gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler. Bunun için Node.js gerekir.
+`check-static.py`, yerel yolları, JavaScript sözdizimini, sınav haftası notlarını, ortak ders araçlarını ve masaüstü/mobil navigasyonu; 43 Türkçe etkinliğini; Sosyal Bilgilerdeki 15 haftalık ve Fen Bilimlerindeki 15 haftalık konu verilerini, Fen kitap/sayfa eşleştirmesini, 3 Kasım sınav bildirimini ve ilk iki haftanın konu etkinliklerini; ayrı ilerleme/yedek geçişlerini ve bağlantıları; gömülü paket akışını, sürükle-bırak kontrollerini, soru başına Groq yönergelerini ve okuma duraklarını denetler. Bunun için Node.js gerekir.
 
 ## İçerik ve dağıtım notu
 

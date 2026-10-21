@@ -32,7 +32,7 @@ Ajanın ilk dört adımı:
 | `index.html` | Tek sayfa uygulama: ders seçici, Türkçe okuyucu, ortak ayarlar paneli, `speakEleven/stopEleven` |
 | `book-texts.js` | Türkçe kitap metinleri |
 | `theme1-practice*.js/css` | Türkçe tema etkinlikleri (şablonun kaynağı) |
-| `social-studies-content.js`, `social-studies.js`, `social-studies.css` | Sosyal Bilgiler alanı (37 hafta) |
+| `social-studies-content.js`, `social-studies.js`, `social-studies.css` | Sosyal Bilgiler alanı (1. dönem, 15 hafta; `TERM_PLAN` + kaynak hafta içeriği) |
 | `science-content.js` | Fen Bilimleri 15 haftalık konu akışı: `summary`, `blockLabels`, `points`, `terms`, `tasks`, `quiz`, `focus` |
 | **`science-term-notes.js`** | **Kavram şeridi sözlüğü: 146 kavram → tanım + tek örnek** |
 | `science-activities.js` | Haftalık etkinlik setleri (`window.SCIENCE_ACTIVITIES`) |
@@ -71,6 +71,43 @@ Ajanın ilk dört adımı:
 | 3. Vücudumuzdaki Sistemler | 9–15 | Sindirim (9–10) → dolaşım (11–12) → solunum (13) → bağımlılık + boşaltım (14) → sağlık, sistemlerin birlikteliği, yıl sonu (15) |
 
 Ara tatil: 16–20 Kasım (10. hafta ile 11. hafta arası boşluk).
+
+---
+
+## 3b. Dönem, hafta ve ders saati standardı
+
+Her ders için haftalık konu dağılımı **kitabın kapsamına** göre kurulur; tahminle bütün yıla yayılmaz.
+
+**1. Kitabın kapsamını belirle.** Kitap yalnız 1. dönem mi, yıl boyu mu? 1. Kitap kapsamındaki bir ders
+(Fen, Türkçe, Sosyal Bilgiler) **yalnız 1. dönemde** bitirilir; 2. dönem konusu eklenmez.
+
+**2. Dönem takvimini yaz.** 2026–2027 1. dönem: **14 Eylül – 22 Ocak**. Ara tatil **16–20 Kasım**
+(10. ve 11. hafta arası) ders haftası sayılmaz → **18 öğretim haftası**.
+
+**3. Bitiş haftasını erken al.** Konular dönem sonundan **yaklaşık 3 hafta önce** biter
+(tekrar, sınav ve telafi için boşluk kalır) → **15 konu haftası** (14–18 Eylül → 28–31 Aralık).
+
+**4. Haftalık ders saatini yaz.** Toplam saat = hafta × haftalık saat.
+
+| Ders | Haftalık saat | 15 hafta | Konu dağılımı |
+|---|---|---|---|
+| Fen Bilimleri | 4 | 60 saat | 3 ünite: 5 + 3 + 7 hafta |
+| Türkçe | 5 | 75 saat | 3 tema: 5 + 5 + 5 hafta, 11 çalışma sayfası (12 metin) |
+| Sosyal Bilgiler | 3 | 45 saat | 3 öğrenme alanı: 5 + 3 + 7 hafta |
+
+**5. Konuları haftaya böl.** `hafta sayısı × haftalık saat` bütçesini konu sayısına böl:
+- Bir konu ~1–2 hafta; haftada **en çok iki konu** (Türkçede haftada 1 metin, 5 saat).
+- Aynı metnin iki haftalık işlenişi tek çalışma sayfasında birleşir (`mergeDuplicateWeeks`).
+- Sosyal Bilgilerde iki (gerekiyorsa üç) kazanım tek haftada birleşir; konu anlatımı, sınamalar ve
+  etkinlikler kaynak haftalardan **sırayla** birleştirilir (`TERM_PLAN`, `mergedLesson`, `mergedActivities`).
+
+**6. Kitapta olmayanı çıkar.** Hafta yetmiyorsa önce şu bölümler kaldırılır:
+- "Dönem sonu", "Yıl sonu tekrar", "Sosyal etkinlik", "öğrenme alanı tekrarı" gibi **tekrar** haftaları,
+- kitapta karşılığı olmayan ek konular.
+Kitapta olan hiçbir kazanım bu sırada silinmez; yalnızca haftalara sıkıştırılır.
+
+**7. Takvimi tek yerde tut.** Tarih listesi Sosyal Bilgiler `TERM_PLAN` içindedir; Fen ve Türkçe
+takvimi bu listeyle aynı olmak zorundadır (`scripts/check-science.js` karşılaştırır).
 
 ---
 
@@ -188,24 +225,23 @@ Gizli cevap koruması:
 
 ## 9. ElevenLabs sesli okuma
 
-| Ders | Durum |
-|---|---|
-| Türkçe | **VAR** — `index.html` içinde `speakEleven(text, status)` + `stopEleven(update)`, quiz yorumunu okur |
-| Sosyal Bilgiler | **YOK** |
-| Fen Bilimleri | **YOK** |
+Kapsam: **Fen Bilimleri, Sosyal Bilgiler, Türkçe** — yalnızca **yazılı (metin) soruların geri bildirimi**.
+Konu metni, sayfa metni veya çoktan seçmeli cevap anahtarı okunmaz.
 
-Mevcut Türkçe davranış (şablon):
+| Ders | Düğme | Kimlik |
+|---|---|---|
+| Fen | `🔊 Geri bildirimi sesli oku` | `science-tts-<etkinlik>` (yalnız `activity.type === 'text'`) |
+| Sosyal | `🔊 Geri bildirimi sesli oku` | `social-ai-feedback-…-tts` |
+| Türkçe | `🔊 Geri bildirimi sesli oku` | `theme1-tts` (`.feedback-box` altında) |
+
+- Ortak delege `index.html` içinde: `[data-tts-read]` hedef kutunun `textContent`'ini okur,
+  `[data-tts-status]` alanına durum yazar, `[data-tts-stop]` okumayı durdurur.
 - `POST https://api.elevenlabs.io/v1/text-to-speech/<voiceId>`, `xi-api-key` başlığı.
 - Gövde: `{ text, model_id:'eleven_multilingual_v2', voice_settings:{stability:0.45, similarity_boost:0.75} }`.
 - `402 paid_plan_required` → cihaz sesine (`speechSynthesis`, `tr-TR`) düşer ve durumu yazar.
 - `stopEleven` hem `speechSynthesis`'i hem `Audio` nesnesini durdurur, `ObjectURL`'i serbest bırakır.
-- Düğmeler: `🔊 Yorumu sesli oku` / `Durdur`, durum metni `aria-live="polite"` bir alanda.
-
-Fen ve Sosyal'e eklenecek davranış:
-1. Ortak yardımcıya çıkar (`window.speakEleven = ...`), iki ders de aynı işlevi çağırsın.
-2. Yalnızca **güvenli** metin okunur: `DURUM / HATA-EKSİK / İPUCU`; ham model yanıtı okunmaz.
-3. Düğme geri bildirim kutusunun altında; anahtar yoksa düğme görünür ama uyarı verir.
-4. Metin 1500 karakteri geçerse cümle sınırından bölünür.
+- Yiğin metin yalnız **güvenli** geri bildirimdir (`DURUM / HATA-EKSİK / İPUCU`); ham model yanıtı okunmaz.
+- Anahtar yoksa düğme uyarı verir; düğme geri bildirim görünür olduğunda açılır.
 
 ---
 
@@ -295,8 +331,7 @@ eden metin, odak cümlesine düşen kart, `iş`/`değiştiren` tipi kelime içi 
 
 ## 16. Sıradaki işler
 
-1. **ElevenLabs sesli okuma** — Fen geri bildirimi ve Sosyal'e ekle (9. bölüm).
-2. **Fen 3–15. hafta etkinlik setleri** — her hafta 10–15 etkinlik + `docs/science-activity-analysis-<hafta>.md`.
+1. **Fen 3–15. hafta etkinlik setleri** — her hafta 10–15 etkinlik + `docs/science-activity-analysis-<hafta>.md`.
 3. Arayüzün tarayıcıda göz kontrolü (bu ortamda mümkün değil; kullanıcı kontrolü).
 4. Görsel kapsamını yeni kavramlarda sürdürme (yeni kavram → yeni görsel anahtarı).
 

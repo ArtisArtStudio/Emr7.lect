@@ -22,7 +22,6 @@
     { id: 'together', label: '1. Öğrenme Alanı', title: 'Birlikte Yaşamak', pages: '12–58' },
     { id: 'world', label: '2. Öğrenme Alanı', title: 'Evimiz Dünya', pages: '68–83' },
     { id: 'heritage', label: '3. Öğrenme Alanı', title: 'Ortak Mirasımız', pages: '86–155' },
-    { id: 'review', label: 'Yıl sonu', title: 'Tekrar ve paylaşım', pages: '12–155' },
   ];
   const UNIT_BY_ID = new Map(UNITS.map((unit) => [unit.id, unit]));
 
@@ -34,15 +33,13 @@
   const activity = (sourceStyle, title, prompt, fields, hint = '') => ({ sourceStyle, title, prompt, fields, hint });
   const week = (id, date, unitId, topic, focus, tasks, activityData) => {
     const unit = UNIT_BY_ID.get(unitId);
-    const source = unitId === 'review'
-      ? 'Önceki üç öğrenme alanından seçilen konular; yıl sonu tekrar önerisi.'
-      : `MEB 7. Sınıf Sosyal Bilgiler Ders Kitabı, 1. Kitap (2026), ${unit.label}, “${unit.title}”, s. ${unit.pages}.`;
+    const source = `MEB 7. Sınıf Sosyal Bilgiler Ders Kitabı, 1. Kitap (2026), ${unit.label}, “${unit.title}”, s. ${unit.pages}.`;
     return { id, date, unitId, unit: unit.title, unitLabel: unit.label, topic, focus, tasks, activity: activityData, source };
   };
 
   // Her satır ayrı haftadır: konu, tarih ve ilerleme başka haftayla birleştirilmez.
   // Takvim mevcut uygulamadaki 2026–2027 haftalık tarihleriyle aynı tutulmuştur.
-  const WEEKS = [
+  const SOURCE_WEEKS = [
     week(1, '14–18 Eyl', 'together', 'Gruplarda ve sosyal hayatta iletişimin önemi', 'Etkili iletişimin grup yaşamına katkısını açıkla; iletişimi etkileyen etmenleri günlük örnekler, gözlemler ve kaynak araştırmasıyla incele.', [
       'Ders kitabındaki iletişim bölümünü ve haftanın özgün konu anlatımını oku.',
       'Sohbet, trafik metni ve dört örnek olaydaki iletişim davranışlarını inceleyip gözlem/merak listesi oluştur.',
@@ -159,17 +156,6 @@
       response('example2', 'Örnek 2 ve katkı', 'Başka bir alandan örnek…', 'textarea', 8),
       response('compare', 'Ortak yön / fark', 'İki örneğin toplumsal katkısını karşılaştır…', 'textarea', 8),
     ], 'Kitaptaki farklı alanlardan millî mesele örneklerini inceleme yaklaşımına dayanır.')),
-
-    week(12, '7–11 Ara', 'together', 'Birlikte Yaşamak · öğrenme alanı tekrarı', 'İletişim, fırsat eşitliği ve millî meseleler arasında bağlantı kur; öğrenmeni öz değerlendir.', [
-      'İletişim, fırsat eşitliği ve dayanışma kartlarını ilgili konu başlığıyla eşleştir.',
-      'Tekrar sorularında çoktan seçmeli ve çoklu seçim yanıtlarını kontrol et.',
-      'Açıklamalı kavram haritası ve öz değerlendirmeyle sonraki çalışma adımını belirle.',
-    ], activity('Kavram haritası', 'Birlikte yaşama kavram haritası', 'Üç konu başlığını örneklerle birbirine bağlayan kısa bir kavram haritası taslağı oluştur.', [
-      response('communication', 'İletişim → birlikte yaşama', 'İletişim hangi davranışla güçlenir?', 'textarea', 8),
-      response('equality', 'Fırsat eşitliği → katılım', 'Eşit katılımı hangi düzenleme destekler?', 'textarea', 8),
-      response('solidarity', 'Millî mesele → dayanışma', 'Ortak sorumluluğa bir örnek…', 'textarea', 8),
-      response('connection', 'Üç başlık arasındaki bağ', 'Ortak nokta nedir?', 'textarea', 8),
-    ], 'Kitaptaki öğrenme alanı özetleri ve kavram çalışmalarıyla uyumlu tekrar.')),
 
     week(13, '14–18 Ara', 'world', 'Küreselleşme ve günlük yaşam', 'Küreselleşmenin insan ve toplum hayatındaki etkilerini günlük örneklerle fark et.', [
       'Günlük hayatta farklı yerlerle bağlantı kurduğun üç örnek belirle.',
@@ -388,45 +374,103 @@
       response('evidence', 'Kaynakta bulduğum bilgi', 'Kendi cümlelerinle kısa not…', 'textarea', 8),
       response('conclusion', 'Sonucum', 'Soruma verdiğim yanıt…', 'textarea', 8),
     ], 'Kitaptaki soru kartları hazırlama ve araştırma raporu oluşturma etkinliklerinden esinlenir.')),
-
-    week(35, '7–11 Haz', 'heritage', 'Ortak Mirasımız · öğrenme alanı tekrarı', 'Anadolu’daki tarihî değişim, Osmanlı politikaları, yenilikler ve kültürel miras arasında bağ kur.', [
-      'Üç ana konu başlığından birer kavram seç.',
-      'Seçtiğin kavramlar arasında tarihî bir bağlantı kur.',
-      'Öz değerlendirmede güçlü olduğun ve tekrar etmek istediğin bir noktayı belirt.',
-    ], activity('Kavram haritası ve öz değerlendirme', 'Ortak Mirasımızı ilişkilendir', 'Öğrenme alanının üç konu başlığını birer örnekle bağlayan bir harita taslağı hazırla.', [
-      response('policies', 'Büyüme politikaları', 'Bir politika ve örneği…', 'textarea', 8),
-      response('innovations', 'Yenilikler', 'Bir ihtiyaç ve yenilik bağlantısı…', 'textarea', 8),
-      response('culture', 'Kültür ve medeniyet', 'Bir kültürel unsur ve işlevi…', 'textarea', 8),
-      response('reflection', 'Öz değerlendirmem', 'Güçlü yönüm ve tekrar edeceğim konu…', 'textarea', 8),
-    ], 'Kitaptaki öğrenme alanı özeti ve kendimi değerlendiriyorum bölümüyle uyumlu tekrar.')),
-
-    week(36, '14–18 Haz', 'review', 'Yıl sonu · üç öğrenme alanını karşılaştırma', 'Birlikte Yaşamak, Evimiz Dünya ve Ortak Mirasımız konularından öğrendiklerini anahtar kavramlarla hatırla.', [
-      'Her öğrenme alanından bir kavram ve bir örnek seç.',
-      'Bir kavramı günümüz yaşamıyla ilişkilendir.',
-      'Tekrar etmen gereken konuyu not et.',
-    ], activity('Karşılaştırmalı kavram haritası', 'Üç alan, üç bağlantı', 'Her öğrenme alanından seçtiğin kavramları toplumsal yaşam, dünya ve tarih bağlantılarıyla eşleştir.', [
-      response('together', 'Birlikte Yaşamak', 'Kavram + günlük yaşam örneği…', 'textarea', 8),
-      response('world', 'Evimiz Dünya', 'Kavram + güncel bağlantı…', 'textarea', 8),
-      response('heritage', 'Ortak Mirasımız', 'Kavram + tarihî örnek…', 'textarea', 8),
-      response('link', 'Ortak düşünce', 'Bu üç alanı birleştiren değer veya beceri…', 'textarea', 8),
-    ], 'Kitabın üç öğrenme alanının kavram ve özet çalışmalarından esinlenen yıl sonu tekrarı.')),
-
-    week(37, '21–25 Haz', 'review', 'Yıl sonu · öğrenme paylaşımı', 'Yıl boyunca öğrendiğin bir konuyu kısa, kanıta dayalı ve anlaşılır bir ürünle paylaş.', [
-      'Paylaşacağın konuyu seç ve ana mesajını bir cümleyle belirle.',
-      'Ürününe bir örnek, kaynak veya görsel gözlem ekle.',
-      'Çalışmanı aileden biriyle paylaş ve geri bildirim al.',
-    ], activity('Mini sergi / sunum kontrol listesi', 'Öğrenmemi paylaşıyorum', 'Seçtiğin konuyu kısa bir afiş, sözlü anlatım veya not kartıyla paylaşmaya hazırla.', [
-      response('title', 'Ürün başlığı', 'Konuya uygun kısa başlık…', 'text'),
-      response('message', 'Ana mesaj ve kanıt', 'Bir bilgi veya örnekle destekle…', 'textarea', 12),
-      checklistField('checks', 'Paylaşmadan önce kontrol et', [
-        { id: 'clear', label: 'Ana mesajım açık ve anlaşılır.' },
-        { id: 'evidence', label: 'En az bir örnek veya kaynak kullandım.' },
-        { id: 'respect', label: 'Farklı görüşlere saygılı bir dil kullandım.' },
-      ]),
-    ], 'Kitaptaki araştırma raporu, ürün oluşturma ve paylaşma adımlarından esinlenir.')),
   ];
 
+  // 1. dönem planı: kitap yalnız bir dönem olduğu için 37 haftalık liste 15 öğretim
+  // haftasına indirildi. Her satır, kaynak haftaları birlikte işleyen tek bir haftadır;
+  // konu, görev ve içerik kaynağı korunur, yalnızca hafta sayısı dönem takvimine uyar.
+  const TERM_PLAN = [
+    { id: 1, date: '14–18 Eyl', unitId: 'together', olds: [1, 2], topic: 'İletişim: gruplarda iletişimin önemi, süreç ve türler', focus: 'Etkili iletişimin grup yaşamına katkısını, iletişim sürecinin ögelerini ve sözlü–yazılı–sözsüz türleri ayırt et.', tasks: ['İletişimi bozan ve güçlendiren davranışları iki gruba ayır.','İletişim sürecinin ögelerini kendi cümlelerinle açıkla.','Sözlü, yazılı ve sözsüz iletişime birer örnek ver.','Bir grupta yaşadığın bir iletişim sorununu ve çözümünü yaz.'] },
+    { id: 2, date: '21–25 Eyl', unitId: 'together', olds: [3, 4], topic: 'Empati, ben dili ve anlaşmazlığı yapıcı çözme', focus: 'Duyguyu suçlamadan anlatan ben dili cümleleri kur; anlaşmazlıkta dinleme, sıra alma ve uzlaşma adımlarını uygula.', tasks: ['Bir çatışma cümlesini ben diliyle yeniden yaz.','Empati ile sempati arasındaki farkı örnekle göster.','Bir anlaşmazlık için üç çözüm üret, en uygununu gerekçelendir.','Farklılıklara saygıyı gösteren bir sınıf kuralı öner.'] },
+    { id: 3, date: '28 Eyl–2 Eki', unitId: 'together', olds: [5, 6], topic: 'Fırsat eşitliği ve erişilebilir çevre', focus: 'Özel gereksinimli bireylerin katılımını zorlaştıran engelleri fark et ve erişilebilirliğin günlük yaşamdaki karşılığını açıkla.', tasks: ['Okulunda bir erişim engeli belirle ve nedenini yaz.','Erişilebilirliğin yalnızca rampa olmadığını üç örnekle açıkla.','Fırsat eşitliğini destekleyen bir hak sırala.','Bir engeli kaldıracak iki öneri yaz.'] },
+    { id: 4, date: '5–9 Eki', unitId: 'together', olds: [7, 8], topic: 'Engelsiz yaşam projesi, millî mesele ve ortak değerler', focus: 'Fırsat eşitliği için hedefi ve adımları olan bir proje tasarla; millî meselelerde ortak değerlerin birleştirici rolünü açıkla.', tasks: ['Projenin hedefini, adımlarını ve ölçülebilir sonucunu yaz.','Millî mesele kavramını bir örnekle açıkla.','Ortak değerlerin toplumu nasıl birleştirdiğini belirt.','Projeni bir arkadaşının önerisiyle geliştir.'] },
+    { id: 5, date: '12–16 Eki', unitId: 'together', olds: [9, 10, 11], topic: 'Millî günler, Millî Mücadele ve toplumsal dayanışma', focus: 'Ulusal bayramların ve anma günlerinin ortak hafızadaki yerini, Millî Mücadele’de birliğin rolünü ve dayanışma örneklerini yorumla.', tasks: ['Bir millî günün ortak hafızaya katkısını açıkla.','Millî Mücadele’de birliği sağlayan iki gelişmeyi sırala.','Afet, bilim ya da sporda bir dayanışma örneği ver.','Ortak değerleri korumak için bir sorumluluk yaz.'] },
+    { id: 6, date: '19–23 Eki', unitId: 'world', olds: [13, 14], topic: 'Küreselleşme ve insan hayatına etkileri', focus: 'Küreselleşmenin günlük yaşamdaki olumlu ve olumsuz etkilerini örneklerle karşılaştır.', tasks: ['Günlük hayatından küresel bir bağlantı örneği ver.','Küreselleşmenin iki olumlu, iki olumsuz etkisini yaz.','Bir ürünün üretim ve tüketim yolculuğunu açıkla.','Yerel kültürü korumak için bir öneri yaz.'] },
+    { id: 7, date: '26–30 Eki', unitId: 'world', olds: [15, 16], topic: 'Küresel bağlantılar, bölgesel ve küresel sorunlar', focus: 'Bilgi, ürün ve kültür dolaşımının fırsatlarıyla sorumluluklarını ayırt et; bir sorunun etki alanını belirleyerek bölgesel mi küresel mi olduğuna karar ver.', tasks: ['Bir sorunun etki alanını ve ilgili toplulukları yaz.','Bölgesel ve küresel soruna birer örnek ver.','Küresel bağlantıların getirdiği bir sorumluluğu açıkla.','Bir sorunun nedenlerini üç başlıkta topla.'] },
+    { id: 8, date: '2–6 Kas', unitId: 'world', olds: [17, 18], topic: 'Küresel sorunlara çözümler ve Türkiye’nin rolü', focus: 'Çözüm önerilerinde birey, kurum ve ülkelerin sorumluluğunu ayırt et; Türkiye’nin diplomasi, insani yardım ve iş birliği rollerini örneklendir.', tasks: ['Bir küresel sorun için birey ve kurum görevi yaz.','Türkiye’nin uluslararası bir iş birliğine örnek ver.','İnsani yardımın önemini bir örnekle açıkla.','Sınav öncesi konuları üç başlıkta özetle.'] },
+    { id: 9, date: '9–13 Kas', unitId: 'heritage', olds: [19, 20], topic: 'Anadolu’da Türk beylikleri ve Osmanlı Beyliği’nin kuruluşu', focus: 'Haritadan yararlanarak Anadolu’nun siyasi yapısını açıkla; kuruluş yerinin güçlü, zayıf, fırsat ve tehdit yönlerini değerlendir.', tasks: ['Anadolu’daki beyliklerin dağılışını haritadan oku.','Kuruluş yerinin iki güçlü yönünü yaz.','Bir fırsat ve bir tehdit belirle.','Beylikten devlete geçişin nedenlerini sırala.'] },
+    { id: 10, date: '23–27 Kas', unitId: 'heritage', olds: [21, 22], topic: 'Osmanlı’nın büyüme politikaları ve ilk genişleme', focus: 'Gaza, fetih, iskân ve istimalet kavramlarını örneklerle açıkla; Osman Bey’den Orhan Bey’e yaşanan gelişmeleri zaman sırasına koy.', tasks: ['Dört büyüme politikasını birer örnekle açıkla.','Kuruluş dönemi gelişmelerini tarih sırasına diz.','İskân ve istimaletin işlevini karşılaştır.','Bir fetih kararının nedenlerini yaz.'] },
+    { id: 11, date: '30 Kas–4 Ara', unitId: 'heritage', olds: [23, 24], topic: 'Balkanlarda genişleme ve İstanbul’un fethi', focus: 'Balkanlardaki genişlemenin devleti güçlendirmesini ve İstanbul’un fethinin neden, hazırlık ve sonuçlarını neden–sonuç ilişkisi içinde açıkla.', tasks: ['Balkanlarda izlenen yerleşim politikasını açıkla.','Fethin iki nedenini ve iki hazırlığını yaz.','Fethin sonuçlarını dünya tarihi açısından değerlendir.','Bir olayın neden–sonuç zincirini kur.'] },
+    { id: 12, date: '7–11 Ara', unitId: 'heritage', olds: [25, 26], topic: 'Yavuz ve Kanuni dönemleri, deniz seyahatleri ve ekonomi', focus: 'Harita ve ticaret yollarından yararlanarak Osmanlı’nın doğu ve Akdeniz siyasetini, deniz yollarının ekonomiye etkisini açıkla.', tasks: ['Yavuz ve Kanuni dönemi kazanımlarını haritada işaretle.','Ticaret yollarının yön değiştirmesinin sonucunu yaz.','Osmanlı ekonomisini etkileyen iki gelişmeyi açıkla.','Bir haritadan üç çıkarım yaz.'] },
+    { id: 13, date: '14–18 Ara', unitId: 'heritage', olds: [27, 28, 29], topic: 'Rönesans, Reform ve Aydınlanma: değişen dünya', focus: 'Avrupa’daki bilim, sanat ve düşünce değişimini neden ve sonuçlarıyla açıkla; bu değişimlerin Osmanlı’ya yansımalarını değerlendir.', tasks: ['Rönesans’ın iki sonucunu yaz.','Reformun nedenlerini ve sonuçlarını ayır.','Aydınlanma düşüncesinin bilime etkisini açıkla.','Bu değişimlerin Osmanlı’ya yansımasına bir örnek ver.'] },
+    { id: 14, date: '21–25 Ara', unitId: 'heritage', olds: [30, 31, 32], topic: 'Sanayi İnkılabı ve Osmanlı’nın yenilik arayışları', focus: 'Makineleşmenin üretim ve toplum hayatını nasıl değiştirdiğini açıkla; Osmanlı yeniliklerini amaç, uygulama ve sonuç bakımından yorumla.', tasks: ['Sanayi İnkılabı’nın üç sonucunu yaz.','Bir Osmanlı yeniliğinin amacını ve sonucunu açıkla.','Yeniliklerin neden beklenen sonucu vermediğini tartış.','Üretim biçimindeki değişimi örnekle göster.'] },
+    { id: 15, date: '28–31 Ara', unitId: 'heritage', olds: [33, 34], topic: 'Osmanlı kültür ve medeniyeti, kültürel miras araştırması', focus: 'Eğitim, hukuk, sanat ve gündelik yaşamdan izleri yorumla; kültürel miras için sorunu, kanıtı ve öneriyi içeren bir araştırma raporu hazırla.', tasks: ['Kültür ve medeniyete üç örnek ver.','Bir miras öğesinin bugüne kalan izini açıkla.','Rapor için soru, kaynak ve kanıt planı yaz.','Dönem boyunca öğrendiğin üç kavramı ilişkilendir.'] },
+  ];
+
+  const SOURCE_WEEK_BY_ID = new Map(SOURCE_WEEKS.map((item) => [item.id, item]));
+
+  // Birleşik haftanın kitap çalışması, kaynak haftaların sorularını tek akışta toplar;
+  // böylece ikinci konu da haftanın içinde sorulur, alan kimlikleri çakışmaz.
+  function mergedActivity(plan, parts) {
+    const primary = parts[0].activity;
+    if (parts.length === 1) return primary;
+    const fields = [];
+    parts.forEach((part, index) => {
+      (part.activity?.fields || []).forEach((field) => {
+        if (fields.some((item) => item.label === field.label)) return;
+        fields.push({ ...field, id: index === 0 ? field.id : `${field.id}-${index + 1}` });
+      });
+    });
+    return {
+      ...primary,
+      title: `${plan.topic} · çalışma`,
+      prompt: parts.map((part) => part.activity?.prompt).filter(Boolean).join(' '),
+      fields,
+      hint: primary.hint,
+    };
+  }
+
+  function mergedWeek(plan) {
+    const parts = plan.olds.map((id) => SOURCE_WEEK_BY_ID.get(id)).filter(Boolean);
+    const head = week(plan.id, plan.date, plan.unitId, plan.topic, plan.focus, plan.tasks, mergedActivity(plan, parts));
+    head.sourceIds = plan.olds.slice();
+    return head;
+  }
+
+  const WEEKS = TERM_PLAN.map(mergedWeek);
+
   const LESSON_CONTENT = window.SOCIAL_STUDIES_CONTENT || { lessons: {}, checks: {} };
+
+  // İçerik dosyası kaynak haftalara göre yazılmıştır; dönem planındaki her hafta
+  // kendi kaynak haftalarının konu anlatımını, sınamasını ve etkinliklerini birleştirir.
+  const CONTENT_GROUPS = new Map(TERM_PLAN.map((item) => [item.id, item.olds.slice()]));
+  const groupIds = (id) => CONTENT_GROUPS.get(id) || [id];
+  const contentFor = (id) => groupIds(id).map((oldId) => LESSON_CONTENT.lessons?.[oldId]).filter(Boolean);
+
+  function mergedLesson(id) {
+    const parts = contentFor(id);
+    if (!parts.length) return {};
+    if (parts.length === 1) return parts[0];
+    const terms = [];
+    parts.forEach((part) => (part.terms || []).forEach((term) => {
+      if (!terms.includes(term)) terms.push(term);
+    }));
+    const points = [];
+    parts.forEach((part) => (part.points || []).forEach((point) => {
+      if (!points.includes(point)) points.push(point);
+    }));
+    const last = parts[parts.length - 1];
+    return {
+      summary: parts.map((part) => part.summary).filter(Boolean).join('\n\n'),
+      points: points.slice(0, 10),
+      terms,
+      transfer: last.transfer || parts[0].transfer,
+      flowDescription: parts.map((part) => part.flowDescription).filter(Boolean)[0] || '',
+    };
+  }
+
+  function mergedChecks(id) {
+    return groupIds(id).flatMap((oldId) => {
+      const items = LESSON_CONTENT.checks?.[oldId];
+      return Array.isArray(items) ? items : [];
+    });
+  }
+
+  function mergedActivities(id) {
+    const groups = groupIds(id).map((oldId) => LESSON_CONTENT.activities?.[oldId]).filter((list) => Array.isArray(list) && list.length);
+    if (!groups.length) return null;
+    return groups.flat();
+  }
 
   function makeChoiceField(question, index) {
     const options = question.options.map((label, optionIndex) => ({
@@ -455,18 +499,18 @@
   }
 
   for (const item of WEEKS) {
-    const content = LESSON_CONTENT.lessons?.[item.id] || {};
-    const quiz = LESSON_CONTENT.checks?.[item.id] || [];
-    const customActivities = LESSON_CONTENT.activities?.[item.id];
+    const content = mergedLesson(item.id);
+    const quiz = mergedChecks(item.id);
+    const customActivities = mergedActivities(item.id);
     item.summary = content.summary || item.focus;
-    item.summaryTitle = content.summaryTitle || (item.id >= 3 && item.id <= 12 ? `${item.topic} · konu anlatımı` : 'Haftanın konu özeti');
+    item.summaryTitle = content.summaryTitle || `${item.topic} · konu anlatımı`;
     item.summaryPoints = Array.isArray(content.points) ? content.points : [];
     item.keyTerms = Array.isArray(content.terms) ? content.terms : [];
     const hasCustomActivities = Array.isArray(customActivities) && customActivities.length > 0;
-    const customFlowTitles = item.id >= 13 && item.id <= 18 && hasCustomActivities
+    const customFlowTitles = item.unitId === 'world' && hasCustomActivities
       ? ['Kısa sınama', ...customActivities.map((activityItem) => activityItem.title)]
       : (hasCustomActivities ? customActivities.map((activityItem) => activityItem.title) : []);
-    item.flowDescription = content.flowDescription || (item.id >= 3 && item.id <= 18 && hasCustomActivities
+    item.flowDescription = content.flowDescription || (hasCustomActivities
       ? `Konu anlatımını oku; ardından ${customFlowTitles.join(' → ')} etkinliklerini sırayla tamamla.`
       : 'Kısa sınama, kitaba dayalı özgün çalışma ve konuya özel uygulama adımlarını sırayla tamamla.');
     const transfer = content.transfer || {};
@@ -478,7 +522,7 @@
           ? activityItem.fields
           : (Array.isArray(activityItem.questions) ? activityItem.questions.flatMap((questionItem) => questionItem.fields || []) : []),
       }));
-      if (item.id >= 13 && item.id <= 18 && quiz.length) {
+      if (item.unitId === 'world' && quiz.length) {
         item.activities = [{
           id: 'self-check',
           sourceStyle: 'Çoktan seçmeli · anında öz değerlendirme',
