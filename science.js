@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'emr7lect.science.v1';
+  const STORAGE_KEY = 'emr7lect.science.v2';
   const DEFAULT_MODEL = 'openai/gpt-oss-20b';
   const EBA_URL = 'https://www.eba.gov.tr/';
   const MEBI_URL = 'https://mebi.eba.gov.tr/';
@@ -17,43 +17,21 @@
   const WEEK_BY_ID = new Map(WEEKS.map((week) => [week.id, week]));
 
   // Her hafta için tek, konuya özel raster illüstrasyon. Görseller 1600 px WebP olarak
-  // üretildi; 800 px sürümü srcset ile küçük ekranlara sunulur.
+  // üretildi; 800 px sürümü srcset ile küçük ekranlara sunulur. 2. hafta araç galerisini,
+  // 5. ve 15. haftalar ise ünite karşılaştırma galerilerini kullanır.
   const WEEK_IMAGE_SOURCES = {
     1: { src: 'assets/science-week-01.webp', small: 'assets/science-week-01-800.webp', width: 1600, height: 893, alt: "Dünya yörüngesinde görev yapan bir gözlem uydusu; algılayıcısı kıyı çizgisi ve bulutlara doğru bakıyor." },
-    2: { src: 'assets/science-week-02.webp', small: 'assets/science-week-02-800.webp', width: 1600, height: 893, alt: "Anadolu üzerinde yörüngede duran güneş panelli haberleşme uydusu ve aşağıda yer istasyonu çanak antenleri." },
-    4: { src: 'assets/science-week-04.webp', small: 'assets/science-week-04-800.webp', width: 1600, height: 893, alt: "Yüksek ve kuru bir dağ sırtında, Samanyolu’nun altında açık kubbeli iki gözlemevi." },
-    5: { src: 'assets/science-week-05.webp', small: 'assets/science-week-05-800.webp', width: 1600, height: 893, alt: "Uydu görüntülerinin tarım ve hava gözleminde kullanıldığı bir kontrol odası ve ekranda yeryüzü haritası." },
-    6: { src: 'assets/science-week-06.webp', small: 'assets/science-week-06-800.webp', width: 1600, height: 893, alt: "Dünya çevresinde farklı yörüngelerde sürüklenen işlevini yitirmiş uydu parçaları ve yanlarından geçen çalışan bir uydu." },
-    7: { src: 'assets/science-week-07.webp', small: 'assets/science-week-07-800.webp', width: 1600, height: 893, alt: "Kent ışıklarının gökyüzüne saçılarak yıldızları gizlediği bir gece; karşıda karanlık tepede görünür Samanyolu." },
-    8: { src: 'assets/science-week-08.webp', small: 'assets/science-week-08-800.webp', width: 1600, height: 893, alt: "Gaz ve tozdan oluşan bulutsunun yoğun çekirdeğinde beliren önyıldız ve çevresindeki madde diski." },
-    9: { src: 'assets/science-week-09.webp', small: 'assets/science-week-09-800.webp', width: 1600, height: 893, alt: "Süpernova ile dağılan gaz filamentleri, nötron yıldızı ve kara delik çevresindeki ışığı büken disk; önde şişen kırmızı dev yıldız." },
-    10: { src: 'assets/science-week-10.webp', small: 'assets/science-week-10-800.webp', width: 1600, height: 893, alt: "Farklı renk ve parlaklıkta yıldızların göründüğü gece gökyüzü; bir takımyıldızın yıldızları ince çizgilerle birleştirilmiş." },
-    11: { src: 'assets/science-week-11.webp', small: 'assets/science-week-11-800.webp', width: 1600, height: 893, alt: "Mavi sarmal kolları ve sıcak çekirdeğiyle karşıdan görünen sarmal galaksi ve arka planda daha uzak galaksiler." },
-    13: { src: 'assets/science-week-13.webp', small: 'assets/science-week-13-800.webp', width: 1600, height: 893, alt: "Spor salonunda ağır bir kasayı iterek yatay yönde yer değiştirmesini sağlayan öğrenci." },
-    14: { src: 'assets/science-week-14.webp', small: 'assets/science-week-14-800.webp', width: 1600, height: 893, alt: "Okul koridorunda çantasını taşıyarak yürüyen öğrenci; taşıma kuvveti yukarı, yer değiştirme yatay yönde." },
-    15: { src: 'assets/science-week-15.webp', small: 'assets/science-week-15-800.webp', width: 1600, height: 893, alt: "Halter kaldıran sporcu, yuvarlanan futbol topu ve koşan çocuk; hareket eden cisimlerin kinetik enerjisi." },
-    16: { src: 'assets/science-week-16.webp', small: 'assets/science-week-16-800.webp', width: 1600, height: 893, alt: "Yüksekte duran bir top, gerilmiş bir yay ve rafta bekleyen ağırlık; yükseklik ve esneklikle depolanan enerji." },
-    17: { src: 'assets/science-week-17.webp', small: 'assets/science-week-17-800.webp', width: 1600, height: 893, alt: "Salıncakta sallanan çocuk; en yüksek noktada depolanan enerjinin en alt noktada harekete dönüşmesi." },
-    18: { src: 'assets/science-week-18.webp', small: 'assets/science-week-18-800.webp', width: 1600, height: 893, alt: "Pürüzlü zeminde yavaşlayan top ve tekerlekten çıkan ısı ile ses; sürtünmeyle çevreye aktarılan enerji." },
-    19: { src: 'assets/science-week-19.webp', small: 'assets/science-week-19-800.webp', width: 1600, height: 893, alt: "Lunaparkta yüksekten inen vagon, dönen çark ve yürüyen ziyaretçiler; iş ve enerji dönüşümlerinin günlük yaşamda bir arada görünümü." },
-    20: { src: 'assets/science-week-20.webp', small: 'assets/science-week-20-800.webp', width: 1600, height: 893, alt: "Yarı saydam insan silüeti içinde ağızdan başlayıp bağırsaklara uzanan sindirim kanalı ve önünde dengeli bir öğün." },
-    21: { src: 'assets/science-week-21.webp', small: 'assets/science-week-21-800.webp', width: 1600, height: 893, alt: "İnsan gövdesinde yemek borusu, mide, karaciğer, pankreas, ince ve kalın bağırsağın konumlarını gösteren anatomik illüstrasyon." },
-    22: { src: 'assets/science-week-22.webp', small: 'assets/science-week-22-800.webp', width: 1600, height: 893, alt: "İnce bağırsak yüzeyindeki villusların yakın görünümü ve besin moleküllerinin emilerek kan damarına geçişi." },
-    23: { src: 'assets/science-week-23.webp', small: 'assets/science-week-23-800.webp', width: 1600, height: 893, alt: "Sebze, meyve, tam tahıl ve su ile yürüyüş yapan bir aile; sindirim sağlığını destekleyen dengeli beslenme ve hareket." },
-    24: { src: 'assets/science-week-24.webp', small: 'assets/science-week-24-800.webp', width: 1600, height: 893, alt: "Kalp, atardamar, toplardamar ve kılcal damarlarla vücuda yayılan kan dolaşımı ağının anatomik illüstrasyonu." },
-    25: { src: 'assets/science-week-25.webp', small: 'assets/science-week-25-800.webp', width: 1600, height: 893, alt: "Kalp ile akciğerler arasındaki küçük, kalp ile vücut arasındaki büyük kan dolaşımını gösteren şematik illüstrasyon." },
-    26: { src: 'assets/science-week-26.webp', small: 'assets/science-week-26-800.webp', width: 1600, height: 893, alt: "Sağlık çalışanının gözetiminde koldan kan bağışı alınan bir bağış merkezi ve kan torbası." },
-    27: { src: 'assets/science-week-27.webp', small: 'assets/science-week-27-800.webp', width: 1600, height: 893, alt: "Parkta tempolu yürüyüş yapan yetişkinler, yanında su ve meyve; dolaşım sağlığını destekleyen günlük alışkanlıklar." },
-    28: { src: 'assets/science-week-28.webp', small: 'assets/science-week-28-800.webp', width: 1600, height: 893, alt: "Burun, yutak, gırtlak, soluk borusu, bronşlar ve akciğerleri gösteren solunum sistemi anatomik illüstrasyonu." },
-    29: { src: 'assets/science-week-29.webp', small: 'assets/science-week-29-800.webp', width: 1600, height: 893, alt: "Diyaframın kasılıp gevşemesiyle akciğerlerin dolması ve alveollerde oksijen ile karbondioksit alışverişi." },
-    30: { src: 'assets/science-week-30.webp', small: 'assets/science-week-30-800.webp', width: 1600, height: 893, alt: "Açık pencereden temiz hava giren havalandırılmış bir sınıf ve pencereden görünen ağaçlıklı yeşil alan." },
-    31: { src: 'assets/science-week-31.webp', small: 'assets/science-week-31-800.webp', width: 1600, height: 893, alt: "Zararlı madde dumanının solunum yollarına ve akciğerlere ulaşmasını gösteren uyarıcı, yargılamayan eğitim illüstrasyonu." },
-    32: { src: 'assets/science-week-32.webp', small: 'assets/science-week-32-800.webp', width: 1600, height: 893, alt: "Böbrekler, üreterler, idrar kesesi ve üretrayı gösteren boşaltım sistemi anatomik illüstrasyonu." },
-    33: { src: 'assets/science-week-33.webp', small: 'assets/science-week-33-800.webp', width: 1600, height: 893, alt: "Böbrek içindeki süzme birimlerinin yakın görünümü; kanın süzülmesi ve oluşan idrarın toplanması." },
-    34: { src: 'assets/science-week-34.webp', small: 'assets/science-week-34-800.webp', width: 1600, height: 893, alt: "Su içen bir çocuk, taze sebze meyve ve spor ayakkabısı; boşaltım sağlığını destekleyen günlük alışkanlıklar." },
-    35: { src: 'assets/science-week-35.webp', small: 'assets/science-week-35-800.webp', width: 1600, height: 893, alt: "Yarı saydam insan gövdesinde sindirim, dolaşım, solunum ve boşaltım sistemleri; sistemler arasında akan besin, oksijen ve atık madde şeridi." },
-    36: { src: 'assets/science-week-36.webp', small: 'assets/science-week-36-800.webp', width: 1600, height: 893, alt: "Tarihsel anatomi çalışma odasında elle çizilmiş anatomi levhaları, deri kaplı defterler ve pirinç mikroskop; gözlemden bilimsel modele geçiş." },
-    37: { src: 'assets/science-week-37.webp', small: 'assets/science-week-37-800.webp', width: 1600, height: 893, alt: "Ders yılının sonunda bir öğrenci masası: açık defterde şemalar, renkli notlar, Güneş Sistemi ve kalp maketleri." },
+    3: { src: 'assets/science-week-06.webp', small: 'assets/science-week-06-800.webp', width: 1600, height: 893, alt: "Dünya çevresinde farklı yörüngelerde sürüklenen işlevini yitirmiş uydu parçaları ve yanlarından geçen çalışan bir uydu." },
+    4: { src: 'assets/science-week-09.webp', small: 'assets/science-week-09-800.webp', width: 1600, height: 893, alt: "Süpernova ile dağılan gaz filamentleri, nötron yıldızı ve kara delik çevresindeki ışığı büken disk; önde şişen kırmızı dev yıldız." },
+    6: { src: 'assets/science-week-13.webp', small: 'assets/science-week-13-800.webp', width: 1600, height: 893, alt: "Spor salonunda ağır bir kasayı iterek yatay yönde yer değiştirmesini sağlayan öğrenci." },
+    7: { src: 'assets/science-week-15.webp', small: 'assets/science-week-15-800.webp', width: 1600, height: 893, alt: "Halter kaldıran sporcu, yuvarlanan futbol topu ve koşan çocuk; hareket eden cisimlerin kinetik enerjisi." },
+    8: { src: 'assets/science-week-18.webp', small: 'assets/science-week-18-800.webp', width: 1600, height: 893, alt: "Pürüzlü zeminde yavaşlayan top ve tekerlekten çıkan ısı ile ses; sürtünmeyle çevreye aktarılan enerji." },
+    9: { src: 'assets/science-week-20.webp', small: 'assets/science-week-20-800.webp', width: 1600, height: 893, alt: "Yarı saydam insan silüeti içinde ağızdan başlayıp bağırsaklara uzanan sindirim kanalı ve önünde dengeli bir öğün." },
+    10: { src: 'assets/science-week-22.webp', small: 'assets/science-week-22-800.webp', width: 1600, height: 893, alt: "İnce bağırsak yüzeyindeki villusların yakın görünümü ve besin moleküllerinin emilerek kan damarına geçişi." },
+    11: { src: 'assets/science-week-24.webp', small: 'assets/science-week-24-800.webp', width: 1600, height: 893, alt: "Kalp, atardamar, toplardamar ve kılcal damarlarla vücuda yayılan kan dolaşımı ağının anatomik illüstrasyonu." },
+    12: { src: 'assets/science-week-26.webp', small: 'assets/science-week-26-800.webp', width: 1600, height: 893, alt: "Sağlık çalışanının gözetiminde koldan kan bağışı alınan bir bağış merkezi ve kan torbası." },
+    13: { src: 'assets/science-week-28.webp', small: 'assets/science-week-28-800.webp', width: 1600, height: 893, alt: "Burun, yutak, gırtlak, soluk borusu, bronşlar ve akciğerleri gösteren solunum sistemi anatomik illüstrasyonu." },
+    14: { src: 'assets/science-week-32.webp', small: 'assets/science-week-32-800.webp', width: 1600, height: 893, alt: "Böbrekler, üreterler, idrar kesesi ve üretrayı gösteren boşaltım sistemi anatomik illüstrasyonu." },
   };
 
   const VEHICLE_IMAGES = [
@@ -66,19 +44,21 @@
     { src: 'assets/science-vehicle-space-telescope.webp', small: 'assets/science-vehicle-space-telescope-800.webp', width: 1600, height: 1073, alt: "Uzaktaki gök cisimlerinden gelen ışığı toplayan, güneş panelli uzay teleskobu.", label: "Teleskop · ışık toplar" },
   ];
 
-  // Ünite ve sistem tekrarlarında haftalık görseller yeniden kullanılır.
+  // Ünite karşılaştırma galerileri: her kart ayrı bir haftanın illüstrasyonunu kullanır.
   const GALLERY_IMAGES = {
-    12: { title: 'Uzay Çağı: ana fikirler bir arada', items: [
-      { week: 1, label: 'Araştırma araçları' }, { week: 6, label: 'Yörünge güvenliği' },
-      { week: 8, label: 'Yıldızların yaşamı' }, { week: 11, label: 'Galaksi ölçeği' },
+    5: { title: 'Uzay Çağı: ana fikirler bir arada', items: [
+      { ...WEEK_IMAGE_SOURCES[1], label: 'Araştırma araçları' },
+      { ...WEEK_IMAGE_SOURCES[3], label: 'Yörünge güvenliği' },
+      { ...WEEK_IMAGE_SOURCES[4], label: 'Yıldızların yaşamı' },
+      { src: 'assets/science-week-11.webp', small: 'assets/science-week-11-800.webp', width: 1600, height: 893, alt: 'Mavi sarmal kolları ve sıcak çekirdeğiyle karşıdan görünen sarmal galaksi ve arka planda daha uzak galaksiler.', label: 'Galaksi ölçeği' },
     ] },
-    35: { title: 'Vücudumuzdaki sistemleri karşılaştıralım', items: [
-      { week: 20, label: 'Sindirim' }, { week: 24, label: 'Dolaşım' },
-      { week: 28, label: 'Solunum' }, { week: 32, label: 'Boşaltım' },
+    15: { title: 'Vücudumuzdaki sistemleri karşılaştıralım', items: [
+      { ...WEEK_IMAGE_SOURCES[9], label: 'Sindirim' },
+      { ...WEEK_IMAGE_SOURCES[11], label: 'Dolaşım' },
+      { ...WEEK_IMAGE_SOURCES[13], label: 'Solunum' },
+      { ...WEEK_IMAGE_SOURCES[14], label: 'Boşaltım' },
     ] },
   };
-  GALLERY_IMAGES[36] = GALLERY_IMAGES[35];
-  GALLERY_IMAGES[37] = GALLERY_IMAGES[35];
 
   const VISUAL_ROUTES = {
     telescope: [{ label: 'Gözlem için uygun yer', text: 'Yüksek · kuru · açık · kent ışıklarından uzak' }],
@@ -268,7 +248,7 @@
 
   function visualGalleryImages(item) {
     const gallery = GALLERY_IMAGES[item.id];
-    if (gallery) return gallery.items.map((entry) => ({ ...WEEK_IMAGE_SOURCES[entry.week], week: entry.week, label: entry.label }));
+    if (gallery) return gallery.items;
     if (item.visual === 'spaceVehicles') return VEHICLE_IMAGES;
     const week = WEEK_IMAGE_SOURCES[item.id];
     return week ? [week] : [];
@@ -371,7 +351,7 @@
     return `<section class="science-open-activity" aria-labelledby="science-activity-title-${item.id}">
       <div class="science-activity-heading"><div class="tag">ÖZGÜN UYGULAMA</div><h4 id="science-activity-title-${item.id}">${escapeHTML(item.activity.title)}</h4><p>${escapeHTML(item.activity.format)}</p></div>
       <p class="science-activity-prompt">${escapeHTML(item.activity.prompt)}</p>
-      ${item.id === 3 ? '<p class="science-activity-visual-guide">Görsel galerisine dönerek araçları görevleriyle eşleştir: roket yükü taşır; uydu yörüngede sinyal ya da veri iletir; sonda uzaktan ölçüm yapar; mekik insan ve malzeme taşır; istasyon araştırma ortamı sağlar; teleskop ışık toplar.</p>' : ''}
+      ${item.visual === 'spaceVehicles' ? '<p class="science-activity-visual-guide">Görsel galerisine dönerek araçları görevleriyle eşleştir: roket yükü taşır; uydu yörüngede sinyal ya da veri iletir; sonda uzaktan ölçüm yapar; mekik insan ve malzeme taşır; istasyon araştırma ortamı sağlar; teleskop ışık toplar.</p>' : ''}
       <ul class="science-criteria">${item.activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>
       <label class="science-response-label" for="${responseId}">Yanıtın / model taslağın</label>
       <textarea class="science-response" id="${responseId}" data-science-activity-answer="${item.id}" maxlength="5000" rows="4" placeholder="${escapeHTML(item.activity.placeholder)}">${escapeHTML(saved.activityAnswer)}</textarea>

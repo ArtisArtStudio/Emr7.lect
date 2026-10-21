@@ -1208,15 +1208,28 @@ def main() -> int:
     if any(image.endswith(".jpg") for image in science_images):
         errors.append("Fen lessons must not depend on the old JPEG illustrations")
     raster_images = {image for image in science_images if image.endswith(".webp")}
-    # 3. hafta araç galerisi, 12. hafta ünite tekrarı olduğu için ayrı haftalık görsel kullanmaz.
-    gallery_weeks = {3, 12}
-    if len(raster_images) < 42 - PENDING_RASTER_MIGRATIONS:
-        errors.append(f"Fen lessons need a dedicated WebP illustration per week and per space vehicle (found {len(raster_images)})")
-    for week_number in range(1, 38):
-        if week_number in gallery_weeks:
-            continue
-        if not any(re.fullmatch(rf"assets/science-week-{week_number:02d}\.webp", image) for image in raster_images):
-            errors.append(f"Missing Fen weekly illustration for week {week_number}")
+    # 2. hafta araç galerisini, 5. ve 15. haftalar ünite karşılaştırma galerilerini kullanır.
+    gallery_weeks = {2, 5, 15}
+    week_block = re.search(r"const WEEK_IMAGE_SOURCES = \{(.*?)\n  \};", science_js, re.S)
+    if not week_block:
+        errors.append("Fen lessons need a weekly illustration table")
+    else:
+        week_images = {
+            int(week): asset
+            for week, asset in re.findall(r"(\d+): \{ src: '(assets/science-week-[^']+)'", week_block.group(1))
+        }
+        expected_weeks = set(range(1, 16)) - gallery_weeks
+        if set(week_images) != expected_weeks:
+            errors.append(f"Fen lessons need one illustration for each of weeks {sorted(expected_weeks)}")
+        for week, asset in sorted(week_images.items()):
+            if not (ROOT / asset).is_file():
+                errors.append(f"Missing Fen weekly illustration for week {week}: {asset}")
+    gallery_blocks = re.findall(r"\n    (\d+): \{ title: '[^']*', items: \[(.*?)\n    \] \},", science_js, re.S)
+    for gallery_week, body in gallery_blocks:
+        if len(re.findall(r"label: '", body)) != 4:
+            errors.append(f"Fen review week {gallery_week} should show four labelled comparison images")
+    if {int(week) for week, _ in gallery_blocks} != {5, 15}:
+        errors.append("Fen review weeks 5 and 15 need their own comparison galleries")
     if len(re.findall(r"label: '[^']+'", science_js)) < 7:
         errors.append("The seven space-vehicle diagrams need their own labelled raster illustrations")
     for image in science_images:
@@ -1423,7 +1436,7 @@ def main() -> int:
                 )
                 if science_test.returncode:
                     errors.append(f"Fen Bilimleri workspace test failed:\n{science_test.stderr.strip()}")
-                elif "Fen Bilimleri 37-week calendar and topic map, four-part in-context explanations, task-gated research results, original seven-vehicle gallery and weekly visuals, rose-berry palette, unchanged tasks/quizzes/activities, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
+                elif "Fen Bilimleri 15-week first-term calendar with merged topics, four-part in-context explanations, task-gated research results, original seven-vehicle gallery and weekly visuals, rose-berry palette, unchanged tasks/quizzes/activities, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
                     errors.append("Fen Bilimleri workspace test did not report success")
 
             if not errors:
@@ -1553,7 +1566,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, the date-aligned 37-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 
