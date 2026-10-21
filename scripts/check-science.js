@@ -127,8 +127,8 @@ assert.ok(listHTML.includes('science-week-exam'), 'The exam date should use its 
 // Konu bazlı etkinlik seti: ilk iki haftada en az 10 etkinlik, yedi etkileşim türü.
 const activityData = global.window.SCIENCE_ACTIVITIES;
 assert.ok(activityData, 'The activity set should be exposed for the science course.');
-assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7], 'The analysed activity rounds should cover the first seven weeks.');
-for (const weekId of [1, 2, 3, 4, 5, 6, 7]) {
+assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7, 8], 'The analysed activity rounds should cover the first eight weeks.');
+for (const weekId of [1, 2, 3, 4, 5, 6, 7, 8]) {
   const activities = science.activitiesFor(weekId);
   assert.ok(activities.length >= 10 && activities.length <= 15, `Week ${weekId} should carry 10–15 topic activities, found ${activities.length}.`);
   assert.equal(new Set(activities.map((activity) => activity.id)).size, activities.length, `Week ${weekId} activity ids should be unique.`);
@@ -151,7 +151,8 @@ assert.equal(science.practiceSummaryFor(4).total, 14, 'Week 4 should carry its o
 assert.equal(science.practiceSummaryFor(5).total, 14, 'Week 5 should carry its own activity set.');
 assert.equal(science.practiceSummaryFor(6).total, 14, 'Week 6 should carry its own activity set.');
 assert.equal(science.practiceSummaryFor(7).total, 14, 'Week 7 should carry its own activity set.');
-assert.equal(science.practiceSummaryFor(8).total, 0, 'Weeks without an analysed set should not fake activities.');
+assert.equal(science.practiceSummaryFor(8).total, 14, 'Week 8 should carry its own activity set.');
+assert.equal(science.practiceSummaryFor(9).total, 0, 'Weeks without an analysed set should not fake activities.');
 const week3Groups = global.window.SCIENCE_ACTIVITIES.weeks[3].groups;
 assert.equal(week3Groups.length, 3, 'Week 3 should be organised in three sections.');
 assert.deepEqual(week3Groups.map((group) => group.activities.length), [4, 4, 6], 'Week 3 sections should keep the shared 4-4-6 layout.');
@@ -192,6 +193,20 @@ assert.deepEqual([...new Set(week7Activities.map((activity) => activity.type))].
 assert.equal(week7Activities.filter((activity) => activity.type === 'text').length, 2, 'Week 7 should keep two writing tasks.');
 assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(global.window.SCIENCE_ACTIVITIES.weeks[7])), 'Week 7 activities must not cite the textbook.');
 assert.match(global.window.SCIENCE_ACTIVITIES.weeks[7].topic, /enerji/i, 'Week 7 should cover energy types.');
+const week8Groups = global.window.SCIENCE_ACTIVITIES.weeks[8].groups;
+assert.equal(week8Groups.length, 3, 'Week 8 should be organised in three sections.');
+assert.deepEqual(week8Groups.map((group) => group.activities.length), [4, 4, 6], 'Week 8 sections should keep the shared 4-4-6 layout.');
+const week8Activities = week8Groups.flatMap((group) => group.activities);
+assert.deepEqual([...new Set(week8Activities.map((activity) => activity.type))].sort(), ['choice', 'fill', 'match', 'order', 'sort', 'text', 'tf'], 'Week 8 should use all seven interaction types.');
+assert.equal(week8Activities.filter((activity) => activity.type === 'text').length, 2, 'Week 8 should keep two writing tasks.');
+assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(global.window.SCIENCE_ACTIVITIES.weeks[8])), 'Week 8 activities must not cite the textbook.');
+assert.match(global.window.SCIENCE_ACTIVITIES.weeks[8].topic, /sürtünme/i, 'Week 8 should cover friction.');
+for (const activity of week8Activities) {
+  if (activity.type === 'text') {
+    assert.ok(activity.criteria.length >= 3, `${activity.id} should keep at least three criteria.`);
+    assert.ok(activity.minChars >= 150, `${activity.id} should ask for a substantial piece of writing.`);
+  }
+}
 
 science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { 'f1-a01': { values: { 'm:k1': 'd1', 'm:k2': 'd2' }, checked: true } } } } });
 assert.equal(science.exportProgress().weeks['1'].activities['f1-a01'].values['m:k1'], 'd1', 'Activity answers should persist inside the weekly progress record.');
