@@ -15,11 +15,10 @@
 | Etkileşimli oyun | **3** |
 | Ölçme / puanlama aracı | **3** |
 | Metin, video veya ses içeriği | **12** |
-| Bunlardan uygulamada etkinliğe bağlı olan | **4** |
-| Etkinliği eksik olan metin/video/ses içeriği | **8** |
-| Ayrıca eksik olan ölçme seti | **1** (Tema 2, s. 117) |
+| Bunlardan uygulamada çalışmaya bağlı olan | **12** |
+| Hâlâ eksik olan | **1** (Tema 2 ek ölçme seti) |
 
-Yani gerçek resim: **12 içerikten 4'ü hazır, 8'i eksik.** Eksiklerin yedisi Tema 2'de (Bir Hilal Uğruna), biri Tema 1'in sonundaki “Motivasyon Defteri”.
+Yani artık **12 metin/video/ses içeriğinin tamamı** uygulamada bir çalışmaya bağlı. Dört içerik mevcut Tema 1 etkinlik akışında (metne ve rapora dayalı sorularla), sekizi yeni **karekod çalışması** kartlarında (izleme öncesi hazırlık + not çizelgesi + iki seçim sorusu + bir yazma görevi).
 
 ---
 
@@ -34,7 +33,7 @@ Yani gerçek resim: **12 içerikten 4'ü hazır, 8'i eksik.** Eksiklerin yedisi 
 | 5 | s. 48 | Şampiyonlar Müzesi | Etkileşimli oyun | — | ⛔ bilinçli olarak alınmadı |
 | 6 | s. 49 | Resimli Sözcükler | Etkileşimli oyun | — | ⛔ bilinçli olarak alınmadı |
 | 7 | s. 57 · 5. etkinlik | Osmanlı'da Astronomi… Ali Kuşçu | Dinleme | `adiny-a05`, `adiny-a06` + `adiny-review` 4. soru (rapor bağlamı) | ✅ var |
-| 8 | s. 69 · 4. etkinlik | **Beyhan Budak ile Motivasyon Defteri** | İzleme | — | ❌ eksik |
+| 8 | s. 69 · 4. etkinlik | Beyhan Budak ile Motivasyon Defteri | İzleme | `qr-motivasyon` kartı (5. hafta) | ✅ var |
 | 9 | s. 71 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | Tema ölçmesi 8 soru **özgün** yazıldı; karekod içeriği kullanılmadı | ⚠️ kısmi |
 
 Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısını istemez; uygulamadaki 8 soruluk tema ölçmesi özgün sorulardan oluşur. “Motivasyon Defteri” ise **tamamen boş**: bağlantı, etkinlik ve değerlendirme yok.
@@ -45,52 +44,67 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 
 | # | Kitap yeri | İçerik | Tür | Uygulamadaki karşılığı | Durum |
 | --- | --- | --- | --- | --- | --- |
-| 10 | s. 80 · 5. etkinlik | Sakarya Zaferi | İzleme | — | ❌ eksik |
+| 10 | s. 80 · 5. etkinlik | Sakarya Zaferi | İzleme | `qr-sakarya` kartı (7–8. hafta) | ✅ var |
 | 11 | s. 82 · 7. etkinlik | Dereceli Puanlama Anahtarı | Değerlendirme aracı | — | ⛔ etkinlik değil |
-| 12 | s. 91 · 5. etkinlik | Çanakkale Geçilmez | İzleme | — | ❌ eksik |
+| 12 | s. 91 · 5. etkinlik | Çanakkale Geçilmez | İzleme | `qr-canakkale-gecilmez` kartı (9. hafta) | ✅ var |
 | — | s. 93 | Konuşma Yapalım | Konuşma | — | ⏭️ kapsam dışı |
-| 13 | s. 95 · Hazırlık | Hey Onbeşli — Bir Çanakkale Ağıdı | İzleme | — | ❌ eksik |
-| 14 | s. 95 | Millî Mücadele Sergisi · Kahraman Çocuklar | İzleme | — | ❌ eksik (9. haftanın ana içeriği) |
-| 15 | s. 100 · 6. etkinlik | Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale | Medya metni | — | ❌ eksik |
-| 16 | s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | İzleme | — | ❌ eksik |
-| 17 | s. 116 · 5. soru | Çanakkale | İzleme | — | ❌ eksik |
-| 18 | s. 117 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | Hafta 9/14'te quiz bile yok | ❌ eksik |
+| 13 | s. 95 · Hazırlık | Hey Onbeşli — Bir Çanakkale Ağıdı | İzleme / Dinleme | `qr-hey-onbesli` kartı (9. hafta) | ✅ var |
+| 14 | s. 95 | Millî Mücadele Sergisi · Kahraman Çocuklar | İzleme | `qr-milli-mucadele-sergisi` kartı (9. hafta) | ✅ var |
+| 15 | s. 100 · 6. etkinlik | Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale | Medya metni | `qr-canakkale-medya` kartı (9. hafta) | ✅ var |
+| 16 | s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | İzleme | `qr-18-mart` kartı (10. hafta) | ✅ var |
+| 17 | s. 116 · 5. soru | Çanakkale | İzleme | `qr-canakkale-son` kartı (10. hafta) | ✅ var |
+| 18 | s. 117 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | — | ❌ eksik (ölçme seti) |
 
 ### Tema 2'nin uygulamadaki durumu
 
-- Hafta 7–8 (Mustafa 1881–1920): metin var, quiz yok, etkinlik yok.
-- Hafta 9 (Millî Mücadele Sergisi · dinleme/izleme): **hiçbir şey yok** — ne metin, ne bağlantı, ne etkinlik.
-- Hafta 10 (Mustafa Kemal'in Kağnısı): metin var, etkinlik yok.
+- Hafta 7–8 (Mustafa 1881–1920): metin + Sakarya Zaferi kartı. Quiz ve tema etkinlik seti hâlâ yok.
+- Hafta 9 (Millî Mücadele Sergisi · dinleme/izleme): dört karekod kartı var (sergi, Çanakkale Geçilmez, Hey Onbeşli, Çanakkale tanıtım metni). Haftanın kendi quiz'i yok.
+- Hafta 10 (Mustafa Kemal'in Kağnısı): metin + iki karekod kartı (18 Mart, Çanakkale).
 - Tema 3 (İletişim ve Sosyal İlişkiler) karekod listesi henüz yayımlanmamış; 14. haftadaki “Dijital Tayfa” için de elimizde içerik yok.
 
 ---
 
 ## 4. Hangilerini ekledim?
 
-Uygulamada karekod içeriğine bağlı **dört** çalışma var; hepsi Tema 1'de ve hepsi kullanıcı tarafından sağlanan Gemini analiz raporlarıyla destekleniyor:
+### 4a. Mevcut Tema 1 etkinlik akışına bağlı olanlar (4)
 
-1. **Hayat Büyük Bir Okuldur** → `marti-a08` (anahtar kelimeler), `marti-a09` (üç ölçütle değerlendirme). Bağlantı etkinlik başında 🎥 “Videoyu aç” olarak görünüyor.
-2. **Bir İyilik Hikâyesi** → `genclik-a04` (görsel ile videonun ortak mesajı).
-3. **Yiğit Caner Aydın söyleşisi** → `sport-a01`–`sport-a06` (kelime, çözümleme, duygu/kişilik çıkarımı, yazı–ses–görüntü, karşılaştırma, özet) ve `adiny-a03` (Kaoru ile karşılaştırma).
-4. **Ali Kuşçu dinleme kaydı** → `adiny-a05` (yedi not), `adiny-a06` (giriş–gelişme–sonuç), `adiny-review` 4. soru.
+1. **Hayat Büyük Bir Okuldur** → `marti-a08`, `marti-a09` (+ Gemini raporu, EBA bağlantısı etkinlik başında).
+2. **Bir İyilik Hikâyesi** → `genclik-a04`.
+3. **Yiğit Caner Aydın söyleşisi** → `sport-a01`–`sport-a06`, `adiny-a03`.
+4. **Ali Kuşçu dinleme kaydı** → `adiny-a05`, `adiny-a06`, `adiny-review` 4. soru.
 
-Ek olarak 2026-10-21'de Tema 1 için ana metinden sonra gelen **ek okuma katmanı** eklendi (`theme1-extras.js`): üç özgün metin ve 9 etkinlik. Bu katman karekod içeriği değildir; kitaptaki şiir/serbest okuma/ek metin boşluğunu kapatır.
+### 4b. Karekod çalışması kartları (8)
 
-**Eklenmeyenler ve nedeni:**
+`turkce-qr.js` + `turkce-qr-app.js`. Her kart dört bölümden oluşur: **izlemeden önce** (2 hazırlık sorusu), **izlerken not al** (4 alan), **izledikten sonra** (2 seçim sorusu), **yaz** (1 görev, 3 ölçüt). Kartlar ana metinden sonra, mevcut etkinlik alanından önce görünür.
 
-- **Oyun/etkileşimli üç içerik** (Anlam Kartları, Şampiyonlar Müzesi, Resimli Sözcükler): bunlar soru seti değil, EBA oyunu; yeni alıştırmaya dönüştürmek kitabın etkinliğini taklit etmek olur. Mevcut karar (bkz. `docs/theme1-activity-inventory.md`, madde 5) korunuyor.
-- **Motivasyon Defteri, Sakarya Zaferi, Millî Mücadele Sergisi, Çanakkale içerikleri:** bunlar için elimde döküm/analiz raporu yok. Video izleyip “içerikte şunlar anlatılıyor” demek uydurma olur; bu yüzden bağlantı dışında bir şey eklenmedi.
+| Çalışma | Hafta | Odak |
+| --- | --- | --- |
+| `qr-motivasyon` — Beyhan Budak ile Motivasyon Defteri | 5 | Hedef, öz izleme, not tutma |
+| `qr-sakarya` — Sakarya Zaferi | 7–8 | Neden–sonuç, tarih sırası |
+| `qr-milli-mucadele-sergisi` — Kahraman Çocuklar | 9 | Bölüm takibi, çıkarım, mesaj |
+| `qr-canakkale-gecilmez` — Çanakkale Geçilmez | 9 | Görüntü–ses–seslendirme, gözlem/yorum |
+| `qr-hey-onbesli` — Hey Onbeşli | 9 | Ağıt türü, tekrar, duygu |
+| `qr-canakkale-medya` — Çanakkale tanıtım metni | 9 | Bilgi seçimi, hedef kitle, görsel |
+| `qr-18-mart` — 18 Mart anma içeriği | 10 | Tarih–olay, mesaj ve kanıt |
+| `qr-canakkale-son` — Çanakkale | 10 | İki içeriği karşılaştırma |
+
+Tasarım sınırı: video/ses dosyaları elimizde olmadığı için sorular **videoda geçtiği iddia edilen ayrıntılara** dayanmaz. Öğrencinin kendi izlediğini kaydetmesine, medya okuryazarlığına ve okuduğu metinle karşılaştırma yapmasına dayanır. Böylece içerik değişse de çalışma geçerli kalır.
+
+### 4c. Eklenmeyenler
+
+- **Konuşma Yapalım (s. 93)** ve konuşma atölyeleri: kullanıcı talimatıyla kapsam dışı.
+- **Oyunlar** (Anlam Kartları, Şampiyonlar Müzesi, Resimli Sözcükler): soru seti değil, EBA oyunu; taklit edilmedi.
+- **Dereceli puanlama anahtarı (s. 82)** ve **ek ölçme setleri**: etkinlik değil, ölçme aracı; Tema 2'nin ölçme seti hâlâ eksik.
+- **Tema 1 ek okuma katmanı** (`theme1-extras.js`, 3 metin + 9 etkinlik): karekod içeriği değil, ayrı bir katman.
 
 ---
 
-## 5. Eksikleri kapatmak için ne gerekiyor?
+## 5. Sıradaki adımlar
 
-Her içerik için iki aşama var:
-
-1. **Bağlantı + iskelet (bugün yapılabilir):** Hafta 9 ve Tema 2 haftalarına “izleme/dinleme kartı” eklenir; kartta bağlantı, izleme öncesi tahmin, not çizelgesi ve **metne bağlı olmayan** beceri soruları (amaç, hedef kitle, kanıt seçme, karşılaştırma) bulunur. Cevap anahtarı gösterilmez; geri bildirim yol gösterici olur.
-2. **İçeriğe bağlı sorular (rapor gerekiyor):** “Videoda hangi olay anlatılıyor, hangi ayrıntı hangi sonucu doğuruyor?” türü sorular için döküm veya Gemini raporu şart. Tema 1'de dört içerik bu sayede yazılabildi.
-
-Sıradaki en verimli adım: **Millî Mücadele Sergisi · Kahraman Çocuklar** (9. hafta) ve **Sakarya Zaferi** (s. 80). İkisi de aynı temanın çekirdeği; kullanıcı raporu gelirse iki haftalık set (not çizelgesi + 6–8 soru + karşılaştırma) tek seferde yazılabilir.
+1. **Döküm/rapor gelirse:** mevcut 8 kart, videonun ayrıntısına inen sorularla derinleştirilir (ör. Sakarya'da hangi olayın hangi sonucu doğurduğu). Şu an bu sorular bilinçli olarak içerik iddiası taşımıyor.
+2. **Tema 2 etkinlik seti:** hafta 7–10 için metne bağlı 8–10 etkinlik ve quiz. Karekod kartları bunun yerine geçmez, üstüne eklenir.
+3. **Tema 2 ek ölçme seti (s. 117):** 8 soruluk ölçme + öz değerlendirme.
+4. **Tema 3:** karekod listesi yayımlandığında “Dijital Tayfa” ve diğer içerikler aynı şablonla eklenir.
 
 ---
 

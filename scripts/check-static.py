@@ -1492,6 +1492,18 @@ def main() -> int:
                     errors.append("Turkish QR inventory test did not report success")
 
             if not errors:
+                qr_flow_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-turkce-qr.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if qr_flow_test.returncode:
+                    errors.append(f"Turkish QR practice test failed:\n{qr_flow_test.stderr.strip()}")
+                elif "Türkçe karekod çalışmaları hazır" not in qr_flow_test.stdout:
+                    errors.append("Turkish QR practice test did not report success")
+
+            if not errors:
                 try:
                     focus_test = focus_week_test_source(html)
                 except ValueError as exc:

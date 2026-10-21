@@ -140,6 +140,12 @@ Tasarım kuralları:
 - Yanıtlar `data[...].extras[activityId]` altında saklanır; mevcut Tema 1 ilerlemesinden ayrıdır.
 - Doğrulama: `node scripts/check-turkce-extras.js` (kapsam, tür dengesi, söz sanatları, cevap sızması ve ana etkinlik alanının değişmediği denetimi).
 
+## 5c. Karekod içerikleri
+
+Karekodla açılan izleme/dinleme içeriklerinin dökümü ve kapsamı [`turkce-qr-envanteri.md`](turkce-qr-envanteri.md) içinde. Birinci dönemde 12 metin/video/ses içeriğinden 4'ü mevcut Tema 1 akışında, 8'i yeni karekod kartlarında çalışılıyor; konuşma etkinliği (s. 93) kapsam dışı. Kartlar izleme öncesi hazırlık, not çizelgesi, iki seçim sorusu ve bir yazma görevinden oluşur; içerik dökümü olmadığı için videoda geçtiği iddia edilen ayrıntılara dayanmaz.
+
+---
+
 ## 6. Şiir metinleri: alınan karar
 
 Kanun gereği kitap metinlerini kendimiz yeniden üretemeyiz ve depoda PDF olmadığı için "Zafer", "Uçun Kuşlar" ve "Ağaç ve Sen" metinlerini alamıyoruz. Tema 1 için **2. seçenek uygulandı**: söz sanatları çalışmasını karşılayan özgün bir şiir ("Yıldız Sayan Çocuk") yazıldı ve ana metinden sonraki ek bölüme yerleştirildi. Tema 2–3 şiirleri için seçenekler hâlâ açık:

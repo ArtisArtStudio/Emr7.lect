@@ -46,6 +46,8 @@ global.window = sandbox;
 // eslint-disable-next-line no-eval
 eval(read('theme1-practice.js'));
 eval(read('theme1-extras.js'));
+eval(read('turkce-qr.js'));
+const qrUnits = sandbox.TURKCE_QR?.units || [];
 const extrasUnits = (sandbox.THEME1_EXTRAS?.units || []).map((unit) => ({
   weekId: unit.weekId,
   title: unit.title,
@@ -99,6 +101,9 @@ console.log(`\nMetin: ${rows.filter((row) => row.text !== '—' && row.text !== 
   `Quiz: ${rows.filter((row) => row.quiz !== '—').length}/${rows.length} hafta (${totalQuiz} soru) · ` +
   `Etkinlik: ${rows.filter((row) => row.activities > 0).length}/${rows.length} hafta (${totalActivities} etkinlik) · ` +
   `Yazma görevi: ${rows.filter((row) => row.writing === 'var').length}/${rows.length} hafta`);
+console.log(`Karekod çalışması: ${qrUnits.length} içerik · ` +
+  `${qrUnits.reduce((total, unit) => total + unit.questions.length, 0)} seçim sorusu · ` +
+  `${qrUnits.reduce((total, unit) => total + unit.notes.length, 0)} not alanı.`);
 console.log(`Ana metinden sonraki ek okuma: ${extrasUnits.length}/${rows.length} hafta · ` +
   `${extrasUnits.reduce((total, unit) => total + unit.span, 0)} ek etkinlik · ` +
   `${extrasUnits.filter((unit) => unit.hasWrite).length} ek yazma görevi.`);

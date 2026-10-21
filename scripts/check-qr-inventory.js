@@ -52,6 +52,9 @@ const sandbox = {};
 global.window = sandbox;
 // eslint-disable-next-line no-eval
 eval(read('theme1-practice.js'));
+// eslint-disable-next-line no-eval
+eval(read('turkce-qr.js'));
+const qrUnits = new Map((sandbox.TURKCE_QR?.units || []).map((unit) => [unit.id, unit]));
 const activities = new Map();
 for (const unit of sandbox.THEME1_PRACTICE.units) {
   for (const group of unit.groups) {
@@ -74,6 +77,10 @@ const LINKLESS_OK = new Set(['adiny-review']);
 for (const row of coveredRows) {
   assert.ok(row.ids.length, `${row.title} “var” işaretli ama etkinlik kimliği yazılmamış.`);
   for (const id of row.ids) {
+    if (id.startsWith('qr-')) {
+      assert.ok(qrUnits.has(id), `Envanterde geçen ${id} karekod çalışması turkce-qr.js içinde yok.`);
+      continue;
+    }
     const activity = activities.get(id);
     assert.ok(activity, `Envanterde geçen ${id} etkinliği uygulamada yok.`);
     if (!LINKLESS_OK.has(id)) assert.ok(activity.sourceUrl, `${id} için QR bağlantısı bekleniyordu.`);
@@ -81,15 +88,11 @@ for (const row of coveredRows) {
 }
 
 // 2) "eksik" denilen içerik uygulamaya bağlanmamış olmalı.
-const appSources = [...activities.values()].map((activity) => `${activity.source || ''} ${activity.title || ''}`).join(' ').toLocaleLowerCase('tr');
-const MISSING_MARKERS = {
-  'Beyhan Budak ile Motivasyon Defteri': ['motivasyon defteri', 'beyhan budak'],
-  'Sakarya Zaferi': ['sakarya zaferi'],
-  'Çanakkale Geçilmez': ['çanakkale geçilmez'],
-  'Hey Onbeşli — Bir Çanakkale Ağıdı': ['onbeşli'],
-  'Millî Mücadele Sergisi · Kahraman Çocuklar': ['kahraman çocuklar', 'millî mücadele sergisi'],
-  'Çanakkale': ['çanakkale'],
-};
+const appSources = [
+  ...[...activities.values()].map((activity) => `${activity.source || ''} ${activity.title || ''}`),
+  ...[...qrUnits.values()].map((unit) => `${unit.title} ${unit.where}`),
+].join(' ').toLocaleLowerCase('tr');
+const MISSING_MARKERS = {};
 for (const row of missingRows) {
   for (const marker of MISSING_MARKERS[row.title] || []) {
     assert.ok(!appSources.includes(marker), `${row.title} envanterde eksik görünüyor ama uygulamada “${marker}” geçiyor.`);
@@ -104,9 +107,9 @@ for (const url of urls) assert.ok(url.startsWith('https://www.eba.gov.tr/'), `QR
 // 4) Özet sayıları tabloyla uyuşmalı.
 assert.equal(numbered.length, 18, 'Birinci dönem numaralı karekod içeriği 18 olmalı.');
 assert.equal(mediaRows.length, 12, 'Metin/video/ses içeriği 12 olmalı.');
-assert.equal(coveredRows.length, 4, 'Etkinliğe bağlı içerik 4 olmalı.');
-assert.equal(missingMediaRows.length, 8, 'Etkinliği eksik metin/video/ses içeriği 8 olmalı.');
-assert.equal(missingRows.length, 9, 'Eksik satır sayısı 9 olmalı (8 içerik + Tema 2 ek ölçme).');
+assert.equal(coveredRows.length, 12, 'Çalışmaya bağlı metin/video/ses içeriği 12 olmalı.');
+assert.equal(missingMediaRows.length, 0, 'Metin/video/ses içeriklerinin hepsi bağlı olmalı.');
+assert.equal(missingRows.length, 1, 'Yalnızca Tema 2 ek ölçme seti eksik olmalı.');
 assert.equal(gameRows.length, 3, 'Oyun/etkileşimli içerik 3 olmalı.');
 assert.equal(assessRows.length, 3, 'Ölçme/puanlama aracı 3 olmalı.');
 const assessOnlyRows = rows.filter((row) => row.statusCell.includes(tags.game) && /Ölçme|Puanlama|Değerlendirme aracı/i.test(row.kind));
@@ -125,7 +128,12 @@ assert.equal(speaking[0].ids.length, 0, 'Konuşma etkinliğine bağlı çalışm
 // 6) Öğrenciye dönük uygulama metinlerinde kitap/sayfa referansı olmamalı (envanter belgesi hariç).
 assert.ok(inventory.includes('Kapsam dışı'), 'Envanter, konuşma etkinliklerinin kapsam dışı olduğunu belirtmeli.');
 
+// 7) Karekod çalışmaları sayısı envanterle uyuşmalı.
+const qrRows = coveredRows.filter((row) => row.ids.some((id) => id.startsWith('qr-')));
+assert.equal(qrRows.length, 8, 'Envanterde 8 karekod çalışması satırı olmalı.');
+assert.equal(qrUnits.size, 8, 'Uygulamada 8 karekod çalışması olmalı.');
+
 console.log(
-  `Türkçe karekod envanteri tutarlı: ${rows.length} içerik · ${coveredRows.length} bağlı · ${missingRows.length} eksik · ` +
-  `${gameRows.length} oyun · ${partialRows.length} kısmi · konuşma kapsam dışı.`,
+  `Türkçe karekod envanteri tutarlı: ${rows.length} içerik · ${coveredRows.length} bağlı (${qrRows.length} kart) · ` +
+  `${missingRows.length} eksik · ${gameRows.length} oyun · ${partialRows.length} kısmi · konuşma kapsam dışı.`,
 );
