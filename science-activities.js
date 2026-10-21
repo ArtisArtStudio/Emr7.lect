@@ -54,7 +54,7 @@
             instruction: 'Cümleleri okuyup boşlukları tamamla. Kısa yaz; büyük-küçük harf farkı önemsenmez.',
             text: 'Türkiye’nin ilk yerli ve millî haberleşme uydusu {{1}}’dır. Yeryüzünü yüksek çözünürlükle görüntüleyen yerli gözlem uydumuz {{2}}’dir. Uyduların Dünya çevresinde izlediği yola {{3}} denir. Bir uydunun Dünya’ya düşmeden yörüngesinde kalmasını sağlayan, ona kazandırılan yatay {{4}} ile kütle çekiminin birlikte etkisidir. İşlevini yitirmiş uydu ve roket parçalarının oluşturduğu soruna uzay {{5}} denir.',
             blanks: [
-              { answers: ['türksat 6a', 'türksat-6a', 'türksat 6 a'], hint: '2024’te göreve başlayan haberleşme uydumuz.' },
+              { answers: ['türksat 6a', 'türksat-6a', 'türksat 6 a'], hint: '2024’te fırlatılan haberleşme uydumuz.' },
               { answers: ['i̇mece', 'imece'], hint: 'Adı “iş birliği, yardımlaşma” anlamına gelen gözlem uydumuz.' },
               { answers: ['yörünge', 'yörünge çizgisi'], hint: 'Cismin izlediği yol.' },
               { answers: ['hız', 'hızı', 'sürat', 'hız kazanımı'], hint: 'Fırlatmada kazanılan, yönü yeryüzüne paralel olan büyüklük.' },
