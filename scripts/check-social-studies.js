@@ -36,6 +36,7 @@ class MockElement {
 }
 
 require('../ai-grader.js');
+require('../ai-grader.js');
 require('../social-studies-content.js');
 require('../social-studies.js');
 const social = global.window.SOCIAL_STUDIES;
@@ -321,6 +322,9 @@ assert.ok(mockElements.socialWeekContent.innerHTML.includes('gruplarda iletişim
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('14–18 Eyl 2026–2027 · 1. hafta'));
 assert.ok(!mockElements.socialWeekContent.innerHTML.includes('ham hafta'), 'The user interface must not call a week a “ham hafta”.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Haftalık çalışma çizelgesi'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('social-quest-path'), 'Social Studies activities should carry the shared quest path.');
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Görev yolu'), 'The quest path should be labelled in Turkish like the other courses.');
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('social-result-pill'), 'Social Studies should show the shared verdict pill.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('konu anlatımı'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Anahtar kavramlar'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="0"') && mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="5"'));
@@ -634,6 +638,8 @@ async function runSocialAIRegressionChecks() {
   saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'correct', 'A safe Groq result should be stored for the question.');
   assert.ok(mockElements[feedbackId].textContent.includes('TAM DOĞRU'));
+  assert.ok(mockElements[feedbackId].textContent.includes('YOL GÖSTERİCİ: Konu özetindeki'), 'The guided next step should reach the student.');
+  assert.ok(mockElements[feedbackId].textContent.includes('YAZMAYA BAŞLA: İki açıklama'), 'The sentence starter should reach the student.');
   assert.match(requestBody.messages[0].content, /YAZMA KOÇLUĞU/, 'The system prompt should carry the shared coaching rules.');
   assert.match(requestBody.messages[0].content, /"guide"/, 'The contract should ask for the guidance fields.');
   assert.match(mockElements[feedbackId].textContent, /YOL GÖSTERİCİ: Konu özetindeki/, 'The guided next step should reach the student.');

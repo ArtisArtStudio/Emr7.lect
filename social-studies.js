@@ -962,6 +962,13 @@
     node.hidden = !text;
     const tts = document.getElementById(`${socialAIFeedbackNodeId(weekId, activityId, reviewKey)}-tts`);
     if (tts) tts.hidden = !text;
+    const pill = document.getElementById(`socialResultPill-${weekId}`);
+    if (pill && state && state !== 'pending') {
+      const label = SOCIAL_AI_STATE_LABELS[state] || '';
+      pill.textContent = state === 'system' ? '' : label;
+      pill.dataset.state = state;
+      pill.hidden = !pill.textContent;
+    }
   }
 
   function saveSocialAIFeedback(saved, weekId, activityItem, reviewKey, fields, state, text) {
@@ -1184,6 +1191,10 @@
     const completeCount = activities.filter((activityItem) => isActivityComplete(item, saved, activityItem)).length;
     const currentComplete = isActivityComplete(item, saved, activeActivity);
     const currentStatus = currentComplete ? 'Tamamlandı' : 'Devam ediyor';
+    const activityFeedback = (saved && saved.aiFeedback && saved.aiFeedback[activeActivity.id]) || {};
+    const verdictState = Object.values(activityFeedback).map((entry) => entry && entry.state).filter((state) => state && state !== 'pending' && state !== 'system')[0] || '';
+    const verdictLabel = verdictState ? (SOCIAL_AI_STATE_LABELS[verdictState] || '') : '';
+    const questPathHTML = `<nav class="social-quest-path" aria-label="Etkinlik adımları"><span class="social-quest-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol><li><span class="social-quest-number">1</span><span>Yönergeyi oku</span></li><li><span class="social-quest-number">2</span><span>Kaynağı incele</span></li><li><span class="social-quest-number">3</span><span>Yanıtını yaz</span></li><li><span class="social-quest-number">4</span><span>Kontrol et, geri bildirimi uygula</span></li></ol></nav>`;
     const sourceTextHTML = activeActivity.sourceText
       ? `<section class="social-reading-source" aria-label="${escapeHTML(activeActivity.sourceTitle || 'Özgün kaynak metin')}"><div class="social-reading-heading"><span>ÖZGÜN METİN</span><h5>${escapeHTML(activeActivity.sourceTitle || 'Kaynak metin')}</h5>${activeActivity.sourceLabel ? `<small>${escapeHTML(activeActivity.sourceLabel)}</small>` : ''}</div><div class="social-reading-text">${renderSourceText(activeActivity.sourceText)}</div></section>`
       : '';
@@ -1211,7 +1222,8 @@
         return `<button type="button" class="social-practice-step${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}" data-social-activity-select="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(activityItem.title)}${complete ? ', tamamlandı' : ''}" ${active ? 'aria-current="step"' : ''}><span class="social-practice-step-no">${index + 1}</span><span class="social-practice-step-copy"><b>${escapeHTML(activityItem.title)}</b><small>${escapeHTML(stepDetail)}</small></span><span class="social-practice-step-status" id="social-activity-step-status-${item.id}-${activityItem.id}" aria-label="${complete ? 'Tamamlandı' : 'Devam ediyor'}">${complete ? '✓' : ''}</span></button>`;
       }).join('')}</nav>
       <article class="social-activity-step" id="socialActivityStep" aria-labelledby="socialActivityTitle-${item.id}">
-        <header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${activities.length}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p></div><span class="social-activity-state${currentComplete ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${currentStatus}</span></header>
+        <header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${activities.length}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p></div><div class="social-activity-badges"><span class="social-result-pill" id="socialResultPill-${item.id}" data-state="${verdictState || 'none'}" role="status" aria-live="polite"${verdictLabel ? '' : ' hidden'}>${escapeHTML(verdictLabel)}</span><span class="social-activity-state${currentComplete ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${currentStatus}</span></div></header>
+        ${questPathHTML}
         ${activeActivity.scenario ? `<blockquote class="social-case-stem"><b>Örnek durum</b><span>${escapeHTML(activeActivity.scenario)}</span></blockquote>` : ''}
         <p class="social-style-note"><b>Etkinlik biçimi:</b> ${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}${activeActivity.hint ? `<span>${escapeHTML(activeActivity.hint)}</span>` : ''}</p>
         ${(activeActivity.format || activeActivity.count || activeActivity.sourceLabel) ? `<div class="social-activity-meta">${activeActivity.format || activeActivity.sourceStyle ? `<span>${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}</span>` : ''}${activeActivity.count ? `<span>${escapeHTML(activeActivity.count)}</span>` : ''}<span>${activities.length} etkinlik</span></div>` : ''}
