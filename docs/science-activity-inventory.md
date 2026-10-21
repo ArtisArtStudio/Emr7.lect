@@ -4,7 +4,7 @@ Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik 
 
 | Hafta | Kitap konusu / başvuru | Uygulamadaki özgün etkinlik | Etkinlik biçimi |
 | ---: | --- | --- | --- |
-| 1 | 1. Ünite · Uzay Çağı · s. 14–15 · Uzay araştırmalarına giriş ve gözlem soruları | Bir uzay gözlemi planla · **ayrıca 14 etkinliklik konu seti** | Araştırma sorusu ve gözlem çizelgesi · eşleştirme, boşluk doldurma, sınıflandırma, sıralama, doğru–yanlış, çoktan seçmeli, metin yazma |
+| 1 | 1. Ünite · Uzay Çağı · s. 14–15 · Uzay araştırmalarına giriş ve gözlem soruları | Bir uzay gözlemi planla · **ayrıca 14 etkinliklik konu seti + 1 görsel soru** | Araştırma sorusu ve gözlem çizelgesi · eşleştirme, boşluk doldurma, sınıflandırma, sıralama, doğru–yanlış, çoktan seçmeli, metin yazma, görsel soru |
 | 2 | 1. Ünite · Uzay Çağı · s. 15–23 · Türkiye’nin uzay çalışmaları ve uydular | Uydu görev kartları · **ayrıca 14 etkinliklik konu seti** | Örnek olay sınıflandırma |
 | 3 | 1. Ünite · Uzay Çağı · s. 16–23 · Uzay araçları ve gözlem teknolojileri | Görev için doğru aracı seç | Tasarım kararı ve gerekçe |
 | 4 | 1. Ünite · Uzay Çağı · s. 23–25 · Teleskoplar, gözlem yerleri ve gökyüzü gözlemi | Gözlem yeri karşılaştırması | Kanıt tablosu |
@@ -44,7 +44,7 @@ Bu envanter, MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap’ın etkinlik 
 
 ## Konu bazlı etkinlik seti (ilk iki hafta)
 
-Haftalık özgün uygulamanın yanında, 1.–15. hafta için konu başına **on dört** etkinlik içeren ayrı bir set eklendi. Etkinlikler; ders kitabındaki eşleştirme, karşılaştırma tablosu, sınıflandırma, tanım, haber/veri yorumu ve araştırma şablonu biçimlerinin beceri dağılımı incelenerek yazıldı. Ayrıntılı sayfa–etkinlik eşleştirmesi ve tür dağılımı [`science-activity-analysis-weeks-1-2.md`](science-activity-analysis-weeks-1-2.md) içindedir.
+Haftalık özgün uygulamanın yanında, 1.–15. hafta için konu başına **on dört** etkinlik içeren ayrı bir set eklendi. Her haftanın sonunda ayrıca **Görsel sorular** bölümü vardır: haftanın doğrulanmış illüstrasyonu (etiketleriyle) gösterilir, öğrenci görselden ve etiketlerden yararlanarak iki soruyu yanıtlar. Görsel soru anahtarları konu anlatımındaki kavram görselleriyle aynıdır; böylece ek bir görsel üretilmez ve sorular yerel olarak kontrol edilir. Etkinlikler; ders kitabındaki eşleştirme, karşılaştırma tablosu, sınıflandırma, tanım, haber/veri yorumu ve araştırma şablonu biçimlerinin beceri dağılımı incelenerek yazıldı. Ayrıntılı sayfa–etkinlik eşleştirmesi ve tür dağılımı [`science-activity-analysis-weeks-1-2.md`](science-activity-analysis-weeks-1-2.md) içindedir.
 
 | Hafta | Etkinlik | Tür dağılımı |
 | ---: | ---: | --- |

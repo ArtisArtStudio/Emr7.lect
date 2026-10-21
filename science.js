@@ -588,6 +588,7 @@
     order: { icon: '🔢', label: 'Sıralama', path: [['📋', 'Adımları oku'], ['🔢', 'Numaralandır'], ['✓', 'Kontrol et']] },
     tf: { icon: '⚖️', label: 'Doğru–yanlış', path: [['📖', 'Yargıyı oku'], ['⚖️', 'Karar ver'], ['✓', 'Kontrol et']] },
     choice: { icon: '🎯', label: 'Çoktan seçmeli', path: [['👀', 'Soruyu oku'], ['🎯', 'Seçimini yap'], ['✓', 'Kontrol et']] },
+    visual: { icon: '🖼️', label: 'Görsel soru', path: [['🖼️', 'Görseli incele'], ['👀', 'Etiketleri oku'], ['🎯', 'Seçimini yap'], ['✓', 'Kontrol et']] },
     text: { icon: '✍️', label: 'Yazılı yanıt', path: [['💭', 'Düşün'], ['🗺️', 'Planla'], ['✍️', 'Kendi sözlerinle yaz']] },
   });
 
@@ -673,7 +674,7 @@
       else if (activity.type === 'sort') ok = values[`s:${item.id}`] === item.answer;
       else if (activity.type === 'order') ok = values[`o:${item.id}`] === String(list.indexOf(item) + 1);
       else if (activity.type === 'tf') ok = values[`t:${item.id}`] === (item.answer ? 'D' : 'Y');
-      else if (activity.type === 'choice') ok = values[`c:${item.id}`] === String(item.answer);
+      else if (activity.type === 'choice' || activity.type === 'visual') ok = values[`c:${item.id}`] === String(item.answer);
       if (ok) correct += 1;
     });
     return { total: list.length, correct, text: false };
@@ -696,7 +697,7 @@
       if (activity.type === 'sort') return Boolean(values[`s:${item.id}`]);
       if (activity.type === 'order') return Boolean(values[`o:${item.id}`]);
       if (activity.type === 'tf') return Boolean(values[`t:${item.id}`]);
-      if (activity.type === 'choice') return Boolean(values[`c:${item.id}`]);
+      if (activity.type === 'choice' || activity.type === 'visual') return Boolean(values[`c:${item.id}`]);
       return false;
     });
   }
@@ -1026,7 +1027,7 @@
     const result = evaluateActivity(activity, entry.values);
 
     // Çoktan seçmeli etkinlikler yerel olarak kontrol edilir; diğerleri yapay zekâ ile değerlendirilir.
-    if (activity.type === 'choice') {
+    if (activity.type === 'choice' || activity.type === 'visual') {
       const text = localVerdictText(activity, result);
       const state = result.correct === result.total ? 'correct' : result.correct === 0 ? 'wrong' : 'partial';
       const issues = state === 'correct' ? [] : ['selection'];
@@ -1193,6 +1194,16 @@
     return `<div class="science-practice-choice">${activity.questions.map((question, index) => `<fieldset class="science-choice-row"><legend><span class="science-choice-no">${index + 1}</span> ${escapeHTML(question.prompt)}</legend><div class="science-choice-options">${renderRadioGroup(activity, `c:${question.id}`, question.options.map((option, optionIndex) => ({ value: String(optionIndex), label: option })), entry.values[`c:${question.id}`] || '')}</div></fieldset>`).join('')}</div>`;
   }
 
+  // Görsel soru: konu anlatımındaki doğrulanmış illüstrasyon + etiketler üzerinden soru.
+  // Görsel bir "süs" değil, sorunun kurulduğu kanıttır; bu yüzden alt metni ve açıklaması zorunludur.
+  function renderVisualQuestion(activity, entry) {
+    const image = CONCEPT_IMAGES[activity.image];
+    const figure = image
+      ? `<figure class="science-visual-question-figure">${responsiveImage(image, 'science-visual-question-image', '(max-width: 700px) 92vw, 620px')}<figcaption>${escapeHTML(activity.caption || image.alt)}</figcaption></figure>`
+      : '';
+    return `<div class="science-practice-visual">${figure}${renderChoice(activity, entry)}</div>`;
+  }
+
   function renderTextAnswer(activity, entry) {
     return `<textarea class="science-response science-practice-text" rows="6" maxlength="5000" data-practice-text="${activity.id}" data-practice-key="x" placeholder="Yanıtını kendi cümlelerinle yaz…">${escapeHTML(entry.values.x || '')}</textarea>`;
   }
@@ -1217,13 +1228,14 @@
     else if (activity.type === 'order') body = renderOrder(activity, entry);
     else if (activity.type === 'tf') body = renderTrueFalse(activity, entry);
     else if (activity.type === 'choice') body = renderChoice(activity, entry);
+    else if (activity.type === 'visual') body = renderVisualQuestion(activity, entry);
     else if (activity.type === 'text') body = renderTextAnswer(activity, entry);
     const criteria = Array.isArray(activity.criteria)
       ? `<ul class="science-criteria">${activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>`
       : '';
     const source = activity.sourceText ? `<blockquote class="science-activity-source">${escapeHTML(activity.sourceText)}</blockquote>` : '';
-    const checkLabel = activity.type === 'choice' ? '✓ Kontrol et' : '✦ Kontrol et';
-    const helper = activity.type === 'choice'
+    const checkLabel = activity.type === 'choice' || activity.type === 'visual' ? '✓ Kontrol et' : '✦ Kontrol et';
+    const helper = activity.type === 'choice' || activity.type === 'visual'
       ? 'Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.'
       : 'Yanıtın ortak Groq ayarlarıyla değerlendirilir; doğru cevap gösterilmez.';
     return `<article class="science-activity-card" id="science-activity-${activity.id}" data-kind="${activity.type}" data-practice-week="${weekId}"${state ? ` data-check-state="${state}"` : ''}>

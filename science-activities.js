@@ -18,7 +18,7 @@
           {
             id: 'f1-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Uzay araştırması kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -46,7 +46,7 @@
           {
             id: 'f1-a02',
             no: '2',
-            title: 'Boşlukları doğru kavramla tamamla',
+            title: 'Uzay gözlemi cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -64,7 +64,7 @@
           {
             id: 'f1-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Uzay araştırması yargılarını ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -147,35 +147,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir uydu, Dünya’ya düşmeden yörüngesinde nasıl kalır?',
-                options: [
-                  'Uydunun kütlesi sıfır olduğu için',
-                  'Yatay hızı ile Dünya’nın uyguladığı kütle çekimi birlikte eğri bir yol oluşturduğu için',
-                  'Uzayda hava olmadığı için hiçbir kuvvet etki etmediğinden',
-                  'Uydu, yer istasyonundan gönderilen sinyalle havada tutulduğu için',
-                ],
+                options: ['Uydunun kütlesi sıfır olduğu için', 'Yatay hızı ile Dünya’nın uyguladığı kütle çekimi birlikte eğri bir yol oluşturduğu için', 'Uzayda hava olmadığı için hiçbir kuvvet etki etmediğinden', 'Uydu, yer istasyonundan gönderilen sinyalle havada tutulduğu için'],
                 answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Yer istasyonunun temel görevi nedir?',
-                options: [
-                  'Uyduyu yörüngesine yerleştirmek',
-                  'Uydunun güneş panellerini üretmek',
-                  'Uydudan gelen sinyalleri almak, işlemek ve gerekli yönlendirmeleri yapmak',
-                  'Uydunun görüntülerini doğrudan yayımlamak',
-                ],
-                answer: 2,
+                options: ['Uydunun görüntülerini doğrudan yayımlamak', 'Uydudan gelen sinyalleri almak, işlemek ve gerekli yönlendirmeleri yapmak', 'Uyduyu yörüngesine yerleştirmek', 'Uydunun güneş panellerini üretmek'],
+                answer: 1,
               },
               {
                 id: 'q3',
                 prompt: 'Aynı bölgenin iki farklı tarihte alınan uydu görüntüsünü karşılaştıran bir uzman en güvenilir sonuca nasıl ulaşır?',
-                options: [
-                  'Yalnızca ilk görüntüye bakarak',
-                  'Görüntülerdeki renkleri beğenisine göre yorumlayarak',
-                  'İki görüntüyü aynı ölçekte üst üste koyup ölçülebilir değişimi hesaplayarak',
-                  'Görüntüleri sosyal medyada paylaşıp yorum sayısını sayarak',
-                ],
-                answer: 2,
+                options: ['Görüntülerdeki renkleri beğenisine göre yorumlayarak', 'İki görüntüyü aynı ölçekte üst üste koyup ölçülebilir değişimi hesaplayarak', 'Görüntüleri sosyal medyada paylaşıp yorum sayısını sayarak', 'Yalnızca ilk görüntüye bakarak'],
+                answer: 1,
               },
             ],
           },
@@ -316,35 +301,20 @@
               {
                 id: 'q1',
                 prompt: 'Metinde uydu görüntüsü hangi amaçla kullanılmıştır?',
-                options: [
-                  'Parkların ziyaretçi sayısını ölçmek için',
-                  'Bitki örtüsündeki değişimi izleyip sulama kararı vermek için',
-                  'Parklardaki gürültü düzeyini belirlemek için',
-                  'Yeni park alanlarının yerini seçmek için',
-                ],
-                answer: 1,
+                options: ['Parkların ziyaretçi sayısını ölçmek için', 'Parklardaki gürültü düzeyini belirlemek için', 'Bitki örtüsündeki değişimi izleyip sulama kararı vermek için', 'Yeni park alanlarının yerini seçmek için'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'İkinci görüntüde soluk alanların azalması neyi gösterir?',
-                options: [
-                  'Sulamanın etkisiyle bitki örtüsünün canlandığını',
-                  'Park alanlarının küçüldüğünü',
-                  'Uydunun arızalandığını',
-                  'Yağışın tamamen durduğunu',
-                ],
-                answer: 0,
+                options: ['Park alanlarının küçüldüğünü', 'Uydunun arızalandığını', 'Yağışın tamamen durduğunu', 'Sulamanın etkisiyle bitki örtüsünün canlandığını'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Metne göre uydu verisinin değerini artıran temel özellik hangisidir?',
-                options: [
-                  'Tek bir görüntüyle kesin sonuca ulaşması',
-                  'Aynı alanın farklı tarihlerde karşılaştırılabilmesi',
-                  'Görüntülerin yalnızca gece alınması',
-                  'Verinin yalnızca uzmanlarca görülebilmesi',
-                ],
-                answer: 1,
+                options: ['Tek bir görüntüyle kesin sonuca ulaşması', 'Görüntülerin yalnızca gece alınması', 'Verinin yalnızca uzmanlarca görülebilmesi', 'Aynı alanın farklı tarihlerde karşılaştırılabilmesi'],
+                answer: 3,
               },
             ],
           },
@@ -364,6 +334,27 @@
             ],
             minChars: 220,
             placeholder: 'Sel öncesi ve sonrası görüntüleri karşılaştırarak…',
+          },
+        ],
+      },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f1-a15',
+            no: '15',
+            title: 'Yapay uyduyu oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, uzay teknolojisi',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'yapay-uydu',
+            questions: [
+              { id: "q1", prompt: "Görseldeki yapay uydunun güneş panellerinin temel görevi nedir?", options: ["Yörüngeyi kısaltmak", "Güneş ışığından elektrik enerjisi üretmek", "Dünya’ya ses göndermek", "Uyduyu soğutmak"], answer: 1 },
+              { id: "q2", prompt: "Türkiye’nin kendi haberleşme uydularını işletmesi en çok hangi alanda bağımsızlık sağlar?", options: ["Uzay turizmi", "Gök taşı madenciliği", "Haberleşme ve veri iletimi", "Yer çekimini değiştirme"], answer: 2 }
+            ],
           },
         ],
       },
@@ -479,35 +470,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir araştırma ekibi, Mars yüzeyinden örnek veri toplamak istiyor. Hangi araç bu görev için en uygundur?',
-                options: [
-                  'Haberleşme uydusu',
-                  'Uzay sondası',
-                  'Yer teleskobu',
-                  'Yer istasyonu',
-                ],
-                answer: 1,
+                options: ['Uzay sondası', 'Haberleşme uydusu', 'Yer teleskobu', 'Yer istasyonu'],
+                answer: 0,
               },
               {
                 id: 'q2',
                 prompt: 'Bir bölgedeki orman kaybını yıllar içinde izlemek isteyen kurum hangi aracı kullanır?',
-                options: [
-                  'Uzay roketi',
-                  'Gözlem uydusu',
-                  'Uzay mekiği',
-                  'Yer istasyonu',
-                ],
-                answer: 1,
+                options: ['Uzay mekiği', 'Uzay roketi', 'Yer istasyonu', 'Gözlem uydusu'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Uydudan gelen sinyali alıp işleyen birim olmasaydı ne olurdu?',
-                options: [
-                  'Uydu daha hızlı hareket ederdi',
-                  'Uydunun topladığı veri yeryüzünde kullanılamazdı',
-                  'Uydu yakıtını tüketmezdi',
-                  'Teleskoplar çalışmazdı',
-                ],
-                answer: 1,
+                options: ['Uydu yakıtını tüketmezdi', 'Teleskoplar çalışmazdı', 'Uydu daha hızlı hareket ederdi', 'Uydunun topladığı veri yeryüzünde kullanılamazdı'],
+                answer: 3,
               },
             ],
           },
@@ -647,35 +623,20 @@
               {
                 id: 'q1',
                 prompt: 'Tabloya göre yıldız sayısını en çok azaltan etken hangisidir?',
-                options: [
-                  'Bulutluluk',
-                  'Yapay ışık miktarı',
-                  'Rüzgâr hızı',
-                  'Sıcaklık',
-                ],
-                answer: 1,
+                options: ['Yapay ışık miktarı', 'Sıcaklık', 'Bulutluluk', 'Rüzgâr hızı'],
+                answer: 0,
               },
               {
                 id: 'q2',
                 prompt: 'Ölçümün bulutsuz ve Aysız gece yapılmasının amacı nedir?',
-                options: [
-                  'Gözlem süresini kısaltmak',
-                  'Yıldız sayısını etkileyen diğer değişkenleri sabitlemek',
-                  'Daha az yıldız görmek',
-                  'Teleskobu korumak',
-                ],
-                answer: 1,
+                options: ['Yıldız sayısını etkileyen diğer değişkenleri sabitlemek', 'Daha az yıldız görmek', 'Gözlem süresini kısaltmak', 'Teleskobu korumak'],
+                answer: 0,
               },
               {
                 id: 'q3',
                 prompt: 'Dağ gözlemevinde sayının en yüksek olmasının en olası nedeni hangisidir?',
-                options: [
-                  'Yıldızların gözlemevine yaklaşması',
-                  'Kent ışıklarından uzak, yüksek ve kuru bir konumda bulunması',
-                  'Gözlemevinin daha sıcak olması',
-                  'Ölçümün daha kısa sürmesi',
-                ],
-                answer: 1,
+                options: ['Kent ışıklarından uzak, yüksek ve kuru bir konumda bulunması', 'Yıldızların gözlemevine yaklaşması', 'Ölçümün daha kısa sürmesi', 'Gözlemevinin daha sıcak olması'],
+                answer: 0,
               },
             ],
           },
@@ -732,6 +693,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f2-a15',
+            no: '15',
+            title: 'Teleskobu oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, gözlem teknolojisi',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'teleskop',
+            questions: [
+              { id: "q1", prompt: "Görseldeki teleskobun temel işlevi nedir?", options: ["Uyduları yörüngeye taşımak", "Gökyüzündeki sesleri kaydetmek", "Hava sıcaklığını ölçmek", "Uzak gök cisimlerinden gelen ışığı toplayıp görüntüyü büyütmek"], answer: 3 },
+              { id: "q2", prompt: "Teleskobun gözlemevi kubbesinde bulunmasının nedeni nedir?", options: ["Onu hava koşullarından koruyup gözlem koşullarını denetlemek", "Büyütme gücünü artırmak", "Gök cisimlerini yaklaştırmak", "Işık kirliliğini artırmak"], answer: 0 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -748,7 +730,7 @@
           {
             id: 'f3-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Uzay teknolojisi kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -776,7 +758,7 @@
           {
             id: 'f3-a02',
             no: '2',
-            title: 'Boşlukları doğru kavramla tamamla',
+            title: 'Uzay teknolojisi cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -794,7 +776,7 @@
           {
             id: 'f3-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Uzay kirliliği yargılarını ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -877,30 +859,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir konum belirleme cihazının yörüngedeki uydulara ihtiyaç duymasının nedeni nedir?',
-                options: [
-                  'Cihazın bataryası uydudan şarj edildiği için',
-                  'Konumun hesaplanabilmesi için farklı uydulardan gelen sinyallerin karşılaştırılması gerektiği için',
-                  'Cihazın haritası yalnızca uydu belleğinde tutulduğu için',
-                  'Uydular cihaza elektrik kablosuyla bağlandığı için',
-                ],
-                answer: 1,
+                options: ['Cihazın bataryası uydudan şarj edildiği için', 'Uydular cihaza elektrik kablosuyla bağlandığı için', 'Konumun hesaplanabilmesi için farklı uydulardan gelen sinyallerin karşılaştırılması gerektiği için', 'Cihazın haritası yalnızca uydu belleğinde tutulduğu için'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'Uzay çalışmalarında geliştirilen ısı yalıtımının evlerde kullanılması hangi kavramla açıklanır?',
-                options: ['Teknoloji aktarımı', 'Uzay kirliliği', 'Yörünge değişimi', 'Görev sonu planı'],
-                answer: 0,
+                options: ['Uzay kirliliği', 'Görev sonu planı', 'Yörünge değişimi', 'Teknoloji aktarımı'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Bir uydunun görüntüsünün afet yönetiminde işe yaraması için hangi adım zorunludur?',
-                options: [
-                  'Görüntünün hiç işlenmeden yayımlanması',
-                  'Ham görüntünün harita ve rapora dönüştürülerek karar vericilere ulaştırılması',
-                  'Uydunun yörüngesinden çıkarılması',
-                  'Görüntünün yalnızca gece alınması',
-                ],
-                answer: 1,
+                options: ['Ham görüntünün harita ve rapora dönüştürülerek karar vericilere ulaştırılması', 'Görüntünün hiç işlenmeden yayımlanması', 'Uydunun yörüngesinden çıkarılması', 'Görüntünün yalnızca gece alınması'],
+                answer: 0,
               },
             ],
           },
@@ -1024,35 +996,20 @@
               {
                 id: 'q1',
                 prompt: 'Kessler sendromu neyi anlatır?',
-                options: [
-                  'Uyduların güneş enerjisiyle çalışmasını',
-                  'Çarpışmaların kendi kendini besleyerek enkaz artışını hızlandırmasını',
-                  'Bir uydunun yörüngeye yerleşme süresini',
-                  'Uydu görüntülerinin çözünürlüğünü',
-                ],
-                answer: 1,
+                options: ['Çarpışmaların kendi kendini besleyerek enkaz artışını hızlandırmasını', 'Uyduların güneş enerjisiyle çalışmasını', 'Uydu görüntülerinin çözünürlüğünü', 'Bir uydunun yörüngeye yerleşme süresini'],
+                answer: 0,
               },
               {
                 id: 'q2',
                 prompt: 'Alçak yörüngedeki birkaç milimetrelik parça neden tehlikelidir?',
-                options: [
-                  'Yer çekimi olmadığı için büyüdüğünden',
-                  'Çok yüksek hızda hareket ettiği için çarpınca büyük hasar verebildiğinden',
-                  'Işık yaydığı için uyduları kör ettiğinden',
-                  'Radyo sinyallerini kestiği için',
-                ],
-                answer: 1,
+                options: ['Işık yaydığı için uyduları kör ettiğinden', 'Radyo sinyallerini kestiği için', 'Yer çekimi olmadığı için büyüdüğünden', 'Çok yüksek hızda hareket ettiği için çarpınca büyük hasar verebildiğinden'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: '2009’da yaşanan uydu çarpışması hangi sonucu doğurmuştur?',
-                options: [
-                  'Uyduların yörüngesinin değişmemesi',
-                  'Binlerce izlenebilir enkaz parçasının oluşması',
-                  'Uzay kirliliğinin tamamen sona ermesi',
-                  'Tüm haberleşme uydularının çalışmayı bırakması',
-                ],
-                answer: 1,
+                options: ['Tüm haberleşme uydularının çalışmayı bırakması', 'Uyduların yörüngesinin değişmemesi', 'Binlerce izlenebilir enkaz parçasının oluşması', 'Uzay kirliliğinin tamamen sona ermesi'],
+                answer: 2,
               },
             ],
           },
@@ -1093,6 +1050,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f3-a15',
+            no: '15',
+            title: 'Uzay atıklarını oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, sorun–çözüm',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'uzay-kirliligi',
+            questions: [
+              { id: "q1", prompt: "Görseldeki insan yapımı uzay atıklarının en önemli riski nedir?", options: ["Dünya’nın dönüşünü yavaşlatmak", "Çalışan uydulara ve uzay araçlarına çarpmak", "Atmosferi tamamen yok etmek", "Yer çekimini artırmak"], answer: 1 },
+              { id: "q2", prompt: "Uzay kirliliğini azaltmak için hangisi doğru bir uygulamadır?", options: ["Atıkları yörüngede bırakmak", "Daha çok uyduyu aynı yörüngeye yığmak", "Ömrü biten uyduları güvenli biçimde yörüngeden çıkarmak", "Atıkları yakıt olarak kullanmak"], answer: 2 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -1108,7 +1086,7 @@
           {
             id: 'f4-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Işık kirliliği kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -1136,7 +1114,7 @@
           {
             id: 'f4-a02',
             no: '2',
-            title: 'Boşlukları doğru kavramla tamamla',
+            title: 'Işık kirliliği cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -1154,7 +1132,7 @@
           {
             id: 'f4-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Işık kirliliği yargılarını ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -1201,7 +1179,7 @@
           {
             id: 'f4-a05',
             no: '5',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Yıldız oluşumu kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -1258,35 +1236,20 @@
               {
                 id: 'q1',
                 prompt: 'Önyıldızı ‘yıldız’dan ayıran temel özellik nedir?',
-                options: [
-                  'Işık üretmemesi, yalnızca ısınmış gaz olması',
-                  'Çekirdeğinde kaynaşmanın henüz başlamamış olması',
-                  'Uzayda hareket etmemesi',
-                  'Kütlesinin ölçülememesi',
-                ],
-                answer: 1,
+                options: ['Çekirdeğinde kaynaşmanın henüz başlamamış olması', 'Uzayda hareket etmemesi', 'Kütlesinin ölçülememesi', 'Işık üretmemesi, yalnızca ısınmış gaz olması'],
+                answer: 0,
               },
               {
                 id: 'q2',
                 prompt: 'Bulutsunun yoğun bir bölgesinin çökmesinin nedeni nedir?',
-                options: [
-                  'Gaz moleküllerinin birbirini itmesi',
-                  'Kütle çekiminin maddeyi merkeze doğru çekmesi',
-                  'Uzayda sürtünme kuvvetinin artması',
-                  'Işığın gazı sıkıştırması',
-                ],
-                answer: 1,
+                options: ['Uzayda sürtünme kuvvetinin artması', 'Işığın gazı sıkıştırması', 'Gaz moleküllerinin birbirini itmesi', 'Kütle çekiminin maddeyi merkeze doğru çekmesi'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Bir bulutsunun karanlık ya da ışıma bulutsusu olarak adlandırılmasını belirleyen nedir?',
-                options: [
-                  'Boyutunun büyüklüğü',
-                  'Işığı kendisinin üretip üretmemesi ya da yakınındaki yıldızların ışığını yansıtması',
-                  'Dünya’dan uzaklığı',
-                  'İçinde kaç yıldız bulunduğu',
-                ],
-                answer: 1,
+                options: ['İçinde kaç yıldız bulunduğu', 'Boyutunun büyüklüğü', 'Dünya’dan uzaklığı', 'Işığı kendisinin üretip üretmemesi ya da yakınındaki yıldızların ışığını yansıtması'],
+                answer: 3,
               },
             ],
           },
@@ -1392,30 +1355,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir yıldızın süpernova ile patlayıp patlamayacağını belirleyen temel etken nedir?',
-                options: ['Rengi', 'Kütlesi', 'Dünya’ya uzaklığı', 'Bulutsunun rengi'],
-                answer: 1,
+                options: ['Kütlesi', 'Dünya’ya uzaklığı', 'Rengi', 'Bulutsunun rengi'],
+                answer: 0,
               },
               {
                 id: 'q2',
                 prompt: 'Kara deliğin oluşması için gereken nedir?',
-                options: [
-                  'Çekirdeğin çok büyük kütleyle çökmesi ve çekiminin ışığın bile kaçamayacağı kadar güçlü olması',
-                  'Yıldızın dış katmanlarının yavaşça atılması',
-                  'Beyaz cücenin soğumaya devam etmesi',
-                  'Bulutsunun yeniden ısınması',
-                ],
-                answer: 0,
+                options: ['Bulutsunun yeniden ısınması', 'Beyaz cücenin soğumaya devam etmesi', 'Çekirdeğin çok büyük kütleyle çökmesi ve çekiminin ışığın bile kaçamayacağı kadar güçlü olması', 'Yıldızın dış katmanlarının yavaşça atılması'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Beyaz cüce neden artık kendi ışığını üretmez?',
-                options: [
-                  'Çekirdeğinde kaynaşma yapamadığı için yalnızca kalan ısısını yaydığından',
-                  'Kütlesi sıfıra düştüğü için',
-                  'Atmosferi olmadığı için',
-                  'Dünya’ya çok yaklaştığı için',
-                ],
-                answer: 0,
+                options: ['Atmosferi olmadığı için', 'Dünya’ya çok yaklaştığı için', 'Kütlesi sıfıra düştüğü için', 'Çekirdeğinde kaynaşma yapamadığı için yalnızca kalan ısısını yaydığından'],
+                answer: 3,
               },
             ],
           },
@@ -1456,6 +1409,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f4-a15',
+            no: '15',
+            title: 'Bulutsuyu oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, yıldız oluşumu',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'bulutsu',
+            questions: [
+              { id: "q1", prompt: "Görseldeki bulutsu, yıldız oluşumunda neyi temsil eder?", options: ["Gaz ve tozun çökerek yeni yıldızların doğduğu bölgeyi", "Ölmüş yıldızların tamamen boş kaldığı bölgeyi", "Gezegenlerin donduğu bölgeyi", "Galaksilerin dışındaki boşluğu"], answer: 0 },
+              { id: "q2", prompt: "Bulutsudaki gaz ve tozun bir araya gelip çökmesini sağlayan temel etken nedir?", options: ["Ses enerjisi", "Sürtünme kuvveti", "Kütle çekimi", "Işık basıncı"], answer: 2 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -1471,7 +1445,7 @@
           {
             id: 'f5-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Yıldız ve galaksi kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -1499,7 +1473,7 @@
           {
             id: 'f5-a02',
             no: '2',
-            title: 'Boşlukları doğru kavramla tamamla',
+            title: 'Yıldız ve galaksi cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -1517,7 +1491,7 @@
           {
             id: 'f5-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Yıldız ve galaksi yargılarını ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -1545,30 +1519,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir yıldızın renginden hangi bilgi doğrudan çıkarılabilir?',
-                options: ['Kütlesi', 'Yüzey sıcaklığı', 'Yaşı', 'Dünya’ya uzaklığı'],
-                answer: 1,
+                options: ['Yaşı', 'Dünya’ya uzaklığı', 'Kütlesi', 'Yüzey sıcaklığı'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Işık yılı neden uzaklık birimi olarak kullanılır?',
-                options: [
-                  'Yıldızlar arası uzaklığın kilometreyle yazılamayacak kadar büyük olması',
-                  'Bir yıldızın yaşını ölçmek için',
-                  'Işığın uzayda yavaşlaması',
-                  'Yıldızların yalnızca bir yıl görünmesi',
-                ],
-                answer: 0,
+                options: ['Bir yıldızın yaşını ölçmek için', 'Işığın uzayda yavaşlaması', 'Yıldızların yalnızca bir yıl görünmesi', 'Yıldızlar arası uzaklığın kilometreyle yazılamayacak kadar büyük olması'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Aynı ışıma gücüne sahip iki yıldızdan Dünya’ya daha yakın olanı için ne söylenebilir?',
-                options: [
-                  'Gökyüzünde daha parlak görünür',
-                  'Daha soğuktur',
-                  'Daha yaşlıdır',
-                  'Rengi kesinlikle kırmızıdır',
-                ],
-                answer: 0,
+                options: ['Daha yaşlıdır', 'Rengi kesinlikle kırmızıdır', 'Daha soğuktur', 'Gökyüzünde daha parlak görünür'],
+                answer: 3,
               },
             ],
           },
@@ -1580,7 +1544,7 @@
           {
             id: 'f5-a05',
             no: '5',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Uzaklık ve evren kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -1689,7 +1653,7 @@
           {
             id: 'f5-a10',
             no: '10',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'Galaksi ve evren kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -1749,35 +1713,20 @@
               {
                 id: 'q1',
                 prompt: 'Samanyolu’nun gece gökyüzünde bir bant biçiminde görünmesinin nedeni nedir?',
-                options: [
-                  'Galaksimizin diski içinden, diskin düzlemine bakıyor olmamız',
-                  'Samanyolu’nun Dünya’ya çok yakın olması',
-                  'Yıldızların yalnızca yazın görünmesi',
-                  'Atmosferin ışığı kırması',
-                ],
-                answer: 0,
+                options: ['Samanyolu’nun Dünya’ya çok yakın olması', 'Atmosferin ışığı kırması', 'Yıldızların yalnızca yazın görünmesi', 'Galaksimizin diski içinden, diskin düzlemine bakıyor olmamız'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Güneş, Samanyolu içinde nerede bulunur?',
-                options: [
-                  'Merkezde',
-                  'Merkezden yaklaşık 26.000 ışık yılı uzaklıkta bir kolda',
-                  'Galaksinin dışında, boşlukta',
-                  'Andromeda’nın içinde',
-                ],
-                answer: 1,
+                options: ['Merkezden yaklaşık 26.000 ışık yılı uzaklıkta bir kolda', 'Galaksinin dışında, boşlukta', 'Andromeda’nın içinde', 'Merkezde'],
+                answer: 0,
               },
               {
                 id: 'q3',
                 prompt: 'Aşağıdaki ölçek sıralamalarından hangisi küçükten büyüğe doğrudur?',
-                options: [
-                  'Gezegen → Güneş Sistemi → Galaksi → Galaksi kümesi → Evren',
-                  'Evren → Galaksi → Gezegen → Güneş Sistemi',
-                  'Güneş Sistemi → Gezegen → Evren → Galaksi',
-                  'Galaksi → Gezegen → Galaksi kümesi → Evren',
-                ],
-                answer: 0,
+                options: ['Güneş Sistemi → Gezegen → Evren → Galaksi', 'Gezegen → Güneş Sistemi → Galaksi → Galaksi kümesi → Evren', 'Evren → Galaksi → Gezegen → Güneş Sistemi', 'Galaksi → Gezegen → Galaksi kümesi → Evren'],
+                answer: 1,
               },
             ],
           },
@@ -1818,6 +1767,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f5-a15',
+            no: '15',
+            title: 'Galaksiyi oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, gök cismi sınıflandırma',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'galaksi',
+            questions: [
+              { id: "q1", prompt: "Görseldeki gök cismi hangi sınıftadır?", options: ["Bulutsu", "Galaksi", "Takımyıldız", "Gezegen"], answer: 1 },
+              { id: "q2", prompt: "Güneş sistemimiz hangi galaksinin içinde yer alır?", options: ["Andromeda", "Triangulum", "Sombrero", "Samanyolu"], answer: 3 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -1833,7 +1803,7 @@
           {
             id: 'f6-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Kuvvet kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -1861,7 +1831,7 @@
           {
             id: 'f6-a02',
             no: '2',
-            title: 'Boşlukları doğru kavramla tamamla',
+            title: 'Kuvvet ve hareket cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -1879,7 +1849,7 @@
           {
             id: 'f6-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Kuvvet yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -1926,7 +1896,7 @@
           {
             id: 'f6-a05',
             no: '5',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'Hareket ve denge kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -1962,20 +1932,20 @@
               {
                 id: 'q1',
                 prompt: 'Duran bir cisme etki eden kuvvetlerin bileşkesi sıfırsa ne olur?',
-                options: ['Cisim hızlanır', 'Cisim durmaya devam eder', 'Cisim yön değiştirir', 'Cismin kütlesi azalır'],
-                answer: 1,
+                options: ['Cisim hızlanır', 'Cisim yön değiştirir', 'Cisim durmaya devam eder', 'Cismin kütlesi azalır'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'Sabit hızla giden bir bisikletlinin üzerine etki eden net kuvvet için ne söylenebilir?',
-                options: ['Sıfırdır', 'Sürekli artar', 'Hareket yönüne eşittir', 'Her zaman geriye doğrudur'],
-                answer: 0,
+                options: ['Hareket yönüne eşittir', 'Sürekli artar', 'Sıfırdır', 'Her zaman geriye doğrudur'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Kaygan bir zeminde sürtünme azaldığında aynı itmeyle giden bir oyuncak araba ne yapar?',
-                options: ['Daha çabuk durur', 'Daha uzun süre hareketine devam eder', 'Hareket etmez', 'Yönü kendiliğinden değişir'],
-                answer: 1,
+                options: ['Yönü kendiliğinden değişir', 'Hareket etmez', 'Daha uzun süre hareketine devam eder', 'Daha çabuk durur'],
+                answer: 2,
               },
             ],
           },
@@ -2039,7 +2009,7 @@
           {
             id: 'f6-a10',
             no: '10',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'İş ve enerji kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -2099,30 +2069,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir cisme 200 N kuvvet uygulanıyor ve cisim kuvvet yönünde 3 m yer değiştiriyor. Yapılan iş kaç joule’dür?',
-                options: ['60 J', '200 J', '600 J', '603 J'],
-                answer: 2,
+                options: ['600 J', '60 J', '200 J', '603 J'],
+                answer: 0,
               },
               {
                 id: 'q2',
                 prompt: 'Aşağıdakilerden hangisinde fiziksel anlamda iş yapılmaz?',
-                options: [
-                  'Eldeki çantayı sabit yükseklikte taşımak',
-                  'Kovayı kuyudan yukarı çekmek',
-                  'Kutuyu yerde ileri itmek',
-                  'Çantayı sırtına alıp merdiven çıkmak',
-                ],
-                answer: 0,
+                options: ['Kutuyu yerde ileri itmek', 'Eldeki çantayı sabit yükseklikte taşımak', 'Çantayı sırtına alıp merdiven çıkmak', 'Kovayı kuyudan yukarı çekmek'],
+                answer: 1,
               },
               {
                 id: 'q3',
                 prompt: 'Basit makineler için hangisi doğrudur?',
-                options: [
-                  'İşi yoktan var eder',
-                  'İşi kolaylaştırır, işten kazanç sağlamaz',
-                  'Her zaman işi azaltır',
-                  'Kuvveti her zaman artırır',
-                ],
-                answer: 1,
+                options: ['İşi kolaylaştırır, işten kazanç sağlamaz', 'Kuvveti her zaman artırır', 'İşi yoktan var eder', 'Her zaman işi azaltır'],
+                answer: 0,
               },
             ],
           },
@@ -2163,6 +2123,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f6-a15',
+            no: '15',
+            title: 'Kuvvetleri oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, net kuvvet',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'kuvvet',
+            questions: [
+              { id: "q1", prompt: "Görselde iki öğrenci arabayı aynı yönde itiyor. Net kuvvet için ne söylenir?", options: ["Kuvvetler zıt yönde olduğu için çıkarılır", "Kuvvetler aynı yönde olduğu için toplanır", "Net kuvvet her zaman sıfırdır", "Kuvvetler birbirini yok eder"], answer: 1 },
+              { id: "q2", prompt: "Araba sabit hızla ilerlerken net kuvvet için hangisi doğrudur?", options: ["Sürekli artar", "Her zaman sıfırdan büyüktür", "Sıfırdır", "Yön değiştirir"], answer: 2 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -2178,7 +2159,7 @@
           {
             id: 'f7-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Enerji türlerini tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -2206,7 +2187,7 @@
           {
             id: 'f7-a02',
             no: '2',
-            title: 'Boşlukları doğru kavramla tamamla',
+            title: 'Enerji cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -2224,7 +2205,7 @@
           {
             id: 'f7-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Enerji yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -2271,7 +2252,7 @@
           {
             id: 'f7-a05',
             no: '5',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'Enerji hesabı kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -2307,20 +2288,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir aracın hızı iki katına çıkarılırsa kinetik enerjisi kaç katına çıkar?',
-                options: ['Aynı kalır', 'İki katına', 'Dört katına', 'Yarıya'],
-                answer: 2,
+                options: ['Aynı kalır', 'Dört katına', 'Yarıya', 'İki katına'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: '2 kilogramlık bir cisim 3 metre yükseğe kaldırıldığında depolanan yer çekimi potansiyel enerjisi kaç joule’dür? (g = 10 m/s²)',
-                options: ['6 J', '30 J', '60 J', '600 J'],
-                answer: 2,
+                options: ['60 J', '30 J', '6 J', '600 J'],
+                answer: 0,
               },
               {
                 id: 'q3',
                 prompt: 'Aynı hızla giden bir kamyonun otomobilden daha fazla kinetik enerjiye sahip olmasının nedeni nedir?',
-                options: ['Kütlesinin daha büyük olması', 'Renginin farklı olması', 'Daha yüksekte olması', 'Sürtünmesinin az olması'],
-                answer: 0,
+                options: ['Sürtünmesinin az olması', 'Kütlesinin daha büyük olması', 'Renginin farklı olması', 'Daha yüksekte olması'],
+                answer: 1,
               },
             ],
           },
@@ -2444,30 +2425,20 @@
               {
                 id: 'q1',
                 prompt: 'Ses enerjisi neden boşlukta yayılmaz?',
-                options: [
-                  'Sesin bir maddesel ortamda titreşim olarak yayılması',
-                  'Sesin ışıktan yavaş olması',
-                  'Sesin enerji taşımaması',
-                  'Boşlukta sıcaklık olmaması',
-                ],
-                answer: 0,
+                options: ['Boşlukta sıcaklık olmaması', 'Sesin bir maddesel ortamda titreşim olarak yayılması', 'Sesin enerji taşımaması', 'Sesin ışıktan yavaş olması'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Bitkinin fotosentez yaparken gerçekleştirdiği dönüşüm hangisidir?',
-                options: [
-                  'Işık enerjisi → kimyasal enerji',
-                  'Kimyasal enerji → ses enerjisi',
-                  'Kinetik enerji → ışık enerjisi',
-                  'Isı enerjisi → elektrik enerjisi',
-                ],
-                answer: 0,
+                options: ['Kimyasal enerji → ses enerjisi', 'Kinetik enerji → ışık enerjisi', 'Işık enerjisi → kimyasal enerji', 'Isı enerjisi → elektrik enerjisi'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Bir cismin enerjisi dönüşürken toplam enerji için ne söylenir?',
-                options: ['Azalır', 'Artar', 'Değişmez', 'Her zaman sıfırlanır'],
-                answer: 2,
+                options: ['Her zaman sıfırlanır', 'Değişmez', 'Artar', 'Azalır'],
+                answer: 1,
               },
             ],
           },
@@ -2508,6 +2479,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f7-a15',
+            no: '15',
+            title: 'Havalanan topu oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, enerji türleri',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'kinetik-enerji',
+            questions: [
+              { id: "q1", prompt: "Görseldeki top havadayken hangi enerji türlerine sahiptir?", options: ["Yalnızca kinetik enerji", "Hem kinetik hem potansiyel enerji", "Yalnızca potansiyel enerji", "Hiçbiri"], answer: 1 },
+              { id: "q2", prompt: "Topun hızı iki katına çıkarılırsa kinetik enerjisi nasıl değişir?", options: ["İki katına çıkar", "Değişmez", "Yarıya iner", "Dört katına çıkar"], answer: 3 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -2523,7 +2515,7 @@
           {
             id: 'f8-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Dönüşüm kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -2569,7 +2561,7 @@
           {
             id: 'f8-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Dönüşüm yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -2616,7 +2608,7 @@
           {
             id: 'f8-a05',
             no: '5',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'Sürtünme türlerini eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -2652,25 +2644,20 @@
               {
                 id: 'q1',
                 prompt: 'Ağır bir dolabı yerinden kımıldatmak, kımıldadıktan sonra itmeye devam etmekten neden daha zordur?',
-                options: [
-                  'Statik sürtünmenin kayma sürtünmesinden büyük olması',
-                  'Dolabın kütlesinin hareket ettikten sonra azalması',
-                  'Kayma sürtünmesinin statik sürtünmeden büyük olması',
-                  'Dolabın ağırlığının hareket sırasında artması',
-                ],
-                answer: 0,
+                options: ['Dolabın kütlesinin hareket ettikten sonra azalması', 'Dolabın ağırlığının hareket sırasında artması', 'Statik sürtünmenin kayma sürtünmesinden büyük olması', 'Kayma sürtünmesinin statik sürtünmeden büyük olması'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'Bir cismin kayarak giderken yavaşlamasının nedeni, enerjisinin hangi biçime dönüşmesidir?',
-                options: ['Ses enerjisi yalnızca', 'Isı enerjisi', 'Kimyasal enerji', 'Elektrik enerjisi'],
-                answer: 1,
+                options: ['Kimyasal enerji', 'Elektrik enerjisi', 'Isı enerjisi', 'Ses enerjisi yalnızca'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Aynı kuvvet küçük bir alana uygulandığında ne olur?',
-                options: ['Basınç artar', 'Basınç azalır', 'Basınç değişmez', 'Kuvvet yok olur'],
-                answer: 0,
+                options: ['Kuvvet yok olur', 'Basınç azalır', 'Basınç değişmez', 'Basınç artar'],
+                answer: 3,
               },
             ],
           },
@@ -2794,35 +2781,20 @@
               {
                 id: 'q1',
                 prompt: 'Tekerleğin taşımacılıkta büyük bir kolaylık sağlamasının nedeni nedir?',
-                options: [
-                  'Yuvarlanma sürtünmesinin kayma sürtünmesinden küçük olması',
-                  'Tekerleğin ağırlığı artırması',
-                  'Kayma sürtünmesinin yuvarlanmadan küçük olması',
-                  'Tekerleğin enerji üretmesi',
-                ],
-                answer: 0,
+                options: ['Kayma sürtünmesinin yuvarlanmadan küçük olması', 'Tekerleğin enerji üretmesi', 'Yuvarlanma sürtünmesinin kayma sürtünmesinden küçük olması', 'Tekerleğin ağırlığı artırması'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'Bir dönüşümde “kaybolan” enerji için en doğru açıklama hangisidir?',
-                options: [
-                  'Başka bir enerji türüne dönüşmüştür',
-                  'Tamamen yok olmuştur',
-                  'Yoktan var olmuştur',
-                  'Kütleye dönüşmüştür',
-                ],
-                answer: 0,
+                options: ['Tamamen yok olmuştur', 'Yoktan var olmuştur', 'Başka bir enerji türüne dönüşmüştür', 'Kütleye dönüşmüştür'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Sürtünmeyi artırmak hangi durumda istenir?',
-                options: [
-                  'Fren balatasının tekerleği tutması gerektiğinde',
-                  'Bisiklet zinciri yağlanırken',
-                  'Uçağın gövdesi tasarlanırken',
-                  'Tekerlek yatağı seçilirken',
-                ],
-                answer: 0,
+                options: ['Tekerlek yatağı seçilirken', 'Bisiklet zinciri yağlanırken', 'Uçağın gövdesi tasarlanırken', 'Fren balatasının tekerleği tutması gerektiğinde'],
+                answer: 3,
               },
             ],
           },
@@ -2863,6 +2835,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f8-a15',
+            no: '15',
+            title: 'Kaykaycıyı oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, dönüşüm',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'enerji-donusumu',
+            questions: [
+              { id: "q1", prompt: "Görseldeki kaykaycı rampadan inerken hangi dönüşüm gerçekleşir?", options: ["Kinetik enerji → potansiyel enerji", "Isı enerjisi → elektrik enerjisi", "Potansiyel enerji → kinetik enerji", "Ses enerjisi → kimyasal enerji"], answer: 2 },
+              { id: "q2", prompt: "Kaykaycı rampanın sonunda yavaşlayıp durduğunda enerjisi ne olur?", options: ["Yok olur", "Sürtünme ve hava direnciyle ısıya dönüşür", "Yeniden yükselir", "Elektriğe dönüşür"], answer: 1 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -2878,7 +2871,7 @@
           {
             id: 'f9-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Sindirim kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -2924,7 +2917,7 @@
           {
             id: 'f9-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Sindirim yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -2971,7 +2964,7 @@
           {
             id: 'f9-a05',
             no: '5',
-            title: 'Beş organı göreviyle eşleştir',
+            title: 'Sindirim organlarını görevleriyle eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 organ · 6 görev',
@@ -3007,25 +3000,20 @@
               {
                 id: 'q1',
                 prompt: 'Ekmek uzun süre çiğnendiğinde neden tatlanır?',
-                options: [
-                  'Tükürükteki enzimin nişastayı parçalaması',
-                  'Mide asidinin ağza gelmesi',
-                  'Dişlerin şeker üretmesi',
-                  'Safranın ağza ulaşması',
-                ],
-                answer: 0,
+                options: ['Dişlerin şeker üretmesi', 'Safranın ağza ulaşması', 'Tükürükteki enzimin nişastayı parçalaması', 'Mide asidinin ağza gelmesi'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'İnce bağırsağın yüzeyindeki villusların temel işlevi nedir?',
-                options: ['Emilim yüzeyini büyütmek', 'Besini öğütmek', 'Asit salgılamak', 'Safra üretmek'],
-                answer: 0,
+                options: ['Besini öğütmek', 'Asit salgılamak', 'Safra üretmek', 'Emilim yüzeyini büyütmek'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Besin mideye ulaştığında sindirimin en yoğun yaşandığı organ hangisidir?',
-                options: ['İnce bağırsak', 'Mide', 'Yemek borusu', 'Kalın bağırsak'],
-                answer: 0,
+                options: ['Yemek borusu', 'İnce bağırsak', 'Mide', 'Kalın bağırsak'],
+                answer: 1,
               },
             ],
           },
@@ -3149,35 +3137,20 @@
               {
                 id: 'q1',
                 prompt: 'Safra yağların sindiriminde nasıl bir rol oynar?',
-                options: [
-                  'Yağları küçük damlacıklara ayırarak enzimlerin işini kolaylaştırır',
-                  'Yağları doğrudan kana geçirir',
-                  'Yağları proteinlere dönüştürür',
-                  'Yağları midede çözer',
-                ],
-                answer: 0,
+                options: ['Yağları doğrudan kana geçirir', 'Yağları küçük damlacıklara ayırarak enzimlerin işini kolaylaştırır', 'Yağları midede çözer', 'Yağları proteinlere dönüştürür'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Lifli besinler sindirilmediği hâlde neden önemlidir?',
-                options: [
-                  'Bağırsak hareketlerini düzenler',
-                  'Doğrudan enerji sağlar',
-                  'Mide asidini artırır',
-                  'Kan şekerini yükseltir',
-                ],
-                answer: 0,
+                options: ['Doğrudan enerji sağlar', 'Mide asidini artırır', 'Kan şekerini yükseltir', 'Bağırsak hareketlerini düzenler'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Peristaltik hareketin özelliği hangisidir?',
-                options: [
-                  'Yer çekiminden bağımsız çalışması',
-                  'Yalnızca midede görülmesi',
-                  'Enzim salgılaması',
-                  'Besini kana geçirmesi',
-                ],
-                answer: 0,
+                options: ['Yalnızca midede görülmesi', 'Besini kana geçirmesi', 'Yer çekiminden bağımsız çalışması', 'Enzim salgılaması'],
+                answer: 2,
               },
             ],
           },
@@ -3218,6 +3191,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f9-a15',
+            no: '15',
+            title: 'Sindirim kanalını oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, organ işlevi',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'sindirim-kanali',
+            questions: [
+              { id: "q1", prompt: "Görseldeki sindirim kanalında besinlerin en yoğun sindirildiği ve emildiği bölüm hangisidir?", options: ["Mide", "Yemek borusu", "İnce bağırsak", "Kalın bağırsak"], answer: 2 },
+              { id: "q2", prompt: "Kalın bağırsağın görevi için hangisi doğrudur?", options: ["Su ve mineralleri geri emer, atıkları yoğunlaştırır", "Proteinleri amino asitlere ayırır", "Mide asidi salgılar", "Besinleri mideye taşır"], answer: 0 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -3233,7 +3227,7 @@
           {
             id: 'f10-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Besin gruplarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -3261,7 +3255,7 @@
           {
             id: 'f10-a02',
             no: '2',
-            title: 'Sindirim cümlelerini tamamla',
+            title: 'Besin grubu cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -3279,7 +3273,7 @@
           {
             id: 'f10-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Besin grubu yargılarını ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -3326,7 +3320,7 @@
           {
             id: 'f10-a05',
             no: '5',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'Emilim kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -3362,25 +3356,20 @@
               {
                 id: 'q1',
                 prompt: 'Glikoz ve amino asitler emildikten sonra hangi yolla taşınır?',
-                options: ['Doğrudan kan', 'Yalnızca lenf', 'Mide özsuyu', 'Safra kanalı'],
-                answer: 0,
+                options: ['Safra kanalı', 'Yalnızca lenf', 'Doğrudan kan', 'Mide özsuyu'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'Yağların büyük bölümünün emiliminde hangi yol kullanılır?',
-                options: ['Lenf yolu, ardından kan', 'Doğrudan mide duvarı', 'Kalın bağırsak', 'Yemek borusu'],
-                answer: 0,
+                options: ['Doğrudan mide duvarı', 'Kalın bağırsak', 'Lenf yolu, ardından kan', 'Yemek borusu'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'İltihaplı bir bağırsakta emilim neden azalır?',
-                options: [
-                  'Bağırsak yüzeyinin ve villusların zarar görmesi',
-                  'Mide asidinin azalması',
-                  'Safranın artması',
-                  'Enzimlerin tamamen yok olması',
-                ],
-                answer: 0,
+                options: ['Safranın artması', 'Bağırsak yüzeyinin ve villusların zarar görmesi', 'Mide asidinin azalması', 'Enzimlerin tamamen yok olması'],
+                answer: 1,
               },
             ],
           },
@@ -3504,30 +3493,20 @@
               {
                 id: 'q1',
                 prompt: 'Mide asidinin çok yüksek olması ince bağırsakta hangi soruna yol açabilir?',
-                options: [
-                  'Bağırsak enzimlerinin çalışmasının engellenmesi',
-                  'Villusların çoğalması',
-                  'Safranın artması',
-                  'Emilimin hızlanması',
-                ],
-                answer: 0,
+                options: ['Villusların çoğalması', 'Emilimin hızlanması', 'Safranın artması', 'Bağırsak enzimlerinin çalışmasının engellenmesi'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Aşağıdakilerden hangisi sindirim sağlığını koruyan bir davranıştır?',
-                options: ['Besinleri iyi çiğnemek', 'Öğün atlamak', 'Yemekten hemen sonra koşmak', 'Açıkta satılan gıda tüketmek'],
-                answer: 0,
+                options: ['Öğün atlamak', 'Besinleri iyi çiğnemek', 'Yemekten hemen sonra koşmak', 'Açıkta satılan gıda tüketmek'],
+                answer: 1,
               },
               {
                 id: 'q3',
                 prompt: 'Uzun süren karın ağrısı, şişkinlik ve kilo kaybı durumunda ne yapılmalıdır?',
-                options: [
-                  'Bir sağlık kuruluşuna başvurulmalıdır',
-                  'İlaç kendi kendine seçilmelidir',
-                  'Öğünler tamamen kesilmelidir',
-                  'Yalnızca su içilmelidir',
-                ],
-                answer: 0,
+                options: ['Yalnızca su içilmelidir', 'Öğünler tamamen kesilmelidir', 'Bir sağlık kuruluşuna başvurulmalıdır', 'İlaç kendi kendine seçilmelidir'],
+                answer: 2,
               },
             ],
           },
@@ -3568,6 +3547,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f10-a15',
+            no: '15',
+            title: 'Villusları oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, emilim',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'emilim',
+            questions: [
+              { id: "q1", prompt: "Görseldeki villusların emilimdeki temel işlevi nedir?", options: ["Besinleri öğütmek", "Enzim salgılamak", "İnce bağırsak yüzey alanını büyütmek", "Safra üretmek"], answer: 2 },
+              { id: "q2", prompt: "Emilen glikoz ve amino asitler nereye geçer?", options: ["Doğrudan kana", "Önce mideye", "Lenf yoluyla kalbe", "Kalın bağırsağa"], answer: 0 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -3583,7 +3583,7 @@
           {
             id: 'f11-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Kalp ve damar kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -3611,7 +3611,7 @@
           {
             id: 'f11-a02',
             no: '2',
-            title: 'Dolaşım cümlelerini tamamla',
+            title: 'Küçük dolaşım cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '5 boşluk',
@@ -3629,7 +3629,7 @@
           {
             id: 'f11-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Dolaşım yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -3712,30 +3712,20 @@
               {
                 id: 'q1',
                 prompt: 'Küçük kan dolaşımı hangi organdan çıkıp hangi organda tamamlanır?',
-                options: [
-                  'Sağ karıncıktan çıkar, akciğerlerde temizlenir, sol kulakçığa döner',
-                  'Sol karıncıktan çıkar, böbreklerde temizlenir, sağ kulakçığa döner',
-                  'Sağ kulakçıktan çıkar, midede temizlenir, sol karıncığa döner',
-                  'Sol kulakçıktan çıkar, akciğerlerde temizlenir, sağ karıncığa döner',
-                ],
-                answer: 0,
+                options: ['Sağ kulakçıktan çıkar, midede temizlenir, sol karıncığa döner', 'Sağ karıncıktan çıkar, akciğerlerde temizlenir, sol kulakçığa döner', 'Sol kulakçıktan çıkar, akciğerlerde temizlenir, sağ karıncığa döner', 'Sol karıncıktan çıkar, böbreklerde temizlenir, sağ kulakçığa döner'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Büyük kan dolaşımının başlangıç noktası neresidir?',
-                options: ['Sol karıncık', 'Sağ karıncık', 'Sol kulakçık', 'Sağ kulakçık'],
-                answer: 0,
+                options: ['Sol kulakçık', 'Sağ karıncık', 'Sol karıncık', 'Sağ kulakçık'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Atardamarların duvarları neden kalın ve esnektir?',
-                options: [
-                  'Yüksek basınca dayanmaları gerektiği için',
-                  'Kanı topladıkları için',
-                  'Madde alışverişi yaptıkları için',
-                  'Kapakçık taşıdıkları için',
-                ],
-                answer: 0,
+                options: ['Kanı topladıkları için', 'Kapakçık taşıdıkları için', 'Yüksek basınca dayanmaları gerektiği için', 'Madde alışverişi yaptıkları için'],
+                answer: 2,
               },
             ],
           },
@@ -3760,7 +3750,7 @@
           {
             id: 'f11-a08',
             no: '8',
-            title: 'Dolaşım cümlelerini tamamla',
+            title: 'Büyük dolaşım cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '4 boşluk',
@@ -3859,25 +3849,20 @@
               {
                 id: 'q1',
                 prompt: 'Küçük kan dolaşımını gözlemlerine dayanarak tanımlayan bilim insanı kimdir?',
-                options: ['İbnü’n Nefîs', 'Galen', 'Marcello Malpighi', 'Claude Bernard'],
-                answer: 0,
+                options: ['Marcello Malpighi', 'Galen', 'Claude Bernard', 'İbnü’n Nefîs'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Kılcal damarları mikroskopla ilk kez gören bilim insanı kimdir?',
-                options: ['Marcello Malpighi', 'William Harvey', 'İbnü’n Nefîs', 'Casimir Funk'],
-                answer: 0,
+                options: ['William Harvey', 'Casimir Funk', 'Marcello Malpighi', 'İbnü’n Nefîs'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Galen’in kanın kalpte gözeneklerden geçtiği görüşü neden terk edildi?',
-                options: [
-                  'Gözlem ve deneyler kalbin bölmelerinde gözenek olmadığını gösterdiği için',
-                  'Kanın miktarı ölçülemediği için',
-                  'Atardamarlar bulunamadığı için',
-                  'Kalp kapakçıkları görülmediği için',
-                ],
-                answer: 0,
+                options: ['Kalp kapakçıkları görülmediği için', 'Atardamarlar bulunamadığı için', 'Gözlem ve deneyler kalbin bölmelerinde gözenek olmadığını gösterdiği için', 'Kanın miktarı ölçülemediği için'],
+                answer: 2,
               },
             ],
           },
@@ -3918,6 +3903,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f11-a15',
+            no: '15',
+            title: 'Kalbi oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, kalbin odacıkları',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'kalp',
+            questions: [
+              { id: "q1", prompt: "Görseldeki kalpte kanı tüm vücuda pompalayan odacık hangisidir?", options: ["Sağ karıncık", "Sol karıncık", "Sol kulakçık", "Sağ kulakçık"], answer: 1 },
+              { id: "q2", prompt: "Kalpte kanın geri kaçmasını ne engeller?", options: ["Karıncık duvarı", "Bronşlar", "Kapakçıklar", "Alveoller"], answer: 2 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -3933,7 +3939,7 @@
           {
             id: 'f12-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Kan bağışı kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -3979,7 +3985,7 @@
           {
             id: 'f12-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Kan bağışı yargılarını ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -4062,35 +4068,20 @@
               {
                 id: 'q1',
                 prompt: 'Hipertansiyon neden düzenli ölçüm gerektirir?',
-                options: [
-                  'Çoğu zaman belirti vermeden ilerlediği için',
-                  'Yalnızca çocuklarda görüldüğü için',
-                  'Kan grubunu değiştirdiği için',
-                  'Nabzı tamamen durdurduğu için',
-                ],
-                answer: 0,
+                options: ['Kan grubunu değiştirdiği için', 'Nabzı tamamen durdurduğu için', 'Yalnızca çocuklarda görüldüğü için', 'Çoğu zaman belirti vermeden ilerlediği için'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Aterosklerozun kalp krizi riskini artırmasının nedeni nedir?',
-                options: [
-                  'Damarın daralması ve kan akışının güçleşmesi',
-                  'Kanın sulanması',
-                  'Kalbin küçülmesi',
-                  'Alyuvar sayısının artması',
-                ],
-                answer: 0,
+                options: ['Alyuvar sayısının artması', 'Kanın sulanması', 'Damarın daralması ve kan akışının güçleşmesi', 'Kalbin küçülmesi'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Dolaşım sağlığıyla ilgili bilgi nereden edinilmelidir?',
-                options: [
-                  'Sağlık Bakanlığı ve yetkili sağlık kuruluşlarından',
-                  'Sosyal medyadaki kulaktan dolma tariflerden',
-                  'Reklamlardan',
-                  'Yalnızca arkadaş tavsiyelerinden',
-                ],
-                answer: 0,
+                options: ['Reklamlardan', 'Sağlık Bakanlığı ve yetkili sağlık kuruluşlarından', 'Sosyal medyadaki kulaktan dolma tariflerden', 'Yalnızca arkadaş tavsiyelerinden'],
+                answer: 1,
               },
             ],
           },
@@ -4115,7 +4106,7 @@
           {
             id: 'f12-a08',
             no: '8',
-            title: 'Sağlık cümlelerini tamamla',
+            title: 'Bağış ve sağlık cümlelerini tamamla',
             type: 'fill',
             format: 'Boşluk doldurma',
             count: '4 boşluk',
@@ -4214,20 +4205,20 @@
               {
                 id: 'q1',
                 prompt: 'Bilinci kapalı ve solunumu durmuş bir kişide erken kalp masajı neyi önler?',
-                options: ['Beyin hasarını', 'Kan grubu değişimini', 'Ateşi', 'Kan şekerinin düşmesini'],
-                answer: 0,
+                options: ['Kan şekerinin düşmesini', 'Beyin hasarını', 'Ateşi', 'Kan grubu değişimini'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Kan grubunu keşfederek güvenli kan naklinin önünü açan bilim insanı kimdir?',
-                options: ['Karl Landsteiner', 'William Harvey', 'İbnü’n Nefîs', 'Marcello Malpighi'],
-                answer: 0,
+                options: ['İbnü’n Nefîs', 'Marcello Malpighi', 'Karl Landsteiner', 'William Harvey'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Kan bağışı sırasında alınan miktar yaklaşık ne kadardır?',
-                options: ['450 mililitre', '50 mililitre', '1,5 litre', '3 litre'],
-                answer: 0,
+                options: ['3 litre', '1,5 litre', '50 mililitre', '450 mililitre'],
+                answer: 3,
               },
             ],
           },
@@ -4268,6 +4259,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f12-a15',
+            no: '15',
+            title: 'Bağış anını oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, kan bağışı',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'kan-bagisi',
+            questions: [
+              { id: "q1", prompt: "Görseldeki işlemde alınan kan neden bileşenlerine ayrılır?", options: ["Kanın rengini değiştirmek için", "Tek bağışın birden çok hastaya yarar sağlaması için", "Bağış süresini kısaltmak için", "Kan grubunu belirlemek için"], answer: 1 },
+              { id: "q2", prompt: "Bağış öncesinde sağlık taraması neden yapılır?", options: ["Kanın miktarını azaltmak için", "Kan grubunu değiştirmek için", "İşlemi hızlandırmak için", "Hem bağışçının hem alıcının güvenliğini korumak için"], answer: 3 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -4283,7 +4295,7 @@
           {
             id: 'f13-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Solunum kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -4329,7 +4341,7 @@
           {
             id: 'f13-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Solunum yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -4376,7 +4388,7 @@
           {
             id: 'f13-a05',
             no: '5',
-            title: 'Beş kavramı tanımıyla eşleştir',
+            title: 'Soluk alıp verme kavramlarını eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 kavram · 6 tanım',
@@ -4412,35 +4424,20 @@
               {
                 id: 'q1',
                 prompt: 'Soluk alma sırasında diyafram kasıldığında ne olur?',
-                options: [
-                  'Düzleşir, göğüs hacmi artar, hava içeri girer',
-                  'Kubbeleşir, göğüs hacmi azalır',
-                  'Hiç hareket etmez',
-                  'Akciğerler kasılarak havayı iter',
-                ],
-                answer: 0,
+                options: ['Kubbeleşir, göğüs hacmi azalır', 'Düzleşir, göğüs hacmi artar, hava içeri girer', 'Hiç hareket etmez', 'Akciğerler kasılarak havayı iter'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Akciğerlerin hareketini sağlayan yapı hangisidir?',
-                options: [
-                  'Göğüs kafesi kasları ve diyafram',
-                  'Yalnızca akciğer kasları',
-                  'Alveoller',
-                  'Soluk borusu kıkırdakları',
-                ],
-                answer: 0,
+                options: ['Soluk borusu kıkırdakları', 'Yalnızca akciğer kasları', 'Göğüs kafesi kasları ve diyafram', 'Alveoller'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Solunum hızı hangi ölçüte göre düzenlenir?',
-                options: [
-                  'Kandaki karbondioksit düzeyi',
-                  'Kan grubu',
-                  'Boy uzunluğu',
-                  'Mide asidi miktarı',
-                ],
-                answer: 0,
+                options: ['Mide asidi miktarı', 'Kan grubu', 'Boy uzunluğu', 'Kandaki karbondioksit düzeyi'],
+                answer: 3,
               },
             ],
           },
@@ -4504,7 +4501,7 @@
           {
             id: 'f13-a10',
             no: '10',
-            title: 'Beş organı göreviyle eşleştir',
+            title: 'Solunum organlarını görevleriyle eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 organ · 6 görev',
@@ -4564,30 +4561,20 @@
               {
                 id: 'q1',
                 prompt: 'Sigaranın alveoller üzerindeki etkisi nedir?',
-                options: [
-                  'Esnekliğini bozar, tüylerin temizleme işini felce uğratır',
-                  'Alveol sayısını artırır',
-                  'Yüzey alanını genişletir',
-                  'Difüzyonu hızlandırır',
-                ],
-                answer: 0,
+                options: ['Yüzey alanını genişletir', 'Esnekliğini bozar, tüylerin temizleme işini felce uğratır', 'Alveol sayısını artırır', 'Difüzyonu hızlandırır'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Pasif içicilik için ne söylenebilir?',
-                options: ['Aktif içicilik kadar zararlıdır', 'Zararsızdır', 'Yalnızca yaşlıları etkiler', 'Sadece koku yapar'],
-                answer: 0,
+                options: ['Sadece koku yapar', 'Yalnızca yaşlıları etkiler', 'Zararsızdır', 'Aktif içicilik kadar zararlıdır'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Hava kirliliğinin yoğun olduğu günlerde hangisi doğru davranıştır?',
-                options: [
-                  'Açık havada uzun süre kalmamak',
-                  'Pencereleri açıp odada spor yapmak',
-                  'Maskeyi tamamen bırakmak',
-                  'Dışarıda koşu mesafesini artırmak',
-                ],
-                answer: 0,
+                options: ['Pencereleri açıp odada spor yapmak', 'Dışarıda koşu mesafesini artırmak', 'Açık havada uzun süre kalmamak', 'Maskeyi tamamen bırakmak'],
+                answer: 2,
               },
             ],
           },
@@ -4628,6 +4615,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f13-a15',
+            no: '15',
+            title: 'Alveolleri oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, gaz alışverişi',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'gaz-alisverisi',
+            questions: [
+              { id: "q1", prompt: "Görseldeki alveollerde gerçekleşen olay nedir?", options: ["Besinlerin kana geçmesi", "Kanın süzülmesi", "Oksijenin kana, karbondioksitin alveole geçtiği gaz alışverişi", "Havanın ısıtılması"], answer: 2 },
+              { id: "q2", prompt: "Alveol duvarının tek katmanlı ve çok ince olması neyi kolaylaştırır?", options: ["Gazların difüzyonunu", "Kanın pıhtılaşmasını", "Besinlerin sindirimini", "Sesin oluşmasını"], answer: 0 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -4643,7 +4651,7 @@
           {
             id: 'f14-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'Bağımlılık kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -4689,7 +4697,7 @@
           {
             id: 'f14-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Bağımlılık yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -4736,7 +4744,7 @@
           {
             id: 'f14-a05',
             no: '5',
-            title: 'Beş organı göreviyle eşleştir',
+            title: 'Boşaltım organlarını görevleriyle eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '5 organ · 6 görev',
@@ -4772,35 +4780,20 @@
               {
                 id: 'q1',
                 prompt: 'Böbrekler günde yaklaşık 180 litre sıvı süzdüğü hâlde idrar neden yaklaşık 1,5 litredir?',
-                options: [
-                  'Süzülen sıvının büyük bölümü geri emilir',
-                  'Böbrekler süzülmeyi durdurur',
-                  'İdrarın bir bölümü akciğerlere gider',
-                  'Su karaciğerde depolanır',
-                ],
-                answer: 0,
+                options: ['Böbrekler süzülmeyi durdurur', 'İdrarın bir bölümü akciğerlere gider', 'Su karaciğerde depolanır', 'Süzülen sıvının büyük bölümü geri emilir'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Nefronda gerçekleşen aşamaların doğru sırası hangisidir?',
-                options: [
-                  'Süzülme → geri emilim → salgılama',
-                  'Salgılama → süzülme → geri emilim',
-                  'Geri emilim → salgılama → süzülme',
-                  'Süzülme → salgılama → geri emilim',
-                ],
-                answer: 0,
+                options: ['Salgılama → süzülme → geri emilim', 'Geri emilim → salgılama → süzülme', 'Süzülme → salgılama → geri emilim', 'Süzülme → geri emilim → salgılama'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Yeterli su içmemek hangi riski artırır?',
-                options: [
-                  'Böbrek taşı ve idrar yolu enfeksiyonu',
-                  'Kemik uzaması',
-                  'Kan grubu değişimi',
-                  'Görme kaybı',
-                ],
-                answer: 0,
+                options: ['Kan grubu değişimi', 'Böbrek taşı ve idrar yolu enfeksiyonu', 'Kemik uzaması', 'Görme kaybı'],
+                answer: 1,
               },
             ],
           },
@@ -4924,30 +4917,20 @@
               {
                 id: 'q1',
                 prompt: 'Bağımlılıkla mücadelede neden önleme öne çıkar?',
-                options: [
-                  'Başlamayı engellemek tedaviden daha etkilidir',
-                  'Önleme ilaç gerektirir',
-                  'Tedavi hiç işe yaramaz',
-                  'Önleme yalnızca yetişkinlere uygulanır',
-                ],
-                answer: 0,
+                options: ['Tedavi hiç işe yaramaz', 'Önleme yalnızca yetişkinlere uygulanır', 'Başlamayı engellemek tedaviden daha etkilidir', 'Önleme ilaç gerektirir'],
+                answer: 2,
               },
               {
                 id: 'q2',
                 prompt: 'Nefronun görevi nedir?',
-                options: [
-                  'Kanı süzüp idrar oluşturmak',
-                  'Kanı pompalamak',
-                  'Havayı temizlemek',
-                  'Amonyağı üreye çevirmek',
-                ],
-                answer: 0,
+                options: ['Kanı pompalamak', 'Amonyağı üreye çevirmek', 'Kanı süzüp idrar oluşturmak', 'Havayı temizlemek'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Böbreklerin yapısını mikroskopla inceleyerek süzme birimlerini gösteren bilim insanı kimdir?',
-                options: ['Marcello Malpighi', 'William Harvey', 'Karl Landsteiner', 'Antoine Lavoisier'],
-                answer: 0,
+                options: ['William Harvey', 'Marcello Malpighi', 'Karl Landsteiner', 'Antoine Lavoisier'],
+                answer: 1,
               },
             ],
           },
@@ -4988,6 +4971,27 @@
           },
         ],
       },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f14-a15',
+            no: '15',
+            title: 'Boşaltım sistemini oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, boşaltım organları',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'bobrek',
+            questions: [
+              { id: "q1", prompt: "Görseldeki boşaltım sisteminde idrarı böbrekten idrar kesesine taşıyan yapı hangisidir?", options: ["Üretra", "Nefron", "Üreter", "Böbrek kapsülü"], answer: 2 },
+              { id: "q2", prompt: "Görseldeki sistemde kanı süzme işini yapan organ hangisidir?", options: ["Üreter", "İdrar kesesi", "Böbrek", "Üretra"], answer: 2 }
+            ],
+          },
+        ],
+      },
     ],
   };
 
@@ -5003,7 +5007,7 @@
           {
             id: 'f15-a01',
             no: '1',
-            title: 'Altı kavramı tanımıyla eşleştir',
+            title: 'İç denge kavramlarını tanımlarıyla eşleştir',
             type: 'match',
             format: 'Eşleştirme',
             count: '6 kavram · 7 tanım',
@@ -5049,7 +5053,7 @@
           {
             id: 'f15-a03',
             no: '3',
-            title: 'Altı yargıyı doğru–yanlış diye ayır',
+            title: 'Sistemler yargılarını doğru–yanlış diye ayır',
             type: 'tf',
             format: 'Doğru–yanlış',
             count: '6 yargı',
@@ -5132,35 +5136,20 @@
               {
                 id: 'q1',
                 prompt: 'Yürüyüşe çıkıldığında solunum ve kalp hızının artmasının nedeni nedir?',
-                options: [
-                  'Kasların daha çok oksijen istemesi',
-                  'Böbreklerin durması',
-                  'Mide asidinin azalması',
-                  'Kan grubunun değişmesi',
-                ],
-                answer: 0,
+                options: ['Mide asidinin azalması', 'Kasların daha çok oksijen istemesi', 'Kan grubunun değişmesi', 'Böbreklerin durması'],
+                answer: 1,
               },
               {
                 id: 'q2',
                 prompt: 'Terlemeyle su kaybedildiğinde böbrekler nasıl yanıt verir?',
-                options: [
-                  'İdrar miktarını azaltır',
-                  'İdrar miktarını artırır',
-                  'Süzülmeyi tamamen durdurur',
-                  'Üre üretimini artırır',
-                ],
-                answer: 0,
+                options: ['Üre üretimini artırır', 'Süzülmeyi tamamen durdurur', 'İdrar miktarını azaltır', 'İdrar miktarını artırır'],
+                answer: 2,
               },
               {
                 id: 'q3',
                 prompt: 'Böbrekler çalışmadığında ne olur?',
-                options: [
-                  'Kanda biriken atıklar tüm organları etkiler',
-                  'Yalnızca idrar rengi değişir',
-                  'Sadece mide etkilenir',
-                  'Hiçbir belirti görülmez',
-                ],
-                answer: 0,
+                options: ['Sadece mide etkilenir', 'Hiçbir belirti görülmez', 'Kanda biriken atıklar tüm organları etkiler', 'Yalnızca idrar rengi değişir'],
+                answer: 2,
               },
             ],
           },
@@ -5284,35 +5273,20 @@
               {
                 id: 'q1',
                 prompt: 'Bir bilimsel model için hangisi doğrudur?',
-                options: [
-                  'Gerçeğin kendisi değil, temel ilişkileri öne çıkaran sadeleştirilmiş temsildir',
-                  'Gerçeğin birebir kopyasıdır',
-                  'Hiçbir zaman değişmez',
-                  'Yalnızca çizimlerden oluşur',
-                ],
-                answer: 0,
+                options: ['Yalnızca çizimlerden oluşur', 'Gerçeğin birebir kopyasıdır', 'Hiçbir zaman değişmez', 'Gerçeğin kendisi değil, temel ilişkileri öne çıkaran sadeleştirilmiş temsildir'],
+                answer: 3,
               },
               {
                 id: 'q2',
                 prompt: 'Bir açıklama yeni kanıtla çeliştiğinde ne yapılır?',
-                options: [
-                  'Açıklama gözden geçirilir ve değiştirilir',
-                  'Kanıt görmezden gelinir',
-                  'Ölçümler iptal edilir',
-                  'Açıklama olduğu gibi korunur',
-                ],
-                answer: 0,
+                options: ['Kanıt görmezden gelinir', 'Ölçümler iptal edilir', 'Açıklama olduğu gibi korunur', 'Açıklama gözden geçirilir ve değiştirilir'],
+                answer: 3,
               },
               {
                 id: 'q3',
                 prompt: 'Öz değerlendirme yapmanın en somut yolu hangisidir?',
-                options: [
-                  'Bir açıklamayı hangi kanıta dayandırdığımızı yazmak',
-                  'Yalnızca konu başlıklarını okumak',
-                  'Cevap anahtarına bakmak',
-                  'Notları arkadaştan istemek',
-                ],
-                answer: 0,
+                options: ['Yalnızca konu başlıklarını okumak', 'Cevap anahtarına bakmak', 'Notları arkadaştan istemek', 'Bir açıklamayı hangi kanıta dayandırdığımızı yazmak'],
+                answer: 3,
               },
             ],
           },
@@ -5350,6 +5324,27 @@
             ],
             minChars: 220,
             placeholder: 'En iyi anladığım konu… Zorlandığım konu… Bunu şu kanıtla söylüyorum…',
+          },
+        ],
+      },
+
+      {
+        title: 'Görsel sorular',
+        activities: [
+          {
+            id: 'f15-a15',
+            no: '15',
+            title: 'Sistemleri birlikte oku',
+            type: 'visual',
+            format: 'Görsel soru',
+            count: '1 görsel · 2 soru',
+            skill: 'Görselden çıkarım, sistemlerin iş birliği',
+            instruction: 'Görseli ve üzerindeki etiketleri incele, sonra her soruda tek seçeneği işaretle. Seçimlerin yerel olarak kontrol edilir; doğru seçenek gösterilmez.',
+            image: 'sistem',
+            questions: [
+              { id: "q1", prompt: "Görselde dört sistem bir arada gösterilmiştir. Besin ve oksijeni hücrelere taşıyan sistem hangisidir?", options: ["Sindirim sistemi", "Solunum sistemi", "Dolaşım sistemi", "Boşaltım sistemi"], answer: 2 },
+              { id: "q2", prompt: "Bir sistemdeki aksamanın diğerlerini etkilemesinin nedeni nedir?", options: ["Organların birbirinden bağımsız olması", "Sistemlerin birbirine bağımlı çalışması", "Homeostazinin hiç çalışmaması", "Hücrelerin kanla temas etmemesi"], answer: 1 }
+            ],
           },
         ],
       },

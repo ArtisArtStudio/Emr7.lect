@@ -1268,6 +1268,11 @@ def main() -> int:
         errors.append("Fen concept cards need the horizontal, in-flow strip styling")
     if "science-visual-image" not in science_js or "science-explain-block" not in science_js or "science-explain-block" not in science_css:
         errors.append("Fen lessons need accessible image rendering and structured explanation cards")
+    science_activities = (ROOT / "science-activities.js").read_text(encoding="utf-8")
+    if "renderVisualQuestion" not in science_js or "science-visual-question-figure" not in science_js or ".science-practice-visual" not in science_css:
+        errors.append("Fen visual questions need their own renderer, figure markup, and styling")
+    if science_activities.count("type: 'visual'") != 15 or "Görsel sorular" not in science_activities:
+        errors.append("Every Fen week needs one visual question section that keeps a 10-15 activity load")
     if "spaceVehicles" not in science_js or ".science-visual-gallery.is-vehicles" not in science_css:
         errors.append("Space-vehicle concepts need their own labelled, responsive illustration gallery")
     if "renderTermDefinitions" in science_js or "Kavram sözlüğü" in science_js or "science-key-terms" in science_css or "science-glossary" in science_css:
