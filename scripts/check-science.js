@@ -127,8 +127,8 @@ assert.ok(listHTML.includes('science-week-exam'), 'The exam date should use its 
 // Konu bazlı etkinlik seti: ilk iki haftada en az 10 etkinlik, yedi etkileşim türü.
 const activityData = global.window.SCIENCE_ACTIVITIES;
 assert.ok(activityData, 'The activity set should be exposed for the science course.');
-assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6], 'The analysed activity rounds should cover the first six weeks.');
-for (const weekId of [1, 2, 3, 4, 5, 6]) {
+assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7], 'The analysed activity rounds should cover the first seven weeks.');
+for (const weekId of [1, 2, 3, 4, 5, 6, 7]) {
   const activities = science.activitiesFor(weekId);
   assert.ok(activities.length >= 10 && activities.length <= 15, `Week ${weekId} should carry 10–15 topic activities, found ${activities.length}.`);
   assert.equal(new Set(activities.map((activity) => activity.id)).size, activities.length, `Week ${weekId} activity ids should be unique.`);
@@ -150,7 +150,8 @@ assert.equal(science.practiceSummaryFor(3).total, 14, 'Week 3 should carry its o
 assert.equal(science.practiceSummaryFor(4).total, 14, 'Week 4 should carry its own activity set.');
 assert.equal(science.practiceSummaryFor(5).total, 14, 'Week 5 should carry its own activity set.');
 assert.equal(science.practiceSummaryFor(6).total, 14, 'Week 6 should carry its own activity set.');
-assert.equal(science.practiceSummaryFor(7).total, 0, 'Weeks without an analysed set should not fake activities.');
+assert.equal(science.practiceSummaryFor(7).total, 14, 'Week 7 should carry its own activity set.');
+assert.equal(science.practiceSummaryFor(8).total, 0, 'Weeks without an analysed set should not fake activities.');
 const week3Groups = global.window.SCIENCE_ACTIVITIES.weeks[3].groups;
 assert.equal(week3Groups.length, 3, 'Week 3 should be organised in three sections.');
 assert.deepEqual(week3Groups.map((group) => group.activities.length), [4, 4, 6], 'Week 3 sections should keep the shared 4-4-6 layout.');
@@ -183,6 +184,14 @@ assert.deepEqual([...new Set(week6Activities.map((activity) => activity.type))].
 assert.equal(week6Activities.filter((activity) => activity.type === 'text').length, 2, 'Week 6 should keep two writing tasks.');
 assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(global.window.SCIENCE_ACTIVITIES.weeks[6])), 'Week 6 activities must not cite the textbook.');
 assert.match(global.window.SCIENCE_ACTIVITIES.weeks[6].topic, /iş/i, 'Week 6 should cover physical work.');
+const week7Groups = global.window.SCIENCE_ACTIVITIES.weeks[7].groups;
+assert.equal(week7Groups.length, 3, 'Week 7 should be organised in three sections.');
+assert.deepEqual(week7Groups.map((group) => group.activities.length), [4, 4, 6], 'Week 7 sections should keep the shared 4-4-6 layout.');
+const week7Activities = week7Groups.flatMap((group) => group.activities);
+assert.deepEqual([...new Set(week7Activities.map((activity) => activity.type))].sort(), ['choice', 'fill', 'match', 'order', 'sort', 'text', 'tf'], 'Week 7 should use all seven interaction types.');
+assert.equal(week7Activities.filter((activity) => activity.type === 'text').length, 2, 'Week 7 should keep two writing tasks.');
+assert.ok(!/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(global.window.SCIENCE_ACTIVITIES.weeks[7])), 'Week 7 activities must not cite the textbook.');
+assert.match(global.window.SCIENCE_ACTIVITIES.weeks[7].topic, /enerji/i, 'Week 7 should cover energy types.');
 
 science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { 'f1-a01': { values: { 'm:k1': 'd1', 'm:k2': 'd2' }, checked: true } } } } });
 assert.equal(science.exportProgress().weeks['1'].activities['f1-a01'].values['m:k1'], 'd1', 'Activity answers should persist inside the weekly progress record.');
