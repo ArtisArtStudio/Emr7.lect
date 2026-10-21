@@ -91,7 +91,9 @@ const expectedTopics = [
 ];
 for (const topic of expectedTopics) assert.ok(science.weeks.some((week) => week.topic === topic), `Missing textbook-aligned science topic: ${topic}`);
 assert.ok(science.weeks.every((week) => week.date && week.topic && week.focus && week.pages));
-assert.ok(science.weeks.every((week) => week.summary.length === 3 && week.summary.join(' ').length >= 400 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
+assert.ok(science.weeks.every((week) => week.summary.length === 4 && week.summary.join(' ').length >= 900 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
+assert.ok(science.weeks.every((week) => week.termDefinitions.length >= 4 && week.termDefinitions.every((term) => term.term && term.definition && term.connection)));
+assert.equal(science.weeks.filter((week) => week.researchBrief).length, 2, 'Textbook research findings should accompany the space-technology study weeks.');
 assert.ok(science.weeks.every((week) => week.tasks.length === 3 && week.activity.criteria.length >= 3));
 assert.ok(science.weeks.every((week) => week.quiz.options.length === 4 && Number.isInteger(week.quiz.answer) && week.quiz.answer >= 0 && week.quiz.answer < week.quiz.options.length));
 assert.ok(science.weeks.every((week) => week.activity.minChars >= 15 && week.activity.title && week.activity.format && week.activity.prompt));
@@ -121,6 +123,7 @@ for (const week of science.weeks) {
   const imageCount = (html.match(/class="science-visual-image"/g) || []).length;
   assert.equal(imageCount, ['spaceReview', 'systemsReview'].includes(week.visual) ? 4 : 1, `Week ${week.id} should render its mapped science illustration(s).`);
   assert.ok(html.includes('science-visual-note'), `Week ${week.id} should explain how to read its visual.`);
+  assert.ok(html.includes('Kavram sözlüğü') && html.includes('Süreç bağlantısı'), `Week ${week.id} should render term definitions with process context.`);
 }
 
 const normalized = science.normalizeProgress({
@@ -165,6 +168,14 @@ assert.ok(!mockElements.scienceWeekContent.innerHTML.includes('<svg'), 'The gene
 assert.match(mockElements.scienceWeekContent.innerHTML, /ÖZGÜN UYGULAMA/);
 assert.match(mockElements.scienceWeekContent.innerHTML, /Kontrol et/);
 assert.equal(mockElements.scienceProgressCount.textContent, '1 / 37 hafta tamamlandı');
+
+science.importProgress({ selectedWeek: 3, weeks: {} });
+assert.match(mockElements.scienceWeekContent.innerHTML, /ARAŞTIRMA SONUCU/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /Uzay sondası/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /Dünya’ya taşır|veriyi Dünya’ya iletir/);
+science.importProgress({ selectedWeek: 5, weeks: {} });
+assert.match(mockElements.scienceWeekContent.innerHTML, /bilgisayarlı tomografi ve ultrason/);
+assert.match(mockElements.scienceWeekContent.innerHTML, /Kaynak özeti: ders kitabı s\. 24–26/);
 
 science.importProgress({ selectedWeek: 12, weeks: {} });
 assert.equal((mockElements.scienceWeekContent.innerHTML.match(/class="science-visual-image"/g) || []).length, 4, 'The space review should show four separate source-aligned images.');
@@ -246,7 +257,7 @@ async function checkAICheckAndStaleResponse() {
   assert.equal(science.exportProgress().selectedWeek, null);
   assert.deepEqual(science.exportProgress().weeks, {});
   assert.ok(storage.has('emr7lect.science.v1'));
-  console.log('Fen Bilimleri 37-week book map, calendar alignment, refined topic explanations, untouched activity data, accessible image rendering, safe Groq checks, progress isolation, completion rules, and backup API passed.');
+  console.log('Fen Bilimleri 37-week calendar and topic map, four-part textbook explanations, connected term glossary, space-technology research briefs, distinct rose-berry palette, untouched activities/quizzes/tasks, accessible visuals, safe Groq checks, progress isolation, completion rules, and backup API passed.');
 }
 
 checkAICheckAndStaleResponse().catch((error) => {

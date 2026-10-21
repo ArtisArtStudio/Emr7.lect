@@ -218,8 +218,18 @@
   }
 
   function renderParagraphs(paragraphs) {
-    const labels = ['TEMEL KAVRAM', 'NASIL İŞLER?', 'AKLINDA TUT'];
+    const labels = ['KAVRAMI TANI', 'SÜREÇ VE NEDEN-SONUÇ', 'KİTAPTAN SOMUT ÖRNEK', 'GÖRSELİ / KANITI OKU'];
     return paragraphs.map((paragraph, index) => `<article class="science-explain-block"><span>${labels[index] || 'KONU NOTU'}</span><p>${escapeHTML(paragraph)}</p></article>`).join('');
+  }
+
+  function renderTermDefinitions(definitions) {
+    if (!Array.isArray(definitions) || definitions.length === 0) return '';
+    return `<div class="science-key-terms"><h4>Kavram sözlüğü</h4><dl class="science-term-list">${definitions.map((item) => `<div><dt>${escapeHTML(item.term)}</dt><dd>${escapeHTML(item.definition)}</dd>${item.connection ? `<dd class="science-term-context"><strong>Süreç bağlantısı:</strong> ${escapeHTML(item.connection)}</dd>` : ''}</div>`).join('')}</dl></div>`;
+  }
+
+  function renderResearchBrief(brief) {
+    if (!isRecord(brief) || !Array.isArray(brief.items) || brief.items.length === 0) return '';
+    return `<section class="card science-research-brief" aria-labelledby="scienceResearchTitle"><div class="science-section-heading"><div class="tag">ARAŞTIRMA SONUCU</div><h3 id="scienceResearchTitle">${escapeHTML(brief.title)}</h3><p>${escapeHTML(brief.intro || '')}</p></div><div class="science-research-grid">${brief.items.map((item) => `<article class="science-research-item"><h4>${escapeHTML(item.name)}</h4><p>${escapeHTML(item.role)}</p></article>`).join('')}</div>${brief.takeaway ? `<div class="science-research-takeaway"><strong>Sonuç ve günlük yaşam bağlantısı</strong><p>${escapeHTML(brief.takeaway)}</p></div>` : ''}${brief.source ? `<p class="science-research-source">${escapeHTML(brief.source)}</p>` : ''}</section>`;
   }
 
   function renderVisual(item) {
@@ -308,7 +318,8 @@
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
       ${renderVisual(item)}
-      <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item.summary)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div><div class="science-key-terms"><h4>Anahtar kavramlar</h4><div>${item.terms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div></div></div></section>
+      <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item.summary)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div>${renderTermDefinitions(item.termDefinitions)}</div></section>
+      ${renderResearchBrief(item.researchBrief)}
       <section class="card science-practice-card" aria-labelledby="sciencePracticeTitle"><div class="science-section-heading"><div class="tag">ETKİNLİKLER</div><h3 id="sciencePracticeTitle">Öğrendiklerimi deniyorum</h3><p>Önce kısa soruyu yanıtla; sonra özgün uygulamayı tamamla. Seçimli sorular yerel olarak kontrol edilir.</p></div>${renderQuiz(item, saved)}${renderActivity(item, saved)}</section>
       <div class="science-grid-two"><section class="card science-mini-plan"><h3>Öğrenci için mini plan</h3><p>Üç görevi tamamladıkça işaretle. Yanıtlar bu tarayıcıda ayrı Fen Bilimleri alanında saklanır.</p><div class="science-task-list">${item.tasks.map((task, index) => `<label class="science-task"><input type="checkbox" data-science-task="${index}" data-science-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section><section class="card science-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(source)}</small></section></div>
       <section class="card science-schedule" aria-labelledby="scienceScheduleTitle"><div class="science-section-heading"><h3 id="scienceScheduleTitle">Haftalık çalışma çizelgesi</h3><p>Uygulamadaki görevler ve etkinlik tamamlanınca ilk durum otomatik işaretlenir; dış kaynak çalışmalarını bitirince ilgili kutuyu sen işaretle.</p></div><div class="science-table-wrap"><table class="science-study-table"><caption class="visually-hidden">${item.id}. hafta Fen Bilimleri çalışma çizelgesi</caption><thead><tr><th scope="col">Uygulamadaki çalışmalar</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>

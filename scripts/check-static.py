@@ -1399,7 +1399,7 @@ def main() -> int:
                 )
                 if science_test.returncode:
                     errors.append(f"Fen Bilimleri workspace test failed:\n{science_test.stderr.strip()}")
-                elif "Fen Bilimleri 37-week book map, calendar alignment, refined topic explanations, untouched activity data, accessible image rendering, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
+                elif "Fen Bilimleri 37-week calendar and topic map, four-part textbook explanations, connected term glossary, space-technology research briefs, distinct rose-berry palette, untouched activities/quizzes/tasks, accessible visuals, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
                     errors.append("Fen Bilimleri workspace test did not report success")
 
             if not errors:

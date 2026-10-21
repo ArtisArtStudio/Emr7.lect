@@ -22,12 +22,12 @@ The current page selects a small per-course accent with `body[data-subject]`. Us
 | --- | --- | --- | --- |
 | `turkce` | Türkçe | `#245cdb` | `#f5f7fc` |
 | `matematik` | Matematik | `#7056c9` | `#f8f6fc` |
-| `fen` | Fen Bilimleri | `#176f93` | `#f3f9fc` |
+| `fen` | Fen Bilimleri | `#8a3d58` | `#fcf5f7` |
 | `sosyal` | Sosyal Bilgiler | `#287b68` | `#f3f9f6` |
 | `ingilizce` | İngilizce | `#c76a33` | `#fbf7f3` |
 | `din` | Din Kültürü ve Ahlak Bilgisi | `#a27a22` | `#faf8f0` |
 
-Keep study cards neutral white (`#fff`) and long reading/topic-summary panels warm and readable (`#fffdf6`, dark text). Do not use the pale course wash behind text if it reduces contrast. Existing exam notices use a separate red semantic treatment.
+Keep study cards neutral white (`#fff`). Topic-summary panels may use a course-specific, pale surface with dark text (warm yellow for Social Studies and rose for Fen); do not use the general page wash behind long text if it reduces contrast. Existing exam notices use a separate red semantic treatment.
 
 ## Shared page flow
 
@@ -61,5 +61,5 @@ Show first-term exam notices only in courses explicitly requested for them. Map 
 - Add its subject identity and accent/wash to `index.html`; use the same top-level course selector and shared tools.
 - Build the desktop sidebar + reader and mobile stacked layout described above; keep week selection available during study.
 - Add a course-owned progress namespace, week data, activity renderer, and regression tests. Keep “Kontrol et,” progress, backup, reset, and page navigation consistent with the existing subjects.
-- Keep most surfaces neutral. Use the course accent only for identity and active states; preserve course-specific reading surfaces (for example, cool blue for Fen and warm yellow with dark text for Social Studies) rather than homogenizing them.
+- Keep most surfaces neutral. Use the course accent only for identity and active states; preserve course-specific reading surfaces (for example, rose/berry for Fen and warm yellow with dark text for Social Studies) rather than homogenizing them.
 - Document any intentional course-specific component in its course stylesheet rather than changing shared behavior for all subjects.

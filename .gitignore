@@ -45,3 +45,6 @@ node_modules/
 __pycache__/
 dist/
 build/
+
+# Local Arena source-review sheets, OCR, and prepared content data.
+.arena/
