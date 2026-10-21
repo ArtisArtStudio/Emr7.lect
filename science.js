@@ -187,6 +187,14 @@
     'bilimsel-model': { src: 'assets/science-concept-bilimsel-model.webp', small: 'assets/science-concept-bilimsel-model-450.webp', width: 896, height: 672, alt: "Sınıf masasında küre, anatomi maketi ve defter; her model gerçeğin sadeleştirilmiş bir temsilidir." },
     'oz-degerlendirme': { src: 'assets/science-concept-oz-degerlendirme.webp', small: 'assets/science-concept-oz-degerlendirme-450.webp', width: 896, height: 672, alt: "Öğrenci defterinde işaretlenen kontrol listesi; öz değerlendirme, açıklamanın hangi kanıta dayandığını yazmaktır." },
     'saglik-kaynagi': { src: 'assets/science-concept-saglik-kaynagi.webp', small: 'assets/science-concept-saglik-kaynagi-450.webp', width: 896, height: 672, alt: "Eczanede elden ele verilen bilgilendirme yaprağı; sağlık bilgisi yetkili kaynaklardan alınır." },
+    'sindirim': { src: 'assets/science-concept-sindirim.webp', small: 'assets/science-concept-sindirim-450.webp', width: 896, height: 672, alt: "Sindirim sistemi anatomik model olarak: yemek borusu, mide, karaciğer, ince ve kalın bağırsak bir arada." },
+    'besin': { src: 'assets/science-concept-besin.webp', small: 'assets/science-concept-besin-450.webp', width: 896, height: 672, alt: "Çeşitli bir öğün: tam tahıl, yumurta, peynir, baklagil, zeytinyağı, sebze, meyve ve su." },
+    'yemek-borusu': { src: 'assets/science-concept-yemek-borusu.webp', small: 'assets/science-concept-yemek-borusu-450.webp', width: 896, height: 672, alt: "Yemek borusu, kas halkalarıyla besini aşağıya doğru iter; bu harekete peristaltik hareket denir." },
+    'kimyasal-sindirim': { src: 'assets/science-concept-kimyasal-sindirim.webp', small: 'assets/science-concept-kimyasal-sindirim-450.webp', width: 896, height: 672, alt: "Limon suyu eklenince sütün kesilmesi: asit proteinlerin yapısını değiştirir, kimyasal sindirimin gözlenebilir bir örneğidir." },
+    'sindirim-sagligi': { src: 'assets/science-concept-sindirim-sagligi.webp', small: 'assets/science-concept-sindirim-sagligi-450.webp', width: 896, height: 672, alt: "Sindirim sağlığını destekleyen sofra: su, yoğurt, tam tahıl ve taze sebze." },
+    'aliskanlik': { src: 'assets/science-concept-aliskanlik.webp', small: 'assets/science-concept-aliskanlik-450.webp', width: 896, height: 672, alt: "Günlük alışkanlıklar: su şişesi, spor ayakkabısı ve meyve; küçük ama düzenli seçimler sağlığı belirler." },
+    'soluk-verme': { src: 'assets/science-concept-soluk-verme.webp', small: 'assets/science-concept-soluk-verme-450.webp', width: 896, height: 672, alt: "Soluk verme: akciğerler gevşer, diyafram kubbeleşerek yukarı çıkar ve hava dışarı çıkar." },
+    'temiz-hava': { src: 'assets/science-concept-temiz-hava.webp', small: 'assets/science-concept-temiz-hava-450.webp', width: 896, height: 672, alt: "Temiz hava: orman örtüsü altında süzülen gün ışığı ve açık gökyüzü." },
   });
   const STATE_LABELS = Object.freeze({
     correct: 'TAM DOĞRU', partial: 'KISMEN DOĞRU', wrong: 'YENİDEN DÜŞÜN',
