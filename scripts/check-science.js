@@ -71,7 +71,7 @@ assert.deepEqual(
 assert.deepEqual(science.units.map((unit) => unit.pages), ['14–52', '58–81', '88–148']);
 const socialStudiesSource = fs.readFileSync(path.join(__dirname, '../social-studies.js'), 'utf8');
 const canonicalDates = Object.fromEntries(
-  [...socialStudiesSource.matchAll(/\bweek\((\d+),\s*'([^']+)'/g)].map(([, id, date]) => [Number(id), date]),
+  [...socialStudiesSource.matchAll(/\{\s*id:\s*(\d+),\s*date:\s*'([^']+)'/g)].map(([, id, date]) => [Number(id), date]),
 );
 assert.deepEqual(
   Object.fromEntries(science.weeks.map((week) => [week.id, week.date])),

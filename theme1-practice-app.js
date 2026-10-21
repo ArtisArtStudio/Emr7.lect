@@ -719,13 +719,16 @@
           : "Yazılı yanıt");
       const diagramHTML = questionDiagramMarkup(question.diagram);
       const cardStateAttribute = feedbackState ? `data-check-state="${escapeHTML(feedbackState)}"` : "";
+      // Sesli okuma yalnız yazılı yanıtın geri bildirimine bağlanır; kimlik sadeleştirilir.
+      const feedbackDomId = `theme1-feedback-${String(qKey).replace(/[^A-Za-z0-9_-]+/g, "-")}`;
       return `<article class="question-card" data-question-key="${escapeHTML(qKey)}" ${cardStateAttribute}>
         <div class="question-heading"><span class="question-number">${index + 1}</span><div class="question-copy"><div class="question-prompt-row"><p class="question-prompt">${escapeHTML(question.prompt)}</p><span class="question-result-pill" data-result-pill data-state="${escapeHTML(feedbackState || "none")}" role="status" aria-live="polite" ${resultLabel ? "" : "hidden"}>${escapeHTML(resultLabel)}</span></div>${questionSourceLink ? `<div class="question-source-links">${questionSourceLink}</div>` : ""}</div></div>
         ${diagramHTML}
         <span class="response-type">${escapeHTML(widgetName)}</span>
         <div class="answer-box"><p class="answer-box-title">Yanıt alanı</p><div class="form-fields">${fieldHTMLContent}</div></div>
         <div class="question-actions"><button type="button" class="check-button" data-check-question="${escapeHTML(qKey)}">✦ Kontrol et</button><span class="question-save-status">Yanıt otomatik kaydedilir.</span></div>
-        <div class="feedback-box" data-feedback-key="${escapeHTML(qKey)}" data-state="${escapeHTML(feedbackState || "none")}" ${feedbackText ? "" : "hidden"}>${escapeHTML(feedbackText || "")}</div>
+        <div class="feedback-box" id="${feedbackDomId}" data-feedback-key="${escapeHTML(qKey)}" data-state="${escapeHTML(feedbackState || "none")}" ${feedbackText ? "" : "hidden"}>${escapeHTML(feedbackText || "")}</div>
+        <div class="theme1-tts" data-tts-row="${feedbackDomId}" ${feedbackText ? "" : "hidden"}><button type="button" class="theme1-tts-button" data-tts-read="${feedbackDomId}" data-tts-status="${feedbackDomId}-status">🔊 Geri bildirimi sesli oku</button><button type="button" class="theme1-tts-stop" data-tts-stop>Durdur</button><span class="theme1-tts-status" id="${feedbackDomId}-status" role="status" aria-live="polite"></span></div>
       </article>`;
     }).join("");
 
@@ -1041,16 +1044,20 @@
       feedback.textContent = "";
       feedback.dataset.state = "none";
     }
+    const ttsRow = card?.querySelector?.(".theme1-tts");
+    if (ttsRow) ttsRow.hidden = true;
   }
 
   function showFeedback(card, text, state, issues = [], hint = "recheck", fieldResults = []) {
     const feedback = card?.querySelector(".feedback-box");
     if (!feedback) return;
+    const ttsRow = card?.querySelector(".theme1-tts");
     const finalState = Object.hasOwn(assessmentLabels, state) ? state : "system";
     setQuestionAssessment(card, finalState);
     feedback.textContent = assessmentFeedbackText(text, finalState, issues, hint, fieldResults);
     feedback.dataset.state = finalState;
     feedback.hidden = false;
+    if (ttsRow) ttsRow.hidden = !feedback.textContent.trim();
   }
 
   function openGroqSettings() {

@@ -35,14 +35,18 @@ Etkinlik çeşitleri yalnızca genel tür adlarından çıkarılmadı; ilgili sa
 | `-4`, s. 118–123 | Rönesans için soru–cevap; Reform'u kısa haberle anlatma ve neden/sonuçlarını ayırma; Aydınlanma için neden–sonuç tablosu; Sanayi İnkılabı metninde kavram/boşluk çalışması | 27–32. haftalar: soru kartı, özgün haber taslağı, neden–sonuç, üretimden topluma etki zinciri ve yenilikleri kaynak kanıtıyla değerlendirme |
 | `-4`, s. 132–133 çevresi | Kültür ve medeniyet konularında tartışma, kaynak/görsel inceleme, araştırma sonucunu ifade etme | 33–37. haftalar: kavram bulutu, kaynak kartı, kısa rapor, öğrenme alanı kavram haritası ve yıl sonu paylaşım ürünü |
 
-## 37 haftalık akış ve değişken etkinlik düzeni
+## 15 haftalık akış ve değişken etkinlik düzeni
 
-`social-studies.js` içindeki haftalar ayrı tarih, konu ve ilerlemeye sahiptir:
+Kitap **1. dönem** kapsamındadır; haftalık 3 ders saatiyle 15 öğretim haftası hesaplanmıştır.
+`social-studies.js` içindeki `TERM_PLAN`, kaynak haftaları tek haftada birleştirir
+(`sourceIds` alanı hangi kaynak haftaların birleştiğini gösterir):
 
-- 1–12. haftalar: **Birlikte Yaşamak**
-- 13–18. haftalar: **Evimiz Dünya**
-- 19–35. haftalar: **Ortak Mirasımız**
-- 36–37. haftalar: yıl sonu tekrar ve paylaşım
+- 1–5. haftalar: **Birlikte Yaşamak** (2+2+2+2+3 kaynak hafta)
+- 6–8. haftalar: **Evimiz Dünya** (2+2+2)
+- 9–15. haftalar: **Ortak Mirasımız** (2+2+2+2+3+3+2)
+
+Birleşik haftalarda konu anlatımı, hatırlatma noktaları, anahtar kavramlar, kısa sınamalar ve
+etkinlikler kaynak haftalardan sırayla birleştirilir. Tekrar/yıl sonu haftaları kaldırılmıştır.
 
 Her hafta öğrenciye dönük konu anlatımı/özeti, hatırlatma noktaları ve anahtar kavramlar gösterilir. Etkinlik sayısı ve biçimi konu akışına göre değişir; tüm haftalara aynı üç soru/etkinlik kalıbı uygulanmaz.
 

@@ -75,37 +75,37 @@ const BOOK_QUIZZES = {
 """
     # The preceding grouping snippet declares weeks, specific, and groupTaskOrigins.
     harness += r"""
-const expectedGroups = [[1,2],[3,4],[5,6],[10,11],[14,15],[20,21],[23,24],[31,32]];
+const expectedGroups = [[1,2],[3,4],[7,8],[12,13]];
 const actualGroups = weeks.filter((w) => w[5].length > 1).map((w) => w[5]);
 const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
-if (weeks.length !== 29) throw new Error(`Expected 29 study pages, got ${weeks.length}`);
+if (weeks.length !== 11) throw new Error(`Expected 11 study pages, got ${weeks.length}`);
 if (!equal(actualGroups, expectedGroups)) throw new Error(`Unexpected merged groups: ${JSON.stringify(actualGroups)}`);
 const themes = groupWeeksByTheme(weeks);
-if (themes.length !== 9 || themes[0].number !== 1 || themes[0].name !== 'Hayat Boyu Gelişim') throw new Error('Theme navigation is missing its first theme or special sections');
-if (!equal(themes[0].rows.map((w) => w[0]), [1,3,5]) || themes[0].weekCount !== 6) throw new Error('Theme 1 does not contain the three grouped study units from weeks 1–6');
-if (THEME_NUMBER_BY_NAME.get('Bir Hilal Uğruna') !== 2 || themeDisplayName('Dönem sonu') !== 'Dönem sonu') throw new Error('Theme numbering includes a non-theme section or is out of order');
+if (themes.length !== 3 || themes[0].number !== 1 || themes[0].name !== 'Hayat Boyu Gelişim') throw new Error('Theme navigation is missing its first theme or special sections');
+if (!equal(themes[0].rows.map((w) => w[0]), [1,3,5]) || themes[0].weekCount !== 5) throw new Error('Theme 1 does not contain the three grouped study units from weeks 1–5');
+if (THEME_NUMBER_BY_NAME.get('Bir Hilal Uğruna') !== 2 || themeDisplayName('Yıl sonu tekrar') !== 'Yıl sonu tekrar') throw new Error('Theme numbering includes a non-theme section or is out of order');
 const byId = new Map(weeks.map((w) => [w[0], w]));
-for (const [id, date] of [[1,'14–25 Eyl'],[3,'28 Eyl–9 Eki'],[5,'12–23 Eki'],[10,'23 Kas–4 Ara'],[14,'21–31 Ara'],[20,'15–26 Şub'],[23,'15–26 Mar'],[31,'10–21 May']]) {
+for (const [id, date] of [[1,'14–25 Eyl'],[3,'28 Eyl–9 Eki'],[5,'12–16 Eki'],[7,'26 Eki–6 Kas'],[12,'7–18 Ara'],[15,'28 Ara–1 Oca']]) {
   if (byId.get(id)?.[1] !== date) throw new Error(`Wrong combined date for week group ${id}: ${byId.get(id)?.[1]}`);
 }
 if (!byId.get(3)[3].includes('Sen Sor O Yanıtlasın')) throw new Error('The merged Gençliğin Kıymeti page lost its listening item');
-if (specific[1].tasks.length !== 4 || specific[5].tasks.length !== 8) throw new Error('Merged task lists are not correct');
+if (specific[1].tasks.length !== 4 || specific[5].tasks.length !== 4) throw new Error('Merged task lists are not correct');
 
 const oldProgress = {
   1: { done: [true,false,true,false], answers: {0:1}, aiAnswer: '', studySchedule: {1: {eba: true}} },
   2: { done: [false,true,false,true], answers: {1:0}, aiAnswer: 'week 2 answer', studySchedule: {2: {tonguc: true}} },
-  5: { done: [true,false,false,false], answers: {0:0}, phaserGame: {} },
-  6: { done: [false,true,false,true], answers: {1:2,5:1}, extraQuiz: [['new question']], phaserGame: {gate:2} }
+  7: { done: [true,false,false,false], answers: {0:0}, phaserGame: {} },
+  8: { done: [false,true,false,true], answers: {1:2,5:1}, extraQuiz: [['new question']], phaserGame: {gate:2} }
 };
 const migrated = mergeGroupedProgress(oldProgress);
 if (!equal(migrated[1].done, [true,true,true,true])) throw new Error('Progress from weeks 1–2 was not combined');
 if (migrated[1].answers[0] !== 1 || migrated[1].answers[1] !== 0) throw new Error('Quiz answers from weeks 1–2 were not preserved');
 if (migrated[1].aiAnswer !== 'week 2 answer') throw new Error('A written answer from week 2 was lost');
 if (!equal(migrated[1].studySchedule, {1:{eba:true},2:{tonguc:true}})) throw new Error('External platform checks from merged weeks were not preserved separately');
-if (!equal(migrated[5].done, [true,false,false,false,false,true,false,true])) throw new Error('Progress from weeks 5–6 was not mapped to merged tasks');
-if (!migrated[5].extraQuiz || migrated[5].answers[5] !== 1) throw new Error('Generated quiz data from week 6 was not preserved');
-if (migrated[5].phaserGame.gate !== 2) throw new Error('Mini-game progress from week 6 was not preserved');
-if ('2' in migrated || '4' in migrated || '6' in migrated || '11' in migrated) throw new Error('Obsolete duplicate-week progress keys remain');
+if (!equal(migrated[7].done, [true,false,false,false,false,true,false,true])) throw new Error('Progress from weeks 7–8 was not mapped to merged tasks');
+if (!migrated[7].extraQuiz || migrated[7].answers[5] !== 1) throw new Error('Generated quiz data from week 8 was not preserved');
+if (migrated[7].phaserGame.gate !== 2) throw new Error('Mini-game progress from week 8 was not preserved');
+if ('2' in migrated || '4' in migrated || '8' in migrated || '13' in migrated) throw new Error('Obsolete duplicate-week progress keys remain');
 if (mergeGroupedProgress(migrated) !== migrated) throw new Error('Week progress migration is not idempotent');
 console.log('Week grouping and saved-progress migration passed.');
 let current = 1;
@@ -134,11 +134,11 @@ global.document = {
 };
 renderList();
 const sections = themeRoot.children;
-if (sections.length !== 9 || sections[0].className !== 'theme-group' || !sections[0].open || sections[1].open) throw new Error('Theme navigation did not open only the active theme');
+if (sections.length !== 3 || sections[0].className !== 'theme-group' || !sections[0].open || sections[1].open) throw new Error('Theme navigation did not open only the active theme');
 if (sections[0].children[0].children[0].textContent !== 'Tema 1 · Hayat Boyu Gelişim') throw new Error('Theme 1 label is missing from the navigation');
-if (sections[0].children[0].children[1].textContent !== '3 çalışma · 6 hafta') throw new Error('Theme 1 study/week count is incorrect');
+if (sections[0].children[0].children[1].textContent !== '3 çalışma · 5 hafta') throw new Error('Theme 1 study/week count is incorrect');
 const theme1Buttons = sections[0].children[1].children;
-if (!equal(theme1Buttons.map((button) => button.children[0].textContent), ['1–2','3–4','5–6'])) throw new Error('Theme 1 weeks are not ordered and grouped correctly');
+if (!equal(theme1Buttons.map((button) => button.children[0].textContent), ['1–2','3–4','5'])) throw new Error('Theme 1 weeks are not ordered and grouped correctly');
 if (theme1Buttons[0].attributes['aria-current'] !== 'page') throw new Error('The active Theme 1 week is not marked accessibly');
 console.log('Theme navigation renders Theme 1 with its grouped weeks.');
 
@@ -1424,7 +1424,7 @@ def main() -> int:
                 )
                 if social_test.returncode:
                     errors.append(f"Social Studies workspace test failed:\n{social_test.stderr.strip()}")
-                elif "Social Studies summaries, Week 8 exam notice, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
+                elif "Social Studies summaries, Week 8 exam notice, merged first-term textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed." not in social_test.stdout:
                     errors.append("Social Studies workspace test did not report success")
 
             if not errors:
@@ -1566,7 +1566,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, 37 Social Studies topic summaries and variable topic-aligned activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, a 15-week first-term Social Studies plan with merged topics and variable activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
     return 0
 
 

@@ -39,19 +39,21 @@ require('../social-studies-content.js');
 require('../social-studies.js');
 const social = global.window.SOCIAL_STUDIES;
 assert.ok(social, 'The Social Studies workspace should expose its module API.');
-assert.equal(social.weeks.length, 37, 'The plan must retain 37 individually tracked weeks.');
-assert.deepEqual(social.weeks.map((week) => week.id), Array.from({ length: 37 }, (_, index) => index + 1));
+assert.equal(social.weeks.length, 15, 'The first-term plan must fit 15 teaching weeks.');
+assert.deepEqual(social.weeks.map((week) => week.id), Array.from({ length: 15 }, (_, index) => index + 1));
 assert.deepEqual(social.units.map((unit) => unit.title), [
-  'Birlikte Yaşamak', 'Evimiz Dünya', 'Ortak Mirasımız', 'Tekrar ve paylaşım',
+  'Birlikte Yaşamak', 'Evimiz Dünya', 'Ortak Mirasımız',
 ]);
 assert.deepEqual(
   Object.fromEntries(social.units.map((unit) => [unit.id, social.weeks.filter((week) => week.unitId === unit.id).length])),
-  { together: 12, world: 6, heritage: 17, review: 2 },
+  { together: 5, world: 3, heritage: 7 },
 );
-assert.ok(social.weeks.some((week) => week.topic === 'Büyük deniz seyahatleri ve Osmanlı ekonomisi'), 'The third learning area should include the textbook topic on sea routes and Ottoman economic effects.');
-assert.ok(social.weeks.every((week) => week.date && week.topic && week.focus && week.tasks.length === 3));
+assert.deepEqual(social.weeks.map((week) => week.sourceIds.length), [2,2,2,2,3,2,2,2,2,2,2,2,3,3,2], 'Every week must record the textbook weeks it merges.');
+assert.ok(social.weeks.every((week) => week.date && week.date !== '16–20 Kas'), 'The autumn break must stay out of the calendar.');
+assert.ok(social.weeks.some((week) => /deniz seyahatleri/i.test(week.topic)), 'The third learning area should include the textbook topic on sea routes and Ottoman economic effects.');
+assert.ok(social.weeks.every((week) => week.date && week.topic && week.focus && week.tasks.length >= 4));
 assert.ok(social.weeks.every((week) => week.summary.length > 100 && week.summaryPoints.length >= 3 && week.keyTerms.length >= 3), 'Every week needs a meaningful topic summary, learning points, and key terms.');
-assert.ok(social.weeks.every((week) => week.source.includes('MEB 7. Sınıf') || week.unitId === 'review'));
+assert.ok(social.weeks.every((week) => week.source.includes('MEB 7. Sınıf')));
 
 const renewedWeekFlows = {
   3: ['perspective-reading', 'language-sort', 'rewrite-and-reflect'],
@@ -74,24 +76,61 @@ const secondLearningAreaFlows = {
   18: ['neighbor-map-source', 'turkey-role-sort', 'turkey-contribution-report'],
 };
 
+// Dönem planı iki (kimi yerde üç) kaynak haftayı tek haftada birleştirir; etkinlik akışı
+// kaynak haftaların akışlarının sırasıyla birleşimidir.
+const mergedFlows = {
+  1: [
+    'communication-importance', 'phone-conversation', 'traffic-communication',
+    'four-communication-cases', 'learner-generated-questions', 'communication-source-research',
+    'communication-process-and-types', 'classify-communication-types',
+    'same-message-three-ways', 'choose-communication-channel',
+  ],
+  2: [...renewedWeekFlows[3], ...renewedWeekFlows[4]],
+  3: [...renewedWeekFlows[5], ...renewedWeekFlows[6]],
+  4: [...renewedWeekFlows[7], ...renewedWeekFlows[8]],
+  5: [...renewedWeekFlows[9], ...renewedWeekFlows[10], ...renewedWeekFlows[11]],
+  6: ['self-check', ...secondLearningAreaFlows[13], ...secondLearningAreaFlows[14]],
+  7: ['self-check', ...secondLearningAreaFlows[15], ...secondLearningAreaFlows[16]],
+  8: ['self-check', ...secondLearningAreaFlows[17], ...secondLearningAreaFlows[18]],
+};
+
+const everyActivity = social.weeks.flatMap((week) => week.activities);
+const findActivity = (id) => {
+  const found = everyActivity.find((activity) => activity.id === id);
+  assert.ok(found, `Missing activity: ${id}`);
+  return found;
+};
+
+const reading = findActivity('communication-importance');
+const phone = findActivity('phone-conversation');
+const traffic = findActivity('traffic-communication');
+const cases = findActivity('four-communication-cases');
+const learnerQuestions = findActivity('learner-generated-questions');
+const research = findActivity('communication-source-research');
+assert.ok(reading.sourceText.split(/\s+/).length > 180, 'Week-one explanatory reading should be substantial.');
+assert.ok(reading.questions.some((question) => question.id === 'communication-factors'), 'Week one should ask learners to identify factors that affect communication.');
+assert.equal(phone.dialogue.length, 8, 'The original cellphone conversation should be visible.');
+assert.equal(phone.questions.length, 3, 'The cellphone conversation should have three topic questions.');
+assert.ok(traffic.sourceText.includes('Trafik ışıkları') && traffic.questions.length === 3, 'The traffic communication reading should include exactly three questions.');
+assert.equal(cases.caseStudies.length, 4, 'The observation activity should show four original cases.');
+assert.ok(cases.questions.some((question) => question.id === 'observations') && cases.questions.some((question) => question.id === 'wonders'));
+assert.equal(learnerQuestions.questions.length, 3, 'Learners should create their own research questions.');
+const researchText = [research.prompt, ...research.questions.map((question) => question.prompt)].join(' ').toLocaleLowerCase('tr-TR');
+for (const term of ['ben dili', 'empati', 'farklılıklara saygı', 'etkin dinleme', 'beden dili', 'sen dili']) {
+  assert.ok(researchText.includes(term), `The research activity should include ${term}.`);
+}
+assert.ok(research.questions.some((question) => question.id === 'research-source-record'), 'The research activity should provide a source-record structure.');
+
+const typesReading = findActivity('communication-process-and-types');
+assert.ok(typesReading.sourceText.split(/\s+/).length > 180, 'Week-two communication-types explanation should be substantial.');
+assert.ok(typesReading.sourceText.includes('Sözlü iletişim') && typesReading.sourceText.includes('Yazılı iletişim') && typesReading.sourceText.includes('Sözsüz iletişim'));
+assert.equal(findActivity('classify-communication-types').questions.length, 6, 'Week two should have six varied examples to classify.');
+assert.ok(findActivity('same-message-three-ways').questions.some((question) => question.id === 'nonverbal-version'));
+
 for (const week of social.weeks) {
   assert.ok(week.activities.length >= 3, `Week ${week.id} should have a complete activity flow.`);
-  if (week.id === 1) {
-    assert.deepEqual(week.activities.map((activity) => activity.id), [
-      'communication-importance', 'phone-conversation', 'traffic-communication',
-      'four-communication-cases', 'learner-generated-questions', 'communication-source-research',
-    ], 'The first communication week should follow the requested textbook-like sequence.');
-  } else if (week.id === 2) {
-    assert.deepEqual(week.activities.map((activity) => activity.id), [
-      'communication-process-and-types', 'classify-communication-types',
-      'same-message-three-ways', 'choose-communication-channel',
-    ], 'Week two should continue into communication and communication types.');
-  } else if (week.id <= 12) {
-    assert.deepEqual(week.activities.map((activity) => activity.id), renewedWeekFlows[week.id], `Week ${week.id} should have its renewed first-area activity sequence.`);
-    assert.equal(week.activities.length, week.id === 12 ? 4 : 3, `Week ${week.id} should retain the planned activity count.`);
-  } else if (week.id >= 13 && week.id <= 18) {
-    assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', ...secondLearningAreaFlows[week.id]], `Week ${week.id} should have its renewed Evimiz Dünya activity sequence.`);
-    assert.equal(week.activities.length, 4, `Week ${week.id} should pair a short self-check with three varied learning activities.`);
+  if (mergedFlows[week.id]) {
+    assert.deepEqual(week.activities.map((activity) => activity.id), mergedFlows[week.id], `Week ${week.id} should merge its source weeks' activity flows in order.`);
   } else {
     assert.equal(week.activities.length, 3, `Week ${week.id} should retain its existing flow outside the refreshed learning areas.`);
     assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', 'book', 'apply']);
@@ -131,28 +170,6 @@ for (const week of social.weeks) {
     }
   }
 
-  if (week.id === 1) {
-    const [reading, phone, traffic, cases, learnerQuestions, research] = week.activities;
-    assert.ok(reading.sourceText.split(/\s+/).length > 180, 'Week-one explanatory reading should be substantial.');
-    assert.ok(reading.questions.some((question) => question.id === 'communication-factors'), 'Week one should ask learners to identify factors that affect communication.');
-    assert.equal(phone.dialogue.length, 8, 'The original cellphone conversation should be visible.');
-    assert.equal(phone.questions.length, 3, 'The cellphone conversation should have three topic questions.');
-    assert.ok(traffic.sourceText.includes('Trafik ışıkları') && traffic.questions.length === 3, 'The traffic communication reading should include exactly three questions.');
-    assert.equal(cases.caseStudies.length, 4, 'The observation activity should show four original cases.');
-    assert.ok(cases.questions.some((question) => question.id === 'observations') && cases.questions.some((question) => question.id === 'wonders'));
-    assert.equal(learnerQuestions.questions.length, 3, 'Learners should create their own research questions.');
-    const researchText = [research.prompt, ...research.questions.map((question) => question.prompt)].join(' ').toLocaleLowerCase('tr-TR');
-    for (const term of ['ben dili', 'empati', 'farklılıklara saygı', 'etkin dinleme', 'beden dili', 'sen dili']) {
-      assert.ok(researchText.includes(term), `The research activity should include ${term}.`);
-    }
-    assert.ok(research.questions.some((question) => question.id === 'research-source-record'), 'The research activity should provide a source-record structure.');
-  }
-  if (week.id === 2) {
-    assert.ok(week.activities[0].sourceText.split(/\s+/).length > 180, 'Week-two communication-types explanation should be substantial.');
-    assert.ok(week.activities[0].sourceText.includes('Sözlü iletişim') && week.activities[0].sourceText.includes('Yazılı iletişim') && week.activities[0].sourceText.includes('Sözsüz iletişim'));
-    assert.equal(week.activities[1].questions.length, 6, 'Week two should have six varied examples to classify.');
-    assert.ok(week.activities[2].questions.some((question) => question.id === 'nonverbal-version'));
-  }
 
   const responses = Object.fromEntries(week.activities.map((activity) => [activity.id, Object.fromEntries(activity.fields.map((field) => {
     if (field.kind === 'checklist') return [field.id, Object.fromEntries(field.options.map((option) => [option.id, true]))];
@@ -242,7 +259,7 @@ assert.equal(priorVersionTwo.weeks['1'].legacyResponses['self-check']['self-chec
 assert.equal(priorVersionTwo.weeks['1'].legacyResponses.book.respect, 'Eski kitap yanıtı');
 assert.equal(priorVersionTwo.weeks['1'].legacyResponses.apply['transfer-1'], 'Eski uygulama yanıtı');
 assert.equal(priorVersionTwo.weeks['1'].legacyChoiceChecks['self-check']['self-check-1'], true);
-assert.deepEqual(priorVersionTwo.weeks['1'].tasks, [true, false, true]);
+assert.deepEqual(priorVersionTwo.weeks['1'].tasks, [true, false, true, false]);
 assert.equal(priorVersionTwo.weeks['1'].platforms.mebi, true);
 
 social.importProgress(imported);
@@ -254,33 +271,43 @@ assert.ok(storage.has('emr7lect.socialStudies.v1'), 'Progress should persist in 
 social.resetProgress();
 assert.equal(social.exportProgress().selectedWeek, 1);
 
-for (const week of social.weeks.slice(2, 12)) {
+const guidedWeeks = social.weeks.filter((week) => week.unitId === 'together' && week.id > 1);
+for (const week of guidedWeeks) {
   const kinds = new Set(week.activities.flatMap((activity) => activity.fields.map((field) => field.kind)));
   assert.ok(kinds.has('sort'), `Week ${week.id} should include an accessible textbook-aligned sorting activity.`);
   assert.ok(week.activities.every((activity) => activity.format && activity.hint), `Week ${week.id} needs an activity-specific format and guidance.`);
 }
-assert.ok(social.weeks[2].activities[1].sourceStyle.includes('Sürükle-bırak'), 'Week three should classify original I-language and respectful-question examples.');
-assert.ok(social.weeks[3].activities[0].sourceStyle.includes('arkası yarın'), 'Week four should use a predict-the-continuation activity.');
-assert.ok(social.weeks[4].activities[2].sourceStyle.includes('Beyin yazımı'), 'Week five should retain a textbook-aligned brainwriting stage.');
-assert.ok(social.weeks[6].activities[1].sourceStyle.includes('Sürükle-bırak'), 'Week seven should sequence a small accessibility project.');
-assert.ok(social.weeks[7].activities[0].sourceStyle.includes('Kelime bulutu'), 'Week eight should use a word-cloud activity.');
-assert.ok(social.weeks[8].activities[0].sourceStyle.includes('Sürükle-bırak'), 'Week nine should classify national holidays and commemoration days.');
-assert.ok(social.weeks[9].activities[0].sourceText.includes('Tekâlif-i Milliye'), 'Week ten should ground solidarity work in an original historical explanation.');
-assert.ok(social.weeks[10].activities[0].caseStudies.length === 4, 'Week eleven should compare four original social-solidarity examples.');
-assert.ok(social.weeks[11].activities.length === 4, 'Week twelve should review the full first learning area with several activity types.');
-for (const week of social.weeks.slice(12, 18)) {
+assert.ok(findActivity('language-sort').sourceStyle.includes('Sürükle-bırak'), 'The empathy week should classify original I-language and respectful-question examples.');
+assert.ok(findActivity('pause-and-predict').sourceStyle.includes('arkası yarın'), 'The conflict week should use a predict-the-continuation activity.');
+assert.ok(findActivity('brainwriting').sourceStyle.includes('Beyin yazımı'), 'The equality week should retain a textbook-aligned brainwriting stage.');
+assert.ok(findActivity('project-cycle-sort').sourceStyle.includes('Sürükle-bırak'), 'The project week should sequence a small accessibility project.');
+assert.ok(findActivity('word-cloud-values').sourceStyle.includes('Kelime bulutu'), 'The shared-values week should use a word-cloud activity.');
+assert.ok(findActivity('national-days-sort').sourceStyle.includes('Sürükle-bırak'), 'The national-days week should classify holidays and commemoration days.');
+assert.ok(findActivity('national-struggle-reading').sourceText.includes('Tekâlif-i Milliye'), 'The solidarity week should ground work in an original historical explanation.');
+assert.ok(findActivity('solidarity-case-comparison').caseStudies.length === 4, 'The solidarity week should compare four original social-solidarity examples.');
+assert.ok(findActivity('solidarity-case-comparison').sourceStyle.includes('karşılaştırma'), 'The solidarity week should compare contributions across different areas.');
+
+const worldWeeks = social.weeks.filter((week) => week.unitId === 'world');
+for (const week of worldWeeks) {
   const customActivities = week.activities.slice(1);
   const kinds = new Set(customActivities.flatMap((activity) => activity.fields.map((field) => field.kind)));
   assert.ok(kinds.has('sort'), `Week ${week.id} should include a textbook-aligned, accessible classification interaction.`);
   assert.ok(kinds.has('text') || kinds.has('textarea') || kinds.has('words'), `Week ${week.id} should include open responses for AI feedback.`);
   assert.ok(customActivities.every((activity) => activity.format && activity.hint), `Week ${week.id} needs activity-specific format and guidance.`);
 }
-assert.ok(social.weeks[12].activities[2].questions.some((question) => question.id === 'dictionary-comparison'), 'Week thirteen should compare a learner-made definition with a dictionary explanation.');
-assert.ok(social.weeks[17].activities[1].sourceProviders.includes('eba') && social.weeks[17].activities[1].sourceProviders.includes('mebi'), 'Week eighteen should offer approved source links for its map-based research.');
-assert.deepEqual(social.weeks.slice(12, 18).map((week) => week.activities.map((activity) => activity.id)), Object.entries(secondLearningAreaFlows).map(([, activityIds]) => ['self-check', ...activityIds]), 'Weeks thirteen through eighteen should use the renewed Evimiz Dünya flows.');
-assert.deepEqual(social.weeks.slice(18).map((week) => week.activities.map((activity) => activity.id)), Array.from({ length: 19 }, () => ['self-check', 'book', 'apply']), 'Week nineteen onward should retain its existing activity flows.');
-assert.ok(social.weeks[1].activities[2].scenario.includes('Proje grubunun'), 'Week two should use an original communication-types transfer situation.');
-assert.ok(social.weeks[10].activities[0].sourceStyle.includes('karşılaştırma'), 'Week eleven should compare contributions across different textbook-linked areas.');
+assert.ok(findActivity('globalization-definition').questions.some((question) => question.id === 'dictionary-comparison'), 'The globalisation week should compare a learner-made definition with a dictionary explanation.');
+assert.ok(findActivity('neighbor-map-source').sourceProviders.includes('eba') && findActivity('neighbor-map-source').sourceProviders.includes('mebi'), 'The Turkey-role week should offer approved source links for its map-based research.');
+assert.deepEqual(
+  worldWeeks.map((week) => week.activities.map((activity) => activity.id)),
+  [[13, 14], [15, 16], [17, 18]].map(([first, second]) => ['self-check', ...secondLearningAreaFlows[first], ...secondLearningAreaFlows[second]]),
+  'The Evimiz Dünya weeks should merge their source-week flows in order.',
+);
+assert.deepEqual(
+  social.weeks.filter((week) => week.unitId === 'heritage').map((week) => week.activities.map((activity) => activity.id)),
+  Array.from({ length: 7 }, () => ['self-check', 'book', 'apply']),
+  'The third learning area should keep its existing activity flows.',
+);
+assert.ok(findActivity('same-message-three-ways').scenario.includes('Proje grubunun'), 'The communication-types week should use an original transfer situation.');
 
 for (const id of ['socialWorkspace', 'socialWeekList', 'socialWeekPrompt', 'socialWeekContent', 'socialProgressBar', 'socialProgressTrack', 'socialProgressCount']) {
   mockElements[id] = new MockElement(id);
@@ -288,12 +315,12 @@ for (const id of ['socialWorkspace', 'socialWeekList', 'socialWeekPrompt', 'soci
 social.resetProgress();
 const root = mockElements.socialWorkspace;
 assert.ok(root.listeners.click && root.listeners.input && root.listeners.change && root.listeners.dragstart && root.listeners.dragover && root.listeners.drop && root.listeners.keydown, 'Text, selection, drag-and-drop, and keyboard interactions should be delegated from the workspace.');
-assert.equal((mockElements.socialWeekList.innerHTML.match(/data-social-select=/g) || []).length, 37, 'The UI should render every week separately.');
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Gruplarda ve sosyal hayatta iletişimin önemi'));
+assert.equal((mockElements.socialWeekList.innerHTML.match(/data-social-select=/g) || []).length, 15, 'The UI should render every week separately.');
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('gruplarda iletişimin önemi'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('14–18 Eyl 2026–2027 · 1. hafta'));
 assert.ok(!mockElements.socialWeekContent.innerHTML.includes('ham hafta'), 'The user interface must not call a week a “ham hafta”.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Haftalık çalışma çizelgesi'));
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Konu anlatımı · iletişim neden önemlidir?'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('konu anlatımı'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Anahtar kavramlar'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="0"') && mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="5"'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Metinde iletişimi etkileyen hangi etmenler sıralanıyor?'));
@@ -312,7 +339,7 @@ assert.ok(mockElements.socialWeekContent.innerHTML.includes('https://eba.gov.tr/
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('https://mebi.eba.gov.tr/student/section/upper-subjects/bee82e4d-de71-4a3e-0884-08ddc2afb3ce'));
 assert.equal(mockElements.socialWeekPrompt.hidden, true);
 assert.equal(mockElements.socialWeekContent.hidden, false);
-assert.equal(mockElements.socialProgressCount.textContent, '0 / 37 hafta tamamlandı');
+assert.equal(mockElements.socialProgressCount.textContent, '0 / 15 hafta tamamlandı');
 
 const phoneStepButton = { dataset: { socialActivitySelect: '1' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? phoneStepButton : null } });
@@ -337,28 +364,27 @@ root.listeners.click({ target: { closest: (selector) => selector === '[data-soci
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Ben dili') && mockElements.socialWeekContent.innerHTML.includes('Beden dili'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler ↗') && mockElements.socialWeekContent.innerHTML.includes('MEBİ öğrenci bölümü ↗'));
 
-const week2Button = { dataset: { socialSelect: '2' } };
-root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week2Button : null } });
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Konu anlatımı · iletişim süreci ve türleri'));
+const typesStepButton = { dataset: { socialActivitySelect: '6' } };
+root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? typesStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Sözlü iletişim') && mockElements.socialWeekContent.innerHTML.includes('Sözsüz iletişim'));
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="3"'));
-const classifyStepButton = { dataset: { socialActivitySelect: '1' } };
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="8"'));
+const classifyStepButton = { dataset: { socialActivitySelect: '7' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? classifyStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Seçimimi kontrol et'));
 const customRadio = {
-  dataset: { socialWeek: '2', socialActivity: 'classify-communication-types', socialResponse: 'type-choice-1' },
+  dataset: { socialWeek: '1', socialActivity: 'classify-communication-types', socialResponse: 'type-choice-1' },
   type: 'radio',
   value: 'spoken',
 };
 root.listeners.change({ target: customRadio });
-assert.equal(social.exportProgress().weeks['2'].responses['classify-communication-types']['type-choice-1'], 'spoken');
-const customCheckButton = { dataset: { socialWeek: '2', socialActivity: 'classify-communication-types', socialCheckChoice: 'type-choice-1' } };
+assert.equal(social.exportProgress().weeks['1'].responses['classify-communication-types']['type-choice-1'], 'spoken');
+const customCheckButton = { dataset: { socialWeek: '1', socialActivity: 'classify-communication-types', socialCheckChoice: 'type-choice-1' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-check-choice]' ? customCheckButton : null } });
-assert.equal(social.exportProgress().weeks['2'].choiceChecks['classify-communication-types']['type-choice-1'], true);
+assert.equal(social.exportProgress().weeks['1'].choiceChecks['classify-communication-types']['type-choice-1'], true);
 
-const week3Button = { dataset: { socialSelect: '3' } };
+const week3Button = { dataset: { socialSelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week3Button : null } });
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Empati, ben dili ve farklılıklara saygı'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Empati, ben dili ve anlaşmazlığı yapıcı çözme'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Ben dili, suçlayıcı söz ve saygılı soruyu sınıflandır'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Grup çalışmasında söz hakkı'));
 const languageSortStep = { dataset: { socialActivitySelect: '1' } };
@@ -369,7 +395,7 @@ assert.ok(mockElements.socialWeekContent.innerHTML.includes('Sürükle') && mock
 
 const sortStatus = { textContent: '' };
 const sortWidget = {
-  dataset: { socialWeek: '3', socialActivity: 'language-sort', socialField: 'language-groups' },
+  dataset: { socialWeek: '2', socialActivity: 'language-sort', socialField: 'language-groups' },
   querySelector: () => sortStatus,
 };
 const sortCard = {
@@ -394,7 +420,7 @@ const sortTarget = {
   },
 };
 root.listeners.click({ target: sortTarget });
-assert.equal(social.exportProgress().weeks['3'].responses['language-sort']['language-groups']['i-one'], 'i-language');
+assert.equal(social.exportProgress().weeks['2'].responses['language-sort']['language-groups']['i-one'], 'i-language');
 
 const dragPayload = { value: '', effectAllowed: '', setData(_type, value) { this.value = value; }, getData() { return this.value; } };
 const dragCard = {
@@ -417,7 +443,7 @@ const dragTarget = {
   },
 };
 root.listeners.drop({ target: dragTarget, dataTransfer: dragPayload, preventDefault() {} });
-assert.equal(social.exportProgress().weeks['3'].responses['language-sort']['language-groups']['you-one'], 'blaming-you', 'Native drag-and-drop should persist the dropped category.');
+assert.equal(social.exportProgress().weeks['2'].responses['language-sort']['language-groups']['you-one'], 'blaming-you', 'Native drag-and-drop should persist the dropped category.');
 
 const keyboardCard = {
   dataset: { socialSortItem: 'ask-one' },
@@ -439,27 +465,27 @@ const keyboardTarget = {
   },
 };
 root.listeners.keydown({ target: keyboardTarget, key: 'Enter', preventDefault() {} });
-assert.equal(social.exportProgress().weeks['3'].responses['language-sort']['language-groups']['ask-one'], 'respectful', 'Keyboard target activation should persist the selected card.');
+assert.equal(social.exportProgress().weeks['2'].responses['language-sort']['language-groups']['ask-one'], 'respectful', 'Keyboard target activation should persist the selected card.');
 
 const multiStep = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? multiStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Seçimlerimi kontrol et'));
 const multiInput = {
-  dataset: { socialWeek: '3', socialActivity: 'rewrite-and-reflect', socialResponse: 'parts', socialMulti: 'parts', socialOption: 'situation' },
+  dataset: { socialWeek: '2', socialActivity: 'rewrite-and-reflect', socialResponse: 'parts', socialMulti: 'parts', socialOption: 'situation' },
   type: 'checkbox',
   value: 'situation',
   checked: true,
 };
 root.listeners.change({ target: multiInput });
-assert.deepEqual(social.exportProgress().weeks['3'].responses['rewrite-and-reflect'].parts, ['situation']);
-const multiCheckButton = { dataset: { socialWeek: '3', socialActivity: 'rewrite-and-reflect', socialCheckChoice: 'parts' } };
+assert.deepEqual(social.exportProgress().weeks['2'].responses['rewrite-and-reflect'].parts, ['situation']);
+const multiCheckButton = { dataset: { socialWeek: '2', socialActivity: 'rewrite-and-reflect', socialCheckChoice: 'parts' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-check-choice]' ? multiCheckButton : null } });
-assert.equal(social.exportProgress().weeks['3'].choiceChecks['rewrite-and-reflect'].parts, true);
+assert.equal(social.exportProgress().weeks['2'].choiceChecks['rewrite-and-reflect'].parts, true);
 
 const renewedBackup = social.normalizeProgress({
   version: 3,
-  selectedWeek: 3,
-  weeks: { '3': {
+  selectedWeek: 2,
+  weeks: { '2': {
     responses: {
       book: { rewrite1: 'Eski yanıt korunuyor.' },
       'language-sort': { 'language-groups': { 'i-one': 'i-language', unknown: 'not-a-category' } },
@@ -468,83 +494,83 @@ const renewedBackup = social.normalizeProgress({
     choiceChecks: { 'language-sort': { 'language-groups': true }, 'rewrite-and-reflect': { parts: true } },
   } },
 });
-assert.equal(renewedBackup.weeks['3'].legacyResponses.book.rewrite1, 'Eski yanıt korunuyor.', 'Old post-week-two answers must remain in the backup record.');
-assert.deepEqual(renewedBackup.weeks['3'].responses['language-sort']['language-groups']['i-one'], 'i-language');
-assert.equal(renewedBackup.weeks['3'].responses['language-sort']['language-groups'].unknown, undefined, 'Unknown sort-card IDs must not be imported.');
-assert.deepEqual(renewedBackup.weeks['3'].responses['rewrite-and-reflect'].parts, ['situation'], 'Multi-select backups should retain only valid options.');
+assert.equal(renewedBackup.weeks['2'].legacyResponses.book.rewrite1, 'Eski yanıt korunuyor.', 'Old post-week-two answers must remain in the backup record.');
+assert.deepEqual(renewedBackup.weeks['2'].responses['language-sort']['language-groups']['i-one'], 'i-language');
+assert.equal(renewedBackup.weeks['2'].responses['language-sort']['language-groups'].unknown, undefined, 'Unknown sort-card IDs must not be imported.');
+assert.deepEqual(renewedBackup.weeks['2'].responses['rewrite-and-reflect'].parts, ['situation'], 'Multi-select backups should retain only valid options.');
 const legacyAIFeedbackBackup = social.normalizeProgress({
   version: 3,
-  selectedWeek: 3,
-  weeks: { '3': { aiFeedback: { book: { 'field-old-response': { state: 'correct', text: 'Önceki güvenli geri bildirim', fieldIds: ['respect'] } } } } },
+  selectedWeek: 2,
+  weeks: { '2': { aiFeedback: { book: { 'field-old-response': { state: 'correct', text: 'Önceki güvenli geri bildirim', fieldIds: ['respect'] } } } } },
 });
-assert.equal(legacyAIFeedbackBackup.weeks['3'].legacyAIFeedback.book['field-old-response'].text, 'Önceki güvenli geri bildirim', 'Obsolete AI feedback should remain available in the backup record.');
+assert.equal(legacyAIFeedbackBackup.weeks['2'].legacyAIFeedback.book['field-old-response'].text, 'Önceki güvenli geri bildirim', 'Obsolete AI feedback should remain available in the backup record.');
 
-const week20Button = { dataset: { socialSelect: '20' } };
+const week20Button = { dataset: { socialSelect: '9' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week20Button : null } });
-assert.equal(social.exportProgress().selectedWeek, 20);
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('Osmanlı Beyliği’nin kuruluş yeri ve GZFT'));
+assert.equal(social.exportProgress().selectedWeek, 9);
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Osmanlı Beyliği’nin kuruluşu'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT’yi gerekçeyle doldur'));
 const responseInput = {
-  dataset: { socialWeek: '20', socialActivity: 'book', socialResponse: 'strength' },
+  dataset: { socialWeek: '9', socialActivity: 'book', socialResponse: 'strength-2' },
   value: 'Kuruluş konumu gelişme için fırsatlar sunabilir.',
   type: 'textarea',
   closest(selector) { return selector === '[data-social-response]' ? this : null; },
 };
 root.listeners.input({ target: responseInput });
-assert.equal(social.exportProgress().weeks['20'].responses.book.strength, responseInput.value);
-const taskInput = { dataset: { socialWeek: '20', socialTask: '0' }, checked: true };
+assert.equal(social.exportProgress().weeks['9'].responses.book['strength-2'], responseInput.value);
+const taskInput = { dataset: { socialWeek: '9', socialTask: '0' }, checked: true };
 root.listeners.change({ target: taskInput });
-const providerInput = { dataset: { socialWeek: '20', socialProvider: 'eba' }, checked: true };
+const providerInput = { dataset: { socialWeek: '9', socialProvider: 'eba' }, checked: true };
 root.listeners.change({ target: providerInput });
-assert.equal(social.exportProgress().weeks['20'].tasks[0], true);
-assert.equal(social.exportProgress().weeks['20'].platforms.eba, true);
-assert.notEqual(social.exportProgress().weeks['21']?.platforms.eba, true, 'External platform progress must stay separate by week.');
-assert.equal(social.isWeekComplete(social.weeks[19]), false, 'The app tracker must stay incomplete until every task and activity field is done.');
+assert.equal(social.exportProgress().weeks['9'].tasks[0], true);
+assert.equal(social.exportProgress().weeks['9'].platforms.eba, true);
+assert.notEqual(social.exportProgress().weeks['10']?.platforms.eba, true, 'External platform progress must stay separate by week.');
+assert.equal(social.isWeekComplete(social.weeks[8]), false, 'The app tracker must stay incomplete until every task and activity field is done.');
 
 const radioInput = {
-  dataset: { socialWeek: '20', socialActivity: 'self-check', socialResponse: 'self-check-1' },
+  dataset: { socialWeek: '9', socialActivity: 'self-check', socialResponse: 'self-check-1' },
   type: 'radio',
-  value: social.weeks[19].activities[0].fields[0].answer,
+  value: social.weeks[8].activities[0].fields[0].answer,
 };
 root.listeners.change({ target: radioInput });
-assert.equal(social.exportProgress().weeks['20'].responses['self-check']['self-check-1'], radioInput.value);
-const checkChoiceButton = { dataset: { socialWeek: '20', socialActivity: 'self-check', socialCheckChoice: 'self-check-1' } };
+assert.equal(social.exportProgress().weeks['9'].responses['self-check']['self-check-1'], radioInput.value);
+const checkChoiceButton = { dataset: { socialWeek: '9', socialActivity: 'self-check', socialCheckChoice: 'self-check-1' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-check-choice]' ? checkChoiceButton : null } });
-assert.equal(social.exportProgress().weeks['20'].choiceChecks['self-check']['self-check-1'], true, 'Checking a self-assessment should persist its feedback state.');
+assert.equal(social.exportProgress().weeks['9'].choiceChecks['self-check']['self-check-1'], true, 'Checking a self-assessment should persist its feedback state.');
 const activityStepButton = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? activityStepButton : null } });
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT’yi gerekçeyle dold'), 'The student should be able to navigate to the transfer/reflection step.');
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT'), 'The student should be able to navigate to the transfer/reflection step.');
 
-const week13Button = { dataset: { socialSelect: '13' } };
+const week13Button = { dataset: { socialSelect: '6' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week13Button : null } });
 const week13DefinitionStep = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week13DefinitionStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Kendi tanımını örnek ve sözlük açıklamasıyla karşılaştır'));
 assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-ai-check"/g) || []).length, 3, 'Each Week 13 open question should have one grouped Groq check button.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('question-dictionary-comparison'));
-const week18Button = { dataset: { socialSelect: '18' } };
+const week18Button = { dataset: { socialSelect: '8' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week18Button : null } });
-const week18MapStep = { dataset: { socialActivitySelect: '1' } };
+const week18MapStep = { dataset: { socialActivitySelect: '4' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week18MapStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Harita ve güvenilir kaynaktan komşularla iş birliğini araştır'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler ↗') && mockElements.socialWeekContent.innerHTML.includes('MEBİ öğrenci bölümü ↗'));
 assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-ai-check"/g) || []).length, 3, 'Each Week 18 source-research question should have a Groq check button.');
 
 async function runSocialAIRegressionChecks() {
-  const week13AgainButton = { dataset: { socialSelect: '13' } };
+  const week13AgainButton = { dataset: { socialSelect: '6' } };
   await root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week13AgainButton : null } });
   const week13DefinitionAgain = { dataset: { socialActivitySelect: '2' } };
   await root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week13DefinitionAgain : null } });
 
   const reviewKey = 'question-dictionary-comparison';
-  const feedbackId = 'social-ai-feedback-13-globalization-definition-question-dictionary-comparison';
+  const feedbackId = 'social-ai-feedback-6-globalization-definition-question-dictionary-comparison';
   mockElements[feedbackId] = new MockElement(feedbackId);
   mockElements.apiKey = { value: '' };
   mockElements.model = { value: 'openai/gpt-oss-20b' };
   mockElements.apiSettings = { open: false };
   const button = {
     dataset: {
-      socialWeek: '13',
+      socialWeek: '6',
       socialActivity: 'globalization-definition',
       socialAiKey: reviewKey,
       socialAiFields: JSON.stringify(['definition-comparison']),
@@ -558,7 +584,7 @@ async function runSocialAIRegressionChecks() {
   });
   const enterAnswer = (value) => root.listeners.input({
     target: {
-      dataset: { socialWeek: '13', socialActivity: 'globalization-definition', socialResponse: 'definition-comparison' },
+      dataset: { socialWeek: '6', socialActivity: 'globalization-definition', socialResponse: 'definition-comparison' },
       type: 'textarea',
       value,
       closest(selector) { return selector === '[data-social-response]' ? this : null; },
@@ -569,13 +595,13 @@ async function runSocialAIRegressionChecks() {
   let fetchCalls = 0;
   global.fetch = async () => { fetchCalls += 1; throw new Error('fetch should not run without an API key'); };
   await clickAIButton();
-  let saved = social.exportProgress().weeks['13'];
+  let saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'system', 'Missing Groq settings should give a local settings reminder.');
   assert.equal(mockElements.apiSettings.open, true, 'A missing-key reminder should open the shared API settings.');
   assert.equal(fetchCalls, 0, 'The AI button should not call Groq without a user-provided key.');
 
   enterAnswer('İki tanım da toplumlar arasındaki bağlantıları anlatıyor; sözlük açıklaması daha kapsamlı.');
-  assert.equal(social.exportProgress().weeks['13'].aiFeedback['globalization-definition'][reviewKey], undefined, 'Editing an open response should invalidate previously saved AI feedback.');
+  assert.equal(social.exportProgress().weeks['6'].aiFeedback['globalization-definition'][reviewKey], undefined, 'Editing an open response should invalidate previously saved AI feedback.');
   assert.equal(mockElements[feedbackId].hidden, true, 'Editing an open response should hide stale feedback.');
 
   const testAPIKey = 'test-key-not-persisted';
@@ -602,7 +628,7 @@ async function runSocialAIRegressionChecks() {
   assert.equal(requestBody.model, mockElements.model.value, 'The control should reuse the shared Groq model setting.');
   assert.equal(requestBody.response_format.type, 'json_object', 'The AI request should use the constrained assessment format.');
   assert.ok(requestBody.messages[1].content.includes('daha kapsamlı'), 'The learner response should be assessed.');
-  saved = social.exportProgress().weeks['13'];
+  saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'correct', 'A safe Groq result should be stored for the question.');
   assert.ok(mockElements[feedbackId].textContent.includes('TAM DOĞRU'));
   assert.ok(!JSON.stringify(saved).includes(testAPIKey), 'The Groq API key must not be saved with Social Studies progress.');
@@ -614,7 +640,7 @@ async function runSocialAIRegressionChecks() {
     json: async () => ({ choices: [{ message: { content: JSON.stringify({ status: 'correct', issues: [], fields: [] }) } }] }),
   });
   await clickAIButton();
-  saved = social.exportProgress().weeks['13'];
+  saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey].state, 'unrated', 'An incomplete model assessment must not be presented as fully correct.');
   assert.ok(mockElements[feedbackId].textContent.includes('SONUÇ SINIFLANDIRILAMADI'));
 
@@ -633,11 +659,11 @@ async function runSocialAIRegressionChecks() {
     }) } }] }),
   });
   await pendingAssessment;
-  saved = social.exportProgress().weeks['13'];
+  saved = social.exportProgress().weeks['6'];
   assert.equal(saved.aiFeedback['globalization-definition'][reviewKey], undefined, 'An assessment for an edited response must not be persisted.');
   assert.ok(mockElements[feedbackId].textContent.includes('Yanıt kontrol sırasında değişti'), 'A stale response should be clearly discarded.');
 
-  console.log('Social Studies summaries, Week 8 exam notice, Weeks 3–18 textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed.');
+  console.log('Social Studies summaries, Week 8 exam notice, merged first-term textbook-aligned flows, Groq checks and stale-response protection, progress migration, completion rules, exact links, and backups passed.');
 }
 
 runSocialAIRegressionChecks().catch((error) => {

@@ -477,6 +477,53 @@
 #theme1Practice .check-button:hover { background: #1b4dbd; }
 #theme1Practice .check-button:disabled { opacity: .65; cursor: wait; }
 #theme1Practice .question-save-status { color: #4d5f74; font-size: 10px; }
+#theme1Practice .theme1-tts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#theme1Practice .theme1-tts[hidden] { display: none; }
+
+#theme1Practice .theme1-tts-button {
+  padding: 7px 12px;
+  border: 1px solid #c7d8e8;
+  border-radius: 999px;
+  background: #f2f8fd;
+  color: #1f4a63;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#theme1Practice .theme1-tts-button:hover { background: #e4f1fa; }
+
+#theme1Practice .theme1-tts-button:focus-visible {
+  outline: 2px solid #2f6f95;
+  outline-offset: 2px;
+}
+
+#theme1Practice .theme1-tts-stop {
+  padding: 7px 11px;
+  border: 1px solid #e2d5da;
+  border-radius: 999px;
+  background: #fff;
+  color: #6b3a52;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#theme1Practice .theme1-tts-status {
+  color: #51636f;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 #theme1Practice .feedback-box {
   margin: 10px 0 0 37px;
   padding: 11px 13px;

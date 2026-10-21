@@ -11,7 +11,7 @@ Dört kaynak PDF’nin **153 PDF sayfası** (50 + 30 + 37 + 36) tek tek metin ç
 - **PDF 3:** PDF s. 1–37 → basılı s. 80–116.
 - **PDF 4:** PDF s. 1–36 → basılı s. 117–152.
 
-Bu doküman, kaynak metni kopyalamak yerine her sayfanın ana fikrini ve görsel/şekil işlevini özgün sözlerle özetler. “Hafta” sütunu, mevcut 37 haftalık akışla ilişkiyi gösterir. Kitaptaki etkinlik ve görev yönergeleri kaynak analizi amacıyla tanımlanmıştır; uygulamadaki mevcut etkinlik verileri bu incelemede değiştirilmemiştir. Kitap görselleri uygulamaya kopyalanmamıştır.
+Bu doküman, kaynak metni kopyalamak yerine her sayfanın ana fikrini ve görsel/şekil işlevini özgün sözlerle özetler. “Hafta” sütunu, Fen Bilimleri için 15 haftalık 1. dönem akışıyla ilişkiyi gösterir. Kitaptaki etkinlik ve görev yönergeleri kaynak analizi amacıyla tanımlanmıştır; uygulamadaki mevcut etkinlik verileri bu incelemede değiştirilmemiştir. Kitap görselleri uygulamaya kopyalanmamıştır.
 
 ## İlk PDF’nin kapak ve ön sayfaları (PDF 1, s. 1–13)
 
