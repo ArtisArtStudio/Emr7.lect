@@ -52,6 +52,7 @@ global.document = {
 };
 
 require('../science-content.js');
+require('../science-activities.js');
 require('../science.js');
 const science = global.window.SCIENCE;
 assert.ok(science, 'The Fen Bilimleri workspace should expose its course API.');
@@ -109,6 +110,54 @@ assert.ok(science.weeks.every((week) => ['space', 'spaceVehicles', 'telescope', 
 assert.deepEqual(science.weeks.map((week) => week.visual), ['space', 'spaceVehicles', 'debris', 'stars', 'spaceReview', 'energy', 'energy', 'energy', 'digestion', 'digestion', 'circulation', 'circulation', 'respiration', 'excretion', 'systemsReview']);
 assert.ok(science.weeks.every((week) => week.summary[0] && week.summary[1] && week.summary[2]));
 assert.ok(new Set(science.weeks.map((week) => week.activity.title)).size === 15, 'Each week should have its own original activity title.');
+
+// Sınav bildirimi: 3 Kasım 2026 tarihi yalnızca 2–6 Kasım haftasında görünür.
+assert.equal(science.examDateFor(8), '3 Kasım 2026', 'The Fen exam should be announced for 3 November 2026.');
+assert.equal(science.examDateFor(7), '');
+assert.equal(science.examDateFor(9), '');
+science.importProgress({ selectedWeek: 1, weeks: {} });
+const listHTML = mockElements.scienceWeekList.innerHTML;
+assert.equal((listHTML.match(/1\. sınav \(3 Kasım 2026\)/g) || []).length, 1, 'Only week eight should carry the Fen exam date in the week list.');
+assert.ok(listHTML.includes('science-week-exam'), 'The exam date should use its own red badge class.');
+
+// Konu bazlı etkinlik seti: ilk iki haftada en az 10 etkinlik, yedi etkileşim türü.
+const activityData = global.window.SCIENCE_ACTIVITIES;
+assert.ok(activityData, 'The activity set should be exposed for the science course.');
+assert.deepEqual(Object.keys(activityData.weeks).map(Number).sort((a, b) => a - b), [1, 2], 'The first analysis round should cover exactly the first two weeks.');
+for (const weekId of [1, 2]) {
+  const activities = science.activitiesFor(weekId);
+  assert.ok(activities.length >= 10 && activities.length <= 15, `Week ${weekId} should carry 10–15 topic activities, found ${activities.length}.`);
+  assert.equal(new Set(activities.map((activity) => activity.id)).size, activities.length, `Week ${weekId} activity ids should be unique.`);
+  const types = new Set(activities.map((activity) => activity.type));
+  for (const type of ['match', 'fill', 'tf', 'sort', 'order', 'choice', 'text']) {
+    assert.ok(types.has(type), `Week ${weekId} should include a ${type} activity.`);
+  }
+  assert.ok(activities.every((activity) => activity.title && activity.instruction && activity.format && activity.skill), `Week ${weekId} activities need title, format, skill and instruction.`);
+  assert.ok(activities.every((activity) => !/kitap|ders kitab|sayfa \d/i.test(JSON.stringify(activity))), 'Activities must not cite the textbook or page numbers.');
+  assert.ok(activities.filter((activity) => activity.type === 'text').every((activity) => activity.criteria.length >= 3 && activity.minChars >= 150), 'Writing activities need criteria and a minimum length.');
+  assert.ok(activities.filter((activity) => activity.type === 'match').every((activity) => Object.keys(activity.answers).length === activity.items.length), 'Matching activities need one answer per item.');
+  assert.ok(activities.filter((activity) => activity.type === 'fill').every((activity) => activity.text.split(/\{\{\d+\}\}/).length - 1 === activity.blanks.length), 'Every fill blank needs its own answer entry.');
+  assert.ok(activities.filter((activity) => activity.type === 'sort').every((activity) => activity.items.every((item) => activity.categories.some((category) => category.id === item.answer))), 'Sorted cards must point at a real category.');
+  assert.ok(activities.filter((activity) => activity.type === 'order').every((activity) => activity.answer.length === activity.items.length), 'Ordering activities need a full expected sequence.');
+}
+assert.equal(science.practiceSummaryFor(1).total, 14);
+assert.equal(science.practiceSummaryFor(1).done, 0);
+assert.equal(science.practiceSummaryFor(3).total, 0, 'Weeks without an analysed set should not fake activities.');
+
+science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { 'f1-a01': { values: { 'm:k1': 'd1', 'm:k2': 'd2' }, checked: true } } } } });
+assert.equal(science.exportProgress().weeks['1'].activities['f1-a01'].values['m:k1'], 'd1', 'Activity answers should persist inside the weekly progress record.');
+assert.equal(science.practiceSummaryFor(1).done, 0, 'A partially answered activity is not complete.');
+science.importProgress({ selectedWeek: 1, weeks: { '1': { activities: { 'f1-a01': { values: { 'm:k1': 'd1', 'm:k2': 'd2', 'm:k3': 'd3', 'm:k4': 'd4', 'm:k5': 'd5', 'm:k6': 'd6' }, checked: true } } } } });
+assert.equal(science.practiceSummaryFor(1).done, 1, 'A fully correct matching activity counts as complete.');
+const activityHTML = mockElements.scienceWeekContent.innerHTML;
+assert.ok(activityHTML.includes('science-activity-set'), 'The week should render its activity set.');
+assert.ok(activityHTML.includes('ETKİNLİK SETİ'));
+assert.ok(activityHTML.includes('data-practice-card='), 'The set should include a drag-and-drop activity.');
+assert.ok(activityHTML.includes('science-practice-fill'), 'The set should include fill-in-the-blank inputs.');
+assert.ok(activityHTML.includes('data-practice-text='), 'The set should include a writing activity.');
+assert.ok(activityHTML.includes('1 / 14 etkinlik tamamlandı') || activityHTML.includes('1 / 14'), 'The set should show its completion count.');
+assert.ok(!activityHTML.includes('<svg'), 'Activity widgets should be HTML controls, not drawings.');
+science.importProgress({ selectedWeek: null, weeks: {} });
 
 const links = science.getProviderLinks(science.weeks[0]);
 assert.equal(links.eba, 'https://www.eba.gov.tr/');

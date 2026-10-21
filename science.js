@@ -113,6 +113,111 @@
     'salincak': { src: 'assets/science-concept-salincak.webp', small: 'assets/science-concept-salincak-450.webp', width: 896, height: 672, alt: "Güneşli bir parkta yüksek noktaya kadar sallanan ip salıncak; en yüksek ve en alt noktalarda enerji türleri değişiyor." },
     'hiz': { src: 'assets/science-concept-hiz.webp', small: 'assets/science-concept-hiz-450.webp', width: 896, height: 672, alt: "Koşu pistinde hızlı koşan ve yavaş ilerleyen iki sporcu; aynı sürede alınan yolun karşılaştırılması." },
     'kutle': { src: 'assets/science-concept-kutle.webp', small: 'assets/science-concept-kutle-450.webp', width: 896, height: 672, alt: "Laboratuvarda terazi; küçük ama yoğun metal blok ile büyük ama hafif köpük bloğun kütleleri farklı." },
+    'sindirim-kanali': { src: 'assets/science-concept-sindirim-kanali.webp', small: 'assets/science-concept-sindirim-kanali-450.webp', width: 896, height: 672, alt: "Sindirim kanalı gerçekçi bir model olarak: yemek borusu, mide, kıvrımlı ince bağırsak ve onu çevreleyen kalın bağırsak." },
+    'ince-bagirsak': { src: 'assets/science-concept-ince-bagirsak.webp', small: 'assets/science-concept-ince-bagirsak-450.webp', width: 896, height: 672, alt: "İnce bağırsak yüzeyinin yakın görünümü: sıra sıra villuslar ve içlerinde ince kılcal damar ağları." },
+    'enzim': { src: 'assets/science-concept-enzim.webp', small: 'assets/science-concept-enzim-450.webp', width: 896, height: 672, alt: "Bir enzimin yüzey modeli: oyuğa yerleşmeye hazır küçük molekül; enzim yalnızca kendi oyuğuna uyan molekülle çalışır." },
+    'atardamar': { src: 'assets/science-concept-atardamar.webp', small: 'assets/science-concept-atardamar-450.webp', width: 896, height: 672, alt: "Üç damar türünün kesiti: kalın duvarlı atardamar, kapakçıklı toplardamar ve tek katmanlı kılcal damar." },
+    'kan': { src: 'assets/science-concept-kan.webp', small: 'assets/science-concept-kan-450.webp', width: 896, height: 672, alt: "Mikroskop görüntüsü: yoğun alyuvar tabakası, ortada çekirdeği loblu bir akyuvar ve dağınık kan pulcukları." },
+    'soluk-borusu': { src: 'assets/science-concept-soluk-borusu.webp', small: 'assets/science-concept-soluk-borusu-450.webp', width: 896, height: 672, alt: "Yarı saydam gövde içinde solunum yolu: gırtlak, halkalı soluk borusu, ikiye ayrılan bronşlar ve akciğerler." },
+    'gaz-alisverisi': { src: 'assets/science-concept-gaz-alisverisi.webp', small: 'assets/science-concept-gaz-alisverisi-450.webp', width: 896, height: 672, alt: "Bronşçukların ucundaki yarı saydam alveol keseleri ve her keseyi saran ince kılcal damarlar." },
+    'diyafram': { src: 'assets/science-concept-diyafram.webp', small: 'assets/science-concept-diyafram-450.webp', width: 896, height: 672, alt: "Göğüs boşluğunu karın boşluğundan ayıran kubbe biçimli diyafram kası ve üstünde akciğerler." },
+    'bobrek': { src: 'assets/science-concept-bobrek.webp', small: 'assets/science-concept-bobrek-450.webp', width: 896, height: 672, alt: "Boşaltım sistemi gerçekçi bir model olarak: iki böbrek, üreterler, idrar kesesi ve üretra." },
+    'kalp': { src: 'assets/science-concept-kalp.webp', small: 'assets/science-concept-kalp-450.webp', width: 896, height: 672, alt: "Kalbin dört odacığı gerçekçi bir kesitte: solda mavi tonlu sağ kulakçık ve sağ karıncık, sağda kırmızı tonlu sol kulakçık ve sol karıncık; etiketler oklarla gösterilir." },
+    'mide': { src: 'assets/science-concept-mide.webp', small: 'assets/science-concept-mide-450.webp', width: 896, height: 672, alt: "Mide, gerçekçi doku ayrıntısıyla: üstten yemek borusu girer, iç yüzeydeki kıvrımlar görünür, alt uçtan ince bağırsağa bağlanır." },
+    'suzulme': { src: 'assets/science-concept-suzulme.webp', small: 'assets/science-concept-suzulme-450.webp', width: 896, height: 672, alt: "Nefronda süzülme: yumak biçimindeki kılcal damarlar kapsül içinde süzülür, süzüntü uzun tüp boyunca ilerleyerek toplama kanalına ulaşır." },
+    'dengeli-beslenme': { src: 'assets/science-concept-dengeli-beslenme.webp', small: 'assets/science-concept-dengeli-beslenme-450.webp', width: 896, height: 672, alt: "Dengeli bir öğün: balık, tam tahıl, sebze, yoğurt, su ve meyveden oluşan çeşitli besinler bir arada." },
+    'ic-denge': { src: 'assets/science-concept-ic-denge.webp', small: 'assets/science-concept-ic-denge-450.webp', width: 896, height: 672, alt: "Vücudun iç dengesi: su ve tuz miktarını eşit tutan bir terazi, yanında termometre ve kalp simgesi." },
+    'kan-bagisi': { src: 'assets/science-concept-kan-bagisi.webp', small: 'assets/science-concept-kan-bagisi-450.webp', width: 896, height: 672, alt: "Bir bağış merkezinde koldan kan alınması: bağışçı, sağlık çalışanı ve kan torbası." },
+    'idrar': { src: 'assets/science-concept-idrar.webp', small: 'assets/science-concept-idrar-450.webp', width: 896, height: 672, alt: "İdrarın vücuttan atılması: iki üreterle gelen idrar mesanede toplanır ve üretradan dışarı çıkar." },
+    'sistem': { src: 'assets/science-concept-sistem.webp', small: 'assets/science-concept-sistem-450.webp', width: 896, height: 672, alt: "Dört sistem bir arada: sindirim kanalı, kalp ve damarlar, akciğerler, böbrekler ve idrar kesesi." },
+    'hucre': { src: 'assets/science-concept-hucre.webp', small: 'assets/science-concept-hucre-450.webp', width: 896, height: 672, alt: "Bir hücrenin kesiti: çekirdek, organeller ve zardan içeri giren besin molekülleri." },
+    'hijyen': { src: 'assets/science-concept-hijyen.webp', small: 'assets/science-concept-hijyen-450.webp', width: 896, height: 672, alt: "Gıda ve el hijyeni: akan su altında sabunla yıkanan eller, yıkanan sebzeler ve kapalı saklama kabı." },
+    'gozlem': { src: 'assets/science-concept-gozlem.webp', small: 'assets/science-concept-gozlem-450.webp', width: 896, height: 672, alt: "Gece gökyüzü gözlemi: küçük bir teleskopla gözlem yapan kişi, yanında not defteri ve lamba; gökyüzünde Samanyolu." },
+    'veri': { src: 'assets/science-concept-veri.webp', small: 'assets/science-concept-veri-450.webp', width: 896, height: 672, alt: "Uydu görüntülerinden elde edilen veri: bir tablet ekranında kıyı çizgisi, tarım alanları ve nehir deltasının farklı tarihlerdeki görüntüleri." },
+    'haberlesme': { src: 'assets/science-concept-haberlesme.webp', small: 'assets/science-concept-haberlesme-450.webp', width: 896, height: 672, alt: "Haberleşme uydusu, altın kaplamalı gövdesi ve güneş panelleriyle Dünya'nın üzerinde görev yapar; sinyalleri geniş bir coğrafyaya aktarır." },
+    'gozlem-uydusu': { src: 'assets/science-concept-gozlem-uydusu.webp', small: 'assets/science-concept-gozlem-uydusu-450.webp', width: 896, height: 672, alt: "Gözlem uydusunun yeryüzüne dönük optik sistemi, altındaki nehir deltasını ve tarım alanlarını görüntüler." },
+    'teknoloji-aktarimi': { src: 'assets/science-concept-teknoloji-aktarimi.webp', small: 'assets/science-concept-teknoloji-aktarimi-450.webp', width: 896, height: 672, alt: "Uzay çalışmalarından günlük yaşama aktarılan ürünler: güneş paneli, su filtresi, yalıtım örtüsü, şarjlı matkap ve dayanıklı mercek." },
+    'goruntuleme': { src: 'assets/science-concept-goruntuleme.webp', small: 'assets/science-concept-goruntuleme-450.webp', width: 896, height: 672, alt: "Görüntüleme cihazı, hasta yatağa uzanmışken bedenin iç yapısını görüntüye çevirir; MR ve tomografi bu yöntemlerin en bilinenleridir." },
+    'is': { src: 'assets/science-concept-is.webp', small: 'assets/science-concept-is-450.webp', width: 896, height: 672, alt: "Bir kişi ağır kutuyu yatay yönde iterek yer değiştirmesini sağlar; kuvvet ile kuvvet yönünde alınan yol birlikte fiziksel işi oluşturur." },
+    'onyildiz': { src: 'assets/science-concept-onyildiz.webp', small: 'assets/science-concept-onyildiz-450.webp', width: 896, height: 672, alt: "Çöken gaz bulutunun merkezinde önyıldız: çevresinde dönen disk, eksen boyunca dışa savrulan gaz jetleri." },
+    'isik-kirliligi': { src: 'assets/science-concept-isik-kirliligi.webp', small: 'assets/science-concept-isik-kirliligi-450.webp', width: 896, height: 672, alt: "Işık kirliliği: kentin üzerinde biriken turuncu ışık kubbesi gökyüzünü yıkar; gözlemevi bu parlaklığın uzağında, yıldızların göründüğü karanlık bir tepede durur." },
+    'kutle-cekimi': { src: 'assets/science-concept-kutle-cekimi.webp', small: 'assets/science-concept-kutle-cekimi-450.webp', width: 896, height: 672, alt: "Dalından kopan elma yer çekimi etkisiyle aşağı düşerken, aynı çekim dalda kalan elmayı da tutar; kütle çekimi her iki elmaya da etki eder." },
+    'carpisma-riski': { src: 'assets/science-concept-carpisma-riski.webp', small: 'assets/science-concept-carpisma-riski-450.webp', width: 896, height: 672, alt: "Alçak yörüngede biriken uzay enkazı: parçalanmış güneş paneli, hurdaya dönmüş roket kademesi ve savrulan metal parçalar." },
+    'gorev-sonu-plani': { src: 'assets/science-concept-gorev-sonu-plani.webp', small: 'assets/science-concept-gorev-sonu-plani-450.webp', width: 896, height: 672, alt: "Görevini tamamlamış uydu, itici motorunu çalıştırarak yörüngeden çıkmaya yöneliyor; altında Dünya'nın atmosfer çizgisi." },
+    'iletisim': { src: 'assets/science-concept-iletisim.webp', small: 'assets/science-concept-iletisim-450.webp', width: 896, height: 672, alt: "Yer istasyonundaki büyük çanak antenler gökyüzüne yönelmiş; uydu sinyalleri bu istasyonlarda toplanıp dağıtılır." },
+    'uydu-verisi': { src: 'assets/science-concept-uydu-verisi.webp', small: 'assets/science-concept-uydu-verisi-450.webp', width: 896, height: 672, alt: "Uydudan alınan görüntü: nehir deltası, tarım alanları ve denize karışan tortu; aynı bölge farklı tarihlerde karşılaştırılır." },
+    'isik-yili': { src: 'assets/science-concept-isik-yili.webp', small: 'assets/science-concept-isik-yili-450.webp', width: 896, height: 672, alt: "Uzun pozlamada yıldızlar gökyüzünde yay çizer; ışığın bir yılda aldığı yol, yıldızlar arası uzaklığı anlatır." },
+    'evren': { src: 'assets/science-concept-evren.webp', small: 'assets/science-concept-evren-450.webp', width: 896, height: 672, alt: "Derin uzay görüntüsü: farklı biçimlerde binlerce galaksi; evren galaksileri ve aralarındaki boşluğu kapsar." },
+    'gok-cismi': { src: 'assets/science-concept-gok-cismi.webp', small: 'assets/science-concept-gok-cismi-450.webp', width: 896, height: 672, alt: "Ay, tepelerin üzerinde yükselirken kraterleri ve denizleriyle görünür; gök cisimleri uzaydaki doğal kütlelerdir." },
+    'dogrultu': { src: 'assets/science-concept-dogrultu.webp', small: 'assets/science-concept-dogrultu-450.webp', width: 896, height: 672, alt: "İki nokta arasında gerilmiş çelik halat, ortasına asılan ağırlığı taşıyor; kuvvet halatın doğrultusu boyunca iletilir." },
+    'esneklik': { src: 'assets/science-concept-esneklik.webp', small: 'assets/science-concept-esneklik-450.webp', width: 896, height: 672, alt: "Bahçede bir çocuk sapanla nişan alıyor: lastikler sonuna kadar gerilmiş, taş yuvada; serbest kaldığında açığa çıkacak esneklik potansiyel enerjisi bu gerilimde depolanır." },
+    'yukseklik': { src: 'assets/science-concept-yukseklik.webp', small: 'assets/science-concept-yukseklik-450.webp', width: 896, height: 672, alt: "Yüksekte duran top, yere göre potansiyel enerji depolar; yükseklik arttıkça depolanan enerji artar." },
+    'fiziksel-is': { src: 'assets/science-concept-fiziksel-is.webp', small: 'assets/science-concept-fiziksel-is-450.webp', width: 896, height: 672, alt: "İki kişi ağır bir sandığı rampadan yukarı kaldırırken kuvvet, cismi kuvvet yönünde hareket ettirir; kuvvet ile alınan yolun çarpımı işi verir." },
+    'kuvvet-yonu': { src: 'assets/science-concept-kuvvet-yonu.webp', small: 'assets/science-concept-kuvvet-yonu-450.webp', width: 896, height: 672, alt: "Halat çekme oyununda iki kişi zıt yönlerde kuvvet uygular; kuvvetin yönü, uygulanan okların yönüyle belirlenir ve sonucu değiştirir." },
+    'yer-degistirme-yonu': { src: 'assets/science-concept-yer-degistirme-yonu.webp', small: 'assets/science-concept-yer-degistirme-yonu-450.webp', width: 896, height: 672, alt: "Sedye koridor boyunca itilirken cismin yer değiştirmesi kuvvetin doğrultusuyla aynı yöndedir." },
+    'karsilastirma': { src: 'assets/science-concept-karsilastirma.webp', small: 'assets/science-concept-karsilastirma-450.webp', width: 896, height: 672, alt: "İki rampa yan yana: dik ve kısa rampa daha büyük kuvvet, uzun ve eğimli rampa daha küçük kuvvet ister; işi karşılaştırırken ikisi birlikte değerlendirilir." },
+    'uzay-arastirmasi': { src: 'assets/science-concept-uzay-arastirmasi.webp', small: 'assets/science-concept-uzay-arastirmasi-450.webp', width: 896, height: 672, alt: "Görev kontrol merkezinde gözlemciler uydu yörüngelerini ve görüntüleri izler; uzay araştırması ölçüm, kayıt ve değerlendirme sürecidir." },
+    'kanit': { src: 'assets/science-concept-kanit.webp', small: 'assets/science-concept-kanit-450.webp', width: 896, height: 672, alt: "Araştırmacı ölçüm sonuçlarını deftere kaydeder; kaydedilen ölçümler bir açıklamayı destekleyen kanıt hâline gelir." },
+    'yutak': { src: 'assets/science-concept-yutak.webp', small: 'assets/science-concept-yutak-450.webp', width: 896, height: 672, alt: "Baş-boyun kesitinde yutak: burun ve ağız boşluğunun arkasında, hava ile besinin yollarının kesiştiği kaslı geçiş bölgesi." },
+    'kalin-bagirsak': { src: 'assets/science-concept-kalin-bagirsak.webp', small: 'assets/science-concept-kalin-bagirsak-450.webp', width: 896, height: 672, alt: "Kalın bağırsak, ince bağırsağın çevresini kuşatan bölümlü yapısıyla görünür; su ve mineraller burada geri emilir." },
+    'kilcal-damar': { src: 'assets/science-concept-kilcal-damar.webp', small: 'assets/science-concept-kilcal-damar-450.webp', width: 896, height: 672, alt: "Kılcal damar yatağı mikroskop altında: en ince dallarda bile alyuvarlar tek sıra hâlinde ilerler." },
+    'soluk-alma': { src: 'assets/science-concept-soluk-alma.webp', small: 'assets/science-concept-soluk-alma-450.webp', width: 896, height: 672, alt: "Soluk alma sırasında akciğerler genişler ve diyafram aşağı düzleşir; göğüs boşluğunun hacmi artar." },
+    'emilim': { src: 'assets/science-concept-emilim.webp', small: 'assets/science-concept-emilim-450.webp', width: 896, height: 672, alt: "İnce bağırsak yüzeyindeki villuslar besin moleküllerini emer; emilen besinler kılcal damarlara geçer." },
+    'toplardamar': { src: 'assets/science-concept-toplardamar.webp', small: 'assets/science-concept-toplardamar-450.webp', width: 896, height: 672, alt: "Toplardamar kesiti: ince duvarlı, içinde kanın geri akmasını engelleyen tek yönlü kapakçık." },
+    'kucuk-kan-dolasimi': { src: 'assets/science-concept-kucuk-kan-dolasimi.webp', small: 'assets/science-concept-kucuk-kan-dolasimi-450.webp', width: 896, height: 672, alt: "Kalp ile akciğerler arasındaki küçük kan dolaşımı: toplardamar ile gelen kirli kan akciğerlerde temizlenip kalbe döner." },
+    'akciger': { src: 'assets/science-concept-akciger.webp', small: 'assets/science-concept-akciger-450.webp', width: 896, height: 672, alt: "Sağlıklı akciğer çifti; soluk borusundan gelen hava bronşlarla akciğer dokusuna dağılır." },
+    'buyuk-kan-dolasimi': { src: 'assets/science-concept-buyuk-kan-dolasimi.webp', small: 'assets/science-concept-buyuk-kan-dolasimi-450.webp', width: 896, height: 672, alt: "Büyük kan dolaşımı: kalpten çıkan kan atardamarlarla vücuda dağılır, toplardamarlarla kalbe döner." },
+    'oksijen': { src: 'assets/science-concept-oksijen.webp', small: 'assets/science-concept-oksijen-450.webp', width: 896, height: 672, alt: "Alyuvarlar oksijeni taşır; kanda oksijen yüklü alyuvarlar parlak kırmızı görünür." },
+    'idrar-kesesi': { src: 'assets/science-concept-idrar-kesesi.webp', small: 'assets/science-concept-idrar-kesesi-450.webp', width: 896, height: 672, alt: "İdrar kesesi kesiti: üstten iki üreter girer, idrar kesede birikir ve alttaki üretra ile dışarı atılır." },
+    'atardamarcik': { src: 'assets/science-concept-atardamarcik.webp', small: 'assets/science-concept-atardamarcik-450.webp', width: 896, height: 672, alt: "Küçük bir atardamarın içi: kalın ve esnek duvar, içinden geçen alyuvarlar." },
+    'ureter': { src: 'assets/science-concept-ureter.webp', small: 'assets/science-concept-ureter-450.webp', width: 896, height: 672, alt: "Böbrekten çıkan üreter, idrarı idrar kesesine taşıyan ince borudur." },
+    'gonulluluk': { src: 'assets/science-concept-gonulluluk.webp', small: 'assets/science-concept-gonulluluk-450.webp', width: 896, height: 672, alt: "Bağış merkezinde gönüllü kayıt masası; bağış, kimsenin zorlanmadığı isteğe bağlı bir karardır." },
+    'toplumsal-dayanisma': { src: 'assets/science-concept-toplumsal-dayanisma.webp', small: 'assets/science-concept-toplumsal-dayanisma-450.webp', width: 896, height: 672, alt: "Bağış merkezinde sıraya girmiş insanlar; kan bağışı toplumsal dayanışmanın somut bir örneğidir." },
+    'kan-bilesenleri': { src: 'assets/science-concept-kan-bilesenleri.webp', small: 'assets/science-concept-kan-bilesenleri-450.webp', width: 896, height: 672, alt: "Kan torbaları: alyuvarlar, plazma ve trombositler ayrı ayrı hazırlanarak farklı hastalarda kullanılır." },
+    'dolasim-sagligi': { src: 'assets/science-concept-dolasim-sagligi.webp', small: 'assets/science-concept-dolasim-sagligi-450.webp', width: 896, height: 672, alt: "Tansiyon ölçüm cihazı ve stetoskop; kan basıncı ve nabız dolaşım sağlığının temel göstergeleridir." },
+    'hareket': { src: 'assets/science-concept-hareket.webp', small: 'assets/science-concept-hareket-450.webp', width: 896, height: 672, alt: "Koşu pistinde spor ayakkabıları; düzenli hareket kalbi ve damarları güçlendirir." },
+    'dinlenme': { src: 'assets/science-concept-dinlenme.webp', small: 'assets/science-concept-dinlenme-450.webp', width: 896, height: 672, alt: "Sabah ışığı alan düzenli bir yatak; yeterli uyku dolaşım ve genel sağlık için gereklidir." },
+    'guvenilir-kaynak': { src: 'assets/science-concept-guvenilir-kaynak.webp', small: 'assets/science-concept-guvenilir-kaynak-450.webp', width: 896, height: 672, alt: "Doktor masasında stetoskop, gözlük ve sağlık broşürü; sağlık bilgisi yetkili kaynaklardan doğrulanır." },
+    'fiziksel-sindirim': { src: 'assets/science-concept-fiziksel-sindirim.webp', small: 'assets/science-concept-fiziksel-sindirim-450.webp', width: 896, height: 672, alt: "Isırılmış elmanın yakın görünümü: dişler besini parçalara ayırır, yüzey alanı büyür, kimyasal sindirim kolaylaşır." },
+    'brons': { src: 'assets/science-concept-brons.webp', small: 'assets/science-concept-brons-450.webp', width: 896, height: 672, alt: "Bronşlar: soluk borusu ikiye ayrılarak akciğerlere girer, bronşçuklara dallanır." },
+    'karbondioksit': { src: 'assets/science-concept-karbondioksit.webp', small: 'assets/science-concept-karbondioksit-450.webp', width: 896, height: 672, alt: "Soluk verirken karbondioksit ve su buharı dışarı atılır; soğuk havada bu buhar görünür hâle gelir." },
+    'havalandirma': { src: 'assets/science-concept-havalandirma.webp', small: 'assets/science-concept-havalandirma-450.webp', width: 896, height: 672, alt: "Açık pencere: kapalı ortamların düzenli havalandırılması solunum sağlığını korur." },
+    'bagimlilik': { src: 'assets/science-concept-bagimlilik.webp', small: 'assets/science-concept-bagimlilik-450.webp', width: 896, height: 672, alt: "İzmarit ve buruşturulmuş paket: tütün ürünleri nikotin nedeniyle bağımlılık yapar." },
+    'uretra': { src: 'assets/science-concept-uretra.webp', small: 'assets/science-concept-uretra-450.webp', width: 896, height: 672, alt: "Üretra: idrar kesesinin altından dışarı uzanan ince boru; idrarın vücudu terk ettiği yoldur." },
+    'bilimsel-model': { src: 'assets/science-concept-bilimsel-model.webp', small: 'assets/science-concept-bilimsel-model-450.webp', width: 896, height: 672, alt: "Sınıf masasında küre, anatomi maketi ve defter; her model gerçeğin sadeleştirilmiş bir temsilidir." },
+    'oz-degerlendirme': { src: 'assets/science-concept-oz-degerlendirme.webp', small: 'assets/science-concept-oz-degerlendirme-450.webp', width: 896, height: 672, alt: "Öğrenci defterinde işaretlenen kontrol listesi; öz değerlendirme, açıklamanın hangi kanıta dayandığını yazmaktır." },
+    'saglik-kaynagi': { src: 'assets/science-concept-saglik-kaynagi.webp', small: 'assets/science-concept-saglik-kaynagi-450.webp', width: 896, height: 672, alt: "Eczanede elden ele verilen bilgilendirme yaprağı; sağlık bilgisi yetkili kaynaklardan alınır." },
+    'sindirim': { src: 'assets/science-concept-sindirim.webp', small: 'assets/science-concept-sindirim-450.webp', width: 896, height: 672, alt: "Sindirim sistemi anatomik model olarak: yemek borusu, mide, karaciğer, ince ve kalın bağırsak bir arada." },
+    'besin': { src: 'assets/science-concept-besin.webp', small: 'assets/science-concept-besin-450.webp', width: 896, height: 672, alt: "Çeşitli bir öğün: tam tahıl, yumurta, peynir, baklagil, zeytinyağı, sebze, meyve ve su." },
+    'yemek-borusu': { src: 'assets/science-concept-yemek-borusu.webp', small: 'assets/science-concept-yemek-borusu-450.webp', width: 896, height: 672, alt: "Yemek borusu, kas halkalarıyla besini aşağıya doğru iter; bu harekete peristaltik hareket denir." },
+    'kimyasal-sindirim': { src: 'assets/science-concept-kimyasal-sindirim.webp', small: 'assets/science-concept-kimyasal-sindirim-450.webp', width: 896, height: 672, alt: "Limon suyu eklenince sütün kesilmesi: asit proteinlerin yapısını değiştirir, kimyasal sindirimin gözlenebilir bir örneğidir." },
+    'sindirim-sagligi': { src: 'assets/science-concept-sindirim-sagligi.webp', small: 'assets/science-concept-sindirim-sagligi-450.webp', width: 896, height: 672, alt: "Sindirim sağlığını destekleyen sofra: su, yoğurt, tam tahıl ve taze sebze." },
+    'aliskanlik': { src: 'assets/science-concept-aliskanlik.webp', small: 'assets/science-concept-aliskanlik-450.webp', width: 896, height: 672, alt: "Günlük alışkanlıklar: su şişesi, spor ayakkabısı ve meyve; küçük ama düzenli seçimler sağlığı belirler." },
+    'soluk-verme': { src: 'assets/science-concept-soluk-verme.webp', small: 'assets/science-concept-soluk-verme-450.webp', width: 896, height: 672, alt: "Soluk verme: akciğerler gevşer, diyafram kubbeleşerek yukarı çıkar ve hava dışarı çıkar." },
+    'temiz-hava': { src: 'assets/science-concept-temiz-hava.webp', small: 'assets/science-concept-temiz-hava-450.webp', width: 896, height: 672, alt: "Temiz hava: orman örtüsü altında süzülen gün ışığı ve açık gökyüzü." },
+    'yapay-isik': { src: 'assets/science-concept-yapay-isik.webp', small: 'assets/science-concept-yapay-isik-450.webp', width: 896, height: 672, alt: "Korunmasız sokak lambası doğrudan göze ve gökyüzüne ışık verir; ışık kirliliğinin başlıca kaynağı budur." },
+    'gokyuzu-gozlemi': { src: 'assets/science-concept-gokyuzu-gozlemi.webp', small: 'assets/science-concept-gokyuzu-gozlemi-450.webp', width: 896, height: 672, alt: "Gece gökyüzü gözlemi: teleskopla yıldızları izleyen bir gözlemci, karanlık bir gökyüzünde çok daha sönük cisimleri görebilir." },
+    'aydinlatma': { src: 'assets/science-concept-aydinlatma.webp', small: 'assets/science-concept-aydinlatma-450.webp', width: 896, height: 672, alt: "Aşağı yönlendirilmiş başlıklı lambalar yolu aydınlatırken gökyüzüne ışık kaçırmaz; doğru aydınlatmanın örneği." },
+    'yildiz-olusumu': { src: 'assets/science-concept-yildiz-olusumu.webp', small: 'assets/science-concept-yildiz-olusumu-450.webp', width: 896, height: 672, alt: "Gaz ve toz sütununun ucunda yeni doğan yıldızlar: bulutsudaki yoğun bölgeler çökerek yıldız oluşumunu başlatır." },
+    'kirmizi-dev': { src: 'assets/science-concept-kirmizi-dev.webp', small: 'assets/science-concept-kirmizi-dev-450.webp', width: 896, height: 672, alt: "Kırmızı dev: yakıtını tüketen yıldız şişer, yüzeyi soğuyarak kırmızı-turuncu bir renk alır." },
+    'isi-enerjisi': { src: 'assets/science-concept-isi-enerjisi.webp', small: 'assets/science-concept-isi-enerjisi-450.webp', width: 896, height: 672, alt: "Isı enerjisi: elin duvarda bıraktığı sıcaklık, termal görüntüde turuncu-sarı olarak görünür." },
+    'ses-enerjisi': { src: 'assets/science-concept-ses-enerjisi.webp', small: 'assets/science-concept-ses-enerjisi-450.webp', width: 896, height: 672, alt: "Ses enerjisi: davul derisi titreştiğinde üzerindeki toz tanecikleri havaya sıçrar; titreşim enerji taşır." },
+    'atik-madde': { src: 'assets/science-concept-atik-madde.webp', small: 'assets/science-concept-atik-madde-450.webp', width: 896, height: 672, alt: "Atık su arıtma tesisinde dinlendirme havuzları; evlerden gelen atık maddeler arıtılarak doğaya geri verilir." },
+    'bilim-tarihi': { src: 'assets/science-concept-bilim-tarihi.webp', small: 'assets/science-concept-bilim-tarihi-450.webp', width: 896, height: 672, alt: "Eski bir anatomi atlası ve pirinç araçlar: bilim, kuşaklar boyunca kaydedilen gözlemlerle ilerler." },
+    'model': { src: 'assets/science-concept-model.webp', small: 'assets/science-concept-model-450.webp', width: 896, height: 672, alt: "Mühendislik masasında ahşap köprü maketi; model, gerçeğin sadeleştirilmiş bir temsilidir." },
+    'bobrek-sagligi': { src: 'assets/science-concept-bobrek-sagligi.webp', small: 'assets/science-concept-bobrek-sagligi-450.webp', width: 896, height: 672, alt: "Böbrek sağlığını destekleyen sofra: bol su, taze sebze ve az tuz." },
+    'uzay-teknolojisi': { src: 'assets/science-concept-uzay-teknolojisi.webp', small: 'assets/science-concept-uzay-teknolojisi-450.webp', width: 896, height: 672, alt: "Uzay teknolojisi: fırlatma rampasındaki roket ve yer istasyonu çanağı, araştırmanın altyapısını oluşturur." },
+    'yildiz-yasam-dongusu': { src: 'assets/science-concept-yildiz-yasam-dongusu.webp', small: 'assets/science-concept-yildiz-yasam-dongusu-450.webp', width: 896, height: 672, alt: "Yıldızın yaşam döngüsü: bulutsudan doğan yıldız, yakıtını tükettiğinde beyaz cüce ya da süpernova ile sonlanır." },
+    'cekim': { src: 'assets/science-concept-cekim.webp', small: 'assets/science-concept-cekim-450.webp', width: 896, height: 672, alt: "Yağmur damlaları buluttan düşerken kütle çekimi onları yeryüzüne doğru çeker." },
+    'cekim-potansiyel-enerjisi': { src: 'assets/science-concept-cekim-potansiyel-enerjisi.webp', small: 'assets/science-concept-cekim-potansiyel-enerjisi-450.webp', width: 896, height: 672, alt: "Baraj gölünde yüksekte tutulan su, çekim potansiyel enerjisi depolar; serbest kaldığında türbinleri çevirir." },
+    'enerjinin-korunumu': { src: 'assets/science-concept-enerjinin-korunumu.webp', small: 'assets/science-concept-enerjinin-korunumu-450.webp', width: 896, height: 672, alt: "Sarkaçlı saat mekanizması: sarkaç salınırken enerji biçim değiştirir, toplamı korunur." },
+    'organ': { src: 'assets/science-concept-organ.webp', small: 'assets/science-concept-organ-450.webp', width: 896, height: 672, alt: "Farklı organlar anatomik modeller olarak: karaciğer, mide, böbrek ve bağırsaklar; her biri ayrı görev üstlenir." },
+    'kan-akisi': { src: 'assets/science-concept-kan-akisi.webp', small: 'assets/science-concept-kan-akisi-450.webp', width: 896, height: 672, alt: "Kan akışı: atardamar içinde alyuvarlar tek yönde ilerler, dallanan damarlarla dokulara dağılır." },
+    'zararli-madde': { src: 'assets/science-concept-zararli-madde.webp', small: 'assets/science-concept-zararli-madde-450.webp', width: 896, height: 672, alt: "Zararlı madde: sönen sigaradan yayılan duman, ortamdaki herkesi etkiler." },
+    'destek': { src: 'assets/science-concept-destek.webp', small: 'assets/science-concept-destek-450.webp', width: 896, height: 672, alt: "Birbirine kenetlenmiş iki el: bağımlılıkla mücadelede sosyal destek ve yardım istemek sürecin parçasıdır." },
+    'solunum-sagligi': { src: 'assets/science-concept-solunum-sagligi.webp', small: 'assets/science-concept-solunum-sagligi-450.webp', width: 896, height: 672, alt: "Solunum sağlığı: açık pencereden giren temiz hava, pencerede yeşil bitki ve aydınlık bir oda." },
+    'madde-alisverisi': { src: 'assets/science-concept-madde-alisverisi.webp', small: 'assets/science-concept-madde-alisverisi-450.webp', width: 896, height: 672, alt: "Madde alışverişi: alveolden kana oksijen geçişi; alyuvarlar oksijeni alıp dokulara taşır." },
+    'aciklama': { src: 'assets/science-concept-aciklama.webp', small: 'assets/science-concept-aciklama-450.webp', width: 896, height: 672, alt: "Müzede bir açıklama panosu: gözlem ve kanıt, açıklamayla birleşerek bilgiye dönüşür." },
   });
   const STATE_LABELS = Object.freeze({
     correct: 'TAM DOĞRU', partial: 'KISMEN DOĞRU', wrong: 'YENİDEN DÜŞÜN',
@@ -174,6 +279,7 @@
         aiFeedback: feedback && AI_STATES.has(feedback.state) && typeof feedback.text === 'string'
           ? { state: feedback.state, text: feedback.text.slice(0, 3000), checkedAt: typeof feedback.checkedAt === 'string' ? feedback.checkedAt.slice(0, 40) : '' }
           : null,
+        activities: normalizeActivities(raw.activities),
       };
     }
     return normalized;
@@ -310,6 +416,320 @@
     return item.focus || '';
   }
 
+
+  /* ---------------------------------------------------------------------------
+     Konu bazlı etkinlik seti. İlk iki haftanın etkinlikleri science-activities.js
+     içinde tanımlıdır: eşleştirme, boşluk doldurma, doğru-yanlış, süreç sıralama,
+     sürükle-bırak sınıflandırma, çoktan seçmeli ve kısa metin yazma.
+     --------------------------------------------------------------------------- */
+  const ACTIVITY_DATA = window.SCIENCE_ACTIVITIES || { weeks: {} };
+  const EXAM_DATES_BY_WEEK = Object.freeze({ 8: '3 Kasım 2026' });
+  const PRACTICE_FOLD = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
+
+  function normalizePracticeValue(value) {
+    return String(value ?? '')
+      .toLocaleLowerCase('tr')
+      .normalize('NFC')
+      .replace(/\u0307/g, '')
+      .replace(/[çğıöşü]/g, (letter) => PRACTICE_FOLD[letter])
+      .replace(/[.,;:!?()"'’]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function normalizeActivities(raw) {
+    const out = {};
+    if (!isRecord(raw)) return out;
+    for (const [id, entry] of Object.entries(raw)) {
+      if (!/^[a-z0-9]+-a\d+$/.test(id) || !isRecord(entry)) continue;
+      const values = isRecord(entry.values)
+        ? Object.fromEntries(Object.entries(entry.values)
+          .filter(([key, value]) => /^(m|s|b|o|c|t|x)[:a-z0-9]*$/i.test(key) && typeof value === 'string')
+          .map(([key, value]) => [key, value.slice(0, 5000)]))
+        : {};
+      out[id] = { values, checked: entry.checked === true };
+    }
+    return out;
+  }
+
+  function activityGroups(item) {
+    const data = ACTIVITY_DATA.weeks?.[item?.id];
+    return data && Array.isArray(data.groups) ? data.groups : [];
+  }
+
+  function activityList(item) {
+    return activityGroups(item).flatMap((group) => group.activities || []);
+  }
+
+  function practiceEntry(saved, activityId, create = false) {
+    if (!saved) return { values: {} };
+    if (!isRecord(saved.activities)) {
+      if (!create) return { values: {} };
+      saved.activities = {};
+    }
+    if (!isRecord(saved.activities[activityId])) {
+      if (!create) return { values: {} };
+      saved.activities[activityId] = { values: {}, checked: false };
+    }
+    const entry = saved.activities[activityId];
+    if (!isRecord(entry.values)) entry.values = {};
+    return entry;
+  }
+
+  function evaluateActivity(activity, values = {}) {
+    const wrong = [];
+    const note = (label) => { if (wrong.length < 6) wrong.push(label); };
+    if (activity.type === 'text') {
+      const length = String(values.x || '').trim().length;
+      const enough = length >= activity.minChars;
+      return { total: 1, correct: enough ? 1 : 0, wrong: enough ? [] : [`Yanıtın ${length}/${activity.minChars} karakter`], text: true, length };
+    }
+    if (activity.type === 'fill') {
+      let correct = 0;
+      activity.blanks.forEach((blank, index) => {
+        const value = normalizePracticeValue(values[`b:${index}`]);
+        if (value && blank.answers.some((answer) => normalizePracticeValue(answer) === value)) correct += 1;
+        else note(`${index + 1}. boşluk`);
+      });
+      return { total: activity.blanks.length, correct, wrong };
+    }
+    const list = activity.items || activity.questions || activity.statements || [];
+    let correct = 0;
+    list.forEach((item, index) => {
+      let ok = false;
+      if (activity.type === 'match') ok = values[`m:${item.id}`] === activity.answers[item.id];
+      else if (activity.type === 'sort') ok = values[`s:${item.id}`] === item.answer;
+      else if (activity.type === 'order') ok = values[`o:${item.id}`] === String(index + 1);
+      else if (activity.type === 'tf') ok = values[`t:${item.id}`] === (item.answer ? 'D' : 'Y');
+      else if (activity.type === 'choice') ok = values[`c:${item.id}`] === String(item.answer);
+      if (ok) correct += 1;
+      else note(activity.type === 'tf' ? item.text : activity.type === 'choice' ? `${index + 1}. soru` : item.label);
+    });
+    return { total: list.length, correct, wrong };
+  }
+
+  function activityDone(activity, entry) {
+    if (!entry) return false;
+    const result = evaluateActivity(activity, entry.values || {});
+    return result.total > 0 && result.correct === result.total;
+  }
+
+  function practiceSummary(item) {
+    const saved = progress.weeks[String(item.id)];
+    const activities = activityList(item);
+    const done = activities.filter((activity) => activityDone(activity, saved?.activities?.[activity.id])).length;
+    return { activities, done, total: activities.length };
+  }
+
+  function practiceFeedbackText(activity, result) {
+    if (result.text) {
+      if (result.correct === result.total) {
+        return `<b>Yanıtın yeterli uzunlukta.</b> ${result.length} karakter yazdın (en az ${activity.minChars}). Şimdi ölçütleri yeniden okuyup somut bir örnek ekleyerek güçlendir.`;
+      }
+      return `<b>Yanıtını genişlet.</b> ${result.length}/${activity.minChars} karakter. Ölçütlerden birini seç ve somut bir örnek ekle.`;
+    }
+    if (result.correct === result.total) {
+      return `<b>Hepsi doğru.</b> ${result.correct}/${result.total} · Yanıtların ölçütlerle örtüşüyor.`;
+    }
+    const list = result.wrong.length
+      ? `<ul>${result.wrong.slice(0, 4).map((label) => `<li>${escapeHTML(label)}</li>`).join('')}</ul>`
+      : '';
+    return `<b>Yeniden bak.</b> ${result.correct}/${result.total} doğru. Doğru yanıtı doğrudan söylemiyorum; şu bölümleri yeniden incele:${list}`;
+  }
+
+  function renderMatch(activity, entry) {
+    const options = activity.options.map((option) => `<option value="${escapeHTML(option.id)}">${escapeHTML(option.label)}</option>`).join('');
+    return `<div class="science-practice-match">${activity.items.map((item) => {
+      const id = `practice-${activity.id}-m-${item.id}`;
+      const value = entry.values[`m:${item.id}`] || '';
+      return `<div class="science-match-row"><label for="${id}">${escapeHTML(item.label)}</label><select id="${id}" data-practice-select="${activity.id}" data-practice-key="m:${item.id}"><option value="">Seç…</option>${options}</select></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderFill(activity, entry) {
+    const tokens = String(activity.text).split(/\{\{(\d+)\}\}/);
+    const body = tokens.map((token, index) => {
+      if (index % 2 === 0) return escapeHTML(token);
+      const number = Number(token);
+      const id = `practice-${activity.id}-b-${number}`;
+      const value = entry.values[`b:${number - 1}`] || '';
+      return `<span class="science-fill-blank"><label class="visually-hidden" for="${id}">${number}. boşluk</label><input id="${id}" type="text" inputmode="text" autocomplete="off" spellcheck="false" data-practice-input="${activity.id}" data-practice-key="b:${number - 1}" placeholder="${escapeHTML(activity.blanks[number - 1]?.hint || '')}" value="${escapeHTML(value)}"><span class="science-fill-index" aria-hidden="true">${number}</span></span>`;
+    }).join('');
+    return `<p class="science-practice-fill">${body}</p>`;
+  }
+
+  function renderSort(activity, entry) {
+    const placed = new Map(Object.entries(entry.values)
+      .filter(([key, value]) => key.startsWith('s:') && value)
+      .map(([key, value]) => [key.slice(2), value]));
+    const card = (item) => `<button type="button" class="science-sort-card" draggable="true" data-practice-card="${activity.id}:${item.id}" aria-pressed="false">${escapeHTML(item.label)}</button>`;
+    const inZone = (zoneId) => activity.items.filter((item) => (placed.get(item.id) || 'bank') === zoneId);
+    const zone = (zoneId, label, description) => {
+      const cards = inZone(zoneId);
+      return `<section class="science-sort-zone" data-practice-zone="${activity.id}:${zoneId}" tabindex="0" role="group" aria-label="${escapeHTML(label)}"><h5>${escapeHTML(label)}</h5>${description ? `<p class="science-sort-hint">${escapeHTML(description)}</p>` : ''}<div class="science-sort-cards">${cards.length ? cards.map(card).join('') : '<span class="science-sort-empty">Kartı buraya bırak</span>'}</div></section>`;
+    };
+    const assignedCount = placed.size;
+    return `<div class="science-practice-sort"><div class="science-sort-bank-wrap">${zone('bank', 'Kartlar', 'Taşınacak kartlar burada bekler.')}</div><div class="science-sort-zones">${activity.categories.map((category) => zone(category.id, category.label, category.description)).join('')}</div><p class="science-sort-status" id="science-sort-status-${activity.id}" role="status" aria-live="polite">${assignedCount} / ${activity.items.length} kart yerleştirildi</p></div>`;
+  }
+
+  function renderOrder(activity, entry) {
+    const numbers = Array.from({ length: activity.items.length }, (_, index) => `<option value="${index + 1}">${index + 1}</option>`).join('');
+    return `<div class="science-practice-order">${activity.items.map((item) => {
+      const id = `practice-${activity.id}-o-${item.id}`;
+      const value = entry.values[`o:${item.id}`] || '';
+      return `<div class="science-order-row"><label for="${id}">${escapeHTML(item.label)}</label><select id="${id}" data-practice-order="${activity.id}" data-practice-key="o:${item.id}"><option value="">–</option>${numbers}</select></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderRadioGroup(activity, key, choices, value) {
+    return choices.map((choice) => `<label class="science-practice-radio"><input type="radio" name="practice-${activity.id}-${key}" value="${escapeHTML(choice.value)}" data-practice-radio="${activity.id}" data-practice-key="${escapeHTML(key)}"${value === choice.value ? ' checked' : ''}><span>${escapeHTML(choice.label)}</span></label>`).join('');
+  }
+
+  function renderTrueFalse(activity, entry) {
+    return `<div class="science-practice-tf">${activity.statements.map((statement) => `<fieldset class="science-tf-row"><legend>${escapeHTML(statement.text)}</legend><div class="science-tf-choices">${renderRadioGroup(activity, `t:${statement.id}`, [{ value: 'D', label: 'Doğru' }, { value: 'Y', label: 'Yanlış' }], entry.values[`t:${statement.id}`] || '')}</div></fieldset>`).join('')}</div>`;
+  }
+
+  function renderChoice(activity, entry) {
+    return `<div class="science-practice-choice">${activity.questions.map((question, index) => `<fieldset class="science-choice-row"><legend><span class="science-choice-no">${index + 1}</span> ${escapeHTML(question.prompt)}</legend><div class="science-choice-options">${renderRadioGroup(activity, `c:${question.id}`, question.options.map((option, optionIndex) => ({ value: String(optionIndex), label: option })), entry.values[`c:${question.id}`] || '')}</div></fieldset>`).join('')}</div>`;
+  }
+
+  function renderTextAnswer(activity, entry) {
+    return `<textarea class="science-response science-practice-text" rows="6" maxlength="5000" data-practice-text="${activity.id}" data-practice-key="x" placeholder="${escapeHTML(activity.placeholder || 'Yanıtını yaz…')}">${escapeHTML(entry.values.x || '')}</textarea>`;
+  }
+
+  function renderPracticeActivity(activity, entry, weekId) {
+    const result = evaluateActivity(activity, entry.values);
+    const done = result.total > 0 && result.correct === result.total;
+    const criteria = Array.isArray(activity.criteria)
+      ? `<ul class="science-criteria">${activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>`
+      : '';
+    const source = activity.sourceText ? `<blockquote class="science-activity-source">${escapeHTML(activity.sourceText)}</blockquote>` : '';
+    let body = '';
+    if (activity.type === 'match') body = renderMatch(activity, entry);
+    else if (activity.type === 'fill') body = renderFill(activity, entry);
+    else if (activity.type === 'sort') body = renderSort(activity, entry);
+    else if (activity.type === 'order') body = renderOrder(activity, entry);
+    else if (activity.type === 'tf') body = renderTrueFalse(activity, entry);
+    else if (activity.type === 'choice') body = renderChoice(activity, entry);
+    else if (activity.type === 'text') body = renderTextAnswer(activity, entry);
+    const feedback = entry.checked ? practiceFeedbackText(activity, result) : '';
+    return `<details class="science-activity" id="science-activity-${activity.id}" data-practice-week="${weekId}">
+      <summary><span class="science-activity-no" aria-hidden="true">${escapeHTML(activity.no)}</span><span class="science-activity-summary"><strong>${escapeHTML(activity.title)}</strong><small>${escapeHTML(activity.format)} · ${escapeHTML(activity.count)}</small></span><span class="science-activity-state${done ? ' is-done' : ''}" id="science-activity-state-${activity.id}" aria-label="${done ? 'Tamamlandı' : 'Tamamlanmadı'}">${done ? '✓' : ''}</span></summary>
+      <div class="science-activity-body">
+        <p class="science-activity-instruction">${escapeHTML(activity.instruction)}</p>
+        ${source}${body}${criteria}
+        <div class="science-activity-actions"><button type="button" class="science-check-button" data-practice-check="${activity.id}">Kontrol et</button><span class="science-activity-skill">${escapeHTML(activity.skill)}</span></div>
+        <div class="science-practice-feedback${entry.checked ? ` is-checked${done ? ' is-correct' : ''}` : ''}" id="science-practice-feedback-${activity.id}" role="status" aria-live="polite">${feedback}</div>
+      </div>
+    </details>`;
+  }
+
+  function renderPracticeSet(item, saved) {
+    const groups = activityGroups(item);
+    if (!groups.length) return '';
+    const data = ACTIVITY_DATA.weeks[item.id];
+    const summary = practiceSummary(item);
+    return `<section class="card science-activity-set" aria-labelledby="scienceActivitySetTitle-${item.id}">
+      <div class="science-section-heading"><div class="tag">ETKİNLİK SETİ</div><h3 id="scienceActivitySetTitle-${item.id}">Konu etkinlikleri: ${escapeHTML(data.topic)}</h3><p>${escapeHTML(data.note)}</p><p class="science-practice-progress" id="science-practice-progress-${item.id}" role="status" aria-live="polite">${summary.done} / ${summary.total} etkinlik tamamlandı</p></div>
+      ${groups.map((group) => `<div class="science-activity-group"><h4>${escapeHTML(group.title)}</h4>${group.activities.map((activity) => renderPracticeActivity(activity, practiceEntry(saved, activity.id), item.id)).join('')}</div>`).join('')}
+    </section>`;
+  }
+
+  function practiceWeekFor(activityId) {
+    return WEEKS.find((week) => activityList(week).some((activity) => activity.id === activityId)) || null;
+  }
+
+  function refreshPracticeProgress(weekId) {
+    const item = WEEK_BY_ID.get(Number(weekId));
+    if (!item) return;
+    const summary = practiceSummary(item);
+    const node = document.getElementById(`science-practice-progress-${item.id}`);
+    if (node) node.textContent = `${summary.done} / ${summary.total} etkinlik tamamlandı`;
+  }
+
+  function refreshPracticeState(activityId, activity) {
+    const entry = practiceEntry(ensureWeekProgress(practiceWeekFor(activityId)?.id), activityId);
+    const done = activityDone(activity, entry);
+    const state = document.getElementById(`science-activity-state-${activityId}`);
+    if (state) {
+      state.textContent = done ? '✓' : '';
+      state.classList.toggle('is-done', done);
+      state.setAttribute('aria-label', done ? 'Tamamlandı' : 'Tamamlanmadı');
+    }
+  }
+
+  function checkPractice(activityId) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const activity = activityList(week).find((entry) => entry.id === activityId);
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    const result = evaluateActivity(activity, entry.values);
+    entry.checked = true;
+    persist();
+    const feedback = document.getElementById(`science-practice-feedback-${activityId}`);
+    if (feedback) {
+      feedback.innerHTML = practiceFeedbackText(activity, result);
+      feedback.classList.add('is-checked');
+      feedback.classList.toggle('is-correct', result.total > 0 && result.correct === result.total);
+    }
+    refreshPracticeState(activityId, activity);
+    refreshPracticeProgress(week.id);
+  }
+
+  function setPracticeValue(activityId, key, value) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    const next = String(value ?? '').slice(0, 5000);
+    if (entry.values[key] === next) return;
+    entry.values[key] = next;
+    entry.checked = false;
+    persist();
+    const feedback = document.getElementById(`science-practice-feedback-${activityId}`);
+    if (feedback) {
+      feedback.textContent = '';
+      feedback.classList.remove('is-checked', 'is-correct');
+    }
+    refreshPracticeState(activityId, activityList(week).find((activity) => activity.id === activityId));
+    refreshPracticeProgress(week.id);
+  }
+
+  function movePracticeCard(activityId, itemId, zoneId) {
+    const week = practiceWeekFor(activityId);
+    if (!week) return;
+    const saved = ensureWeekProgress(week.id);
+    const entry = practiceEntry(saved, activityId, true);
+    entry.values[`s:${itemId}`] = zoneId === 'bank' ? '' : zoneId;
+    entry.checked = false;
+    persist();
+    const root = document.getElementById('scienceWorkspace');
+    const zone = root?.querySelector?.(`[data-practice-zone="${activityId}:${zoneId}"]`);
+    const cards = zone?.querySelector?.('.science-sort-cards');
+    const card = root?.querySelector?.(`[data-practice-card="${activityId}:${itemId}"]`);
+    if (cards && card) {
+      cards.querySelector('.science-sort-empty')?.remove();
+      cards.append(card);
+      card.classList.remove('is-picked');
+      card.setAttribute('aria-pressed', 'false');
+      root.querySelectorAll?.(`[data-practice-zone^="${activityId}:"]`).forEach((other) => {
+        const container = other.querySelector('.science-sort-cards');
+        if (container && !container.querySelector('[data-practice-card]')) {
+          container.innerHTML = '<span class="science-sort-empty">Kartı buraya bırak</span>';
+        }
+      });
+    }
+    const status = document.getElementById(`science-sort-status-${activityId}`);
+    const activity = activityList(week).find((entryItem) => entryItem.id === activityId);
+    if (status) {
+      const placed = Object.entries(entry.values).filter(([entryKey, entryValue]) => entryKey.startsWith('s:') && entryValue).length;
+      status.textContent = `${placed} / ${activity.items.length} kart yerleştirildi`;
+    }
+    refreshPracticeState(activityId, activity);
+    refreshPracticeProgress(week.id);
+  }
+
   // Kavramlar konu anlatımının hemen ardından tek bir yatay şeritte akar; her kart o kavramı
   // anlatan cümlenin kendisine bağlanır, böylece ayrı bir sözlük bloğu oluşmaz.
   function renderConceptFlow(item) {
@@ -342,7 +762,7 @@
           const complete = isWeekComplete(item);
           const statusText = complete ? 'Tamamlandı' : selected ? 'Seçili' : 'Aç';
           return `<button type="button" class="science-week-button${selected ? ' is-current' : ''}${complete ? ' is-complete' : ''}" id="science-week-button-${item.id}" data-science-week-select="${item.id}"${selected ? ' aria-current="step"' : ''}>
-            <span class="science-week-no">${item.id}</span><span class="science-week-meta"><span class="science-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="science-week-topic">${escapeHTML(item.topic)}</span></span><span class="science-week-status" id="science-week-status-${item.id}" aria-label="${statusText}">${complete ? '✓' : ''}</span>
+            <span class="science-week-no">${item.id}</span><span class="science-week-meta"><span class="science-week-date">${escapeHTML(item.date)} 2026–2027</span><span class="science-week-topic">${escapeHTML(item.topic)}</span>${EXAM_DATES_BY_WEEK[item.id] ? `<span class="science-week-exam">1. sınav (${escapeHTML(EXAM_DATES_BY_WEEK[item.id])})</span>` : ''}</span><span class="science-week-status" id="science-week-status-${item.id}" aria-label="${statusText}">${complete ? '✓' : ''}</span>
           </button>`;
         }).join('')}</div>
       </details>`;
@@ -399,7 +819,7 @@
     const source = `MEB Fen Bilimleri 7. Sınıf Ders Kitabı, 1. Kitap (2026), ${unit.number}. Ünite “${unit.title}”, s. ${item.pages}.`;
     content.innerHTML = `
       <header class="card science-week-heading">
-        <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p><h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Ders kitabı: s. ${escapeHTML(item.pages)}</span></div>
+        <div class="science-week-heading-copy"><div class="science-unit-kicker">${unit.number}. ÜNİTE · ${escapeHTML(unit.title)}</div><p class="science-week-date">${escapeHTML(item.date)} 2026–2027 · ${item.id}. hafta</p>${EXAM_DATES_BY_WEEK[item.id] ? `<aside class="science-exam-notice" role="note" aria-label="Birinci sınav tarihi"><span>1. sınav</span><strong>${escapeHTML(EXAM_DATES_BY_WEEK[item.id])}</strong></aside>` : ''}<h2 id="scienceWeekTitle" tabindex="-1">${escapeHTML(item.topic)}</h2><p>${escapeHTML(item.focus)}</p><span class="science-page-badge">Ders kitabı: s. ${escapeHTML(item.pages)}</span></div>
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
       ${renderVisual(item)}
@@ -407,6 +827,7 @@
       ${renderConceptFlow(item)}
       ${renderResearchBrief(item.researchBrief)}
       <section class="card science-practice-card" aria-labelledby="sciencePracticeTitle"><div class="science-section-heading"><div class="tag">ETKİNLİKLER</div><h3 id="sciencePracticeTitle">Öğrendiklerimi deniyorum</h3><p>Önce kısa soruyu yanıtla; sonra özgün uygulamayı tamamla. Seçimli sorular yerel olarak kontrol edilir.</p></div>${renderQuiz(item, saved)}${renderActivity(item, saved)}</section>
+      ${renderPracticeSet(item, saved)}
       <div class="science-grid-two"><section class="card science-mini-plan"><h3>Öğrenci için mini plan</h3><p>Üç görevi tamamladıkça işaretle. Yanıtlar bu tarayıcıda ayrı Fen Bilimleri alanında saklanır.</p><div class="science-task-list">${item.tasks.map((task, index) => `<label class="science-task"><input type="checkbox" data-science-task="${index}" data-science-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section><section class="card science-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(source)}</small></section></div>
       <section class="card science-schedule" aria-labelledby="scienceScheduleTitle"><div class="science-section-heading"><h3 id="scienceScheduleTitle">Haftalık çalışma çizelgesi</h3><p>Uygulamadaki görevler ve etkinlik tamamlanınca ilk durum otomatik işaretlenir; dış kaynak çalışmalarını bitirince ilgili kutuyu sen işaretle.</p></div><div class="science-table-wrap"><table class="science-study-table"><caption class="visually-hidden">${item.id}. hafta Fen Bilimleri çalışma çizelgesi</caption><thead><tr><th scope="col">Uygulamadaki çalışmalar</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>
         <td><label class="science-provider-check"><input type="checkbox" data-science-our="${item.id}" disabled ${complete ? 'checked' : ''}><span>Mini plan ve iki etkinlik</span></label><span class="science-auto-status${complete ? ' is-done' : ''}" id="science-our-status-${item.id}" role="status" aria-live="polite">${complete ? 'Tamamlandı · otomatik' : 'Görevleri ve etkinliği tamamla.'}</span></td>
@@ -601,9 +1022,31 @@
     if (!root || root.dataset.scienceBound === 'true') return;
     root.dataset.scienceBound = 'true';
     root.addEventListener('click', (event) => {
-      const target = event.target?.closest?.('[data-science-week-select], [data-science-quiz-check], [data-science-ai-check], [data-science-reset], [data-science-print]');
+      const practiceCard = event.target?.closest?.('[data-practice-card]');
+      const practiceZone = event.target?.closest?.('[data-practice-zone]');
+      if (practiceCard) {
+        const [activityId, itemId] = String(practiceCard.dataset.practiceCard).split(':');
+        const picked = practiceCard.getAttribute('aria-pressed') === 'true';
+        root.dataset.practicePicked = picked ? '' : `${activityId}:${itemId}`;
+        root.querySelectorAll?.('[data-practice-card]').forEach((card) => {
+          if (card === practiceCard) card.setAttribute('aria-pressed', String(!picked));
+          else card.setAttribute('aria-pressed', 'false');
+        });
+        practiceCard.classList.toggle?.('is-picked', !picked);
+        return;
+      }
+      if (practiceZone && root.dataset.practicePicked) {
+        const [activityId, itemId] = root.dataset.practicePicked.split(':');
+        const zoneId = String(practiceZone.dataset.practiceZone).split(':')[1];
+        root.dataset.practicePicked = '';
+        movePracticeCard(activityId, itemId, zoneId);
+        return;
+      }
+      const target = event.target?.closest?.('[data-science-week-select], [data-science-quiz-check], [data-science-ai-check], [data-science-reset], [data-science-print], [data-practice-check]');
       if (!target) return;
-      if (target.dataset.scienceWeekSelect) {
+      if (target.dataset.practiceCheck) {
+        checkPractice(target.dataset.practiceCheck);
+      } else if (target.dataset.scienceWeekSelect) {
         const weekId = Number(target.dataset.scienceWeekSelect);
         if (!WEEK_BY_ID.has(weekId)) return;
         progress.selectedWeek = weekId;
@@ -624,6 +1067,14 @@
     root.addEventListener('change', (event) => {
       const input = event.target;
       if (!input) return;
+      if (input.dataset.practiceSelect !== undefined || input.dataset.practiceOrder !== undefined) {
+        setPracticeValue(input.dataset.practiceSelect || input.dataset.practiceOrder, input.dataset.practiceKey, input.value);
+        return;
+      }
+      if (input.dataset.practiceRadio !== undefined) {
+        setPracticeValue(input.dataset.practiceRadio, input.dataset.practiceKey, input.value);
+        return;
+      }
       if (input.dataset.scienceQuizAnswer !== undefined) {
         const saved = ensureWeekProgress(input.dataset.scienceQuizAnswer);
         if (!saved) return;
@@ -648,8 +1099,55 @@
         refreshProgressUI();
       }
     });
+    root.addEventListener('dragstart', (event) => {
+      const card = event.target?.closest?.('[data-practice-card]');
+      if (!card) return;
+      root.dataset.practiceDrag = card.dataset.practiceCard;
+      card.classList.add('is-dragging');
+      event.dataTransfer?.setData?.('text/plain', card.dataset.practiceCard);
+    });
+    root.addEventListener('dragend', (event) => {
+      event.target?.closest?.('[data-practice-card]')?.classList.remove('is-dragging');
+      root.querySelectorAll?.('[data-practice-zone]').forEach((zone) => zone.classList.remove('is-over'));
+    });
+    root.addEventListener('dragover', (event) => {
+      const zone = event.target?.closest?.('[data-practice-zone]');
+      if (!zone) return;
+      event.preventDefault();
+      zone.classList.add('is-over');
+    });
+    root.addEventListener('dragleave', (event) => {
+      event.target?.closest?.('[data-practice-zone]')?.classList.remove('is-over');
+    });
+    root.addEventListener('drop', (event) => {
+      const zone = event.target?.closest?.('[data-practice-zone]');
+      const dragged = root.dataset.practiceDrag;
+      if (!zone || !dragged) return;
+      event.preventDefault();
+      zone.classList.remove('is-over');
+      const [activityId, itemId] = dragged.split(':');
+      root.dataset.practiceDrag = '';
+      movePracticeCard(activityId, itemId, String(zone.dataset.practiceZone).split(':')[1]);
+    });
+    root.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const zone = event.target?.closest?.('[data-practice-zone]');
+      if (!zone || !root.dataset.practicePicked) return;
+      event.preventDefault();
+      const [activityId, itemId] = root.dataset.practicePicked.split(':');
+      root.dataset.practicePicked = '';
+      movePracticeCard(activityId, itemId, String(zone.dataset.practiceZone).split(':')[1]);
+    });
     root.addEventListener('input', (event) => {
       const input = event.target;
+      if (input?.dataset?.practiceInput !== undefined) {
+        setPracticeValue(input.dataset.practiceInput, input.dataset.practiceKey, input.value);
+        return;
+      }
+      if (input?.dataset?.practiceText !== undefined) {
+        setPracticeValue(input.dataset.practiceText, 'x', input.value);
+        return;
+      }
       if (input?.dataset?.scienceActivityAnswer === undefined) return;
       const saved = ensureWeekProgress(input.dataset.scienceActivityAnswer);
       if (!saved) return;
@@ -686,6 +1184,21 @@
     render();
   }
 
+  // Yazdırma sırasında kapalı etkinlikler de kâğıda aktarılsın.
+  if (typeof window.addEventListener === 'function') {
+    window.addEventListener('beforeprint', () => {
+      const nodes = document.querySelectorAll?.('details.science-activity') || [];
+      window.__scienceClosedActivities = [];
+      nodes.forEach((node) => {
+        if (!node.open) { window.__scienceClosedActivities.push(node); node.open = true; }
+      });
+    });
+    window.addEventListener('afterprint', () => {
+      (window.__scienceClosedActivities || []).forEach((node) => { node.open = false; });
+      window.__scienceClosedActivities = [];
+    });
+  }
+
   window.SCIENCE = {
     weeks: WEEKS,
     units: UNITS,
@@ -701,5 +1214,8 @@
     safeScienceAssessment,
     safeScienceFeedbackText,
     runAICheck: runScienceAICheck,
+    activitiesFor: (weekId) => activityList(WEEK_BY_ID.get(Number(weekId)) || {}),
+    practiceSummaryFor: (weekId) => practiceSummary(WEEK_BY_ID.get(Number(weekId)) || {}),
+    examDateFor: (weekId) => EXAM_DATES_BY_WEEK[Number(weekId)] || '',
   };
 })();
