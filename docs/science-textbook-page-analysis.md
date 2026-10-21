@@ -57,7 +57,7 @@ Bu doküman, kaynak metni kopyalamak yerine her sayfanın ana fikrini ve görsel
 | 32 | Uzay kirliliğinin uydulara ve gelecekteki görevlere etkisi; çöpleri izleme, yakalama/uzaklaştırma ve sürdürülebilir tasarım gibi çözüm yaklaşımları. | Örnek problem ve çözüm raporu, risk–öneri–uygulama adımlarını bir araya getiriyor. | 6, 12 |
 | 33 | Uzay istasyonu, mekik, sonda, yer teleskobu, roket, uydu ve uzay teleskobu tanımlarını araç görselleriyle eşleştirme. | Yedi araç fotoğrafı, tanım–görsel eşleştirme ve uzay kirliliğine karşı önlemleri özetliyor. | 3, 6, 12 |
 | 34 | “Uzayda Neler Var?” bölümüne geçiş; yıldızların da yaşam süreci olduğu fikri ve Güneş’in geleceğine dair soru. | Kamp yapan aile ve yıldızlı gökyüzü fotoğrafı; astronomi gözlemini gündelik merakla bağlıyor. | 8–12 |
-| 35 | Yıldız oluşumuyla ilgili araştırma: bulutsu, önyıldız ve küçük/büyük kütleli yıldızların evreleri ile olası son ürünler. | Kaynak ve bulguların yazılacağı araştırma sayfası; çok sayıda yıldız evresi terimini araştırma sorusuna dönüştürüyor. | 8–9 |
+| 35 | **Keşif Noktası: Yıldızların Oluşumunu Araştırın**; bulutsu, önyıldız ve yıldız oluşum basamaklarını kaynaklarla inceleme. | Kaynak ve bulguların yazılacağı araştırma sayfası; yıldız evresi kavramlarını araştırma sorusuna dönüştürüyor. | 8 |
 | 36 | Yıldız yaşam döngüsü terimlerini rol yaparak canlandırma ve evreler arasındaki ilişkiyi açıklama. | Uygulama adımları ve değerlendirme soruları; kavramların sıralı bir süreç olduğunu vurguluyor. | 8–9 |
 | 37 | Yıldız yaşam süreci hakkında kaynaklı poster hazırlama performans görevi; planlama, iş birliği ve sunum. | Poster tasarım yönergesi ile ölçüt/öz değerlendirme bağlantısı; görsel alan öğrencinin ürününe ayrılmış. | 8–9 |
 | 38 | Yıldızların büyüklük karşılaştırmaları ve “yıldız kayması”nın atmosferde yanan cisimlerden kaynaklandığı; Güneş’in yıldız olduğu açıklaması. | Güneş, Sirius, Pollux ve Arcturus’un temsilî boyut karşılaştırması; yıldız adları görsel olarak etiketlenmiş. | 9–10 |
@@ -193,7 +193,9 @@ Bu doküman, kaynak metni kopyalamak yerine her sayfanın ana fikrini ve görsel
 
 ## Haftalık anlatımlara uygulama ilkeleri
 
-- Uzay ünitesinde “Uzay nedir?” sorusu, araçlara geçmeden önce açık bir tanım ve evren içindeki ölçek ilişkisiyle başlatılır; uzay araştırma teknolojilerinin araştırma sonucu, her aracın **ne yaptığı** ve **hangi veriyi sağladığı** ile somutlaştırılır.
-- Sözlük ve anahtar kavramlar yalnızca etiket olarak bırakılmaz; öğrencinin haftalık metninde terimlerin kısa, yaş düzeyine uygun açıklaması verilir.
-- Yıldız yaşamı, enerji dönüşümü ve vücut sistemleri anlatımlarında sayfadaki süreç diyagramlarının sırası, dalları ve görsel sınırlılıkları açıklanır.
-- Ders kitabındaki görev ve etkinlikler mevcut haftalık programla uyumlu biçimde referans alınır; uygulama etkinlikleri kullanıcı istemedikçe değiştirilmez.
+- Uzay ünitesinde “Uzay nedir?” sorusu araçlardan önce açıkça yanıtlanır. Uzay araçlarının görevleri haftalık konu anlatımında tanımlanır ve yedi özgün, etiketli araç çizimiyle görselleştirilir; mevcut araç seçme etkinliğine ayrıca kısa görsel rehber eklenmiştir.
+- Ayrı “Kavram sözlüğü” paneli kullanılmaz. Terimler ve tanımları dört parçalı konu anlatımının içine yerleştirilir; süreç ve neden-sonuç ilişkileri metinde açıklanır.
+- Araştırma sonuçları yalnızca açık **Keşif Noktası** ve araştırmaya elverişli **Performans Görevi** başlıklarında verilir: basılı s. 35’teki Keşif Noktası ile s. 31, 37, 94, 98, 112, 114, 124, 127 ve 136’daki performans görevleri. S. 136’daki boşaltım sağlığı raporu araştırma görevi olarak eklenmiş; araç modeli, solunum sistemi maketi ve s. 133’teki boşaltım sistemi modeli gibi el işi/maket görevleri araştırmaya çevrilmemiştir.
+- Uzay teknolojileri (s. 18–19) ve günlük yaşam örnekleri (s. 25) konu anlatımının parçası olarak kalır; bu sayfalardaki araştırma şablonları ayrıca bir “araştırma sonucu” bölümü yapılmamıştır.
+- Yıldız yaşamı, enerji dönüşümü ve vücut sistemleri anlatımlarında süreç diyagramlarının sırası, dalları ve görsel sınırlılıkları açıklanır. Haftalık konu başlıklarının her biri ilgili özgün görsel ya da süreç diyagramıyla desteklenir; ders kitabı görselleri kopyalanmaz.
+- Konu başlıkları, takvim, görevler, quizler ve etkinlik verileri korunur; görsel rehber, mevcut uzay aracı etkinliğine ek açıklama olarak gösterilir.

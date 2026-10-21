@@ -21,6 +21,18 @@
       title: 'Uyduyla Dünya’yı gözlemlemek',
       images: [{ src: 'assets/science-space.jpg', alt: 'Özgün bilim illüstrasyonu: bir yapay uydu Dünya yörüngesinde gözlem ve iletişim görevi yapıyor.' }],
     },
+    spaceVehicles: {
+      title: 'Uzay araçlarını görevlerine göre tanı',
+      images: [
+        { src: 'assets/science-rocket.svg', alt: 'Özgün çizim: yükünü yörüngeye taşımak üzere yükselen uzay roketi.', label: 'Uzay roketi · taşır' },
+        { src: 'assets/science-communication-satellite.svg', alt: 'Özgün çizim: güneş panelli haberleşme uydusu Dünya ile sinyal aktarıyor.', label: 'Yapay uydu · sinyal iletir' },
+        { src: 'assets/science-earth-observation-satellite.svg', alt: 'Özgün çizim: algılayıcısıyla Dünya yüzeyinden görüntü ve ölçüm alan uydu.', label: 'Dünya gözlem uydusu · veri toplar' },
+        { src: 'assets/science-space-probe.svg', alt: 'Özgün çizim: gök cismine ilişkin ölçüm yapan robotik uzay sondası.', label: 'Uzay sondası · uzaktan inceler' },
+        { src: 'assets/science-space-shuttle.svg', alt: 'Özgün çizim: kanatlı uzay mekiği yörüngede görev yapıyor.', label: 'Uzay mekiği · insan ve malzeme taşır' },
+        { src: 'assets/science-space-station.svg', alt: 'Özgün çizim: astronotların araştırma yaptığı modüler uzay istasyonu.', label: 'Uzay istasyonu · araştırma ortamı' },
+        { src: 'assets/science-space-telescope.svg', alt: 'Özgün çizim: uzaktaki gök cisimlerinden ışık toplayan uzay teleskobu.', label: 'Teleskop · ışık toplar' },
+      ],
+    },
     telescope: {
       title: 'Gözlemevi ve karanlık gökyüzü',
       images: [{ src: 'assets/science-light-pollution.jpg', alt: 'Özgün bilim illüstrasyonu: karanlık gökyüzüne bakan bir gözlemevi ve uzakta aydınlatılmış yerleşim.' }],
@@ -222,23 +234,19 @@
     return paragraphs.map((paragraph, index) => `<article class="science-explain-block"><span>${labels[index] || 'KONU NOTU'}</span><p>${escapeHTML(paragraph)}</p></article>`).join('');
   }
 
-  function renderTermDefinitions(definitions) {
-    if (!Array.isArray(definitions) || definitions.length === 0) return '';
-    return `<div class="science-key-terms"><h4>Kavram sözlüğü</h4><dl class="science-term-list">${definitions.map((item) => `<div><dt>${escapeHTML(item.term)}</dt><dd>${escapeHTML(item.definition)}</dd>${item.connection ? `<dd class="science-term-context"><strong>Süreç bağlantısı:</strong> ${escapeHTML(item.connection)}</dd>` : ''}</div>`).join('')}</dl></div>`;
-  }
-
   function renderResearchBrief(brief) {
     if (!isRecord(brief) || !Array.isArray(brief.items) || brief.items.length === 0) return '';
-    return `<section class="card science-research-brief" aria-labelledby="scienceResearchTitle"><div class="science-section-heading"><div class="tag">ARAŞTIRMA SONUCU</div><h3 id="scienceResearchTitle">${escapeHTML(brief.title)}</h3><p>${escapeHTML(brief.intro || '')}</p></div><div class="science-research-grid">${brief.items.map((item) => `<article class="science-research-item"><h4>${escapeHTML(item.name)}</h4><p>${escapeHTML(item.role)}</p></article>`).join('')}</div>${brief.takeaway ? `<div class="science-research-takeaway"><strong>Sonuç ve günlük yaşam bağlantısı</strong><p>${escapeHTML(brief.takeaway)}</p></div>` : ''}${brief.source ? `<p class="science-research-source">${escapeHTML(brief.source)}</p>` : ''}</section>`;
+    return `<section class="card science-research-brief" aria-labelledby="scienceResearchTitle"><div class="science-section-heading"><div class="tag">${escapeHTML(brief.label || 'ARAŞTIRMA SONUCU')}</div><h3 id="scienceResearchTitle">${escapeHTML(brief.title)}</h3><p>${escapeHTML(brief.intro || '')}</p></div><div class="science-research-grid">${brief.items.map((item) => `<article class="science-research-item"><h4>${escapeHTML(item.name)}</h4><p>${escapeHTML(item.role)}</p></article>`).join('')}</div>${brief.takeaway ? `<div class="science-research-takeaway"><strong>Sonuç ve günlük yaşam bağlantısı</strong><p>${escapeHTML(brief.takeaway)}</p></div>` : ''}${brief.source ? `<p class="science-research-source">${escapeHTML(brief.source)}</p>` : ''}</section>`;
   }
 
   function renderVisual(item) {
     const visual = VISUALS[item.visual];
     if (!visual) return '';
     const singleImage = visual.images.length === 1;
-    return `<figure class="card science-visual${singleImage ? ' is-single' : ' is-gallery'}">
+    const vehicleGallery = item.visual === 'spaceVehicles';
+    return `<figure class="card science-visual${singleImage ? ' is-single' : ' is-gallery'}${vehicleGallery ? ' is-vehicles' : ''}">
       <figcaption><span>ÖZGÜN GÖRSEL MODEL</span><strong>${escapeHTML(visual.title)}</strong></figcaption>
-      <div class="science-visual-gallery${singleImage ? ' is-single' : ''}">${visual.images.map((image) => `<div class="science-visual-item"><img class="science-visual-image" src="${escapeHTML(image.src)}" alt="${escapeHTML(image.alt)}" loading="lazy" decoding="async">${!singleImage && image.label ? `<div class="science-visual-item-label">${escapeHTML(image.label)}</div>` : ''}</div>`).join('')}</div>
+      <div class="science-visual-gallery${singleImage ? ' is-single' : ''}${vehicleGallery ? ' is-vehicles' : ''}">${visual.images.map((image) => `<div class="science-visual-item"><img class="science-visual-image" src="${escapeHTML(image.src)}" alt="${escapeHTML(image.alt)}" loading="lazy" decoding="async">${!singleImage && image.label ? `<div class="science-visual-item-label">${escapeHTML(image.label)}</div>` : ''}</div>`).join('')}</div>
       ${Array.isArray(visual.routes) && visual.routes.length ? `<div class="science-visual-routes">${visual.routes.map((route) => `<div class="science-visual-route"><span>${escapeHTML(route.label)}</span><strong>${escapeHTML(route.text)}</strong></div>`).join('')}</div>` : ''}
       <p class="science-visual-note">${escapeHTML(item.visualNote || '')}</p>
     </figure>`;
@@ -287,6 +295,7 @@
     return `<section class="science-open-activity" aria-labelledby="science-activity-title-${item.id}">
       <div class="science-activity-heading"><div class="tag">ÖZGÜN UYGULAMA</div><h4 id="science-activity-title-${item.id}">${escapeHTML(item.activity.title)}</h4><p>${escapeHTML(item.activity.format)}</p></div>
       <p class="science-activity-prompt">${escapeHTML(item.activity.prompt)}</p>
+      ${item.id === 3 ? '<p class="science-activity-visual-guide">Görsel galerisine dönerek araçları görevleriyle eşleştir: roket yükü taşır; uydu yörüngede sinyal ya da veri iletir; sonda uzaktan ölçüm yapar; mekik insan ve malzeme taşır; istasyon araştırma ortamı sağlar; teleskop ışık toplar.</p>' : ''}
       <ul class="science-criteria">${item.activity.criteria.map((criterion) => `<li>${escapeHTML(criterion)}</li>`).join('')}</ul>
       <label class="science-response-label" for="${responseId}">Yanıtın / model taslağın</label>
       <textarea class="science-response" id="${responseId}" data-science-activity-answer="${item.id}" maxlength="5000" rows="4" placeholder="${escapeHTML(item.activity.placeholder)}">${escapeHTML(saved.activityAnswer)}</textarea>
@@ -318,7 +327,7 @@
         <button class="print science-print" type="button" data-science-print>Yazdır / PDF</button>
       </header>
       ${renderVisual(item)}
-      <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item.summary)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div>${renderTermDefinitions(item.termDefinitions)}</div></section>
+      <section class="card science-topic-summary" aria-labelledby="scienceSummaryTitle"><div class="science-section-heading"><div class="tag">KONU ANLATIMI</div><h3 id="scienceSummaryTitle">Bu haftanın bilimsel fikri</h3></div><div class="science-summary-text">${renderParagraphs(item.summary)}</div><div class="science-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul>${item.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div></div></section>
       ${renderResearchBrief(item.researchBrief)}
       <section class="card science-practice-card" aria-labelledby="sciencePracticeTitle"><div class="science-section-heading"><div class="tag">ETKİNLİKLER</div><h3 id="sciencePracticeTitle">Öğrendiklerimi deniyorum</h3><p>Önce kısa soruyu yanıtla; sonra özgün uygulamayı tamamla. Seçimli sorular yerel olarak kontrol edilir.</p></div>${renderQuiz(item, saved)}${renderActivity(item, saved)}</section>
       <div class="science-grid-two"><section class="card science-mini-plan"><h3>Öğrenci için mini plan</h3><p>Üç görevi tamamladıkça işaretle. Yanıtlar bu tarayıcıda ayrı Fen Bilimleri alanında saklanır.</p><div class="science-task-list">${item.tasks.map((task, index) => `<label class="science-task"><input type="checkbox" data-science-task="${index}" data-science-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section><section class="card science-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(source)}</small></section></div>
@@ -328,7 +337,7 @@
         <td><a class="science-provider-link" href="${escapeHTML(links.tonguc)}" target="_blank" rel="noopener noreferrer">Tonguç konu araması ↗</a><small class="science-provider-note">${escapeHTML(item.topic)} için video araması</small><label class="science-provider-check"><input type="checkbox" data-science-provider="tonguc" data-science-week="${item.id}" ${saved.providers.tonguc ? 'checked' : ''}><span>Tonguç çalışmam bitti</span></label></td>
         <td><a class="science-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ ↗</a><small class="science-provider-note">Portaldan Fen Bilimleri çalışmalarını seç.</small><label class="science-provider-check"><input type="checkbox" data-science-provider="mebi" data-science-week="${item.id}" ${saved.providers.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
       </tr></tbody></table></div></section>
-      <p class="science-source-note">${escapeHTML(source)} Haftalık dağılım öneri niteliğindedir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Konu anlatımları ilgili ders kitabı sayfaları esas alınarak özgün biçimde yazılmıştır; görseller özgün yapay zekâ destekli illüstrasyonlardır, ders kitabındaki metinler, sorular ve şekiller kopyalanmamıştır.</p>`;
+      <p class="science-source-note">${escapeHTML(source)} Haftalık dağılım öneri niteliğindedir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Konu anlatımları ilgili ders kitabı sayfaları esas alınarak özgün biçimde yazılmıştır; görseller özgün dijital illüstrasyonlardır; ders kitabındaki metinler, sorular ve şekiller kopyalanmamıştır.</p>`;
   }
 
   function refreshProgressUI() {

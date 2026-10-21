@@ -92,13 +92,15 @@ const expectedTopics = [
 for (const topic of expectedTopics) assert.ok(science.weeks.some((week) => week.topic === topic), `Missing textbook-aligned science topic: ${topic}`);
 assert.ok(science.weeks.every((week) => week.date && week.topic && week.focus && week.pages));
 assert.ok(science.weeks.every((week) => week.summary.length === 4 && week.summary.join(' ').length >= 900 && week.points.length >= 3 && week.terms.length >= 3 && week.visualNote));
-assert.ok(science.weeks.every((week) => week.termDefinitions.length >= 4 && week.termDefinitions.every((term) => term.term && term.definition && term.connection)));
-assert.equal(science.weeks.filter((week) => week.researchBrief).length, 2, 'Textbook research findings should accompany the space-technology study weeks.');
+assert.equal(science.weeks.filter((week) => week.researchBrief).length, 10, 'Research results should be limited to the Keşif Noktası and suitable performance-task topics.');
+assert.deepEqual(science.weeks.filter((week) => week.researchBrief).map((week) => week.id), [6, 8, 9, 21, 23, 26, 27, 30, 31, 34]);
+assert.ok(science.weeks.filter((week) => week.researchBrief).every((week) => /^(KEŞİF NOKTASI|PERFORMANS GÖREVİ) · ARAŞTIRMA SONUCU$/.test(week.researchBrief.label)));
+assert.ok(science.weeks.filter((week) => [3, 28, 32, 33].includes(week.id)).every((week) => !week.researchBrief), 'Vehicle-model and body-system maquette tasks should not become research briefs.');
 assert.ok(science.weeks.every((week) => week.tasks.length === 3 && week.activity.criteria.length >= 3));
 assert.ok(science.weeks.every((week) => week.quiz.options.length === 4 && Number.isInteger(week.quiz.answer) && week.quiz.answer >= 0 && week.quiz.answer < week.quiz.options.length));
 assert.ok(science.weeks.every((week) => week.activity.minChars >= 15 && week.activity.title && week.activity.format && week.activity.prompt));
-assert.ok(science.weeks.every((week) => ['space', 'telescope', 'debris', 'light', 'stars', 'galaxy', 'spaceReview', 'energy', 'digestion', 'circulation', 'respiration', 'excretion', 'systemsReview'].includes(week.visual)));
-assert.deepEqual(science.weeks.slice(0, 12).map((week) => week.visual), ['space', 'space', 'space', 'telescope', 'space', 'debris', 'light', 'stars', 'stars', 'stars', 'galaxy', 'spaceReview']);
+assert.ok(science.weeks.every((week) => ['space', 'spaceVehicles', 'telescope', 'debris', 'light', 'stars', 'galaxy', 'spaceReview', 'energy', 'digestion', 'circulation', 'respiration', 'excretion', 'systemsReview'].includes(week.visual)));
+assert.deepEqual(science.weeks.slice(0, 12).map((week) => week.visual), ['space', 'space', 'spaceVehicles', 'telescope', 'space', 'debris', 'light', 'stars', 'stars', 'stars', 'galaxy', 'spaceReview']);
 assert.ok(science.weeks.slice(34).every((week) => week.visual === 'systemsReview'));
 assert.ok(science.weeks.every((week) => week.summary[0] && week.summary[1] && week.summary[2]));
 assert.ok(new Set(science.weeks.map((week) => week.activity.title)).size === 37, 'Each week should have its own original activity title.');
@@ -121,9 +123,10 @@ for (const week of science.weeks) {
   science.importProgress({ selectedWeek: week.id, weeks: {} });
   const html = mockElements.scienceWeekContent.innerHTML;
   const imageCount = (html.match(/class="science-visual-image"/g) || []).length;
-  assert.equal(imageCount, ['spaceReview', 'systemsReview'].includes(week.visual) ? 4 : 1, `Week ${week.id} should render its mapped science illustration(s).`);
+  const expectedImages = week.visual === 'spaceVehicles' ? 7 : ['spaceReview', 'systemsReview'].includes(week.visual) ? 4 : 1;
+  assert.equal(imageCount, expectedImages, `Week ${week.id} should render all concept-matched science illustrations.`);
   assert.ok(html.includes('science-visual-note'), `Week ${week.id} should explain how to read its visual.`);
-  assert.ok(html.includes('Kavram sözlüğü') && html.includes('Süreç bağlantısı'), `Week ${week.id} should render term definitions with process context.`);
+  assert.ok(!html.includes('Kavram sözlüğü') && !html.includes('Süreç bağlantısı'), `Week ${week.id} should keep concept definitions within the narrative rather than a separate glossary.`);
 }
 
 const normalized = science.normalizeProgress({
@@ -170,12 +173,31 @@ assert.match(mockElements.scienceWeekContent.innerHTML, /Kontrol et/);
 assert.equal(mockElements.scienceProgressCount.textContent, '1 / 37 hafta tamamlandı');
 
 science.importProgress({ selectedWeek: 3, weeks: {} });
-assert.match(mockElements.scienceWeekContent.innerHTML, /ARAŞTIRMA SONUCU/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /Uzay sondası/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /Dünya’ya taşır|veriyi Dünya’ya iletir/);
+let visualHTML = mockElements.scienceWeekContent.innerHTML;
+assert.equal((visualHTML.match(/class="science-visual-image"/g) || []).length, 7);
+for (const label of ['Uzay roketi', 'Haberleşme uydusu', 'Dünya gözlem uydusu', 'Uzay sondası', 'Uzay mekiği', 'Uzay istasyonu', 'Teleskop']) assert.ok(visualHTML.includes(label), `The vehicle gallery should show ${label}.`);
+assert.ok(!visualHTML.includes('science-research-brief'), 'The vehicle-model performance task should not be turned into a research brief.');
+assert.match(visualHTML, /Görsel galerisine dön/);
 science.importProgress({ selectedWeek: 5, weeks: {} });
-assert.match(mockElements.scienceWeekContent.innerHTML, /bilgisayarlı tomografi ve ultrason/);
-assert.match(mockElements.scienceWeekContent.innerHTML, /Kaynak özeti: ders kitabı s\. 24–26/);
+assert.ok(!mockElements.scienceWeekContent.innerHTML.includes('ARAŞTIRMA SONUCU'), 'Daily-life technology examples should remain part of the ordinary lesson narrative.');
+assert.match(mockElements.scienceWeekContent.innerHTML, /MR\/tomografi\/ultrason/);
+
+for (const [weekId, label, phrase] of [
+  [6, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'uzay enkazı'],
+  [8, 'KEŞİF NOKTASI · ARAŞTIRMA SONUCU', 'Önyıldız'],
+  [9, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'kütleye göre iki yol'],
+  [21, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'görev paylaşımı'],
+  [23, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'günlük alışkanlıklar'],
+  [26, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'Kan ve organ bağışı'],
+  [27, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'Dolaşım sistemi sağlığını'],
+  [30, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'Solunum sistemini korumak'],
+  [31, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'farkındalık'],
+  [34, 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU', 'Sıvı dengesi'],
+]) {
+  science.importProgress({ selectedWeek: weekId, weeks: {} });
+  assert.ok(mockElements.scienceWeekContent.innerHTML.includes(label), `Week ${weekId} should show only its qualifying task heading.`);
+  assert.ok(mockElements.scienceWeekContent.innerHTML.includes(phrase), `Week ${weekId} should display its research result.`);
+}
 
 science.importProgress({ selectedWeek: 12, weeks: {} });
 assert.equal((mockElements.scienceWeekContent.innerHTML.match(/class="science-visual-image"/g) || []).length, 4, 'The space review should show four separate source-aligned images.');
@@ -257,7 +279,7 @@ async function checkAICheckAndStaleResponse() {
   assert.equal(science.exportProgress().selectedWeek, null);
   assert.deepEqual(science.exportProgress().weeks, {});
   assert.ok(storage.has('emr7lect.science.v1'));
-  console.log('Fen Bilimleri 37-week calendar and topic map, four-part textbook explanations, connected term glossary, space-technology research briefs, distinct rose-berry palette, untouched activities/quizzes/tasks, accessible visuals, safe Groq checks, progress isolation, completion rules, and backup API passed.');
+  console.log('Fen Bilimleri 37-week calendar and topic map, four-part in-context explanations, task-gated research results, original seven-vehicle gallery and weekly visuals, rose-berry palette, unchanged tasks/quizzes/activities, safe Groq checks, progress isolation, completion rules, and backup API passed.');
 }
 
 checkAICheckAndStaleResponse().catch((error) => {

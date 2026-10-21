@@ -1200,22 +1200,30 @@ def main() -> int:
     science_css_path = ROOT / "science.css"
     science_js = science_js_path.read_text(encoding="utf-8") if science_js_path.is_file() else ""
     science_css = science_css_path.read_text(encoding="utf-8") if science_css_path.is_file() else ""
-    science_images = set(re.findall(r"src: '(assets/science-[^']+\.jpg)'", science_js))
+    science_images = set(re.findall(r"src: '(assets/science-[^']+\.(?:jpg|svg))'", science_js))
     required_science_images = {
         "assets/science-space.jpg", "assets/science-space-debris.jpg", "assets/science-light-pollution.jpg",
         "assets/science-stars.jpg", "assets/science-galaxy.jpg", "assets/science-energy.jpg",
         "assets/science-digestion.jpg", "assets/science-circulation.jpg", "assets/science-respiration.jpg",
-        "assets/science-excretion.jpg",
+        "assets/science-excretion.jpg", "assets/science-rocket.svg", "assets/science-communication-satellite.svg",
+        "assets/science-earth-observation-satellite.svg", "assets/science-space-probe.svg",
+        "assets/science-space-shuttle.svg", "assets/science-space-station.svg", "assets/science-space-telescope.svg",
     }
     if not required_science_images.issubset(science_images):
-        errors.append("Fen visual mapping must include all ten original science illustrations")
+        errors.append("Fen visual mapping must include the original science illustrations and all seven space-vehicle diagrams")
     for image in science_images:
         if not (ROOT / image).is_file():
             errors.append(f"Missing Fen science image: {image}")
     if "science-visual-image" not in science_js or "science-explain-block" not in science_js or "science-explain-block" not in science_css:
         errors.append("Fen lessons need accessible image rendering and structured explanation cards")
+    if "spaceVehicles" not in science_js or ".science-visual-gallery.is-vehicles" not in science_css:
+        errors.append("Space-vehicle concepts need their own labelled, responsive illustration gallery")
+    if "renderTermDefinitions" in science_js or "Kavram sözlüğü" in science_js or "science-key-terms" in science_css:
+        errors.append("Science concepts should be explained within the lesson narrative, not in a separate glossary panel")
+    if ".science-schedule,.science-visual,.science-research-brief{break-inside:avoid;box-shadow:none}" not in science_css:
+        errors.append("Fen print styles must keep schedules, visuals, and research briefs together without shadows")
     if ".science-summary-text{display:grid" not in science_css or "background:#fffdf6" in science_css:
-        errors.append("Fen topic summaries must keep their cool blue identity, distinct from Social Studies")
+        errors.append("Fen topic summaries must keep their rose-berry identity, distinct from Social Studies")
     style_guide = ROOT / "docs" / "subject-ui-style-guide.md"
     if not style_guide.is_file() or "Fen Bilimleri" not in style_guide.read_text(encoding="utf-8"):
         errors.append("The reusable subject UI guide for future courses is missing")
@@ -1399,7 +1407,7 @@ def main() -> int:
                 )
                 if science_test.returncode:
                     errors.append(f"Fen Bilimleri workspace test failed:\n{science_test.stderr.strip()}")
-                elif "Fen Bilimleri 37-week calendar and topic map, four-part textbook explanations, connected term glossary, space-technology research briefs, distinct rose-berry palette, untouched activities/quizzes/tasks, accessible visuals, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
+                elif "Fen Bilimleri 37-week calendar and topic map, four-part in-context explanations, task-gated research results, original seven-vehicle gallery and weekly visuals, rose-berry palette, unchanged tasks/quizzes/activities, safe Groq checks, progress isolation, completion rules, and backup API passed." not in science_test.stdout:
                     errors.append("Fen Bilimleri workspace test did not report success")
 
             if not errors:

@@ -22,33 +22,6 @@
         "Kitabın ilk sayfaları daha önce öğrenilen yansıma bilgisini hatırlatır; ardından Türksat 6A haberiyle uzay çalışmalarının haberleşme, hava gözlemi ve konum bulma gibi alanlardaki yerini sorar. Uzay teknolojilerine geçmeden önce “bu araştırma hangi soruya yanıt arıyor?” diye düşünmek, araç seçimini anlamlı kılar.",
         "Bir görüntüde doğrudan seçilebilen özelliği gözlem, o özelliğin nedenine ilişkin açıklamayı çıkarım olarak yaz. Uydu görüntüsü yeryüzünün belirli bir andaki görünüşüne kanıt sağlar; tek başına bütün nedenleri açıklamaz. Görselin tarihi, kaynağı ve ölçüm türü de yorumun parçasıdır."
       ],
-      termDefinitions: [
-        {
-          "term": "Uzay",
-          "definition": "Dünya dışındaki gök cisimlerinin ve aralarındaki büyük boşluğun bulunduğu ortam.",
-          "connection": "Uzay araştırması, bu ortamın içindeki cisim ve olayları gözlemleyip ölçerek evreni anlamaya yarayan kanıtlar üretir."
-        },
-        {
-          "term": "Evren",
-          "definition": "Uzayı, galaksileri ve içlerindeki tüm gök cisimlerini kapsayan en geniş bütün.",
-          "connection": "Evren daha kapsayıcı kavramdır: uzayı ve içindeki tüm gök cisimlerini, galaksileri ve yapıları birlikte düşünür."
-        },
-        {
-          "term": "Uzay araştırması",
-          "definition": "Uzaydaki cisim ve olaylar hakkında gözlem, ölçüm ve kanıtla bilgi arama çalışması.",
-          "connection": "Uzay araştırması, bu yapı ve olaylar hakkında gözlem ve ölçümle bilgi aramaktır."
-        },
-        {
-          "term": "Gözlem",
-          "definition": "Bir olayı duyu ya da araçlarla inceleyip fark edilen özellikleri kaydetme.",
-          "connection": "Araştırmacı uygun araçla veri toplar, gözlemleri kaydeder, benzer verileri karşılaştırır ve açıklamasını kanıtla sınar; yeni kanıt önceki fikri değiştirebilir."
-        },
-        {
-          "term": "Çıkarım",
-          "definition": "Gözlem ve kanıtlardan yararlanarak bir olayın olası açıklamasını kurma.",
-          "connection": "Bir görüntüde doğrudan seçilebilen özelliği gözlem, o özelliğin nedenine ilişkin açıklamayı çıkarım olarak yaz."
-        }
-      ],
       points: ["Araştırma sorusu gözlenebilir bir özelliğe odaklanır.", "Gözlem ile gözleme dayalı çıkarım farklıdır.", "Verinin kaynağını belirtmek açıklamayı güçlendirir."],
       terms: ['uzay araştırması', 'gözlem', 'veri', 'kanıt'],
       tasks: ['Üniteye giriş bölümünü incele; bildiğin ve merak ettiğin uzay konularını ayır.', 'Bir uydu veya teleskop görüntüsünde gözlemleyebileceğin iki özelliği yaz.', 'Bir gözlem cümlesi ile ona ait olası bir çıkarımı ayrı ayrı kur.'],
@@ -64,33 +37,6 @@
         "Kitap Türksat uydularını haberleşme; Göktürk ve İMECE örneklerini yüksek çözünürlüklü Dünya gözlemiyle ilişkilendirir. İMECE görüntüleri doğal afet, tarım ve hedef belirleme gibi uygulamalara katkı sağlayabilir; Türksat 6A ise yerli ve millî haberleşme uydusu olarak tanıtılır. Bunlar görev türlerinin farklı olduğuna örnektir.",
         "Bir uyduyu anlatırken yalnızca adını değil; hangi yörüngede çalıştığını, hangi veriyi topladığını veya ilettiğini ve bu verinin kimlerce nasıl kullanıldığını da belirt. Kitaptaki uydu çizimleri görevleri açıklayan temsili görsellerdir; ekranda görülen uydu fotoğrafı, uydunun topladığı verinin kendisi değildir."
       ],
-      termDefinitions: [
-        {
-          "term": "Yapay uydu",
-          "definition": "Bir gezegenin ya da başka bir gök cisminin çevresindeki yörüngede görev yapan insan yapımı araç.",
-          "connection": "Yapay uydu, Dünya’nın ya da başka bir gök cisminin çevresinde belirli bir yörüngede görev yapmak üzere insan eliyle üretilip gönderilen araçtır."
-        },
-        {
-          "term": "Yörünge",
-          "definition": "Bir gök cisminin veya uzay aracının başka bir cismin çevresinde izlediği yol.",
-          "connection": "Yapay uydu, Dünya’nın ya da başka bir gök cisminin çevresinde belirli bir yörüngede görev yapmak üzere insan eliyle üretilip gönderilen araçtır."
-        },
-        {
-          "term": "Haberleşme uydusu",
-          "definition": "Radyo, televizyon, telefon ve benzeri iletişim sinyallerini aktarmaya yardımcı olan uydu.",
-          "connection": "İMECE görüntüleri doğal afet, tarım ve hedef belirleme gibi uygulamalara katkı sağlayabilir; Türksat 6A ise yerli ve millî haberleşme uydusu olarak tanıtılır."
-        },
-        {
-          "term": "Dünya gözlem uydusu",
-          "definition": "Dünya yüzeyine veya atmosferine ilişkin görüntü ve ölçüm verileri toplayan uydu.",
-          "connection": "Bu uydunun farklı tarihlerde çektiği görüntüler karşılaştırılarak arazi, tarım veya afet bölgesindeki değişim izlenebilir; görüntünün zamanı ve çözünürlüğü yorumun sınırını belirler."
-        },
-        {
-          "term": "Uydu verisi",
-          "definition": "Uydudaki algılayıcıların topladığı ve yer istasyonlarına ilettiği görüntü ya da ölçüm bilgisi.",
-          "connection": "Uydu verisi önce yer istasyonuna iletilir, sonra uzmanlarca başka ölçüm ve saha bilgileriyle karşılaştırılır; bu nedenle ham görüntü tek başına neden açıklamaz."
-        }
-      ],
       points: ["Haberleşme ve gözlem uydularının amaçları farklıdır.", "Yörünge ve araç donanımı görevi etkiler.", "Uydu verisi değerlendirilir; tek başına açıklama değildir."],
       terms: ['yapay uydu', 'haberleşme', 'gözlem uydusu', 'uzay araştırması'],
       tasks: ['Kitaptaki Türkiye uzay çalışmaları başlığını oku ve görev türlerini not et.', 'Haberleşme ile gözlem amaçlı bir uyduyu kullanım amacı bakımından karşılaştır.', 'Uydu verisinin işe yarayacağı bir Dünya gözlemi örneği oluştur.'],
@@ -98,7 +44,7 @@
       activity: { title: 'Uydu görev kartları', format: 'Örnek olay sınıflandırma', prompt: 'Üç kısa görev kartı tasarla: birinde iletişim, birinde yeryüzünü gözlemleme, birinde bilimsel ölçüm ihtiyacı olsun. Her kart için uygun araç türünü ve seçim gerekçeni yaz.', placeholder: 'Görev 1 — araç — gerekçe…', minChars: 25, criteria: ['Üç farklı ihtiyacı ayırt et.', 'Her ihtiyacı uygun görev türüyle eşleştir.', 'Seçimini görev özelliğiyle gerekçelendir.'], hint: 'Araç adından çok, hangi veriyi topladığına veya neyi ilettiğine odaklan.' },
     },
     {
-      id: 3, date: '28 Eyl–2 Eki', unitId: 'space', topic: 'Uzay araçları ve gözlem teknolojileri', pages: '16–23', visual: 'space', visualNote: "Görseldeki uyduyu araştırma araçlarından biri olarak düşün; roket, sonda ve teleskopun görevleri bundan farklıdır.",
+      id: 3, date: '28 Eyl–2 Eki', unitId: 'space', topic: 'Uzay araçları ve gözlem teknolojileri', pages: '16–23', visual: 'spaceVehicles', visualNote: "Görseldeki uyduyu araştırma araçlarından biri olarak düşün; roket, sonda ve teleskopun görevleri bundan farklıdır.",
       focus: "Roket, uydu, uzay sondası, uzay istasyonu ve teleskopu kullanım amaçlarına göre ayırt et.",
       summary: [
         "Uzay araştırmalarında kullanılan araçlar görevlerine göre ayrılır. Roket bir taşıma sistemidir; uzay aracı ve yükü yeryüzünden yörüngeye veya daha uzağa götürür. Yapay uydu yörüngede çalışır, uzay sondası robotik ölçüm yapar, teleskop gök cisimlerinden gelen ışığı toplar; uzay istasyonu ise astronotların araştırma yaptığı yörünge laboratuvarıdır.",
@@ -106,69 +52,6 @@
         "Kitapta sondanın Dünya’dan uzaktan kontrol edilebildiği ve çoğunlukla güneş panelleriyle elektrik aldığı; roketin yakıt ve motorla çalıştığı; bazı yeni roketlerin yeniden kullanılabildiği belirtilir. Uzay mekiği insan ve ekipman taşıyabilir; istasyon düşük yer çekimli ortamda deney yapılmasını sağlar. Bu tanımlar, araçları işlevleriyle karşılaştırmanın sonucudur.",
         "Araçların şekillerini değil, yaptıkları işi eşleştir. Roket bir teleskop değildir; teleskop gözlem için ışık toplar. Sonda uzaktaki cisme veri toplamak üzere gider, uydu yörüngede kalır. Kitabın TÜRKSAT, Göktürk ve İMECE örneklerini de bu görev ayrımıyla oku; bir görev birden fazla araç ve yer istasyonu gerektirebilir."
       ],
-      termDefinitions: [
-        {
-          "term": "Uzay roketi",
-          "definition": "Uzay araçlarını yeryüzünden yörüngeye ya da daha uzak bölgelere taşıyan, motor ve yakıt kullanan araç.",
-          "connection": "Araştırma zincirinde roket yükü hedef yörüngeye taşır; ölçüm ve görüntüyü asıl uydu ya da sonda toplar."
-        },
-        {
-          "term": "Uzay sondası",
-          "definition": "Bir gök cismini veya uzay olayını incelemek için gönderilen, ölçüm ve görüntü toplayan robotik araç.",
-          "connection": "Yapay uydu yörüngede çalışır, uzay sondası robotik ölçüm yapar, teleskop gök cisimlerinden gelen ışığı toplar; uzay istasyonu ise astronotların araştırma yaptığı yörünge laboratuvarıdır."
-        },
-        {
-          "term": "Uzay istasyonu",
-          "definition": "Astronotların yörüngede yaşayıp araştırma ve deney yapabildiği donanımlı uzay aracı.",
-          "connection": "Yapay uydu yörüngede çalışır, uzay sondası robotik ölçüm yapar, teleskop gök cisimlerinden gelen ışığı toplar; uzay istasyonu ise astronotların araştırma yaptığı yörünge laboratuvarıdır."
-        },
-        {
-          "term": "Uzay mekiği",
-          "definition": "Kitaptaki tanımıyla astronot ve gerekli malzemeleri taşıyabilen, yeniden kullanılmak üzere tasarlanmış uzay aracı.",
-          "connection": "Uzay mekiği insan ve ekipman taşıyabilir; istasyon düşük yer çekimli ortamda deney yapılmasını sağlar."
-        },
-        {
-          "term": "Teleskop",
-          "definition": "Gök cisimlerinden gelen ışığı veya başka elektromanyetik dalgaları toplayarak gözleme yardım eden araç.",
-          "connection": "Yakın bir gök cisminin yüzeyini incelemek için sonda, iletişim kurmak için haberleşme uydusu, gökyüzü ışığını toplamak için teleskop gerekir."
-        }
-      ],
-      researchBrief: {
-        "title": "Kitaptaki araştırma sorusunun yanıtı: Uzay araştırmalarında hangi teknolojiler kullanılır?",
-        "intro": "Araştırma sonucu tek bir araçtan ibaret değildir. Bilim insanları soruya ve gereken veriye göre aşağıdaki araçları seçer; çoğu görevde birden fazlası birlikte çalışır.",
-        "items": [
-          {
-            "name": "Roket",
-            "role": "Uyduyu, sondaları veya başka yükleri yeryüzünden yörüngeye taşır. Yakıt ve motorla itki üretir; bazı modern tasarımlar yeniden kullanılabilir."
-          },
-          {
-            "name": "Yapay uydu",
-            "role": "Yörüngede haberleşme, Dünya gözlemi, konum belirleme veya bilimsel ölçüm görevi yapar. Türksat haberleşmeye; Göktürk ve İMECE Dünya gözlemine örnektir."
-          },
-          {
-            "name": "Uzay sondası",
-            "role": "Astronot taşımadan bir gök cismine ya da uzay olayına ilişkin ölçüm/görüntü toplar ve veriyi Dünya’ya iletir; güneş panelleri enerji sağlayabilir."
-          },
-          {
-            "name": "Uzay mekiği",
-            "role": "Astronot ve malzeme taşıma görevlerinde kullanılır; kitapta yeniden kullanılabilen araç örneği olarak anlatılır."
-          },
-          {
-            "name": "Uzay istasyonu",
-            "role": "Yörüngede yaşam ve araştırma alanı sağlar. Astronotlar burada deney yapar; istasyonlar güneş panellerinden elektrik alabilir."
-          },
-          {
-            "name": "Uzay teleskobu",
-            "role": "Atmosferin üzerindeki konumundan gök cisimlerinden gelen ışığı toplar. Hubble ve James Webb kitaptaki örneklerdir."
-          },
-          {
-            "name": "Yer tabanlı teleskop ve gözlemevi",
-            "role": "Yeryüzünde gökyüzünü gözler. TUG ve DAG örneklerinde olduğu gibi yüksek, kuru ve kent ışıklarından uzak yerler gözlemi kolaylaştırır."
-          }
-        ],
-        "takeaway": "Günlük yaşam bağlantısı: haberleşme, hava/afet gözlemi, tarım ve navigasyon uydu verilerinden yararlanabilir. Kitabın s. 25’te verdiği sağlık, enerji, malzeme ve gıda örnekleri de uzay araştırmalarıyla ilişkilendirilen teknoloji uygulamalarıdır; bu liste, her ürünün yalnızca uzay için icat edildiği anlamına gelmez.",
-        "source": "Kaynak özeti: ders kitabı s. 16–26; araç tanımları, Türkiye uydu örnekleri, gözlemevleri ve teknoloji uygulamaları."
-      },
       points: ["Roket taşıma, sonda uzaktaki cisimleri inceleme amacı taşır.", "Uydu yörüngede görev yapar; istasyon araştırma ortamı sağlar.", "Teleskop gözlem için ışık toplar."],
       terms: ['uzay sondası', 'uzay istasyonu', 'roket', 'teleskop'],
       tasks: ['Araç adlarını görevleriyle eşleştiren bir tablo hazırla.', 'Bir uzay görevi için hangi verinin gerektiğini belirle.', 'Görev–araç eşleştirmeni bir cümleyle gerekçelendir.'],
@@ -183,33 +66,6 @@
         "Atmosfer bazı ışınları soğurur veya dağıtır; bulut, su buharı ve hava koşulları da gözlemi etkiler. Kent aydınlatmasının gökyüzüne saçılması sönük yıldızları seçmeyi zorlaştırır. Bu nedenle yer gözlemevleri için yüksek, kuru, açık ve yapay ışıklardan uzak bölgeler tercih edilebilir.",
         "Kitap Hubble ve James Webb’i uzay teleskoplarına; TUG ve Doğu Anadolu Gözlemevi’ni (DAG) yer tabanlı gözlem örneklerine verir. Uzay teleskobu atmosfer etkisini azaltır, yer teleskobu ise bakım ve yenileme kolaylığı gibi avantajlar taşıyabilir. Gözlemevlerinin yeri, teleskopun topladığı sinyal kadar önemlidir.",
         "Teleskopla Güneş’e doğrudan, filtresiz bakılmaz; bu gözlere kalıcı zarar verebilir. Bir gözlem yeri seçerken karanlık gökyüzü kadar hava, güvenli erişim ve ölçüm amacını da değerlendir. Kent ışığının fotoğrafta oluşturduğu parlaklık gerçek gök cisimlerinin sayısını artırmaz; yalnızca görünürlüğü değiştirir."
-      ],
-      termDefinitions: [
-        {
-          "term": "Yer tabanlı teleskop",
-          "definition": "Yeryüzünde bulunan ve gökyüzü gözlemi yapan teleskop.",
-          "connection": "Yer tabanlı teleskoplar yeryüzündeki gözlemevlerinde, uzay teleskopları atmosferin üzerinde çalışır."
-        },
-        {
-          "term": "Uzay teleskobu",
-          "definition": "Atmosferin üzerinde, uzayda gözlem yapan teleskop.",
-          "connection": "Uzay teleskobu atmosfer etkisini azaltır, yer teleskobu ise bakım ve yenileme kolaylığı gibi avantajlar taşıyabilir."
-        },
-        {
-          "term": "Gözlemevi",
-          "definition": "Teleskop ve yardımcı ölçüm araçlarıyla gök cisimlerinin incelendiği, uygun konuma kurulmuş araştırma alanı.",
-          "connection": "Kitap Hubble ve James Webb’i uzay teleskoplarına; TUG ve Doğu Anadolu Gözlemevi’ni (DAG) yer tabanlı gözlem örneklerine verir."
-        },
-        {
-          "term": "Işık kirliliği",
-          "definition": "Yapay ışığın gereksiz, yanlış yönlü veya aşırı kullanımıyla gece gökyüzünün doğal karanlığının bozulması.",
-          "connection": "Gökyüzüne saçılan yapay ışık sönük yıldızları görünmez kılabilir; bu yüzden gözlemevi yeri seçilirken çevrenin karanlığı da değerlendirilir."
-        },
-        {
-          "term": "Atmosfer",
-          "definition": "Dünya’yı çevreleyen gaz katmanı; bazı gök ışınlarını etkileyerek yerden gözlemi değiştirebilir.",
-          "connection": "Uzay teleskobu atmosfer etkisini azaltır, yer teleskobu ise bakım ve yenileme kolaylığı gibi avantajlar taşıyabilir."
-        }
       ],
       points: ["Teleskop gök cisimlerinden gelen ışığı toplar.", "Atmosfer, hava koşulları ve yapay ışık gözlemi etkileyebilir.", "Gözlem aracını araştırma sorusuna göre seç; Güneş’e doğrudan bakma."],
       terms: ['teleskop', 'gözlemevi', 'atmosfer', 'ışık kirliliği'],
@@ -226,57 +82,6 @@
         "Ders kitabının s. 25’teki araştırma örnekleri sağlıkta MR/tomografi/ultrason, dijital termometre ve dayanıklı malzemeleri; enerjide güneş panellerini; ulaşımda GPS’i; iletişimde veri aktarımını; gıdada saklama ve su filtrelerini sayar. Bunlar kitapta uzay çalışmalarından günlük yaşama aktarılan uygulama örnekleridir.",
         "Bu örnekleri “uzay araştırması → geliştirilen ölçüm/malzeme/yazılım → günlük gereksinim” zinciriyle açıkla. Ürünün tam olarak nerede ve hangi amaçla icat edildiği ayrı bir tarihsel sorudur; kitabın örneğini, tek bir icat öyküsü gibi genelleme. Görselde görülen veri ile o veriden çıkarılan kararı da birbirinden ayır."
       ],
-      termDefinitions: [
-        {
-          "term": "Teknoloji aktarımı",
-          "definition": "Bir alanda geliştirilen bilgi veya yöntemin başka bir ihtiyaca uyarlanması.",
-          "connection": "Uzay görevi için geliştirilen ölçüm veya iletişim yöntemleri, ihtiyaçla eşleştirilip uyarlanarak sağlık, tarım ya da ulaşım gibi alanlarda kullanılabilir."
-        },
-        {
-          "term": "Uzaktan algılama",
-          "definition": "Bir yere doğrudan dokunmadan, sensör ve görüntülerle o yer hakkında bilgi toplama.",
-          "connection": "Uydu sensörü yeryüzüne dokunmadan görüntü toplar; farklı tarihli kayıtlar karşılaştırıldığında değişim izlenir, nedenini anlamak için ek kanıt gerekir."
-        },
-        {
-          "term": "GPS",
-          "definition": "Uydulardan alınan sinyalleri kullanarak konum ve zaman belirlemeye yardım eden uydu sistemi.",
-          "connection": "25’teki araştırma örnekleri sağlıkta MR/tomografi/ultrason, dijital termometre ve dayanıklı malzemeleri; enerjide güneş panellerini; ulaşımda GPS’i; iletişimde veri aktarımını; gıdada saklama ve su filtrelerini sayar."
-        },
-        {
-          "term": "Uydu görüntüsü",
-          "definition": "Uydudaki algılayıcıların belirli bir zaman ve bölge için kaydettiği görüntü verisi.",
-          "connection": "Uydu görüntüsü belli bir zaman, konum ve çözünürlüğe ait kayıttır."
-        },
-        {
-          "term": "Güneş paneli",
-          "definition": "Güneş ışığını elektrik enerjisine dönüştüren düzenek.",
-          "connection": "Panel ışığı elektriğe dönüştürerek uydu ya da sondanın araçlarını çalıştırabilir; böylece araç görev süresince enerji sağlar."
-        }
-      ],
-      researchBrief: {
-        "title": "Araştırma sonucu: Uzay teknolojilerinin günlük yaşamdaki örnekleri",
-        "intro": "Kitap, uzay çalışmalarıyla ilişkilendirilen uygulamaları alanlara ayırır. Aşağıdaki örneklerde teknoloji ile karşıladığı ihtiyaç birlikte verilmiştir.",
-        "items": [
-          {
-            "name": "Sağlık ve görüntüleme",
-            "role": "MR, bilgisayarlı tomografi ve ultrason gibi görüntüleme araçları; dijital termometre ve bazı dayanıklı malzemeler kitapta örneklenir."
-          },
-          {
-            "name": "Enerji ve iletişim",
-            "role": "Güneş panelleri elektrik üretir; iletişim sistemleri veri/sinyal aktarır."
-          },
-          {
-            "name": "Konum ve gözlem",
-            "role": "GPS konum bulmaya yardım eder; uydu görüntüsü hava, afet, tarım ve arazi gözlemlerinde kullanılabilir."
-          },
-          {
-            "name": "Malzeme ve yaşam",
-            "role": "Termal battaniye, çizilmeye dayanıklı lens, su filtresi ve uzun süre saklanabilen/pratik gıdalar kitapta verilen diğer örneklerdir."
-          }
-        ],
-        "takeaway": "Bu liste araştırma özeti niteliğindedir; ürünlerin kökeni ve güncel işlevi için ayrı, güvenilir kaynak kontrolü gerekir. “Uzayda kullanıldı” demek, bir ürünün yalnızca uzayda kullanılabileceği anlamına gelmez.",
-        "source": "Kaynak özeti: ders kitabı s. 24–26."
-      },
       points: ["Uydu verileri yeryüzünü gözlemlemeye yardımcı olabilir.", "Görüntü doğru tarih ve bağlamla birlikte yorumlanır.", "Teknoloji, belirli bir ihtiyaca göre seçilir."],
       terms: ['uydu verisi', 'görüntüleme', 'iletişim', 'teknoloji aktarımı'],
       tasks: ['Bir uydu verisinin yararlı olabileceği günlük yaşam alanı seç.', 'Bu alanda hangi veriye ihtiyaç duyulacağını açıkla.', 'Teknolojinin tek başına çözemeyeceği bir sınırlılığı belirt.'],
@@ -292,33 +97,31 @@
         "Kitap, uzay enkazını izleme ağlarından söz eder; çözüm olarak görev sonu planlaması, parçaları izleme/yakalama veya güvenli biçimde yörüngeden çıkarma gibi fikirlerin araştırılmasını ister. Önerilerin uygulanabilirliği, güvenlik, maliyet ve uzun vadeli etkilerle birlikte değerlendirilmelidir.",
         "Dünya görselinde her küçük nokta gerçek ölçekteki boyutu göstermez; çizim temsilîdir. Çalışan uyduyla işlevsiz parçayı ayır, bir önerinin hangi riski azalttığını belirt ve sonucunu ölçülebilir bir ölçütle açıkla. Uzay kirliliği şu an doğrudan yerdeki çöpler gibi görünmese de haberleşme, gözlem ve gelecekteki araştırmaları etkileyebilir."
       ],
-      termDefinitions: [
-        {
-          "term": "Uzay kirliliği",
-          "definition": "Dünya çevresindeki yörüngelerde biriken, insan yapımı işlevsiz cisim ve parçalar sorunu.",
-          "connection": "Uzay kirliliği, görevini tamamlamış veya işlevini yitirmiş yapay uyduların, roket aşamalarının ve yörüngede kalan parçaların oluşturduğu insan kaynaklı atık sorunudur."
-        },
-        {
-          "term": "Uzay enkazı",
-          "definition": "Görevini bitirmiş araçlar, roket parçaları veya çarpışmalarla oluşan küçük cisimler.",
-          "connection": "Kitap, uzay enkazını izleme ağlarından söz eder; çözüm olarak görev sonu planlaması, parçaları izleme/yakalama veya güvenli biçimde yörüngeden çıkarma gibi fikirlerin araştırılmasını ister."
-        },
-        {
-          "term": "Çarpışma riski",
-          "definition": "Yörüngedeki iki cismin birbirine çarparak hasar veya yeni parçalar oluşturma olasılığı.",
-          "connection": "Bu nedenle yörüngedeki nesneleri izlemek ve görevleri çarpışma riskini gözeterek planlamak gerekir."
-        },
-        {
-          "term": "Görev sonu planı",
-          "definition": "Bir uzay aracının görevini tamamladıktan sonra güvenli biçimde nasıl yönetileceğini önceden belirleyen plan.",
-          "connection": "Araç daha fırlatılmadan görev bitince yörüngede nasıl güvenli kalacağı veya uzaklaştırılacağı planlanır; bu, yeni enkaz oluşma riskini azaltmaya yardım eder."
-        },
-        {
-          "term": "İzleme",
-          "definition": "Yörüngedeki cisimlerin konumunu ve hareketini ölçerek kaydetme çalışması.",
-          "connection": "Yörüngedeki cisimlerin konum ve hareketi düzenli ölçülür; izleme verisi yakın geçişleri fark edip çarpışma riskini değerlendirmeyi sağlar."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Uzay araştırmalarının yol açabileceği sorunlar: uzay enkazı",
+        "intro": "Kitabın s. 31’deki performans görevi, uzay çalışmalarının doğurabileceği sorunları belirleyip birine çözüm önermeyi ister. Bu araştırma sonucu, ders kitabında açıklanan uzay enkazı sorununa odaklanır.",
+        "items": [
+          {
+            "name": "Sorun nedir?",
+            "role": "Görevini tamamlamış ya da işlevini yitirmiş uydular, roket aşamaları ve çarpışmalarda kopan parçalar yörüngede kalabilir. Bu insan yapımı parçaların oluşturduğu atık uzay kirliliğidir."
+          },
+          {
+            "name": "Neden önemlidir?",
+            "role": "Yüksek hızla hareket eden küçük bir parça bile çalışan uyduya veya uzay aracına zarar verebilir. Çarpışmalar yeni parçalar oluşturup sonraki görevlerin riskini artırabilir; haberleşme ve gözlem gibi hizmetler aksayabilir."
+          },
+          {
+            "name": "Çözüm yolları",
+            "role": "Yörüngedeki cisimleri izlemek, yeni enkaz oluşumunu azaltacak görev-sonu planları yapmak ve güvenli yakalama ya da yörüngeden çıkarma yöntemleri geliştirmek başlıca yaklaşımlardır. Her öneri güvenlik, uygulanabilirlik ve maliyet açısından değerlendirilmelidir."
+          },
+          {
+            "name": "Araştırma sonucu",
+            "role": "En etkili yaklaşım iki işi birlikte yürütür: var olan parçaları takip edip çarpışmaları önlemeye çalışmak ve yeni araçların görev bittikten sonra enkaz bırakmasını önceden planlamak."
+          }
+        ],
+        "takeaway": "Ders kitabının örneklerinden çıkan sonuç, uzay araştırmalarını durdurmak değil; yörüngedeki atıkları azaltan, görevleri izleyen ve uzun vadeli güvenliği gözeten teknolojiler geliştirmektir.",
+        "source": "Kaynak özeti: ders kitabı s. 30–33; “Uzayda Neler Oluyor?” performans görevi ve uzay kirliliği çözüm örnekleri."
+      },
       points: ["Uzay kirliliği insan yapımı atıklarla ilişkilidir.", "Yüksek hızlı parçalar etkin araçlar için risk oluşturabilir.", "Görev öncesi planlama, izleme ve görev sonu yönetimi birlikte düşünülür."],
       terms: ['uzay kirliliği', 'yörünge', 'çarpışma riski', 'görev sonu planı'],
       tasks: ['Uzay kirliliğinin nasıl oluşabileceğini bir neden–sonuç zinciriyle yaz.', 'İki çözüm önerisini güvenlik ve uygulanabilirlik açısından karşılaştır.', 'Bir önerini seç ve hangi ölçütle başarılı sayılacağını belirt.'],
@@ -333,28 +136,6 @@
         "Bir lambanın ışığı yalnızca yeri aydınlatmaz; yukarı ve yana saçılan bölüm atmosferde dağılarak gökyüzünde parlama oluşturabilir. Işığı aşağı yönlendirmek, sadece ihtiyaç duyulan alanı aydınlatmak ve kullanılmayan ışıkları kapatmak saçılmayı azaltır. Güvenli aydınlatma ile gereksiz parlaklık aynı şey değildir.",
         "Kitap, kent merkezindeki gökyüzü gözlemiyle karanlık/yüksek bölgelerdeki gözlemi karşılaştırır. TUG ve DAG gibi gözlemevlerinin konumu, açık hava ve az çevre ışığı gibi koşulların önemini gösterir. Işık kirliliği yalnızca astronomi için değil, doğal gece-gündüz döngüsüne bağlı canlılar için de çevresel bir etkendir.",
         "Bir fotoğrafta fazla parlak gökyüzü, yıldızların gerçekten yok olduğunu kanıtlamaz; onların ışığının kent parlamasında seçilemediğini gösterir. Gözlem planında güvenliği korurken ışığı doğru yönde ve gerektiği kadar kullan. Çözüm önerini “hangi ışığı, nerede, ne zaman ve ne kadar süreyle?” sorularıyla somutlaştır."
-      ],
-      termDefinitions: [
-        {
-          "term": "Işık kirliliği",
-          "definition": "Yapay ışığın yanlış yönlü, aşırı veya gereksiz zamanlarda kullanılmasıyla oluşan çevre ve gökyüzü sorunu.",
-          "connection": "Işık kirliliği, yapay aydınlatmanın gereğinden fazla kullanılması, yanlış yöne çevrilmesi veya gereksiz zamanda açık kalmasıyla gece gökyüzünün doğal karanlığının bozulmasıdır."
-        },
-        {
-          "term": "Gökyüzü parlaması",
-          "definition": "Yukarı saçılan yapay ışığın gece göğünü aydınlık göstererek soluk yıldızları bastırması.",
-          "connection": "Yukarı yönlenmiş ışık atmosferde saçılarak gece göğünü aydınlatır ve sönük yıldızların görünürlüğünü azaltır."
-        },
-        {
-          "term": "Yapay ışık",
-          "definition": "İnsanların lamba ve benzeri kaynaklarla ürettiği ışık.",
-          "connection": "Lambadan çıkan ışığın yalnızca gereken yere ve zamanda yöneltilmesi, enerji israfını ve gökyüzü parlamasını azaltabilir."
-        },
-        {
-          "term": "Gözlem koşulu",
-          "definition": "Bir gözlemin kalitesini etkileyen hava, ışık, konum ve kullanılan araç özellikleri.",
-          "connection": "Bir gözlemin güvenilirliği yalnızca teleskopa değil, hava durumuna, konuma ve çevredeki ışığa da bağlıdır."
-        }
       ],
       points: ["Yapay ışığın yönü, şiddeti ve süresi önemlidir.", "Gökyüzü parlaması sönük gök cisimlerinin gözlemini zorlaştırır.", "Gereken alanı güvenli ve ölçülü biçimde aydınlat."],
       terms: ['ışık kirliliği', 'yapay ışık', 'gökyüzü gözlemi', 'aydınlatma'],
@@ -371,33 +152,31 @@
         "Kitap Atbaşı, Orion ve Tarantula bulutsularını gerçek gözlem örnekleri olarak tanıtır; yıldız oluşumunu araştırma görevi de “bulutsu, önyıldız ve sonraki aşamalar” arasında bağlantı kurmayı ister. Fotoğrafta görülen renkler, teleskopla toplanan ışığın işlenmiş gösterimi olabilir; her bulutsu gözle aynı renkte görünmez.",
         "Şemada bulutsu → yoğunlaşma → önyıldız → yıldız sırasını izle ve her oka nedenini ekle. Kütle çekimi maddenin bir araya gelmesini sağlar; ısınma ve merkez koşulları sonraki değişimlere katkı verir. Bir bulutsu fotoğrafı oluşum sürecini tek başına kaydetmez; süreç açıklaması gözlem ve bilimsel modellere dayanır."
       ],
-      termDefinitions: [
-        {
-          "term": "Bulutsu",
-          "definition": "Uzayda gaz, toz ve başka maddeler içeren; bazı bölgelerinde yıldızların oluşabildiği yapı.",
-          "connection": "Fotoğrafta görülen renkler, teleskopla toplanan ışığın işlenmiş gösterimi olabilir; her bulutsu gözle aynı renkte görünmez."
-        },
-        {
-          "term": "Kütle çekimi",
-          "definition": "Kütlesi olan cisimlerin birbirini çekmesine yol açan etkileşim.",
-          "connection": "Kütle çekimi maddenin bir araya gelmesini sağlar; ısınma ve merkez koşulları sonraki değişimlere katkı verir."
-        },
-        {
-          "term": "Önyıldız",
-          "definition": "Gaz ve tozun yoğunlaşıp ısınmasıyla oluşan, yıldız hâline gelme sürecindeki erken yapı.",
-          "connection": "Kitap Atbaşı, Orion ve Tarantula bulutsularını gerçek gözlem örnekleri olarak tanıtır; yıldız oluşumunu araştırma görevi de “bulutsu, önyıldız ve sonraki aşamalar” arasında bağlantı kurmayı ister."
-        },
-        {
-          "term": "Çekirdek tepkimesi",
-          "definition": "Yıldızın merkezinde gerçekleşen ve yıldızın enerji üretmesini sağlayan tepkimeler.",
-          "connection": "Önyıldız ısınıp yoğunlaştıkça merkezinde enerji üreten tepkimeler başlayabilir; bu değişim yıldızın oluşum evresinden yıldız evresine geçişini açıklar."
-        },
-        {
-          "term": "Yıldız oluşumu",
-          "definition": "Bulutsu içindeki gaz ve tozun yoğunlaşıp ısınmasıyla yıldızın geliştiği uzun süreç.",
-          "connection": "Kitap Atbaşı, Orion ve Tarantula bulutsularını gerçek gözlem örnekleri olarak tanıtır; yıldız oluşumunu araştırma görevi de “bulutsu, önyıldız ve sonraki aşamalar” arasında bağlantı kurmayı ister."
-        }
-      ],
+      researchBrief: {
+        "label": "KEŞİF NOKTASI · ARAŞTIRMA SONUCU",
+        "title": "Keşif Noktası: Yıldızlar nasıl oluşur?",
+        "intro": "Basılı s. 35’teki Keşif Noktası, yıldızların oluşum basamaklarını kaynaklarla araştırıp ilişkilendirmeyi ister. Araştırmanın sonucu, birbiriyle bağlantılı aşamaları gösterir.",
+        "items": [
+          {
+            "name": "Bulutsu",
+            "role": "Yıldız oluşumunun başlayabildiği bölgeler, uzaydaki gaz ve toz bulutlarıdır. Bu bulutsuların her bölgesi aynı yoğunlukta değildir."
+          },
+          {
+            "name": "Yoğunlaşma",
+            "role": "Bazı bölgelerde kütle çekimi gaz ve tozu bir araya toplar. Madde sıkıştıkça merkezin yoğunluğu ve sıcaklığı yükselir."
+          },
+          {
+            "name": "Önyıldız",
+            "role": "Yoğunlaşan ve ısınan merkezin oluşturduğu erken evreye önyıldız denir. Bu aşama, yıldızın oluşum sürecinde olduğunu gösterir."
+          },
+          {
+            "name": "Yıldızın oluşması",
+            "role": "Merkez yeterince sıcak ve yoğun hâle geldiğinde çekirdekte enerji üreten tepkimeler başlayabilir; yıldız enerji yayar. Başlangıç kütlesi sonraki yaşam yolunu etkiler."
+          }
+        ],
+        "takeaway": "Araştırma sonucu: bulutsu → kütle çekimiyle yoğunlaşma ve ısınma → önyıldız → enerji üretmeye başlayan yıldız. Bu süreç çok uzun sürer; şemalar aşamaları anlaşılır kılmak için sadeleştirir.",
+        "source": "Kaynak özeti: ders kitabı s. 35–36; Keşif Noktası “Yıldızların Oluşumunu Araştırın”."
+      },
       points: ["Bulutsular gaz ve toz içeren uzay yapılarıdır.", "Kütle çekimi maddenin bir araya gelmesine katkı sağlar.", "Önyıldız, yıldız oluşum sürecinin erken evresidir."],
       terms: ['bulutsu', 'kütle çekimi', 'önyıldız', 'yıldız oluşumu'],
       tasks: ['Bulutsu ile önyıldızın süreçteki yerini not et.', 'Aşamaları neden–sonuç oklarıyla sırala.', 'Bir modelin gerçek uzay sürecini hangi yönlerden basitleştirdiğini belirt.'],
@@ -413,33 +192,31 @@
         "Süpernova, büyük kütleli yıldızların yaşamlarının sonuna doğru gerçekleşebilen çok güçlü bir olaydır; gezegenimsi bulutsu ise küçük kütleli yıldızların dış katmanlarıyla ilişkili başka bir evredir. Beyaz cüce, nötron yıldızı ve kara delik aynı şey değildir; farklı koşullarda kalan yıldız çekirdeğiyle ilişkilidir.",
         "Yaşam döngüsü diyagramındaki oklar zaman içindeki evreleri gösterir; bir yıldızın gerçek yaşamı milyonlarca veya milyarlarca yıl sürebilir. Kütle bilgisini ve şemanın temsilî olduğunu not et. Evrim şemasında dallanmalar, başlangıç kütlesi farklı olan yıldızların olası sonlarını birbirinden ayırır."
       ],
-      termDefinitions: [
-        {
-          "term": "Kırmızı dev",
-          "definition": "Güneş benzeri bir yıldızın yaşamının ileri evrelerinde genişleyip yüzeyi soğurken kırmızımsı görünebildiği evre.",
-          "connection": "Kitaptaki modele göre Güneş’in kütlesinin yaklaşık sekiz katından daha az başlangıç kütlesine sahip yıldızlar kırmızı dev evresine ilerleyip gezegenimsi bulutsu oluşturabilir; geride beyaz cüce kalabilir."
-        },
-        {
-          "term": "Kırmızı süperdev",
-          "definition": "Büyük kütleli yıldızların yaşamlarının ileri döneminde ulaşabildiği çok büyük yıldız evresi.",
-          "connection": "Daha büyük kütleli yıldızlar kırmızı süperdev ve süpernova evrelerine ulaşabilir; kalan çekirdek nötron yıldızı veya kara delik olabilir."
-        },
-        {
-          "term": "Süpernova",
-          "definition": "Bazı büyük kütleli yıldızların yaşamlarının sonunda görülen çok güçlü yıldız patlaması.",
-          "connection": "Daha büyük kütleli yıldızlar kırmızı süperdev ve süpernova evrelerine ulaşabilir; kalan çekirdek nötron yıldızı veya kara delik olabilir."
-        },
-        {
-          "term": "Beyaz cüce",
-          "definition": "Küçük/orta kütleli bir yıldızın dış katmanlarını kaybettikten sonra geride kalabilen yoğun yıldız kalıntısı.",
-          "connection": "Beyaz cüce, nötron yıldızı ve kara delik aynı şey değildir; farklı koşullarda kalan yıldız çekirdeğiyle ilişkilidir."
-        },
-        {
-          "term": "Nötron yıldızı / kara delik",
-          "definition": "Bazı büyük kütleli yıldızların son evrelerinde oluşabilen, özellikleri birbirinden farklı yoğun kalıntılar.",
-          "connection": "Daha büyük kütleli yıldızlar kırmızı süperdev ve süpernova evrelerine ulaşabilir; kalan çekirdek nötron yıldızı veya kara delik olabilir."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Yıldızların yaşam süreci: kütleye göre iki yol",
+        "intro": "Basılı s. 37’deki performans görevi yıldızların yaşam evreleri ve kavramlar arasındaki ilişkileri araştırmayı ister. Poster hazırlamak yerine bulguları konu anlatımında sonuç olarak veriyoruz.",
+        "items": [
+          {
+            "name": "Ortak başlangıç",
+            "role": "Yıldızlar gaz ve toz bulutlarının yoğunlaşmasıyla oluşur; önyıldız evresinden sonra yıldız olarak enerji yayarlar. Başlangıç kütlesi, sonraki evreleri belirleyen temel etkenlerden biridir."
+          },
+          {
+            "name": "Güneş benzeri / daha küçük kütleli yol",
+            "role": "Kitaptaki modele göre başlangıç kütlesi Güneş’in yaklaşık sekiz katından az olan yıldızlar ilerleyen dönemde kırmızı deve dönüşebilir; dış katmanları gezegenimsi bulutsu oluştururken geride beyaz cüce kalabilir."
+          },
+          {
+            "name": "Büyük kütleli yol",
+            "role": "Daha büyük kütleli yıldızlar kırmızı süperdev evresine ve ardından süpernovaya ulaşabilir. Kalan çekirdek, koşullara bağlı olarak nötron yıldızı ya da kara delik olabilir."
+          },
+          {
+            "name": "Karşılaştırmanın sonucu",
+            "role": "Her yıldız süpernova olmaz; beyaz cüce, nötron yıldızı ve kara delik aynı son değildir. Yaşam döngüsü şemasındaki dallar, farklı başlangıç kütlelerinin olası sonlarını gösterir."
+          }
+        ],
+        "takeaway": "Yıldızın başlangıç kütlesi yaşam çizgisini etkiler. Şemayı okurken evreleri sırayla takip et, hangi dalın hangi kütle grubuna ait olduğunu belirt ve modeli gerçek zaman ölçeğiyle karıştırma.",
+        "source": "Kaynak özeti: ders kitabı s. 35–43; “Yıldızların Yaşam Süreci Posterim” performans görevi ve yıldız evrimi açıklamaları."
+      },
       points: ["Yıldızın başlangıç kütlesi yaşam yolunu etkiler.", "Daha küçük kütleli yıldızların son yolu büyük kütlelilerden farklıdır.", "Süpernova, büyük kütleli yıldızların son evreleriyle ilişkilidir."],
       terms: ['kırmızı dev', 'beyaz cüce', 'süpernova', 'nötron yıldızı', 'kara delik'],
       tasks: ['Küçük ve büyük kütleli yıldız yollarını iki sütunda karşılaştır.', 'Ortak ve farklı evreleri işaretle.', 'Süreç şemasında belirsiz kalan bir kavramı sözlükten veya güvenilir kaynaktan araştır.'],
@@ -454,33 +231,6 @@
         "Takımyıldız, Dünya’dan bakıldığında belirli bir şekil oluşturuyormuş gibi görünen yıldız örüntüsüdür. O örüntüdeki yıldızlar uzayda birbirine yakın veya aynı uzaklıkta olmak zorunda değildir. Kutup Yıldızı’nı bulmaya yardım eden Büyükayı örneği, yön bulma için gökyüzü desenlerinin nasıl kullanıldığını gösterir.",
         "Işık yılı, ışığın bir yılda aldığı uzaklıktır; zaman değil, mesafe birimidir. Örneğin yakın yıldızlarla aramızdaki uzaklıklar kilometreyle yazıldığında çok büyük sayılara ulaşır; ışık yılı bu uzaklıkları anlatmayı kolaylaştırır. Kitaptaki yıldız büyüklüğü çizimleri de gerçek ölçeğe göre değil, karşılaştırma amacıyla hazırlanmıştır.",
         "Yıldız renklerini sıcaklıkla, takımyıldızı görünür örüntüyle, ışık yılını uzaklıkla eşleştir. Gökyüzünde yan yana görünen iki yıldız için “uzayda komşular” sonucunu hemen çıkarma; gerçek konum bilgisi gerekir. Çizimdeki çizgiler yıldızlar arasında fiziksel bağ bulunduğunu değil, gözlemcinin oluşturduğu deseni gösterir."
-      ],
-      termDefinitions: [
-        {
-          "term": "Yüzey sıcaklığı",
-          "definition": "Bir yıldızın dış katmanlarının ne kadar sıcak olduğuna ilişkin özellik; yıldızın rengiyle ilişkilidir.",
-          "connection": "Yıldızların rengi yüzey sıcaklığı hakkında ipucu verir: mavi-beyaz görünenler daha sıcak, sarı tonlular orta, turuncu-kırmızı tonlular daha soğuk olabilir."
-        },
-        {
-          "term": "Takımyıldız",
-          "definition": "Gökyüzünde belirli bir şekil oluşturuyor gibi görünen yıldızların gözlemsel örüntüsü.",
-          "connection": "Takımyıldız, Dünya’dan bakıldığında belirli bir şekil oluşturuyormuş gibi görünen yıldız örüntüsüdür."
-        },
-        {
-          "term": "Işık yılı",
-          "definition": "Işığın boşlukta bir yılda aldığı uzaklığa dayalı mesafe birimi.",
-          "connection": "Işık yılı, ışığın bir yılda aldığı uzaklıktır; zaman değil, mesafe birimidir."
-        },
-        {
-          "term": "Parlaklık",
-          "definition": "Bir yıldızın ne kadar ışık yaydığı veya Dünya’dan ne kadar parlak göründüğü; uzaklık da görünüşü etkiler.",
-          "connection": "Renk, yıldızın tek özelliği değildir; parlaklık ve uzaklık da gökyüzünde nasıl göründüğünü etkiler."
-        },
-        {
-          "term": "Kutup Yıldızı",
-          "definition": "Kuzey gökyüzünde yön bulmaya yardım eden, gök kutbuna yakın konumdaki yıldız.",
-          "connection": "Kutup Yıldızı’nı bulmaya yardım eden Büyükayı örneği, yön bulma için gökyüzü desenlerinin nasıl kullanıldığını gösterir."
-        }
       ],
       points: ["Yıldız rengi sıcaklık hakkında bilgi verebilir.", "Takımyıldızdaki yıldızlar uzayda aynı uzaklıkta olmak zorunda değildir.", "Işık yılı uzaklık birimidir, zaman birimi değildir."],
       terms: ['yıldız', 'takımyıldız', 'ışık yılı', 'gözlem'],
@@ -497,33 +247,6 @@
         "Kitap yıldız, galaksi ve evren kavramlarını birbirini kapsayan yapılar olarak kavram haritasına taşır. Hubble’ın galaksiler üzerine çalışmaları da tarihsel bağlamda anılır. Gök cisimleri arasındaki gerçek uzaklıklar, ders kitabındaki görseldeki aralıklardan çok daha büyüktür; bu görseller kavram ilişkisini anlatmak için küçültülmüştür.",
         "Kavram haritasında yalnızca isimleri sıralama; “içinde bulunur”, “oluşur” veya “kapsar” gibi ilişki sözcüklerini okların üzerine yaz. Dünya’nın bir şehirde/ülkede bulunduğu konumla Güneş Sistemi’nin galaksideki konumu arasında ölçek benzetmesi kurulabilir, ancak benzetmenin gerçek büyüklükleri bire bir göstermediğini belirt."
       ],
-      termDefinitions: [
-        {
-          "term": "Galaksi (gök ada)",
-          "definition": "Yıldızlar, yıldız sistemleri, gaz ve toz gibi maddelerin kütle çekimiyle bir arada bulunduğu dev yapı.",
-          "connection": "Galaksi (gök ada), çok sayıda yıldız ve yıldız sistemi ile gaz ve toz gibi maddelerin kütle çekimiyle bir arada bulunduğu büyük yapıdır."
-        },
-        {
-          "term": "Samanyolu",
-          "definition": "Güneş Sistemi’nin bulunduğu sarmal galaksi.",
-          "connection": "Güneş Sistemi, Dünya ve Güneş’le birlikte Samanyolu Galaksisi’nin içindedir; kitap bunu Avcı (Orion) koluyla ilişkilendirir."
-        },
-        {
-          "term": "Güneş Sistemi",
-          "definition": "Güneş ve onun çevresinde dolanan gezegenler ile diğer gök cisimlerinin oluşturduğu sistem.",
-          "connection": "Güneş Sistemi, Dünya ve Güneş’le birlikte Samanyolu Galaksisi’nin içindedir; kitap bunu Avcı (Orion) koluyla ilişkilendirir."
-        },
-        {
-          "term": "Andromeda",
-          "definition": "Samanyolu’na yakın büyük galaksilerden biri.",
-          "connection": "Andromeda, Samanyolu’na yakın büyük galaksilerden biridir."
-        },
-        {
-          "term": "Ölçek",
-          "definition": "Bir nesnenin veya yapının boyutunun, uzaklığının ya da kapsamının başka birine göre karşılaştırılması.",
-          "connection": "Dünya’nın bir şehirde/ülkede bulunduğu konumla Güneş Sistemi’nin galaksideki konumu arasında ölçek benzetmesi kurulabilir, ancak benzetmenin gerçek büyüklükleri bire bir göstermediğini belirt."
-        }
-      ],
       points: ["Samanyolu, Güneş Sistemi’nin bulunduğu galaksidir.", "Galaksiler farklı biçim ve yapılara sahip olabilir.", "Evren, galaksileri de kapsayan daha geniş ölçektir."],
       terms: ['gök cismi', 'galaksi', 'Samanyolu', 'evren'],
       tasks: ['Yıldız, gezegen, galaksi ve evren kavramlarını kartlara yaz.', 'En kapsayıcı kavramdan daha özel olana doğru oklarla ilişki kur.', 'Kavram haritandaki bir oku kısa bir cümleyle açıkla.'],
@@ -538,28 +261,6 @@
         "Yıldız yaşamı başlangıç kütlesine göre farklı dallara ayrılır; uzay kirliliği ise insanın yörünge kullanımıyla ortaya çıkan ve planlamayla azaltılabilecek bir sorundur. Bilimsel model, gerçek sistemi sadeleştirerek temel ilişkileri gösterir; modelin hangi özellikleri dışarıda bıraktığını da bilmek gerekir.",
         "Kitaptaki görevler uzay aracı karşılaştırma, yıldız yaşamı posteri, galaksi kavram haritası ve uzay kirliliğine çözüm raporunu kapsar. Teknoloji araştırmasının sonucu; araç adı, görevi, topladığı veri ve günlük yaşamla ilişkisi birlikte yazıldığında daha açıklayıcı olur. Kaynak ve kanıt belirtilmesi, bilginin yeniden kontrol edilebilmesini sağlar.",
         "Bir tekrar görselini incelerken her panelin hangi kavramı temsil ettiğini ayrı ayrı söyle. Galaksi çizimi uzaklığı, yıldız döngüsü evreleri, enkaz görseli ise yörünge riskini sadeleştirir; hiçbir çizim uzayın gerçek ölçekte fotoğrafı değildir. İddian, gözlemin ve çıkarımın arasındaki ayrımı koru."
-      ],
-      termDefinitions: [
-        {
-          "term": "Bilimsel model",
-          "definition": "Gerçek bir sistemi veya süreci anlamaya yardım eden, seçilmiş özellikleri sadeleştirerek gösteren açıklama/temsil.",
-          "connection": "Bilimsel model, gerçek sistemi sadeleştirerek temel ilişkileri gösterir; modelin hangi özellikleri dışarıda bıraktığını da bilmek gerekir."
-        },
-        {
-          "term": "Kanıt",
-          "definition": "Bir açıklamayı desteklemek veya sınamak için kullanılan gözlem, ölçüm ya da güvenilir bilgi.",
-          "connection": "Her kavramı bir araştırma sorusu ve kanıt türüyle ilişkilendirmek tekrar etmeyi anlamlı kılar."
-        },
-        {
-          "term": "Temsilî görsel",
-          "definition": "Bir kavramı anlatmak için hazırlanmış çizim; gerçek boyut ve görünüşü bire bir göstermeyebilir.",
-          "connection": "Görsel bir süreci anlaşılır kılmak için seçilmiş özellikleri gösterir; boyutları ve uzaklıkları gerçek ölçekle karşılaştırmadan kesin ölçü gibi kullanma."
-        },
-        {
-          "term": "Kaynak",
-          "definition": "Bilginin nereden alındığını gösteren kitap, araştırma, kurum veya güvenilir yayın.",
-          "connection": "Kaynak ve kanıt belirtilmesi, bilginin yeniden kontrol edilebilmesini sağlar."
-        }
       ],
       points: ["Araçları görevleriyle eşleştir.", "Yıldız yaşam yollarını başlangıç kütlesine göre karşılaştır.", "Modelin sınırını ve kullandığın kaynağı belirt."],
       terms: ['uzay teknolojisi', 'yıldız yaşam döngüsü', 'galaksi', 'kanıt'],
@@ -576,33 +277,6 @@
         "Kitabın sınıf öyküsünde öğretmen masayı iterek hareket ettirir, kalemleri yerden kaldırır ve bilgisayar çantasını taşır. Her sahnede aynı karar verilmez: masada yatay hareket, kalemleri kaldırmada yukarı hareket vardır; çantayı yatay taşırken destek kuvvetinin yönüyle hareket yönünü ayrıca karşılaştırmak gerekir.",
         "Bir örneği değerlendirirken kuvvet oku ile yer değiştirme okunu çiz ve ikisinin yönünü karşılaştır. Duvarı itmek, duvar hareket etmediğinde fiziksel iş değildir; buna rağmen kişi enerji harcayabilir ve yorulabilir. “Fiziksel iş yok” sonucu, hiçbir kuvvet uygulanmadığı anlamına gelmez."
       ],
-      termDefinitions: [
-        {
-          "term": "Kuvvet",
-          "definition": "Cisimlerin hareketini veya şeklini değiştirebilen itme ya da çekme etkisi.",
-          "connection": "Kuvvet uygulanıp cisim hiç hareket etmiyorsa iş yapılmış sayılmaz; kuvvet ile hareket birbirine dik doğrultudaysa kuvvetin hareket yönünde etkisi yoktur."
-        },
-        {
-          "term": "Yer değiştirme",
-          "definition": "Bir cismin başlangıç konumundan son konumuna yönlü konum değişimi.",
-          "connection": "Günlük dilde “iş yapmak” çaba harcamak anlamına gelir; fizikte iş, bir cisme kuvvet uygulanması ve cismin kuvvet doğrultusunda yer değiştirmesiyle tanımlanır."
-        },
-        {
-          "term": "Fiziksel iş",
-          "definition": "Bir kuvvetin cismi kuvvet doğrultusunda yer değiştirmesiyle gerçekleşen fiziksel etki.",
-          "connection": "Duvarı itmek, duvar hareket etmediğinde fiziksel iş değildir; buna rağmen kişi enerji harcayabilir ve yorulabilir."
-        },
-        {
-          "term": "Doğrultu",
-          "definition": "Bir hareketin veya kuvvetin üzerinde bulunduğu çizgi; yön, bu çizgi üzerindeki hangi tarafı gösterir.",
-          "connection": "Kuvvet uygulanıp cisim hiç hareket etmiyorsa iş yapılmış sayılmaz; kuvvet ile hareket birbirine dik doğrultudaysa kuvvetin hareket yönünde etkisi yoktur."
-        },
-        {
-          "term": "Joule (J)",
-          "definition": "Fiziksel iş ve enerji için kullanılan ölçü birimi.",
-          "connection": "Kuvvetin cismi kendi doğrultusunda ne kadar yer değiştirdiğini hesaplarken işin büyüklüğü joule ile ifade edilir; enerji de aynı birimle ölçülür."
-        }
-      ],
       points: ["Fiziksel iş için kuvvet uygulanması gerekir.", "Cisim kuvvet doğrultusunda yer değiştirmelidir.", "Günlük “çaba” ile fiziksel iş kavramı aynı değildir."],
       terms: ['kuvvet', 'yer değiştirme', 'fiziksel iş', 'doğrultu'],
       tasks: ['Günlük hayattan kuvvet uygulanan üç durum düşün.', 'Her durumda cisimde yer değiştirme olup olmadığını kaydet.', 'Fiziksel iş ölçütünü kullanarak sınıflandırmanı gerekçelendir.'],
@@ -617,33 +291,6 @@
         "Bir kitabı yukarı kaldırırken uygulanan kuvvet ve yer değiştirme aynı yöndedir; kitap yükselir. Yerde duran duvarı itmek kuvvet uygulamasıdır ama duvarın yer değiştirmesi yoksa iş yapılmaz. Yatay yolda yük taşırken kuvvetin hangi cisme, hangi yönde uygulandığını açıklamak gerekir; taşıyan kişinin yorulması fiziksel tanımın yerine geçmez.",
         "Kitap, çağrı merkezi çalışanının bilgisayar başındaki çalışması ile duvar örerken tuğlayı hareket ettirme örneğini karşılaştırır. Fizikte değerlendirme kişinin meslek ya da çaba düzeyine göre değil, kuvvet ve yer değiştirmenin ilişkisine göre yapılır. Bir cisme daha büyük kuvvet uygulanıp daha fazla yol aldırılırsa yapılan iş de artabilir.",
         "İşin büyüklüğünü karşılaştırırken cisme etki eden kuvveti ve kuvvet doğrultusunda alınan yolu aynı tabloya yaz. Birimler newton ve metredir; iş birimi joule’dür. Şemadaki okları izlemeden “hareket etti, demek iş yapıldı” deme; hareketin kuvvete göre yönü de önemlidir."
-      ],
-      termDefinitions: [
-        {
-          "term": "Net kuvvet",
-          "definition": "Bir cisme etki eden kuvvetlerin birlikte oluşturduğu toplam etki.",
-          "connection": "Cisme etki eden kuvvetler birlikte değerlendirilir; net kuvvet hareketin değişimini etkilerken fiziksel iş için ayrıca kuvvet doğrultusunda yer değiştirme gerekir."
-        },
-        {
-          "term": "Kuvvet doğrultusu",
-          "definition": "Kuvvetin etkidiği çizgi; cismin yer değiştirmesiyle karşılaştırılır.",
-          "connection": "İşin büyüklüğünü karşılaştırırken cisme etki eden kuvveti ve kuvvet doğrultusunda alınan yolu aynı tabloya yaz."
-        },
-        {
-          "term": "Fiziksel iş",
-          "definition": "Kuvvet etkisiyle kuvvet doğrultusunda gerçekleşen yer değiştirme.",
-          "connection": "Fiziksel iş için kuvvetle birlikte yer değiştirme gerekir; ayrıca yer değiştirmenin yönü kuvvetin uygulandığı yönle karşılaştırılır."
-        },
-        {
-          "term": "Newton (N)",
-          "definition": "Kuvvetin ölçü birimi.",
-          "connection": "Kuvveti ölçerken newton kullanılır; iş ve enerji ise joule ile ifade edilir, bu birimler birbirinin yerine geçmez."
-        },
-        {
-          "term": "Joule (J)",
-          "definition": "İşin ve enerjinin ölçü birimi.",
-          "connection": "Bir cisme kuvvet uygulanıp kuvvet doğrultusunda yer değiştirme olduğunda yapılan fiziksel iş joule cinsinden değerlendirilir."
-        }
       ],
       points: ["Kuvvet ile yer değiştirmenin yönünü karşılaştır.", "Kuvvet uygulanması tek başına fiziksel iş anlamına gelmez.", "Kararını günlük çabaya değil fiziksel ölçüte dayandır."],
       terms: ['kuvvet yönü', 'yer değiştirme yönü', 'iş', 'karşılaştırma'],
@@ -660,33 +307,6 @@
         "Kitapta koşan çocuklar, yarış arabası, barajda biriken su ve denizde ilerleyen tekne gibi örnekler bulunur. Hareket eden çocuk/araç/tekne kinetik enerjiyle, yüksekte tutulan su ise çekim potansiyel enerjisiyle ilişkilidir. Bir örnek bazen birden fazla enerji türü taşıyabilir; soruda hangi enerjiye bakıldığı açık olmalıdır.",
         "Kinetik enerji yalnızca hareket ederken anlam kazanır. Duran bir arabanın kinetik enerjisi yoktur; fakat yüksek bir konumdaysa potansiyel enerjisi olabilir. Görsellerden çıkarım yaparken kütle ve hız hakkında verilen bilgileri ara; sadece cismin büyük görünmesi veya fotoğrafta hızlıymış gibi görünmesi ölçüm değildir."
       ],
-      termDefinitions: [
-        {
-          "term": "Enerji",
-          "definition": "İş yapabilme veya değişim oluşturabilme yeteneği olarak tanımlanan fiziksel büyüklük.",
-          "connection": "Hareket hâlindeki cisimler kinetik enerjiye sahiptir; hareket etmeyen bir cisim de konumundan veya esnekliğinden dolayı potansiyel enerji depolayabilir."
-        },
-        {
-          "term": "Kinetik enerji",
-          "definition": "Bir cismin hareketinden dolayı sahip olduğu enerji.",
-          "connection": "Hareket hâlindeki cisimler kinetik enerjiye sahiptir; hareket etmeyen bir cisim de konumundan veya esnekliğinden dolayı potansiyel enerji depolayabilir."
-        },
-        {
-          "term": "Kütle",
-          "definition": "Bir cisimdeki madde miktarını gösteren özellik.",
-          "connection": "Görsellerden çıkarım yaparken kütle ve hız hakkında verilen bilgileri ara; sadece cismin büyük görünmesi veya fotoğrafta hızlıymış gibi görünmesi ölçüm değildir."
-        },
-        {
-          "term": "Hız",
-          "definition": "Bir cismin hareketinin süratini ve yönünü belirten büyüklük.",
-          "connection": "Görsellerden çıkarım yaparken kütle ve hız hakkında verilen bilgileri ara; sadece cismin büyük görünmesi veya fotoğrafta hızlıymış gibi görünmesi ölçüm değildir."
-        },
-        {
-          "term": "Adil karşılaştırma",
-          "definition": "Bir etkene bakarken diğer önemli değişkenleri aynı tutarak yapılan karşılaştırma.",
-          "connection": "İki cismin kinetik enerjisini karşılaştırırken kütle etkisini inceliyorsan hızı, hız etkisini inceliyorsan kütleyi sabit tut; böylece hangi değişkenin etkili olduğu anlaşılır."
-        }
-      ],
       points: ["Hareketli cisimler kinetik enerjiye sahiptir.", "Kütle ve hız kinetik enerji karşılaştırmasını etkiler.", "Adil karşılaştırmada diğer değişkenler sabit tutulur."],
       terms: ['enerji', 'kinetik enerji', 'kütle', 'hız'],
       tasks: ['Farklı hızlarla hareket eden iki nesne örneği kur.', 'Kütle etkisini incelemek için sabit tutacağın değişkeni belirt.', 'Gözlem sonucunu bir karşılaştırma cümlesiyle yaz.'],
@@ -701,33 +321,6 @@
         "Esnek bir cisim gerildiğinde veya sıkıştırıldığında, eski şekline dönme eğilimi nedeniyle enerji depolayabilir. Yayın sıkıştırılması ya da lastiğin gerilmesi bunun örneğidir. Serbest bırakıldığında depolanan enerji cismin hareket etmesine veya başka bir değişime yol açabilir.",
         "Kitapta barajdaki su, yüksek bir konum, yay ve gerilmiş lastik gibi örnekler karşılaştırılır. Barajda yükseltilmiş su çekim potansiyel enerjisiyle, sıkıştırılmış yay esneklik potansiyel enerjisiyle ilişkilidir. Bu iki türün ortak yanı enerji depolamasıdır; kaynağı ve değişkenleri farklıdır.",
         "Bir cismin yüksekliğini veya ağırlığını değiştirerek çekim potansiyel enerjisini karşılaştır; esnek cisimde ise gerilme/sıkışma miktarını incele. Yükseklik arttı diye her durumda enerji türü yalnızca potansiyel olmaz: cisim hareket ediyorsa kinetik enerji de bulunabilir. Model ve çizimde varsayılan koşulları belirt."
-      ],
-      termDefinitions: [
-        {
-          "term": "Potansiyel enerji",
-          "definition": "Cismin konumundan veya durumundan dolayı depoladığı kabul edilen enerji.",
-          "connection": "Bir cismin yüksekliğini veya ağırlığını değiştirerek çekim potansiyel enerjisini karşılaştır; esnek cisimde ise gerilme/sıkışma miktarını incele."
-        },
-        {
-          "term": "Çekim potansiyel enerjisi",
-          "definition": "Cismin yer çekimine göre konumu ve ağırlığıyla ilişkili enerji.",
-          "connection": "Bir cismin yüksekliğini veya ağırlığını değiştirerek çekim potansiyel enerjisini karşılaştır; esnek cisimde ise gerilme/sıkışma miktarını incele."
-        },
-        {
-          "term": "Esneklik potansiyel enerjisi",
-          "definition": "Gerilmiş ya da sıkışmış esnek cismin depolayabildiği enerji.",
-          "connection": "Barajda yükseltilmiş su çekim potansiyel enerjisiyle, sıkıştırılmış yay esneklik potansiyel enerjisiyle ilişkilidir."
-        },
-        {
-          "term": "Esnek cisim",
-          "definition": "Kuvvet kalktığında eski şekline dönme eğilimi gösteren cisim.",
-          "connection": "Bir cismin yüksekliğini veya ağırlığını değiştirerek çekim potansiyel enerjisini karşılaştır; esnek cisimde ise gerilme/sıkışma miktarını incele."
-        },
-        {
-          "term": "Ağırlık",
-          "definition": "Yer çekiminin bir cisme uyguladığı kuvvet.",
-          "connection": "Ağırlık yer çekiminin cisme uyguladığı kuvvettir; çekim potansiyel enerjisini karşılaştırırken yükseklikle birlikte dikkate alınır."
-        }
       ],
       points: ["Çekim potansiyel enerjisi kütle ve yükseklikle ilişkilidir.", "Gerilen veya sıkışan esnek cisim enerji depolayabilir.", "Farklı potansiyel enerji türlerinin dayandığı durumlar farklıdır."],
       terms: ['potansiyel enerji', 'çekim', 'yükseklik', 'esneklik'],
@@ -744,33 +337,6 @@
         "Kitap öğrencilere salıncak öyküsü verir ve sarkaç, basketbol topu, maket araba, yay ve eğik düzlemle gözlem yapmalarını önerir. Her düzende başlangıç, en alt ve en üst gibi konumlar belirlenir; kinetik ve potansiyel enerji karşılaştırılır. Sürtünmenin ihmal edilip edilmediği sonucu etkiler.",
         "Enerji grafiğinde bir tür artarken diğeri azalabilir; bu, toplam enerjinin kaybolduğu anlamına gelmez. Gerçek salıncak zamanla durur çünkü sürtünme ve hava direnci hareket enerjisinin bir bölümünü ısı ve ses gibi biçimlere aktarır. İdeal modelde bu etkiler bazen özellikle yok sayılır."
       ],
-      termDefinitions: [
-        {
-          "term": "Enerji dönüşümü",
-          "definition": "Enerjinin bir türden başka bir türe geçmesi.",
-          "connection": "Enerji dönüşümü, bir enerji türünün başka bir türe dönüşmesidir."
-        },
-        {
-          "term": "Salınım",
-          "definition": "Bir cismin denge konumu çevresinde ileri-geri hareketi.",
-          "connection": "Sarkaç bir uçtan aşağı inerken hızlanır; alçak noktada kinetik enerjisi büyür, yükselirken enerjinin bir bölümü yeniden çekim potansiyel enerjisine dönüşür."
-        },
-        {
-          "term": "Sarkaç",
-          "definition": "Bir ip veya çubuk ucuna asılı cismin salınım hareketi yaptığı düzenek.",
-          "connection": "Salıncak veya sarkaç yukarıdayken yüksekliği ve çekim potansiyel enerjisi daha fazla, hareketi yavaş olabilir; aşağı inerken hızlanır ve kinetik enerjisi artabilir."
-        },
-        {
-          "term": "Kinetik enerji",
-          "definition": "Cismin hareketiyle ilişkili enerji.",
-          "connection": "Salıncak veya sarkaç yukarıdayken yüksekliği ve çekim potansiyel enerjisi daha fazla, hareketi yavaş olabilir; aşağı inerken hızlanır ve kinetik enerjisi artabilir."
-        },
-        {
-          "term": "Çekim potansiyel enerjisi",
-          "definition": "Cismin yer çekimine göre yüksekliği ve ağırlığıyla ilişkili enerji.",
-          "connection": "Salıncak veya sarkaç yukarıdayken yüksekliği ve çekim potansiyel enerjisi daha fazla, hareketi yavaş olabilir; aşağı inerken hızlanır ve kinetik enerjisi artabilir."
-        }
-      ],
       points: ["Yukarı çıkarken kinetik enerji potansiyel enerjiye dönüşebilir.", "Aşağı inerken potansiyel enerji kinetik enerjiye dönüşebilir.", "Sürtünme enerji dönüşümünü etkileyebilir."],
       terms: ['enerji dönüşümü', 'kinetik enerji', 'çekim potansiyel enerjisi', 'salıncak'],
       tasks: ['Bir salıncağın en üst ve en alt konumlarını karşılaştır.', 'Hangi enerji türünün arttığını ve azaldığını oklarla göster.', 'Modelde sürtünme varsa sonuçta ne fark edebileceğini belirt.'],
@@ -785,33 +351,6 @@
         "Sürtünmesiz bir modelde top yokuş aşağı inerken çekim potansiyel enerjisi azalır, kinetik enerjisi artar; yukarı çıkarken bunun tersi görülebilir. Sürtünme varsa mekanik enerjinin bir bölümü ısıya, bazen sese dönüşür. Topun yavaşlaması hareket enerjisinin başka türlere aktarılmasıyla açıklanır.",
         "Kitap eğik düzlem, sarkaç, basketbol topu ve yaylı araba deneyleriyle bu değişimleri karşılaştırır; bazı yönergelerde sürtünme kuvvetinin ihmal edilmesini özellikle söyler. Bu, öğrencinin ideal koşulla gerçek gözlem arasındaki farkı görmesi içindir. Ölçüm yapılırken sistemin nerede başlayıp nerede bittiği açık olmalıdır.",
         "Enerji grafiğinde yalnızca kinetik ve potansiyel sütunlara bakarsan, sürtünmede ortaya çıkan ısıyı gözden kaçırabilirsin. Model varsayımlarını, ölçüm sınırlarını ve çevreye aktarılan enerjiyi yaz. Enerji tür değiştirir; toplamı izlemek için sisteme ve çevresine ilişkin tüm dönüşümleri hesaba katmak gerekir."
-      ],
-      termDefinitions: [
-        {
-          "term": "Enerjinin korunumu",
-          "definition": "Enerjinin yoktan var olmayıp yok olmaması; tür değiştirmesi veya aktarılması ilkesi.",
-          "connection": "Enerjinin korunumu, enerjinin yoktan var olmadığı ve var olan enerjinin bütünüyle yok olmadığı ilkesidir."
-        },
-        {
-          "term": "Sürtünme",
-          "definition": "Temas eden yüzeylerin göreli hareketine karşı koyan etki.",
-          "connection": "Sürtünmesiz bir modelde top yokuş aşağı inerken çekim potansiyel enerjisi azalır, kinetik enerjisi artar; yukarı çıkarken bunun tersi görülebilir."
-        },
-        {
-          "term": "Mekanik enerji",
-          "definition": "Hareket enerjisi ile konumdan kaynaklanan potansiyel enerjinin toplamı olarak incelenen enerji.",
-          "connection": "Sürtünme varsa mekanik enerjinin bir bölümü ısıya, bazen sese dönüşür."
-        },
-        {
-          "term": "Sistem",
-          "definition": "İncelenmek üzere sınırları belirlenen cisim veya cisimler grubu.",
-          "connection": "Enerji tür değiştirir; toplamı izlemek için sisteme ve çevresine ilişkin tüm dönüşümleri hesaba katmak gerekir."
-        },
-        {
-          "term": "Isı aktarımı",
-          "definition": "Sıcaklık farkıyla enerjinin bir cisimden ya da ortamdan diğerine geçmesi.",
-          "connection": "Sürtünme mekanik enerjinin bir bölümünü iç enerjiye dönüştürür; bu enerji daha sıcak temas yüzeyinden çevreye aktarılabilir."
-        }
       ],
       points: ["Enerji tür değiştirebilir veya sistemle çevre arasında aktarılabilir.", "Sürtünme mekanik enerjinin bir bölümünü ısı ve sese dönüştürebilir.", "Model varsayımları açıkça belirtilmelidir."],
       terms: ['enerjinin korunumu', 'sürtünme', 'ısı enerjisi', 'ses enerjisi'],
@@ -828,33 +367,6 @@
         "Kitabın kaykay yarım borusu, sarkaç, top, yay ve eğik düzlem örnekleri bu ilişkileri farklı durumlarda tekrar ettirir. Her soruda cisme uygulanan kuvveti, hareket yönünü, hızı, yüksekliği ve sürtünme varsayımını sırayla belirlemek çözümün dayanağını kurar.",
         "Bir açıklama oluştururken önce gözlenen hareketi yaz, sonra enerji türlerini ve olası dönüşümleri ilişkilendir. Grafik veya çizimdeki renkler yalnızca temsil anahtarıdır; kitap görseli gerçek ölçekte enerji miktarını ölçmez. Başlangıç ve son durumları aynı ölçütle karşılaştır, eksik değişken varsa bunu belirt."
       ],
-      termDefinitions: [
-        {
-          "term": "İş",
-          "definition": "Kuvvetin cismi kuvvet doğrultusunda yer değiştirmesiyle yapılan fiziksel etki.",
-          "connection": "Fizikte iş, yalnızca çaba harcamak değil; kuvvetin cismi kendi doğrultusunda yer değiştirmesiyle oluşan enerji aktarımıdır."
-        },
-        {
-          "term": "Kinetik enerji",
-          "definition": "Hareket hâlindeki cismin hareketinden kaynaklanan enerji.",
-          "connection": "Fiziksel iş için kuvvet ve kuvvet doğrultusunda yer değiştirme gerekir; kinetik enerji hareketle, potansiyel enerji ise konum veya esneklikle ilişkilidir."
-        },
-        {
-          "term": "Potansiyel enerji",
-          "definition": "Konum veya esneklik gibi durumlara bağlı depolanmış enerji.",
-          "connection": "Fiziksel iş için kuvvet ve kuvvet doğrultusunda yer değiştirme gerekir; kinetik enerji hareketle, potansiyel enerji ise konum veya esneklikle ilişkilidir."
-        },
-        {
-          "term": "Enerji dönüşümü",
-          "definition": "Enerjinin bir biçimden başka bir biçime dönüşmesi.",
-          "connection": "Yokuş aşağı inerken enerji dönüşümü farklı yönde görünür."
-        },
-        {
-          "term": "Sürtünme kuvveti",
-          "definition": "Temas yüzeylerindeki harekete karşı koyarak hareketi ve enerji aktarımını etkileyen kuvvet.",
-          "connection": "Sürtünme hareketi yavaşlatabilir ve mekanik enerjinin bir bölümünün ısıya ya da sese dönüşmesine yol açabilir."
-        }
-      ],
       points: ["Fiziksel iş, kuvvet ve yer değiştirme ölçütleriyle incelenir.", "Kinetik enerji hareketle; potansiyel enerji konum veya esneklikle ilişkilidir.", "Sürtünme ve çevreyle enerji aktarımı açıklamaya eklenmelidir."],
       terms: ['iş', 'kinetik enerji', 'potansiyel enerji', 'enerji dönüşümü'],
       tasks: ['Ünite kavramlarını bir örnek üzerinden tekrar et.', 'Kendi enerji dönüşüm şemanı hazırla.', 'Yanıtlarını konu özetiyle karşılaştır ve eksik kavramı düzelt.'],
@@ -869,33 +381,6 @@
         "Besinler ağızdan alınır ve sindirim kanalında ilerler. Dişlerin çiğnemesi fiziksel parçalanmayı başlatır; tükürükteki enzimler bazı besinlerin kimyasal sindirimine katkı verir. Yutma, mide hareketleri, bağırsaklarda sindirim ve emilim farklı basamaklardır; tek bir organ bütün görevleri üstlenmez.",
         "Kitap Burçak’ın elmayı ısırıp yutmasıyla besinin vücudundaki yolunu sorar. Bu öykü, ağızdan başlayıp yutak, yemek borusu, mide ve bağırsaklara uzanan yolu incelemek için giriş sağlar. Sindirilemeyen kalıntılar sonunda vücuttan uzaklaştırılır; sindirilmiş besinlerin yapı taşları ise hücrelere taşınabilir.",
         "Besin yolunu haritada gösterirken sindirim kanalı ile yardımcı organları ayır. Sindirim, besinleri parçalama; emilim, sindirilmiş maddelerin kana geçmesi; boşaltım ise vücuttaki bazı atıkların uzaklaştırılmasıdır. Bunlar birbiriyle bağlantılı olsa da farklı süreçlerdir. Modelinde besin akışını oklarla, yardımcı organları ayrı göster."
-      ],
-      termDefinitions: [
-        {
-          "term": "Sindirim",
-          "definition": "Besinlerin hücrelerin kullanabileceği küçük molekül ve yapı taşlarına ayrılması süreci.",
-          "connection": "Büyük besin parçaları hücrelere doğrudan geçemez; sindirim süreci onları daha küçük hâle getirir, ardından bazı yapı taşları kana emilir."
-        },
-        {
-          "term": "Sindirim kanalı",
-          "definition": "Besinlerin ağızdan girip sindirim boyunca ilerlediği organlar dizisi.",
-          "connection": "Besin yolunu haritada gösterirken sindirim kanalı ile yardımcı organları ayır."
-        },
-        {
-          "term": "Besin",
-          "definition": "Canlının enerji ve yapı gereksinimleri için aldığı madde.",
-          "connection": "Büyük besin parçaları hücrelere doğrudan geçemez; sindirim süreci onları daha küçük hâle getirir, ardından bazı yapı taşları kana emilir."
-        },
-        {
-          "term": "Emilim",
-          "definition": "Sindirilmiş küçük maddelerin bağırsaktan kana geçmesi.",
-          "connection": "Sindirim, besinleri parçalama; emilim, sindirilmiş maddelerin kana geçmesi; boşaltım ise vücuttaki bazı atıkların uzaklaştırılmasıdır."
-        },
-        {
-          "term": "Yardımcı organ",
-          "definition": "Besinlerin içinden geçmediği hâlde salgı veya başka katkıyla sindirime yardım eden organ.",
-          "connection": "Besin yolunu haritada gösterirken sindirim kanalı ile yardımcı organları ayır."
-        }
       ],
       points: ["Sindirim besinleri küçük yapı taşlarına ayırır.", "Sindirim kanalındaki organlar farklı görevler üstlenir.", "Sindirim ve emilim birbirinden ayrı süreçlerdir."],
       terms: ['sindirim', 'besin', 'sindirim kanalı', 'organ'],
@@ -912,33 +397,35 @@
         "Karaciğer ve pankreas sindirime yardımcı organlardır; salgıları sindirime katkı verir ancak besinler bu organların içinden geçmez. Kitabın s. 95’teki büyük diyagramı, kanal üzerindeki organlarla yardımcı organları birlikte gösterir. Poster veya model hazırlarken bu iki grubu farklı renk/etiketle ayırmak yararlıdır.",
         "Şemayı izlerken “besin nereden geçiyor?”, “nerede parçalanıyor?” ve “nerede kana geçiyor?” sorularını ayrı sor. Yemek borusunda besin taşınır; sindirim burada gerçekleşmez. Karaciğer veya pankreası besin yolu üzerinde bir durak gibi çizmek, yapı ile işlevi karıştırır."
       ],
-      termDefinitions: [
-        {
-          "term": "Yutak",
-          "definition": "Ağızdan gelen besin ve havanın ilgili yollarına geçişini sağlayan ortak bölge.",
-          "connection": "Sindirim kanalındaki besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüs şeklindedir."
-        },
-        {
-          "term": "Yemek borusu",
-          "definition": "Yutulan besinleri kas hareketleriyle mideye taşıyan kanal.",
-          "connection": "Sindirim kanalındaki besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüs şeklindedir."
-        },
-        {
-          "term": "Mide",
-          "definition": "Besinleri kas hareketleriyle karıştıran ve mide öz suyuyla sindirime katkı veren organ.",
-          "connection": "Sindirim kanalındaki besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüs şeklindedir."
-        },
-        {
-          "term": "İnce bağırsak",
-          "definition": "Sindirim işlemlerinin sürdüğü/tamamlandığı ve sindirilmiş maddelerin kana emildiği organ.",
-          "connection": "İnce bağırsakta sindirim tamamlanır ve yapı taşlarının önemli bölümü kana emilir."
-        },
-        {
-          "term": "Karaciğer ve pankreas",
-          "definition": "Salgılarıyla sindirime katkı sağlayan yardımcı organlar; besinler içlerinden geçmez.",
-          "connection": "Karaciğer ve pankreas sindirime yardımcı organlardır; salgıları sindirime katkı verir ancak besinler bu organların içinden geçmez."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Sindirim sistemi organları: görev paylaşımı",
+        "intro": "Basılı s. 94’teki “Sindirim Sistemini Tanıyalım” performans görevi organların görevlerine ilişkin bilgi toplamayı ister. Sonuç, besin yolunu ve yardımcı organları birlikte açıklıyor.",
+        "items": [
+          {
+            "name": "Ağız, yutak ve yemek borusu",
+            "role": "Besin ağızdan alınır ve çiğneme ile küçük parçalara ayrılmaya başlar. Yutak besinin yemek borusuna geçişini sağlar; yemek borusu kas hareketleriyle besini mideye taşır."
+          },
+          {
+            "name": "Mide",
+            "role": "Mide besinleri kas hareketleriyle karıştırır; mide öz suyu kimyasal sindirime katkı verir. Besin burada parçalanırken sindirim kanalı boyunca ilerler."
+          },
+          {
+            "name": "İnce bağırsak",
+            "role": "Sindirim burada sürer ve büyük ölçüde tamamlanır. Sindirilmiş küçük yapı taşları bağırsak duvarından kana emilerek vücudun hücrelerine taşınabilir."
+          },
+          {
+            "name": "Kalın bağırsak ve anüs",
+            "role": "Kalın bağırsakta su ve bazı mineraller emilir; sindirilemeyen artıklar dışkı hâline gelir ve anüsten vücuttan uzaklaştırılır."
+          },
+          {
+            "name": "Karaciğer ve pankreas",
+            "role": "Bu yardımcı organlar salgılarıyla sindirime katkı verir; besinler bu organların içinden geçmez. Böylece sindirim kanalı ile yardımcı organların görevi birbirinden ayrılır."
+          }
+        ],
+        "takeaway": "Besin yolu ağız → yutak → yemek borusu → mide → ince bağırsak → kalın bağırsak → anüstür. Sindirim, emilim ve atıkların uzaklaştırılması farklı basamaklardır; organlar görev paylaşımıyla çalışır.",
+        "source": "Kaynak özeti: ders kitabı s. 91–95; “Sindirim Sistemini Tanıyalım” performans görevi ve organ şemaları."
+      },
       points: ["Besinlerin sindirim kanalındaki sırası korunmalıdır.", "İnce bağırsak sindirim ve emilimde önemli rol oynar.", "Yardımcı organlar kanaldan geçiş yolu değildir."],
       terms: ['yutak', 'yemek borusu', 'mide', 'ince bağırsak', 'kalın bağırsak'],
       tasks: ['Sindirim kanalı organlarını doğru sırada yaz.', 'Her organ için bir görev notu ekle.', 'Yardımcı organları sindirim kanalından ayırarak modele ekle.'],
@@ -953,33 +440,6 @@
         "Sindirim kanalının farklı bölümlerinde farklı besinlerin sindirimi gerçekleşir. Ağızda çiğneme ve tükürükteki enzimler çalışmaya başlar; midede kas hareketleri ve mide öz suyu özellikle proteinlerin sindirimine katkı verir. İnce bağırsakta sindirim devam eder; sindirilmiş maddelerin kana geçmesine emilim denir.",
         "Karaciğer ve pankreas gibi yardımcı organların salgıları kimyasal sindirime yardım eder. Kitabın organ diyagramı besinin içinden geçtiği kanal ile bu salgıları üreten yardımcı yapıları ayrı çizmiştir. Böylece “sindirilen madde hangi organdan geçiyor?” ve “hangi salgı sürece yardım ediyor?” soruları birbirinden ayrılır.",
         "Fiziksel sindirim, kimyasal sindirim ve emilimi üç basamak olarak düşün: parçaların küçülmesi → moleküllerin yapı taşlarına ayrılması → yapı taşlarının kana geçmesi. Bir besinin çiğnenmesi tek başına tüm sindirim sürecini tamamlamaz. Şema çizerken her basamak için farklı ok ya da renk kullan."
-      ],
-      termDefinitions: [
-        {
-          "term": "Fiziksel (mekanik) sindirim",
-          "definition": "Besinin kimyasal yapısı değişmeden daha küçük parçalara ayrılması.",
-          "connection": "Çiğneme ve mide hareketleri besini küçük parçalara ayırır; kimyasal sindirimle birlikte yüzey alanını artırıp sonraki parçalama basamaklarına yardım eder."
-        },
-        {
-          "term": "Kimyasal sindirim",
-          "definition": "Enzimlerin büyük besin moleküllerini daha küçük yapı taşlarına ayırması.",
-          "connection": "Fiziksel sindirim, kimyasal sindirim ve emilimi üç basamak olarak düşün: parçaların küçülmesi → moleküllerin yapı taşlarına ayrılması → yapı taşlarının kana geçmesi."
-        },
-        {
-          "term": "Enzim",
-          "definition": "Canlıdaki belirli kimyasal tepkimeleri hızlandıran biyolojik molekül.",
-          "connection": "Ağızda çiğneme ve tükürükteki enzimler çalışmaya başlar; midede kas hareketleri ve mide öz suyu özellikle proteinlerin sindirimine katkı verir."
-        },
-        {
-          "term": "Emilim",
-          "definition": "Sindirilmiş küçük yapı taşlarının bağırsaktan kana alınması.",
-          "connection": "Fiziksel sindirim, kimyasal sindirim ve emilimi üç basamak olarak düşün: parçaların küçülmesi → moleküllerin yapı taşlarına ayrılması → yapı taşlarının kana geçmesi."
-        },
-        {
-          "term": "Sindirim salgısı",
-          "definition": "Sindirimde görev alan, organ veya yardımcı organlardan salgılanan sıvı.",
-          "connection": "Salgılardaki enzimler kimyasal sindirime katılır; besinlerin küçük yapı taşlarına ayrılması ve ince bağırsakta emilmesi bu basamakları izler."
-        }
       ],
       points: ["Fiziksel sindirim parçaların boyutunu küçültür.", "Kimyasal sindirim enzimlerle yapı taşlarına ayırır.", "Emilim sindirilmiş maddelerin kana geçişidir."],
       terms: ['fiziksel sindirim', 'kimyasal sindirim', 'enzim', 'emilim'],
@@ -996,33 +456,31 @@
         "Kitap düzensiz öğün, hızlı yeme, hazır gıda ve uzun süre ekranda oturma örnekleri üzerinden alışkanlıkları düşündürür. Dengeli beslenme; karbonhidrat, protein, yağ, vitamin, mineral ve suyu uygun çeşitlilikte almaktır. Sağlıkla ilgili özel gereksinimlerde güvenilir yetişkin ve sağlık uzmanının görüşü önemlidir.",
         "Bir öğün tablosunu incelerken tek bir güne bakıp kesin sonuç çıkarma; düzeni ve çeşitliliği fark etmeye çalış. Ders etkinliği tıbbi öneri yerine öz gözlem ve kaynak araştırması sağlar. Uzun süren veya kaygı veren belirtiler varsa bunu tek başına yorumlamak yerine güvenilir bir yetişkine ve sağlık uzmanına bildir."
       ],
-      termDefinitions: [
-        {
-          "term": "Dengeli ve çeşitli beslenme",
-          "definition": "Farklı besin gruplarından vücudun gereksinimine uygun seçim yapma alışkanlığı.",
-          "connection": "Farklı besin gruplarını uygun miktarlarda seçmek, vücudun gereksinimlerini karşılamaya yardım eder; beslenme günlüğü bu alışkanlıkları gözlemlemeyi sağlar."
-        },
-        {
-          "term": "Gıda hijyeni",
-          "definition": "Yiyeceklerin hazırlanması, saklanması ve tüketiminde temizliğe dikkat etme.",
-          "connection": "Yiyecekleri hazırlarken, saklarken ve tüketirken temizlik kurallarına uymak bazı sağlık risklerini azaltır; bu, sindirim sağlığını destekleyen alışkanlıklardan biridir."
-        },
-        {
-          "term": "Öz gözlem",
-          "definition": "Kendi günlük alışkanlıklarını belirli bir süre kaydedip inceleme.",
-          "connection": "Ders etkinliği tıbbi öneri yerine öz gözlem ve kaynak araştırması sağlar."
-        },
-        {
-          "term": "Sindirim sağlığı",
-          "definition": "Sindirim organlarının normal işlevlerini destekleyen genel sağlık durumu.",
-          "connection": "Öğün düzeni, su, hareket ve hijyen gibi günlük alışkanlıklar sindirim organlarının işleyişini destekleyebilir; örnekler tanı koymak için kullanılmaz."
-        },
-        {
-          "term": "Güvenilir sağlık kaynağı",
-          "definition": "Bilgisi yetkin uzman veya kurumlarca hazırlanmış, kanıt ve güncellik bakımından kontrol edilebilir kaynak.",
-          "connection": "Beslenme veya sağlık bilgisi uygulamadan önce kaynağın uzmanlığını, kanıtını ve güncelliğini kontrol et; günlük kayıt tek başına tıbbi öneri değildir."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Sindirim sağlığını destekleyen günlük alışkanlıklar",
+        "intro": "Basılı s. 98’deki performans görevi sindirim sisteminin sağlığını korumak için bilgi toplamayı ister. Aşağıdaki sonuçlar ders kitabındaki önerileri genel eğitim bilgisi olarak bir araya getirir.",
+        "items": [
+          {
+            "name": "Dengeli ve çeşitli beslenme",
+            "role": "Farklı besin gruplarından uygun seçimler yapmak vücudun enerji ve yapı gereksinimlerini destekler. Öğün içeriği ve düzeni kişilerin gereksinimine göre değişebilir."
+          },
+          {
+            "name": "Su, lif ve yavaş yeme",
+            "role": "Yeterli sıvı ve lif içeren besinler sindirim sürecini destekleyebilir. Yemeği iyi çiğnemek ve öğünleri aceleye getirmemek de kitabın vurguladığı alışkanlıklardandır."
+          },
+          {
+            "name": "Hareket ve günlük düzen",
+            "role": "Düzenli fiziksel etkinlik ve uzun süre hareketsiz kalmaktan kaçınma sindirim sağlığını destekleyen yaşam alışkanlıklarıdır. Uyku ve stres yönetimi de genel iyilik hâliyle ilişkilidir."
+          },
+          {
+            "name": "Gıda hijyeni",
+            "role": "Yiyecekleri temiz biçimde hazırlamak ve uygun koşullarda saklamak bazı sağlık risklerini azaltır. Kişisel belirtiler veya hastalık şüphesi için genel sınıf bilgisi tanı yerine geçmez."
+          }
+        ],
+        "takeaway": "Araştırma sonucu: tek bir yiyecek ya da alışkanlık sindirim sağlığını tek başına belirlemez. Çeşitli beslenme, sıvı, hareket ve hijyen birlikte değerlendirilir; kişiye özel sağlık sorusunda bir yetişkin ve sağlık uzmanına danışılır.",
+        "source": "Kaynak özeti: ders kitabı s. 96–99; “Sindirim Sisteminin Sağlığını Koruyalım” performans görevi ve bilgi metni."
+      },
       points: ["Çeşitli beslenme, hijyen ve hareket genel sağlığı destekler.", "Sağlık önerileri kişiye göre değişebilir.", "Belirti üzerinden kendi kendine tanı koyma."],
       terms: ['dengeli beslenme', 'hijyen', 'sindirim sağlığı', 'alışkanlık'],
       tasks: ['Bir günlük örnek menüde besin çeşitliliğini incele.', 'Sindirim sağlığını destekleyen iki alışkanlığı belirle.', 'Sağlıkla ilgili bir sorunda güvenilir yardım kaynağını yaz.'],
@@ -1037,33 +495,6 @@
         "Atardamarlar kanı kalpten uzaklaştırır; toplardamarlar vücuttan kalbe getirir. Kılcal damarlar bu iki damar türünü birbirine bağlayan çok ince damarlardır ve kan ile hücreler arasında madde alışverişine olanak verir. Damar adları oksijen miktarından değil, kanın kalbe göre gidiş yönünden gelir.",
         "Kitabın s. 104’teki insan dolaşım şeması kalp ile bütün vücuda uzanan damar ağını gösterir; büyütülmüş damar çizimlerinde atardamar, toplardamar ve kılcal damar ayrımı yapılır. Kanın taşıdığı maddeler hücrelere ulaşır; atık maddeler de ilgili organlara taşınır.",
         "Bir görselde damarları kırmızı/mavi çizmek kanın oksijen miktarını temsil edebilir; bu renk gerçek kanın damar içinde gözle görüldüğü renk değildir. Akciğere giden atardamarın oksijence düşük, akciğerden kalbe gelen toplardamarın oksijence yüksek kan taşıyabildiğini unutma. Sınıflandırmayı yön üzerinden yap."
-      ],
-      termDefinitions: [
-        {
-          "term": "Dolaşım sistemi",
-          "definition": "Kalp, kan ve damarlarla maddelerin vücutta taşınmasını sağlayan sistem.",
-          "connection": "Dolaşım sistemi kalp, kan ve damarlardan oluşur; hücrelere oksijen ve besin taşınmasına, hücrelerde oluşan bazı atıkların uzaklaştırılmasına yardım eder."
-        },
-        {
-          "term": "Atardamar",
-          "definition": "Kanı kalpten uzaklaştırıp vücuda veya akciğerlere taşıyan damar.",
-          "connection": "104’teki insan dolaşım şeması kalp ile bütün vücuda uzanan damar ağını gösterir; büyütülmüş damar çizimlerinde atardamar, toplardamar ve kılcal damar ayrımı yapılır."
-        },
-        {
-          "term": "Toplardamar",
-          "definition": "Kanı vücuttan veya akciğerlerden kalbe geri taşıyan damar.",
-          "connection": "104’teki insan dolaşım şeması kalp ile bütün vücuda uzanan damar ağını gösterir; büyütülmüş damar çizimlerinde atardamar, toplardamar ve kılcal damar ayrımı yapılır."
-        },
-        {
-          "term": "Kılcal damar",
-          "definition": "Atardamarlarla toplardamarları bağlayan ve hücrelerle madde alışverişi sağlayan ince damar.",
-          "connection": "104’teki insan dolaşım şeması kalp ile bütün vücuda uzanan damar ağını gösterir; büyütülmüş damar çizimlerinde atardamar, toplardamar ve kılcal damar ayrımı yapılır."
-        },
-        {
-          "term": "Nabız",
-          "definition": "Kalbin pompalamasıyla damarlarda hissedilebilen ritmik basınç değişimi.",
-          "connection": "Kalbin pompalaması atardamarlarda ritmik basınç oluşturur; bu ritim bilekten veya göğüsten fark edilip efor öncesi ve sonrası karşılaştırılabilir."
-        }
       ],
       points: ["Kalp kanın dolaşmasına yardım eder.", "Atardamar ve toplardamar adları akış yönüyle ilgilidir.", "Kılcal damarlar madde alışverişinde görev alır."],
       terms: ['kalp', 'kan', 'atardamar', 'toplardamar', 'kılcal damar'],
@@ -1080,33 +511,6 @@
         "Kitap küçük ve büyük dolaşımı ayrı renkli devrelerle gösterir; İbnü’n Nefîs’in küçük dolaşım açıklamasını ve Harvey’nin kan dolaşımı çalışmalarını da bilim tarihi kutusunda anar. Modelde kalp, akciğer ve vücut dokularını doğru sıraya yerleştirmek, kanın iki döngüde nasıl hareket ettiğini anlamayı kolaylaştırır.",
         "Renkli şemalar öğretim modelidir; kanın rengi gerçek damar görüntüsünde kırmızı/mavi iki ayrı renk gibi görünmez. Ayrıca atardamar ve toplardamar adları kalbe göre yönü belirtir; oksijen miktarı bu adların tanımı değildir. İki devreyi karşılaştırırken başlangıç-dönüş noktası, geçtiği organ ve gaz alışverişini ayrı ayrı yaz."
       ],
-      termDefinitions: [
-        {
-          "term": "Küçük kan dolaşımı",
-          "definition": "Kalp ile akciğerler arasında gerçekleşen kan dolaşımı yolu.",
-          "connection": "Küçük kan dolaşımı, kanın kalpten akciğerlere gidip gaz alışverişinden sonra kalbe dönmesidir."
-        },
-        {
-          "term": "Büyük kan dolaşımı",
-          "definition": "Kalp ile vücudun diğer dokuları arasında gerçekleşen kan dolaşımı yolu.",
-          "connection": "Büyük kan dolaşımı, kalpten çıkan kanın vücudun diğer dokularına ulaşması ve yeniden kalbe gelmesidir."
-        },
-        {
-          "term": "Alveol",
-          "definition": "Akciğerlerde, çevresindeki kılcal damarlarla gaz alışverişinin gerçekleştiği hava keseciği.",
-          "connection": "Akciğerlerde kan ile alveol havası arasında gaz alışverişi olur: oksijen kana geçer, karbondioksit kandan alveollere geçer."
-        },
-        {
-          "term": "Oksijen",
-          "definition": "Hücrelerin enerji elde etme süreçlerinde kullandığı, solunumla alınan gaz.",
-          "connection": "Bu iki yol birlikte çalışarak hücrelere oksijen ve besin taşınmasına, karbondioksit gibi atıkların uzaklaştırılmasına yardım eder."
-        },
-        {
-          "term": "Karbondioksit",
-          "definition": "Hücrelerde oluşup kanla akciğerlere taşınan ve soluk vermeyle atılan gaz.",
-          "connection": "Bu iki yol birlikte çalışarak hücrelere oksijen ve besin taşınmasına, karbondioksit gibi atıkların uzaklaştırılmasına yardım eder."
-        }
-      ],
       points: ["Küçük dolaşım kalp ile akciğerler arasındadır.", "Büyük dolaşım kalp ile vücut dokuları arasındadır.", "Damar adlandırmasında akış yönü esas alınır."],
       terms: ['küçük kan dolaşımı', 'büyük kan dolaşımı', 'akciğer', 'kan akışı'],
       tasks: ['Kalp–akciğer–kalp yolunu ayrı renkle göster.', 'Kalp–vücut–kalp yolunu ikinci renkle göster.', 'İki yolun ortak başlangıç noktasını ve amacını açıkla.'],
@@ -1122,33 +526,31 @@
         "Kitap, kan bağışında kayıt, görüşme, sağlık değerlendirmesi/test ve bağış adımlarını gösterir. Ayrıca Türk Kızılay’ın gönüllü bağışçı çalışmasını örnek verir. Bağış için yaş, sağlık durumu ve aralık gibi koşullar zamanla güncellenebilir; bağış uygunluğu yalnızca yetkili sağlık kurumlarınca belirlenir.",
         "Kan bağışı hakkında bilgilendirme yaparken kişiyi zorlamadan, doğru ve güncel kaynağa yönlendir. Öğrenciler bilimsel farkındalık mesajı hazırlayabilir; kendi ya da başka bir kişinin bağış yapıp yapamayacağına karar veremez. Toplumsal dayanışma, güvenli sağlık hizmeti ve gönüllülük kavramları birlikte düşünülmelidir."
       ],
-      termDefinitions: [
-        {
-          "term": "Plazma",
-          "definition": "Kanın hücreleri ve çözünmüş maddeleri taşıyan sıvı bölümü.",
-          "connection": "Kan plazma ve farklı hücre/bileşenlerden oluşur; her bileşenin işi farklıdır."
-        },
-        {
-          "term": "Alyuvar",
-          "definition": "Oksijenin taşınmasına katkı veren kırmızı kan hücresi.",
-          "connection": "Alyuvar, oksijenin akciğerlerden dokulara taşınmasına katkı verir; dolaşım sistemi böylece hücrelere gaz ulaştırır."
-        },
-        {
-          "term": "Akyuvar",
-          "definition": "Vücudun savunmasında görev alan kan hücresi.",
-          "connection": "Akyuvarlar vücudun savunmasında görev alır; kandaki bileşenlerin farklı görevleri birlikte dolaşımın işleyişini destekler."
-        },
-        {
-          "term": "Kan pulcuğu",
-          "definition": "Yaralanmalarda kanın pıhtılaşmasına katkı sağlayan küçük kan bileşeni.",
-          "connection": "Kan pulcukları yaralanma yerinde pıhtı oluşumuna katkı vererek kan kaybını sınırlayan sürecin parçasıdır."
-        },
-        {
-          "term": "Gönüllü kan bağışı",
-          "definition": "Sağlık kurumlarının güvenli koşullarında, karşılık beklemeden kan bağışında bulunma.",
-          "connection": "Gönüllü kan bağışı, ihtiyaç duyan hastalara kan veya kan bileşeni sağlanmasına yardımcı olan toplumsal dayanışma davranışıdır."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Kan ve organ bağışı: dayanışma ve güvenli süreç",
+        "intro": "Basılı s. 112’deki “Gönüllü Bağışçılar İş Başında” performans görevi bağış konusunda farkındalık oluşturmayı amaçlar. Araştırma sonucu, bağışın toplumsal katkısını ve güvenli işleyişini özetler.",
+        "items": [
+          {
+            "name": "Kan bağışı",
+            "role": "Gönüllü kan bağışı, ameliyat, kaza veya bazı tedavilerde kana ya da kan bileşenlerine gereksinim duyan kişilere destek olabilir. Bağışlanan kan yetkili sağlık kuruluşlarında kontrol edilir, uygun biçimde işlenir ve saklanır."
+          },
+          {
+            "name": "Uygunluk ve güvenlik",
+            "role": "Bağış yapıp yapamayacağına kişinin sağlık durumu ve güncel resmî ölçütler doğrultusunda sağlık personeli karar verir. Kitaptaki yaş/kilo bilgileri güncel başvuru koşulları yerine geçmez; başvuru sırasında yetkili kurumun bilgisi kontrol edilir."
+          },
+          {
+            "name": "Organ bağışı",
+            "role": "Organ ve doku bağışı, nakil bekleyen kişilere yaşam veya sağlık desteği sağlayabilir. Uygunluk; tıbbi değerlendirme, kan/doku uyumu ve aciliyet gibi ölçütlerle yetkili ekiplerce belirlenir."
+          },
+          {
+            "name": "Toplumsal sonuç",
+            "role": "Bağış, gönüllülük ve güvene dayalı bir dayanışma sürecidir. Doğru bilgi paylaşmak, kişilerin mahremiyetine saygı göstermek ve kararları yetkili sağlık kurumlarına bırakmak gerekir."
+          }
+        ],
+        "takeaway": "Farkındalık çalışmasının temel sonucu: bağış yaşam kurtarabilir; güvenli tarama, güncel resmî bilgi, gönüllülük ve adil tıbbi değerlendirme sürecin vazgeçilmez parçalarıdır.",
+        "source": "Kaynak özeti: ders kitabı s. 109–112; kan bağışı adımları, Kızılay bilgilendirmesi ve “Gönüllü Bağışçılar İş Başında” performans görevi."
+      },
       points: ["Kan farklı görevleri olan bileşenlerden oluşur.", "Gönüllü bağış sağlık hizmetlerine katkı sağlayabilir.", "Bağış koşullarını yetkili sağlık kurumları belirler."],
       terms: ['kan bağışı', 'gönüllülük', 'toplumsal dayanışma', 'kan bileşenleri'],
       tasks: ['Kan bağışının kimlere nasıl yardımcı olabileceğini güvenilir kaynaktan öğren.', 'Dayanışmayı açıklayan kısa bir mesaj yaz.', 'Bağış koşullarını yalnızca yetkili kaynaktan kontrol et.'],
@@ -1164,33 +566,31 @@
         "Kitap dolaşım sağlığı için bilgi toplama ve rapor hazırlama görevi verir; uyku, su, beslenme, spor ve ekran süresi gibi örnekler sunar. Öneriler genel eğitim bilgisi olarak okunmalıdır. Kişiye özel sağlık sorusunda güncel ve yetkin bir sağlık kaynağı ya da uzman görüşü gerekir.",
         "Bir sağlık iddiasını değerlendirirken kaynağı kim hazırlamış, hangi kanıta dayanıyor ve ne zaman güncellenmiş diye sor. Bir belirtiyi doğrudan bir hastalığa bağlama; ders kitabı tanı koyma aracı değildir. Şemada hareket, dinlenme ve beslenmeyi ayrı etkenler olarak göster, sonra aralarındaki ilişkiyi açıkla."
       ],
-      termDefinitions: [
-        {
-          "term": "Dolaşım sağlığı",
-          "definition": "Kalp, kan ve damarların görevlerini sürdürebilmesiyle ilişkili genel sağlık durumu.",
-          "connection": "Kitap dolaşım sağlığı için bilgi toplama ve rapor hazırlama görevi verir; uyku, su, beslenme, spor ve ekran süresi gibi örnekler sunar."
-        },
-        {
-          "term": "Fiziksel etkinlik",
-          "definition": "Kasları çalıştıran ve enerji harcatan günlük hareket veya egzersiz.",
-          "connection": "Fiziksel etkinlik sırasında kasların oksijen ve besin ihtiyacı artar; kalp ve solunum daha hızlı çalışabilir."
-        },
-        {
-          "term": "Hareketsiz yaşam",
-          "definition": "Günlük yaşamda uzun süre düşük hareket düzeyinde kalma alışkanlığı.",
-          "connection": "Uzun süre az hareket etmek kalp-damar sağlığını etkileyebilecek bir alışkanlıktır; kitap uyku, su, beslenme ve fiziksel etkinlikle birlikte değerlendirmeyi önerir."
-        },
-        {
-          "term": "Sağlık iddiası",
-          "definition": "Bir davranış veya ürünün sağlık üzerindeki etkisine ilişkin, kaynağı kontrol edilmesi gereken açıklama.",
-          "connection": "Bir sağlık iddiasını değerlendirirken kaynağı kim hazırlamış, hangi kanıta dayanıyor ve ne zaman güncellenmiş diye sor."
-        },
-        {
-          "term": "Güvenilir kaynak",
-          "definition": "Uzmanlık, kanıt ve güncellik bakımından doğrulanabilir bilgi kaynağı.",
-          "connection": "Sağlık iddiasını uygulamadan önce kaynağın kim olduğunu, hangi kanıta dayandığını ve ne zaman güncellendiğini sorgula."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Dolaşım sistemi sağlığını koruyan davranışlar",
+        "intro": "Basılı s. 114’teki performans görevi dolaşım sistemi sağlığı için bilgi toplayıp raporlaştırmayı ister. Aşağıda ders kitabının yaşam alışkanlıklarıyla ilgili bulguları özetlenmiştir.",
+        "items": [
+          {
+            "name": "Düzenli hareket",
+            "role": "Yürüyüş, oyun ve uygun fiziksel etkinlik kalp ve damarların çalışmasını destekler. Hareket düzeyi yaşa ve sağlık durumuna göre ayarlanmalıdır."
+          },
+          {
+            "name": "Beslenme ve günlük denge",
+            "role": "Çeşitli ve dengeli beslenme, yeterli dinlenme ve vücudun gereksinimine uygun sıvı tüketimi dolaşım sağlığını destekleyen genel alışkanlıklardır."
+          },
+          {
+            "name": "Tütün dumanından uzak durma",
+            "role": "Tütün dumanı dolaşım ve solunum sistemlerini olumsuz etkileyebilir. Dumansız ortamlar hem kullananları hem çevresindekileri korumaya yardımcı olur."
+          },
+          {
+            "name": "Bilgiyi değerlendirme",
+            "role": "Bir ürünün ya da davranışın kalp sağlığına etkisiyle ilgili iddiaları güvenilir, güncel kaynaklarla karşılaştır. Belirti veya kişisel riskler için sınıf notu değil sağlık uzmanı değerlendirmesi gerekir."
+          }
+        ],
+        "takeaway": "Araştırma sonucu: tek bir “mucize” davranış yerine düzenli hareket, dengeli günlük alışkanlıklar ve tütün dumanından uzak durma birlikte önem taşır; bireysel sağlık kararı uzmana bırakılır.",
+        "source": "Kaynak özeti: ders kitabı s. 113–115; “Dolaşım Sisteminin Sağlığını Koruyalım” performans görevi ve bilgi metni."
+      },
       points: ["Hareket, dinlenme ve dengeli beslenme birlikte düşünülür.", "Sağlık iddialarını güvenilir kaynakla kontrol et.", "Kişisel sağlık kararları uzmana danışılarak verilir."],
       terms: ['dolaşım sağlığı', 'hareket', 'dinlenme', 'güvenilir kaynak'],
       tasks: ['Dolaşım sağlığını destekleyen üç günlük alışkanlık yaz.', 'Bir sağlık iddiasının kaynağını değerlendirme ölçütü belirle.', 'Bir alışkanlığın etkisini neden–sonuç cümlesiyle açıkla.'],
@@ -1205,33 +605,6 @@
         "Burun içindeki kıllar ve mukus, havadaki bazı tozları tutmaya; burun içindeki damarlar havayı ısıtmaya, mukus ise nemlendirmeye yardım eder. Akciğerler göğüs boşluğunda bulunur; diyafram göğüs ve karın boşluklarını ayıran, soluk alıp vermeye katkıda bulunan kastır.",
         "Kitabın solunum sistemi modelinde burun, yutak, gırtlak, soluk borusu, bronşlar, akciğerler ve diyafram etiketlenir. Bronşçukların uçlarındaki alveoller kılcal damarlarla çevrilidir; gaz alışverişi burada gerçekleşir. Ağaç dallarına benzeyen bronş dallanması, havanın iki akciğere dağılmasını zihinde canlandırabilir.",
         "Hava yolunu sırayla çiz ve her yapının görevini kısa notla açıkla. Soluk borusuyla yemek borusunu karıştırma: biri havayı akciğerlere, diğeri besini mideye taşır. Maket, organların konum ve bağlantısını gösterir; gerçek dokuların esnekliğini ve gazların mikroskobik hareketini bütünüyle göstermez."
-      ],
-      termDefinitions: [
-        {
-          "term": "Soluk borusu",
-          "definition": "Havayı gırtlaktan bronşlara taşıyan kıkırdak destekli kanal.",
-          "connection": "Kitabın solunum sistemi modelinde burun, yutak, gırtlak, soluk borusu, bronşlar, akciğerler ve diyafram etiketlenir."
-        },
-        {
-          "term": "Bronş",
-          "definition": "Soluk borusunun iki akciğere uzanan ana dallarından her biri.",
-          "connection": "Kitabın solunum sistemi modelinde burun, yutak, gırtlak, soluk borusu, bronşlar, akciğerler ve diyafram etiketlenir."
-        },
-        {
-          "term": "Bronşçuk",
-          "definition": "Bronşların akciğer içinde dallanmasıyla oluşan küçük hava yolu.",
-          "connection": "Soluk borusu iki bronşa, bronşlar daha ince bronşçuklara ayrılır; bu yollar havayı akciğerdeki alveollere taşır."
-        },
-        {
-          "term": "Alveol",
-          "definition": "Akciğerlerde kılcal damarlarla çevrili, gaz alışverişinin olduğu küçük hava keseciği.",
-          "connection": "Soluk borusu iki bronşa, bronşlar daha ince bronşçuklara ayrılır; bu yollar havayı akciğerdeki alveollere taşır."
-        },
-        {
-          "term": "Diyafram",
-          "definition": "Göğüs boşluğu ile karın boşluğunu ayıran ve solunum hareketlerine yardım eden kas.",
-          "connection": "Akciğerler göğüs boşluğunda bulunur; diyafram göğüs ve karın boşluklarını ayıran, soluk alıp vermeye katkıda bulunan kastır."
-        }
       ],
       points: ["Hava solunum yolları boyunca akciğerlere ilerler.", "Gaz alışverişi alveoller ile kılcal damarlar arasında gerçekleşir.", "Model gerçek organların yalnızca seçilmiş özelliklerini gösterir."],
       terms: ['soluk borusu', 'bronş', 'akciğer', 'gaz alışverişi'],
@@ -1248,33 +621,6 @@
         "Kitap bu hareketleri akciğer diyagramı, soluk alma/verme şeması ve balonlu maketle inceler. Balonlar akciğerlerin genişleyip daralmasını, alttaki esnek zar diyafram hareketini temsil edebilir. Modelin görevi belirli bir ilişkiyi görünür kılmaktır; gerçek akciğerler balon gibi çalışmaz.",
         "Maketin zarını aşağı çekince modeldeki balonların nasıl değiştiğini gözlemle; bu değişimi göğüs boşluğunun hacmiyle ilişkilendir. Model alveollerde oksijen ve karbondioksitin kılcal damarlardan geçişini göstermez. Bilimsel açıklamada hem hava akışını hem gaz alışverişini ayrı ayrı anlat."
       ],
-      termDefinitions: [
-        {
-          "term": "Soluk alma",
-          "definition": "Göğüs boşluğunun genişlemesiyle havanın akciğerlere girmesi.",
-          "connection": "Soluk alma sırasında diyafram kasılarak aşağı doğru düzleşir; kaburgalar arasındaki kasların hareketiyle göğüs boşluğu genişler."
-        },
-        {
-          "term": "Soluk verme",
-          "definition": "Göğüs boşluğunun daralmasıyla havanın akciğerlerden dışarı çıkması.",
-          "connection": "Alveollerde oksijen, solunan havadan kılcal damarlardaki kana geçer; karbondioksit kandan alveol havasına geçerek soluk vermeyle vücuttan uzaklaştırılır."
-        },
-        {
-          "term": "Gaz alışverişi",
-          "definition": "Oksijenin alveol havasından kana, karbondioksitin kandan alveol havasına geçmesi.",
-          "connection": "Göğüs boşluğunun hacim değişimi havanın giriş-çıkışını sağlar; alveol-kılcal damar geçişi ise gaz alışverişidir."
-        },
-        {
-          "term": "Alveol-kılcal damar ağı",
-          "definition": "Akciğerlerde hava ile kan arasında gazların geçiş yaptığı ince yüzey.",
-          "connection": "Alveollerin çevresindeki ince kılcal damarlar, solukla alınan oksijenin kana ve karbondioksitin alveol havasına geçmesini sağlar."
-        },
-        {
-          "term": "Model sınırlılığı",
-          "definition": "Bir modelin gerçek sistemdeki bütün özellikleri gösterememesi.",
-          "connection": "Solunum modeli göğüs hacminin değişimini gösterebilir; fakat hücreleri, gazların mikroskobik geçişini ve bütün kasları aynı anda temsil edemez."
-        }
-      ],
       points: ["Diyaframın hareketi göğüs boşluğunun hacmini değiştirir.", "Oksijen ve karbondioksit alveollerde zıt yönlerde geçer.", "Soluk alıp verme ile gaz alışverişi bağlantılı ama ayrı süreçlerdir."],
       terms: ['diyafram', 'soluk alma', 'soluk verme', 'oksijen', 'karbondioksit'],
       tasks: ['Soluk alma ve verme sırasında diyaframı karşılaştır.', 'Gaz alışverişini iki yönlü okla göster.', 'Bir solunum modeli için bir sınırlılık yaz.'],
@@ -1290,33 +636,31 @@
         "Kitap, Elif’in yaşadığı yoğun trafik/fabrika çevresini örnek olay olarak sunar ve çözüm yolları araştırılmasını ister. Ayrıca solunum sağlığını koruma posteri görevi verir. Bu örnekler bireysel alışkanlığın yanında çevre koşullarının da solunum sağlığını etkileyebildiğini gösterir.",
         "Kirliliği azaltma önerisini açık bir eylemle yaz: kaynağı azaltma, ortamı uygun biçimde havalandırma, dumandan uzak durma veya temiz hava alanı seçme. Belirtiyi tek başına çevreye bağlayıp tanı koyma; hastalık şüphesi sağlık uzmanının değerlendirmesini gerektirir."
       ],
-      termDefinitions: [
-        {
-          "term": "Hava kirliliği",
-          "definition": "Havada insan ve çevre sağlığını etkileyebilecek maddelerin bulunması.",
-          "connection": "Kirli hava solunum yollarını etkileyebilir; kaynakları azaltma ve temiz ortam sağlama, bireysel korunma ile çevresel çözümleri birlikte düşünmeyi gerektirir."
-        },
-        {
-          "term": "Havalandırma",
-          "definition": "İç ortam havasının yenilenip dolaşmasını sağlayan düzenleme.",
-          "connection": "Kirliliği azaltma önerisini açık bir eylemle yaz: kaynağı azaltma, ortamı uygun biçimde havalandırma, dumandan uzak durma veya temiz hava alanı seçme."
-        },
-        {
-          "term": "Solunum sağlığı",
-          "definition": "Solunum yolları ve akciğerlerin görevlerini sürdürebilmesiyle ilişkili sağlık durumu.",
-          "connection": "Bu örnekler bireysel alışkanlığın yanında çevre koşullarının da solunum sağlığını etkileyebildiğini gösterir."
-        },
-        {
-          "term": "Kirletici",
-          "definition": "Havaya karışarak ortamın doğal özelliklerini ve sağlığı olumsuz etkileyebilen madde.",
-          "connection": "Havadaki bazı kirleticiler görünmez ve kokusuz olabilir; bu nedenle ortamın güvenliğini yalnızca gözle veya koklayarak kesin belirleyemeyiz."
-        },
-        {
-          "term": "Koruyucu davranış",
-          "definition": "Sağlık riskini azaltmak için yapılan güvenli ve bilinçli eylem.",
-          "connection": "Tütün dumanından uzak durmak, ortamı uygun havalandırmak ve kirli/tozlu ortamlara maruziyeti azaltmak solunum sağlığını destekleyebilir."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Solunum sistemini korumak için neler yapılabilir?",
+        "intro": "Basılı s. 124’teki performans görevi solunum sağlığını koruma yollarını araştırmayı ister. Sonuçlar, kişisel alışkanlıkları ve çevre koşullarını birlikte ele alır.",
+        "items": [
+          {
+            "name": "Temiz ve dumansız hava",
+            "role": "Tütün dumanından uzak durmak ve kapalı alanlarda uygun havalandırma sağlamak solunum yollarını korumaya yardımcı olur. Duman, kişi kullanmasa bile çevresindekileri etkileyebilir."
+          },
+          {
+            "name": "Hava kirliliği",
+            "role": "Trafik, sanayi, toz ve duman gibi kaynaklar havadaki kirleticileri artırabilir. Bazı kirleticiler görünmez veya kokusuz olduğundan, havanın güvenliğini yalnızca kokuya bakarak belirlemek doğru değildir."
+          },
+          {
+            "name": "Günlük yaşam",
+            "role": "Düzenli hareket, genel sağlık alışkanlıkları ve kirli ortamlara maruziyeti azaltmak solunum sağlığını destekler. Çevre kirliliğini azaltmak için bireysel davranışların yanında toplumsal önlemler de gerekir."
+          },
+          {
+            "name": "Güvenli bilgi",
+            "role": "Belirtiyi tek başına hava kirliliğine bağlayıp tanı koyma. Sağlıkla ilgili kişisel kaygı ve öneriler güvenilir yetişkin ve sağlık uzmanıyla değerlendirilmelidir."
+          }
+        ],
+        "takeaway": "Araştırma sonucu: solunum sağlığı için temiz hava, dumansız ortam, uygun havalandırma ve çevresel kirleticilerin azaltılması birlikte ele alınmalıdır.",
+        "source": "Kaynak özeti: ders kitabı s. 123–124; “Solunum Sisteminin Sağlığını Koruyalım” performans görevi."
+      },
       points: ["Temiz hava ve uygun havalandırma önemlidir.", "Koku ve görünüş havadaki tüm kirleticileri göstermez.", "Sağlık belirtisi olduğunda uzmana danışılır."],
       terms: ['solunum sağlığı', 'havalandırma', 'temiz hava', 'zararlı madde'],
       tasks: ['Sınıf veya ev ortamında havalandırmayı destekleyen iki davranış belirle.', 'Tütün dumanından korunmaya yönelik güvenli bir mesaj yaz.', 'Hava kalitesi hakkında gözlem ile ölçümü ayır.'],
@@ -1332,33 +676,31 @@
         "Kitap Yeşilay’ın bağımlılıkla mücadele ve toplum bilincini artırma çalışmalarını örnek verir. Farkındalık posteri hazırlarken doğrulanmış bilgi, açık destek mesajı ve yardım alınabilecek güvenilir yetişkin/kurum türünü belirtmek, yalnızca korkutucu slogan yazmaktan daha yararlıdır.",
         "Bir mesajda kişiyi suçlama, küçümseme veya özel bilgisini paylaşma. Bilimsel bilgiyi güncel ve yetkili kaynaktan kontrol et; kendin ya da bir yakın için kaygı varsa güvenilir yetişkin ve sağlık uzmanından destek al. Yardım istemek güvenli bir davranıştır."
       ],
-      termDefinitions: [
-        {
-          "term": "Bağımlılık",
-          "definition": "Zarara rağmen sürdürülmesi ve bırakma isteğine karşın kontrol edilmesinin güçleşmesiyle tanımlanan durum.",
-          "connection": "Bağımlılık, bir maddenin veya davranışın kişiye fiziksel, ruhsal ya da sosyal sorunlar yaşatmasına rağmen sürmesi ve bırakma isteğine karşın kontrol edilememesi durumudur."
-        },
-        {
-          "term": "Tütün dumanı",
-          "definition": "Tütün ürünlerinin yanmasıyla oluşup solunum ve dolaşım sağlığını etkileyebilen duman.",
-          "connection": "Tütün dumanı ve bağımlılık yapıcı maddeler solunum yollarını etkileyebilir; dolaşım sistemi ve genel sağlık da zarar görebilir."
-        },
-        {
-          "term": "Farkındalık çalışması",
-          "definition": "Doğru bilgi ve destek yollarını topluma anlaşılır biçimde duyurma çalışması.",
-          "connection": "Doğru bilgi ve yardım yollarını yargılamadan anlatmak, bağımlılık konusunda riskleri tanımayı ve destek aramayı kolaylaştırabilir."
-        },
-        {
-          "term": "Destek kaynağı",
-          "definition": "Güvenilir yetişkin, sağlık uzmanı veya yetkili kurum gibi yardım alınabilecek kişi/yer.",
-          "connection": "Güvenilir bir yetişkin, sağlık uzmanı veya yetkili kurum, bağımlılık riski yaşayan kişinin profesyonel yardıma ulaşmasına yardımcı olabilir."
-        },
-        {
-          "term": "Yargılamayan dil",
-          "definition": "Kişiyi suçlamadan, saygılı ve destekleyici biçimde bilgi veren anlatım.",
-          "connection": "Kişiyi suçlamak yerine saygılı ve destekleyici konuşmak, sağlık bilgisinin anlaşılmasını ve yardım istemeyi kolaylaştırır."
-        }
-      ],
+      researchBrief: {
+        "label": "PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU",
+        "title": "Solunum sağlığı için farkındalık: güvenilir ve destekleyici bilgi",
+        "intro": "Basılı s. 127’deki performans görevi solunum sisteminin sağlığını koruma konusunda farkındalık oluşturmayı ister. Bu araştırma sonucu, bağımlılık ve dumansız yaşam başlıklarını bilgi temelli biçimde ele alır.",
+        "items": [
+          {
+            "name": "Bağımlılık nedir?",
+            "role": "Bir madde ya da davranışı, zararlarına rağmen sürdürmek ve bırakmakta zorlanmak bağımlılıkla ilişkili olabilir. Değerlendirme ve destek, sağlık uzmanlarının alanıdır; öğrenciler kişilere tanı koymaz."
+          },
+          {
+            "name": "Solunum üzerindeki etkiler",
+            "role": "Tütün dumanı solunum yollarını etkileyebilir; pasif maruziyet de çevredeki kişileri etkiler. Bağımlılık yapıcı maddelerin etkileri yalnızca akciğerlerle sınırlı kalmayıp başka vücut sistemlerini de ilgilendirebilir."
+          },
+          {
+            "name": "Farkındalık ve destek",
+            "role": "Farkındalık çalışması doğru bilgiyi, dumansız ortamları ve yardım alınabilecek güvenilir yetişkin/kurumları tanıtır. Yeşilay, kitapta bağımlılıkla mücadele ve bilgilendirme örneği olarak verilir."
+          },
+          {
+            "name": "İletişim ilkesi",
+            "role": "Kişiyi suçlayan veya damgalayan dil yardım istemeyi zorlaştırabilir. Saygılı, kanıta dayalı ve destekleyici iletişim hem bilgiyi anlaşılır kılar hem de mahremiyeti korur."
+          }
+        ],
+        "takeaway": "Araştırma sonucu: etkili farkındalık, korkutucu ya da yargılayıcı sloganlar yerine doğrulanmış bilgi, dumansız ortam ve güvenilir destek yollarını birlikte sunar.",
+        "source": "Kaynak özeti: ders kitabı s. 125–127; bağımlılık bilgisi, Yeşilay ve “Solunum Sisteminin Sağlığı İçin Neler Yapabiliriz?” performans görevi."
+      },
       points: ["Bağımlılık fiziksel, ruhsal ve sosyal yaşamı etkileyebilir.", "Tütün dumanı solunum ve dolaşım sağlığına zarar verebilir.", "Destek aramak yargılanma değil, yardım alma sürecidir."],
       terms: ['bağımlılık', 'solunum sağlığı', 'dolaşım sağlığı', 'destek'],
       tasks: ['Bağımlılığın olası etkilerini fiziksel, ruhsal ve sosyal olarak ayır.', 'Bilimsel bir korunma mesajı tasarla.', 'Destek için başvurulabilecek güvenilir bir yetişkin/kurum türü belirt.'],
@@ -1373,33 +715,6 @@
         "İdrar böbreklerde oluşur, üreter adı verilen borularla idrar kesesine taşınır ve burada geçici olarak depolanır. İdrar kesesi dolduğunda idrar üretradan vücut dışına çıkar. Dolaşım sistemi kanı böbreklere getirir; böylece sistemler birlikte çalışır.",
         "Kitap, Bora’nın spor sonrası terlemesi ve idrara çıkma ihtiyacını sorgulayan öyküyle konuya başlar. İdrar miktarı yalnızca içilen suya bağlı değildir; terleme, ortam sıcaklığı ve vücudun durumu da sıvı dengesini etkiler. Deri ve akciğer gibi yapılar da boşaltım bağlamında ele alınır.",
         "İdrar yolunu böbrek → üreter → idrar kesesi → üretra sırasıyla çiz; kanın böbreğe gelişini ayrı okla göster. Böbrek idrarı süzer/oluşturur, idrar kesesi depolar; bu iki görevi karıştırma. Bir günlük örnek olay, böbreklerin vücuttaki bütün atıkları tek başına attığı anlamına gelmez."
-      ],
-      termDefinitions: [
-        {
-          "term": "Boşaltım sistemi",
-          "definition": "Vücuttaki bazı atıkları ve fazla maddeleri uzaklaştırmaya katkı veren yapı ve organlar.",
-          "connection": "Boşaltım sistemi böbrekler, üreterler, idrar kesesi ve üretradan oluşur; bu yapılar idrarı oluşturma, taşıma, depolama ve dışarı atma görevlerini paylaşır."
-        },
-        {
-          "term": "Böbrek",
-          "definition": "Kanı süzerek idrar oluşumuna ve vücudun iç dengesine katkı sağlayan organ.",
-          "connection": "Boşaltım sistemi böbrekler, üreterler, idrar kesesi ve üretradan oluşur; bu yapılar idrarı oluşturma, taşıma, depolama ve dışarı atma görevlerini paylaşır."
-        },
-        {
-          "term": "Üreter",
-          "definition": "Böbrekte oluşan idrarı idrar kesesine taşıyan boru.",
-          "connection": "Boşaltım sistemi böbrekler, üreterler, idrar kesesi ve üretradan oluşur; bu yapılar idrarı oluşturma, taşıma, depolama ve dışarı atma görevlerini paylaşır."
-        },
-        {
-          "term": "İdrar kesesi (mesane)",
-          "definition": "İdrarın vücuttan atılıncaya kadar geçici olarak depolandığı kaslı yapı.",
-          "connection": "Böbreklerde oluşan idrar üreterlerle mesaneye taşınır, burada geçici olarak depolanır ve sonra üretradan dışarı atılır."
-        },
-        {
-          "term": "Üretra",
-          "definition": "İdrarın idrar kesesinden vücut dışına geçtiği kanal.",
-          "connection": "Boşaltım sistemi böbrekler, üreterler, idrar kesesi ve üretradan oluşur; bu yapılar idrarı oluşturma, taşıma, depolama ve dışarı atma görevlerini paylaşır."
-        }
       ],
       points: ["Böbrekler kanın süzülmesi ve idrar oluşumunda görev alır.", "İdrar böbrek → üreter → idrar kesesi yolunu izler.", "Üretra idrarın vücuttan çıkış yoludur."],
       terms: ['böbrek', 'üreter', 'idrar kesesi', 'üretra'],
@@ -1416,33 +731,6 @@
         "Kitabın s. 132–134 çizimleri böbrekleri, üreterleri, idrar kesesini ve üretrayı etiketler; organ-görev tablosu ise deri, akciğer ve kalın bağırsağın katkısını sorar. Bu örnekler “vücuttan atık uzaklaştırma” kavramının yalnızca tuvalete çıkma ile sınırlı olmadığını gösterir.",
         "Şemada önce kanın böbreğe gelişini, sonra süzülmeyi, idrarın üreter boyunca taşınmasını ve vücuttan çıkışını göster. İdrar kesesi kanı süzmez; böbrek idrarı depolamaz. Bol veya az su içme gibi kişisel tavsiyeler vermek yerine genel süreci açıkla ve sağlık bilgisi için uzman kaynağına yönel."
       ],
-      termDefinitions: [
-        {
-          "term": "Süzülme",
-          "definition": "Kan içindeki bazı maddelerin böbreklerde ayrılarak idrar oluşumuna katılması süreci.",
-          "connection": "Şemada önce kanın böbreğe gelişini, sonra süzülmeyi, idrarın üreter boyunca taşınmasını ve vücuttan çıkışını göster."
-        },
-        {
-          "term": "İdrar",
-          "definition": "Böbreklerin kandan süzdüğü bazı atık ve fazla maddeleri taşıyan sıvı.",
-          "connection": "İdrarın oluşması, taşınması, depolanması ve atılması birbirinden ayrı aşamalardır."
-        },
-        {
-          "term": "Atık madde",
-          "definition": "Hücre veya vücut süreçleri sonucunda oluşup uzaklaştırılması gereken madde.",
-          "connection": "Böbrekler, kanı süzerek bazı atık maddeleri ve vücuttaki fazla suyu idrara aktarır; yararlı maddelerin bir bölümü yeniden kana dönebilir."
-        },
-        {
-          "term": "İç denge",
-          "definition": "Vücudun iç ortamındaki su ve maddelerin belirli sınırlar içinde tutulması.",
-          "connection": "Böbrekler kandaki su ve bazı maddeleri ayarlamaya katkı verir; süzme ve geri emilim süreçleri vücudun iç ortamını belirli sınırlar içinde tutar."
-        },
-        {
-          "term": "Yardımcı boşaltım organı",
-          "definition": "Deri, akciğer ve bağırsak gibi atık uzaklaştırmaya katkıda bulunan yapı.",
-          "connection": "Akciğer karbondioksiti, deri terle bazı maddeleri, bağırsak ise sindirilemeyen atıkları uzaklaştırmaya katkı verir; boşaltım idrarla sınırlı değildir."
-        }
-      ],
       points: ["Böbrekler kandaki bazı atıkları süzer.", "İdrar oluşumu ile idrarın depolanması farklı işlemlerdir.", "Boşaltım ve dolaşım sistemleri birlikte çalışır."],
       terms: ['süzülme', 'idrar', 'atık madde', 'iç denge'],
       tasks: ['Kan–böbrek–idrar ilişkisini şemalaştır.', 'İdrarın oluşması ile depolanmasını ayır.', 'Boşaltımın neden gerekli olduğunu açıkla.'],
@@ -1458,33 +746,31 @@
         "Kitap örnek olay, araştırma raporu ve doğru-yanlış sorularıyla alışkanlıkları sorgulatır; ekran başında uzun süre kalma, hareket ve su tüketimi gibi konuları ele alır. Bu sayfalar genel eğitim amaçlıdır; kişiye özel teşhis, ilaç veya sıvı miktarı belirlemez.",
         "Bir çevrim içi öneriyi paylaşmadan önce kaynağın yetkinliğini, kanıtını ve güncelliğini kontrol et. Bir belirti varsa kendi kendine tanı koyma veya başkasına tedavi önerme; güvenilir bir yetişkin ve sağlık uzmanına danış. Sağlık iletişiminde doğru bilgi kadar kişinin mahremiyetini ve saygınlığını korumak da önemlidir."
       ],
-      termDefinitions: [
-        {
-          "term": "Böbrek sağlığı",
-          "definition": "Böbreklerin kanı süzme ve vücudun iç dengesine katkı görevlerini sürdürebilmesi.",
-          "connection": "Böbreklerin kanı süzme görevi, yeterli sıvı ve güvenli sağlık alışkanlıklarıyla ilişkilidir; sorunlarda kişisel tanı yerine sağlık uzmanına başvurulur."
-        },
-        {
-          "term": "Kişisel hijyen",
-          "definition": "Vücudu ve günlük yaşam araçlarını temiz tutmaya yönelik güvenli alışkanlıklar.",
-          "connection": "Gereksiz ilaç kullanımı, aşırı tuz tüketimi veya kişisel hijyene dikkat etmemek sağlık riskleri oluşturabilir."
-        },
-        {
-          "term": "Gereksiz ilaç kullanımı",
-          "definition": "Sağlık uzmanı önerisi olmadan veya gereksinim bulunmadan ilaç kullanma davranışı.",
-          "connection": "Gereksiz ilaç kullanımı, aşırı tuz tüketimi veya kişisel hijyene dikkat etmemek sağlık riskleri oluşturabilir."
-        },
-        {
-          "term": "Sağlık kaynağını doğrulama",
-          "definition": "Bilginin uzmanlık, kanıt ve güncellik açısından güvenilirliğini kontrol etme.",
-          "connection": "İlaç, tuz veya böbrek sağlığıyla ilgili iddiaları uygulamadan önce yetkin ve güncel sağlık kaynaklarından kontrol et."
-        },
-        {
-          "term": "Kişiye özel öneri",
-          "definition": "Bir kişinin sağlık durumu ve gereksinimine göre sağlık uzmanının verdiği yönlendirme.",
-          "connection": "İlaç ve beslenme önerileri kişinin sağlık durumuna göre değişebilir; bu yüzden kişiye özel karar sağlık uzmanına aittir."
-        }
-      ],
+      researchBrief: {
+        label: 'PERFORMANS GÖREVİ · ARAŞTIRMA SONUCU',
+        title: 'Boşaltım sisteminin sağlığını nasıl destekleriz?',
+        intro: 'Basılı s. 136’daki “Boşaltım Sisteminin Sağlığını Koruyalım” performans görevi güvenilir kaynaklardan bilgi toplamayı ve raporlaştırmayı ister. Kitabın s. 137–138’deki açıklamalarıyla birlikte temel bulgular şöyledir:',
+        items: [
+          {
+            name: 'Sıvı dengesi',
+            role: 'Sıvı gereksinimi yaşa, hareket düzeyine, hava sıcaklığına ve sağlık durumuna göre değişebilir. Uygun sıvı alımı vücudun dengesini destekler; gereğinden çok su içmek gerekmez ve herkese aynı miktar önerilemez.'
+          },
+          {
+            name: 'Beslenme ve hareket',
+            role: 'Dengeli beslenme, aşırı tuz tüketiminden kaçınma, düzenli hareket ve uzun süre hareketsiz kalmaya ara verme genel sağlığı destekler. Bunlar tek başına bir böbrek rahatsızlığını önleme veya tedavi garantisi değildir.'
+          },
+          {
+            name: 'Hijyen ve güvenli ilaç kullanımı',
+            role: 'Kişisel hijyene dikkat etmek ve gereksiz ilaç kullanmamak güvenli alışkanlıklardır. İlaçlar yalnızca güvenilir yetişkin ve sağlık uzmanı yönlendirmesiyle kullanılmalı; çevrim içi tavsiyeler kişiye özel tedavi yerine geçmemelidir.'
+          },
+          {
+            name: 'Kaynağı doğrulama ve destek',
+            role: 'Raporunda bilginin kaynağını, uzmanlığını ve güncelliğini kontrol et; farklı güvenilir kaynakları karşılaştır. Kişisel bir sağlık sorusunda kendi kendine tanı koymak yerine güvenilir bir yetişkin ve sağlık uzmanına danış.'
+          }
+        ],
+        takeaway: 'Araştırma sonucu: boşaltım sistemi sağlığı tek bir yiyecek ya da su miktarına bağlanmaz; dengeli yaşam, kişiye uygun sıvı dengesi, hareket, hijyen ve güvenilir sağlık desteği birlikte düşünülür.',
+        source: 'Kaynak özeti: ders kitabı s. 136–138; “Boşaltım Sisteminin Sağlığını Koruyalım” performans görevi.'
+      },
       points: ["Hijyen ve genel sağlıklı alışkanlıklar önemlidir.", "Su gereksinimi kişiye ve koşullara göre değişebilir.", "Sağlık önerilerini güvenilir kaynakla doğrula."],
       terms: ['böbrek sağlığı', 'hijyen', 'dengeli beslenme', 'sağlık kaynağı'],
       tasks: ['Boşaltım sağlığını destekleyen iki genel alışkanlık yaz.', 'Bir sağlık önerisini değerlendirmek için kaynak kontrol listesi oluştur.', 'Kişiye özel soruda hangi uzmana danışılacağını belirt.'],
@@ -1499,33 +785,6 @@
         "Örneğin kas hücresi çalışırken besin ve oksijen kullanır. Bu maddeler sindirim ve solunum sistemlerinde alınır, dolaşım sistemiyle hücreye taşınır. Hücrelerde oluşan karbondioksit kanla akciğerlere, bazı atıklar böbreklere taşınır. Bu iş birliği, her sistemin ayrı görevi olduğu hâlde diğerlerine bağlı olduğunu gösterir.",
         "Kitabın ünite sonu soruları sindirim organlarını, kan dolaşımını, solunum sağlığını, böbrekleri, organ bağışını ve bağımlılık konusunu birlikte değerlendirir. Sistemler arası ilişkiyi bir kavram haritasında göstermek, tek tek organ adlarını ezberlemekten daha açıklayıcıdır.",
         "Dört sistemi tek çizimde gösterirken besin, oksijen, karbondioksit ve atık maddeleri ayrı renkli oklarla belirt. Okların yönünü doğru kur; sindirimden gelen yapı taşı kana geçer, kan onu hücreye taşır. Şema gerçek vücuttaki bütün damar ve kimyasal tepkimeleri çizmez; yalnızca temel madde akışını sadeleştirir."
-      ],
-      termDefinitions: [
-        {
-          "term": "Sistem",
-          "definition": "Belirli bir işi gerçekleştirmek için birlikte çalışan organ ve yapıların bütünü.",
-          "connection": "Sistemler arası ilişkiyi bir kavram haritasında göstermek, tek tek organ adlarını ezberlemekten daha açıklayıcıdır."
-        },
-        {
-          "term": "Madde alışverişi",
-          "definition": "Maddelerin hücreler, kan ve organlar arasında taşınması veya yer değiştirmesi.",
-          "connection": "Sindirim ve solunum maddeleri kana kazandırır, dolaşım bunları hücrelere taşır; atıklar da ilgili organlara götürülerek vücuttan uzaklaştırılır."
-        },
-        {
-          "term": "Hücre",
-          "definition": "Canlıların temel yapı ve görev birimi.",
-          "connection": "Bu maddeler sindirim ve solunum sistemlerinde alınır, dolaşım sistemiyle hücreye taşınır."
-        },
-        {
-          "term": "Karbondioksit",
-          "definition": "Hücrelerde oluşup kanla akciğerlere taşınan atık gaz.",
-          "connection": "Dört sistemi tek çizimde gösterirken besin, oksijen, karbondioksit ve atık maddeleri ayrı renkli oklarla belirt."
-        },
-        {
-          "term": "Sistemler arası iş birliği",
-          "definition": "Bir sistemin sağladığı madde veya işlevin başka sistemlerin görevini desteklemesi.",
-          "connection": "Besin, oksijen ve atıkların izlediği yollar farklı sistemleri birleştirir; tek bir sistem tüm hücre gereksinimlerini kendi başına karşılamaz."
-        }
       ],
       points: ["Dolaşım maddelerin hücrelere taşınmasına yardım eder.", "Solunum oksijen-karbondioksit alışverişine katkı verir.", "Boşaltım bazı atıkların uzaklaştırılmasını sağlar."],
       terms: ['sistem', 'madde alışverişi', 'hücre', 'atık madde'],
@@ -1542,33 +801,6 @@
         "Kitapta İbnü’n Nefîs’in küçük kan dolaşımına ilişkin açıklaması; Zehrâvî ve Sabuncuoğlu Şerefeddin’in cerrahi çalışmaları; İbn Sina ve Malpighi gibi kişilerin tıp tarihindeki katkıları yer alır. Bu örnekler, bilginin farklı kültür ve dönemlerdeki araştırmacılarla birikerek geliştiğini gösterir.",
         "Bir biyografi özeti yazarken kanıtlanmamış alıntı veya abartılı “ilk kişi” iddiası ekleme. Kişinin katkısını bir güvenilir kaynakla doğrula, yaşadığı dönemi belirt ve kendi çalışmasının sonraki bilgiyle ilişkisini açıkla. Portre bir bilimsel kanıt değil, kişiyi tanıtan görseldir; bilimsel katkı metindeki yöntem ve kaynakla değerlendirilir."
       ],
-      termDefinitions: [
-        {
-          "term": "Bilim tarihi",
-          "definition": "Bilimsel bilgi ve yöntemlerin farklı dönemlerde nasıl geliştiğini inceleyen alan.",
-          "connection": "Bilim insanlarının farklı dönemlerde yaptığı gözlem ve çalışmalar, tıp bilgisinin zaman içinde nasıl biriktiğini ve değiştiğini gösterir."
-        },
-        {
-          "term": "Bilimsel kanıt",
-          "definition": "Bir açıklamayı desteklemek veya sınamak için kullanılan gözlem ve araştırma bulgusu.",
-          "connection": "Portre bir bilimsel kanıt değil, kişiyi tanıtan görseldir; bilimsel katkı metindeki yöntem ve kaynakla değerlendirilir."
-        },
-        {
-          "term": "Anatomi",
-          "definition": "Canlıların vücut yapısını inceleyen bilim alanı.",
-          "connection": "Kitaptaki “İz Bırakanlar” sayfaları, farklı dönemlerde yaşayan bilim insanlarının anatomi, dolaşım, cerrahi ve tıp alanlarındaki katkılarını örnekler."
-        },
-        {
-          "term": "Bilimsel model",
-          "definition": "Bir yapıyı veya süreci açıklamak için seçilmiş özellikleri gösteren temsil.",
-          "connection": "Anatomik bir çizim veya model yapıları anlamaya yardım eder; gerçek dokunun tüm ayrıntılarını göstermediği için metin ve kanıtla birlikte okunur."
-        },
-        {
-          "term": "Kaynak doğrulama",
-          "definition": "Tarihsel veya bilimsel bir iddiayı güvenilir kayıtlarla karşılaştırma.",
-          "connection": "Bir bilim insanına atfedilen buluşu değerlendirirken tarihsel kaydı ve güvenilir kaynakları karşılaştır; portre veya kısa biyografi tek başına kanıt değildir."
-        }
-      ],
       points: ["Bilimsel bilgi yeni kanıtlarla gelişebilir.", "Araştırmacının yöntemi ve dönemi önemlidir.", "Bilgi birikimine farklı araştırmacılar katkı sağlar."],
       terms: ['bilim tarihi', 'kanıt', 'gözlem', 'bilimsel model'],
       tasks: ['Kitaptaki “İz Bırakanlar” bölümünden bir bilim insanı seç.', 'Katkısını bir güvenilir kaynakla doğrula.', 'Bilginin hangi kanıta veya yönteme dayandığını yaz.'],
@@ -1583,33 +815,6 @@
         "Bir bilimsel açıklama; hangi soruya yanıt verdiğini, hangi kanıta dayandığını ve süreçte nelerin değiştiğini açıklar. Model, karmaşık gerçekliği sadeleştirerek anlaşılır kılar; modelin sınırlılıklarını da belirtmek gerekir. Gözlem, çıkarım ve sonuç birbiriyle ilişkili ama farklı düşünme adımlarıdır.",
         "Kitabın son sayfaları sindirim, dolaşım, solunum ve boşaltım sistemlerini test soruları, şemalar, günlük yaşam örnekleri ve bulmacalarla tekrar ettirir. Sözlük, kaynakça ve haritalar başvuru amacıyla eklenmiştir. Kendi çalışma portföyünde uzay teknolojisi, enerji dönüşümü ve sistemler arası madde akışı için birer kanıtlı örnek seçebilirsin.",
         "Öz değerlendirmede yalnızca doğru cevaba değil, hangi kavramı daha iyi açıklayabildiğine, hangi modelinin işe yaradığına ve neyi yeniden araştırman gerektiğine bak. Bir şema hazırlarken okların anlamını ve görselin temsilî olduğunu açıkla. Güvenilir kaynak kullandıysan adını yaz; öğrendiğin bilgiyi yeni bir örneğe aktar."
-      ],
-      termDefinitions: [
-        {
-          "term": "Gözlem",
-          "definition": "Bir olayı veya nesneyi araç/duyularla inceleyip fark edilen özellikleri kaydetme.",
-          "connection": "Yıl boyunca uzay, kuvvet-enerji ve vücudumuzdaki sistemler konularını farklı içeriklerle öğrendin; ortak bilimsel beceriler ise gözlem yapmak, kavramı tanımlamak, kanıtı açıklamak ve model kurmaktır."
-        },
-        {
-          "term": "Çıkarım",
-          "definition": "Gözlem ve kanıtlara dayanarak olası açıklama geliştirme.",
-          "connection": "Gözlem, çıkarım ve sonuç birbiriyle ilişkili ama farklı düşünme adımlarıdır."
-        },
-        {
-          "term": "Model",
-          "definition": "Gerçek bir yapının veya sürecin seçilmiş özelliklerini gösteren sadeleştirilmiş temsil.",
-          "connection": "Öz değerlendirmede yalnızca doğru cevaba değil, hangi kavramı daha iyi açıklayabildiğine, hangi modelinin işe yaradığına ve neyi yeniden araştırman gerektiğine bak."
-        },
-        {
-          "term": "Öz değerlendirme",
-          "definition": "Kendi öğrenme sürecindeki güçlü yanları ve geliştirilmesi gereken noktaları inceleme.",
-          "connection": "Öz değerlendirmede yalnızca doğru cevaba değil, hangi kavramı daha iyi açıklayabildiğine, hangi modelinin işe yaradığına ve neyi yeniden araştırman gerektiğine bak."
-        },
-        {
-          "term": "Kanıtlı açıklama",
-          "definition": "İddiasını gözlem, ölçüm veya güvenilir kaynakla destekleyen bilimsel anlatım.",
-          "connection": "Bir iddiayı gözlem, ölçüm ya da güvenilir kaynakla desteklemek; sonuç ile tahmini ayırır ve başkasının açıklamayı yeniden değerlendirmesine olanak verir."
-        }
       ],
       points: ["Kavramı örnek ve modelle ilişkilendir.", "Açıklamanı kanıt ve güvenilir kaynakla destekle.", "Modelinin sınırını fark edip öğrenme sürecini gözden geçir."],
       terms: ['model', 'kanıt', 'açıklama', 'öz değerlendirme'],
