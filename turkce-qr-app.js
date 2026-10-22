@@ -174,15 +174,16 @@
     return lines.join("\n");
   }
 
+  /* Groq isteğini kısa tutmak için yalnızca özet, ana noktalar ve değerlendirme anahtarı gönderilir;
+     zaman damgalı bölümler öğrenci arayüzünde kalır, isteğe eklenmez. */
   function aiContext(unit) {
     const analysis = unit.analysis;
-    const segments = analysis.segments.map((segment) => `${segment.at} · ${segment.note}`).join("\n");
     return [
       `Video: ${unit.title} (${analysis.speaker})`,
-      `Konu: ${analysis.summary}`,
-      `Bölümler:\n${segments}`,
+      `Özet: ${analysis.summary}`,
+      `Ana noktalar:\n- ${analysis.keyPoints.join("\n- ")}`,
       `Değerlendirmede beklenen öğeler:\n- ${unit.write.answerKey.join("\n- ")}`,
-    ].join("\n\n");
+    ].join("\n");
   }
 
   async function aiGrade(unit, entry, host, button, api) {

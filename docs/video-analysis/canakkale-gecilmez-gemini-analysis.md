@@ -1,8 +1,9 @@
 # “Çanakkale Geçilmez” — video analizi (Gemini)
 
 > **Kaynak ve kullanım sınırı:** Bu dosya, kullanıcı tarafından sağlanan Gemini video analizidir. Uygulama videoyu açmaz, izlemez; değerlendirmede yalnızca bu rapor kaynak olarak kullanılır. Konuşma bölümleri kısmi/özet olabilir; raporda bulunmayan ayrıntılar doğrulanmış sayılmaz.
-> **Video:** Çanakkale Geçilmez · 2. tema · 5. etkinlik (s. 91) · süre ≈ 3:15
+> **Video:** Çanakkale Geçilmez · 2. tema · 5. etkinlik (s. 91) · süre ≈ 3:15–3:30
 > **Bağlantı:** [Drive](https://drive.google.com/file/d/1MjjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view)
+> **İkinci kaynak:** Kullanıcı tarafından sağlanan özet analiz ([kaynak](kaynak/canakkale-gecilmez-ozet.md)); aşağıdaki “ek ayrıntılar” bölümü oradan gelir.
 
 ## Konu ve özet
 
@@ -40,9 +41,19 @@ Dış ses; dramatik, saygılı, bilgilendirici. Döneme uygun müzik ve ses efek
 4. Deniz savaşlarının ardından kara savaşları aşamasına geçildi.
 5. “Çanakkale Geçilmez” sözü videonun kapanış vurgusudur.
 
+## Ek ayrıntılar (ikinci analizden)
+
+İlk analizde geçmeyen, karta da yansıtılan noktalar:
+
+- Videonun ikinci yarısı **“Çanakkale ruhu”** üzerinde durur: Anadolu'nun ve Osmanlı coğrafyasının farklı yerlerinden gelen gönüllüler, talebeler ve neferler omuz omuza mücadele eder.
+- Cephe adları **Conkbayırı, Arıburnu ve Anafartalar** olarak anılır; **Mustafa Kemal Paşa** “Anafartalar Kahramanı” olarak öne çıkar.
+- Anlatım epik ve öğreticidir; top sesleri ve epik müzik kullanılır.
+- Kapanış, ilkenin dünya tarihine etkisi ve bugünkü millî birlik anlayışıyla bağlanır.
+
 ## Belirsizlikler
 
 - **Gün–ay düzeyinde tarih verilmiyor** (18 Mart gibi). Bu yüzden kartta tarih sorusu yok.
+- İki analizde süre farklı (3:15 / 3:30); kesin süre doğrulanamıyor.
 - Anlık psikolojik ayrıntılar ve bireysel asker hatıraları özet düzeyinde geçiyor.
 
 ## Değerlendirmede kullanılacak ölçütler (iç kullanım)

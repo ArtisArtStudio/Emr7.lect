@@ -184,6 +184,21 @@ for (const unit of data.units) {
 }
 
 assert.ok(app.includes('api.groq.com') && app.includes('response_format'), 'Yapay zekâ değerlendirmesi Groq JSON sözleşmesini kullanmalı.');
+
+// Groq isteği kısa kalmalı: bağlam yalnız özet + ana noktalar + anahtardan oluşur, zaman damgaları gönderilmez.
+assert.ok(!/analysis\.segments/.test(app), 'Zaman damgalı bölümler Groq isteğine eklenmemeli.');
+const contextSize = (unit) =>
+  [`Video: ${unit.title} (${unit.analysis.speaker})`, `Özet: ${unit.analysis.summary}`,
+    `Ana noktalar:\n- ${unit.analysis.keyPoints.join('\n- ')}`,
+    `Değerlendirmede beklenen öğeler:\n- ${unit.write.answerKey.join('\n- ')}`].join('\n').length;
+for (const unit of analysed) {
+  const size = contextSize(unit);
+  assert.ok(size <= 1400, `${unit.id}: Groq bağlamı çok uzun (${size} karakter, üst sınır 1400).`);
+  assert.ok(unit.analysis.summary.length <= 700, `${unit.id}: video özeti Groq için uzun (${unit.analysis.summary.length}).`);
+  assert.ok(unit.analysis.keyPoints.length <= 5, `${unit.id}: ana nokta sayısı 5'i geçmemeli.`);
+  assert.ok(unit.write.answerKey.length <= 4, `${unit.id}: anahtar maddeleri 4'ü geçmemeli.`);
+}
+assert.equal(analysed.length, data.units.length, 'Sekiz karekod içeriğinin tamamı için video analizi olmalı.');
 assert.ok(app.includes('EMR7_AI_GRADER'), 'Yapay zekâ metni ortak koçluk filtresinden geçmeli.');
 
 console.log(

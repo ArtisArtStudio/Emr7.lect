@@ -50,9 +50,9 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 | — | s. 93 | Konuşma Yapalım | Konuşma | — | ⏭️ kapsam dışı |
 | 13 | s. 95 · Hazırlık | Hey Onbeşli — Bir Çanakkale Ağıdı | İzleme / Dinleme | `qr-hey-onbesli` kartı (9. hafta) · döküm + AI değerlendirmesi | ✅ var |
 | 14 | s. 95 | Millî Mücadele Sergisi · Kahraman Çocuklar | İzleme | `qr-milli-mucadele-sergisi` kartı (9. hafta) · döküm + AI + Sakarya karşılaştırması | ✅ var |
-| 15 | s. 100 · 6. etkinlik | Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale | Medya metni | `qr-canakkale-medya` kartı (9. hafta) | ✅ var |
-| 16 | s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | İzleme | `qr-18-mart` kartı (10. hafta) | ✅ var |
-| 17 | s. 116 · 5. soru | Çanakkale | İzleme | `qr-canakkale-son` kartı (10. hafta) | ✅ var |
+| 15 | s. 100 · 6. etkinlik | Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale | Medya metni | `qr-canakkale-medya` kartı (9. hafta) · özet + AI | ✅ var |
+| 16 | s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | İzleme | `qr-18-mart` kartı (10. hafta) · özet + AI | ✅ var |
+| 17 | s. 116 · 5. soru | Çanakkale | İzleme | `qr-canakkale-son` kartı (10. hafta) · Seyit Onbaşı özeti + AI | ✅ var |
 | 18 | s. 117 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | — | ❌ eksik (ölçme seti) |
 
 ### Tema 2'nin uygulamadaki durumu
@@ -84,13 +84,13 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 | `qr-milli-mucadele-sergisi` — Kahraman Çocuklar | 9 | Çocukların rolü, sergiyle aktarım, mesaj · **döküm var, AI değerlendirmesi + Sakarya karşılaştırması** |
 | `qr-canakkale-gecilmez` — Çanakkale Geçilmez | 9 | Geçiş girişimi, direniş araçları, sonuç · **döküm var, AI değerlendirmesi açık** |
 | `qr-hey-onbesli` — Hey Onbeşli | 9 | Ağıt kültürü, “on beşliler”, hatıra · **döküm var, AI değerlendirmesi açık** |
-| `qr-canakkale-medya` — Çanakkale tanıtım metni | 9 | Bilgi seçimi, hedef kitle, görsel |
-| `qr-18-mart` — 18 Mart anma içeriği | 10 | Tarih–olay, mesaj ve kanıt |
-| `qr-canakkale-son` — Çanakkale | 10 | İki içeriği karşılaştırma |
+| `qr-canakkale-medya` — Çanakkale tanıtım metni | 9 | Bilgi seçimi, hedef kitle, görsel · **özet + AI** |
+| `qr-18-mart` — 18 Mart anma içeriği | 10 | Anma, şehitlikler, mirası koruma · **özet + AI** |
+| `qr-canakkale-son` — Çanakkale | 10 | Seyit Onbaşı: fedakârlık, neden–sonuç · **özet + AI** |
 
 Video bağlantıları ve her içerik için hazır Gemini istemi [`turkce-qr-linkler.md`](turkce-qr-linkler.md) içinde.
 
-**Dökümü olan içeriklerde** (şu an Motivasyon Defteri, Sakarya Zaferi, Çanakkale Geçilmez, Hey Onbeşli ve Kahraman Çocuklar) sorular videodan yanıtlanabilir; yazma görevi Groq ile değerlendirilir, anahtar modelin iç bağlamında kalır. Dökümü olmayan yedi içerikte tasarım sınırı şudur: sorular **videoda geçtiği iddia edilen ayrıntılara** dayanmaz. Öğrencinin kendi izlediğini kaydetmesine, medya okuryazarlığına ve okuduğu metinle karşılaştırma yapmasına dayanır. Böylece içerik değişse de çalışma geçerli kalır.
+**Dökümü olan içeriklerin tamamında** (sekiz kart) sorular videodan yanıtlanabilir; yazma görevi Groq ile değerlendirilir, anahtar modelin iç bağlamında kalır. Dökümü olmayan yedi içerikte tasarım sınırı şudur: sorular **videoda geçtiği iddia edilen ayrıntılara** dayanmaz. Öğrencinin kendi izlediğini kaydetmesine, medya okuryazarlığına ve okuduğu metinle karşılaştırma yapmasına dayanır. Böylece içerik değişse de çalışma geçerli kalır.
 
 ### 4c. Eklenmeyenler
 

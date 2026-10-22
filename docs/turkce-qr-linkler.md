@@ -16,9 +16,9 @@ Aşağıdaki bağlantılar, 1. kitabın karekodlu içerik listesinin yayımlanm�
 | 3 | Çanakkale Geçilmez | 9 | s. 91 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1MjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view) | ✅ analiz alındı |
 | 4 | Hey Onbeşli — Bir Çanakkale Ağıdı | 9 | s. 95 · Hazırlık | [Drive](https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view) | ✅ analiz alındı |
 | 5 | Millî Mücadele Sergisi · Kahraman Çocuklar | 9 | s. 95 | [Drive](https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view) | ✅ analiz alındı |
-| 6 | Çanakkale (tanıtım medya metni) | 9 | s. 100 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view) | — |
-| 7 | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | 10 | s. 107 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view) | — |
-| 8 | Çanakkale (5. soru) | 10 | s. 116 · 5. soru | [Drive](https://drive.google.com/file/d/1V_xuE7jAr9DXqmRp7p-qg7DFPeZbR2t9/view) | — |
+| 6 | Çanakkale (tanıtım medya metni) | 9 | s. 100 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view) | ✅ özet analiz |
+| 7 | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | 10 | s. 107 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view) | ✅ özet analiz |
+| 8 | Çanakkale (5. soru) | 10 | s. 116 · 5. soru | [Drive](https://drive.google.com/file/d/1V_xuE7jAr9DXqmRp7p-qg7DFPeZbR2t9/view) | ✅ özet analiz |
 
 Uygulamada hâlihazırda bağlı olan dört içerik (karşılaştırma için): Hayat Büyük Bir Okuldur, Bir İyilik Hikâyesi, Yiğit Caner Aydın söyleşisi, Ali Kuşçu dinlemesi. Bunların EBA bağlantıları PDF'ten çözümlenmişti:
 
@@ -97,6 +97,14 @@ Bunu `docs/video-analysis/<içerik-adı>-gemini-analysis.md` olarak depoya koyar
 | Çanakkale Geçilmez | [`video-analysis/canakkale-gecilmez-gemini-analysis.md`](video-analysis/canakkale-gecilmez-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Hey Onbeşli — Bir Çanakkale Ağıdı | [`video-analysis/hey-onbesli-gemini-analysis.md`](video-analysis/hey-onbesli-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Millî Mücadele Sergisi · Kahraman Çocuklar | [`video-analysis/kahraman-cocuklar-gemini-analysis.md`](video-analysis/kahraman-cocuklar-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi ve Sakarya karşılaştırması açık |
+| Çanakkale Geçilmez (2. analiz) | [`video-analysis/canakkale-gecilmez-gemini-analysis.md`](video-analysis/canakkale-gecilmez-gemini-analysis.md) | ✅ yeni ayrıntılar eklendi (Conkbayırı, Arıburnu, Anafartalar, “Çanakkale ruhu”) |
+| Çanakkale (kent tanıtımı) | [`video-analysis/canakkale-kent-tanitim-gemini-analysis.md`](video-analysis/canakkale-kent-tanitim-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+| 18 Mart anma · şehitlikler | [`video-analysis/18-mart-anma-gemini-analysis.md`](video-analysis/18-mart-anma-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+| Çanakkale · Seyit Onbaşı | [`video-analysis/seyit-onbasi-canakkale-gemini-analysis.md`](video-analysis/seyit-onbasi-canakkale-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+
+**Eşleştirme notu:** Özet raporlar başlıklarına göre eşlendi. “Çanakkale Geçilmez” raporu mevcut kartla aynı ada sahip olduğu için oraya **ek ayrıntı** olarak işlendi; “Seyit Onbaşı” raporu s. 116'daki “Çanakkale”, “Şehitlikler/Tarihî Miras” raporu s. 107'deki 18 Mart anma kartı ile eşleştirildi. Farklıysa söyle, taşırım.
+
+Ham Gemini özetleri [`docs/video-analysis/kaynak/`](video-analysis/kaynak/) altında saklanır.
 
 Analiz bağlanınca o kartta üç şey değişir: not alanları videonun gerçek bölümlerine bakar, seçim soruları videodan yanıtlanabilir olur, yazma görevinde **“Yapay zekâ ile değerlendir”** düğmesi çıkar (Groq anahtarı sayfanın üstündeki ortak ayarlardan okunur).
 
@@ -118,4 +126,6 @@ Vaktin sınırlıysa bu sırayla ilerle — çünkü uygulamada en çok boşluk 
 3. ~~Hey Onbeşli~~ ✅
 4. ~~Motivasyon Defteri~~ ✅
 5. ~~Çanakkale Geçilmez~~ ✅
-6. Kalan üç Çanakkale içeriği: tanıtım metni (s. 100), 18 Mart (s. 107), Çanakkale (s. 116)
+6. ~~Tanıtım metni (s. 100)~~ ✅ · ~~18 Mart (s. 107)~~ ✅ · ~~Çanakkale (s. 116)~~ ✅
+
+Sekiz karekod içeriğinin tamamı artık dökümlü ve yapay zekâ değerlendirmeli.
