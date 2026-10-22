@@ -129,3 +129,29 @@ Vaktin sınırlıysa bu sırayla ilerle — çünkü uygulamada en çok boşluk 
 6. ~~Tanıtım metni (s. 100)~~ ✅ · ~~18 Mart (s. 107)~~ ✅ · ~~Çanakkale (s. 116)~~ ✅
 
 Sekiz karekod içeriğinin tamamı artık dökümlü ve yapay zekâ değerlendirmeli.
+
+---
+
+## 7. Tema 2 — Bir Hilal Uğruna (hafta 6–10) karekod listesi
+
+Tema 2'de karekodla açılan **7 içerik** var: altısı video, biri (s. 100, medya metni) PDF. **6. haftada (Bayrağımızın Altında) karekod içeriği yok**; s. 82 dereceli puanlama anahtarı ile s. 117 ek ölçme seti etkinlik/video değil, s. 93 “Konuşma Yapalım” ise kapsam dışı. Aşağıdaki dosya adları Drive'daki özgün adlardır.
+
+| # | Sayfa · etkinlik | İçerik | Tür | Hafta | Uygulamadaki kart | Drive |
+|---|---|---|---|---|---|---|
+| 1 | s. 80 · 5. etkinlik | Sakarya Zaferi | Video (mp4) | 7–8 | `qr-sakarya` | https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view |
+| 2 | s. 91 · 5. etkinlik | Çanakkale Geçilmez | Video (mp4) | 9 | `qr-canakkale-gecilmez` | https://drive.google.com/file/d/1MjjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view |
+| 3 | s. 95 · Hazırlık | Hey Onbeşli — Bir Çanakkale Ağıdı | Video (mp4) | 9 | `qr-hey-onbesli` | https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view |
+| 4 | s. 95 | Millî Mücadele Sergisi · Kahraman Çocuklar | Video (mp4) | 9 | `qr-milli-mucadele-sergisi` | https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view |
+| 5 | s. 100 · 6. etkinlik | Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale | PDF | 9 | `qr-canakkale-medya` | https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view |
+| 6 | s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | Video (mp4) | 10 | `qr-18-mart` | https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view |
+| 7 | s. 116 · 5. soru | Çanakkale (Seyit Onbaşı) | Video (mp4) | 10 | `qr-canakkale-son` | https://drive.google.com/file/d/1V_xuE7jAr9DXqmRp7p-qg7DFPeZbR2t9/view |
+
+### Gemini'ye toplu verilecek bağlantılar (virgülle ayrılmış)
+
+```text
+https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view, https://drive.google.com/file/d/1MjjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view, https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view, https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view, https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view, https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view, https://drive.google.com/file/d/1V_xuE7jAr9DXqmRp7p-qg7DFPeZbR2t9/view
+```
+
+**Sıra:** 80 → 91 → 95 (Hey Onbeşli) → 95 (Sergi) → 100 (PDF) → 107 → 116. Gemini çıktısında içerik adı geçmiyorsa bu sıraya göre eşleştir.
+
+> Erişim notu: Bu adresler dosyanın **görüntüleme** bağlantısıdır. Gemini'nin dosyayı açabilmesi için Drive'da “bağlantıya sahip olan herkes” görüntüleyebilir olmalı; değilse Gemini erişim isteyebilir veya dosyayı açamaz.
