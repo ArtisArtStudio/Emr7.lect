@@ -14,7 +14,7 @@ Aşağıdaki bağlantılar, 1. kitabın karekodlu içerik listesinin yayımlanm�
 | 1 | Beyhan Budak ile Motivasyon Defteri | 5 | s. 69 · 4. etkinlik | [Drive](https://drive.google.com/file/d/1Dpfaf26LDPkfXzLS7Gk2CphFGY-30zqa/view) · [YouTube](https://youtu.be/d8LR9BPEd_0) | ✅ analiz alındı |
 | 2 | Sakarya Zaferi | 7–8 | s. 80 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view) | ✅ analiz alındı |
 | 3 | Çanakkale Geçilmez | 9 | s. 91 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1MjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view) | ✅ analiz alındı |
-| 4 | Hey Onbeşli — Bir Çanakkale Ağıdı | 9 | s. 95 · Hazırlık | [Drive](https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view) | — |
+| 4 | Hey Onbeşli — Bir Çanakkale Ağıdı | 9 | s. 95 · Hazırlık | [Drive](https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view) | ✅ analiz alındı |
 | 5 | Millî Mücadele Sergisi · Kahraman Çocuklar | 9 | s. 95 | [Drive](https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view) | — |
 | 6 | Çanakkale (tanıtım medya metni) | 9 | s. 100 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view) | — |
 | 7 | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | 10 | s. 107 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view) | — |
@@ -95,6 +95,7 @@ Bunu `docs/video-analysis/<içerik-adı>-gemini-analysis.md` olarak depoya koyar
 | Beyhan Budak ile Motivasyon Defteri | [`video-analysis/motivasyon-defteri-gemini-analysis.md`](video-analysis/motivasyon-defteri-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Sakarya Zaferi | [`video-analysis/sakarya-zaferi-gemini-analysis.md`](video-analysis/sakarya-zaferi-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Çanakkale Geçilmez | [`video-analysis/canakkale-gecilmez-gemini-analysis.md`](video-analysis/canakkale-gecilmez-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+| Hey Onbeşli — Bir Çanakkale Ağıdı | [`video-analysis/hey-onbesli-gemini-analysis.md`](video-analysis/hey-onbesli-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 
 Analiz bağlanınca o kartta üç şey değişir: not alanları videonun gerçek bölümlerine bakar, seçim soruları videodan yanıtlanabilir olur, yazma görevinde **“Yapay zekâ ile değerlendir”** düğmesi çıkar (Groq anahtarı sayfanın üstündeki ortak ayarlardan okunur).
 
