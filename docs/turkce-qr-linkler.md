@@ -198,17 +198,29 @@ Tema 3'te karekodla açılan **14 içerik** var: **5 dinleme/izleme videosu**, 5
 
 **Not:** Karekodun kendisi (görüntü) ayrıca çözülmeye çalışıldı; bu PDF'te karekodlar vektör olarak çizildiği için `opencv` okuyamadı. Ancak PDF'in bağlantı katmanı karekodun hedefini birebir verir; adresler buradan alındı.
 
+### Drive kopyaları (yayımlanmış liste)
+
+EBA adresleri oturum istediği için videoların **Drive kopyaları** ayrıca arandı. `turkcedersi.net` 7. sınıf dinleme/izleme sayfası 3. temayı yayımlamış; oradaki Drive dosyaları:
+
+| Sayfa | İçerik | Drive |
+|---|---|---|
+| s. 130 | Düş Fırçası | https://drive.google.com/file/d/1kUbDmqpzWQKch_yPLLhFf2P27fcbagiJ/view |
+| s. 144 | Dijital Tayfa — Komik mi Şimdi? | https://drive.google.com/file/d/1wjrLH3SNBAzyvyEuzAeUJhOd3ex6KPkO/view |
+| s. 161 | İletişimin Önemi | https://drive.google.com/file/d/14thzmqR2hblOivxAa1OJA__563LqvCql/view |
+| s. 139 | Sadaka Taşı | ⏳ yayımlanmamış |
+| s. 169 | Ortak Evimiz Dünya | ⏳ yayımlanmamış |
+
+Aynı sayfadaki etkileşimli içerik adresleri, PDF'ten çıkardığım `resourceId`'lerle **birebir aynı** (7c9f11a4…, 1a2d3dc3…, 56d3ee5c…, f435c891…, 25bb53c3…). İki bağımsız kaynağın örtüşmesi, PDF taramasının doğru olduğunu doğruluyor.
+
 ### Gemini'ye toplu verilecek bağlantılar (virgülle ayrılmış)
 
-Yalnız **dinleme/izleme videoları**, sayfa sırasıyla:
+Drive kopyası bulunan üç video, sayfa sırasıyla:
 
 ```text
-https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c37474f2ec4a8a22af545ead325b7ad9&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=96d3b5324b741511cb62bb00f3344d0f&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c72246e9ade8b155baf3316a6eac2f00&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=4a23110004f17e70a17055512a1addbc&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=75e91ff4e295f41c8bd97c7b304e31dd&resourceType=1&resourceLocation=2
+https://drive.google.com/file/d/1kUbDmqpzWQKch_yPLLhFf2P27fcbagiJ/view, https://drive.google.com/file/d/1wjrLH3SNBAzyvyEuzAeUJhOd3ex6KPkO/view, https://drive.google.com/file/d/14thzmqR2hblOivxAa1OJA__563LqvCql/view
 ```
 
-**Sıra:** 130 (Düş Fırçası) → 139 (Sadaka Taşı) → 144 (Dijital Tayfa) → 161 (İletişimin Önemi) → 169 (Ortak Evimiz Dünya). Gemini çıktısında içerik adı geçmiyorsa bu sıraya göre eşleştir.
-
-> **Erişim uyarısı:** Bu adresler `ders.eba.gov.tr` yönlendirme sayfalarıdır; EBA oturumu istemeden video akışını vermez. Gemini bağlantıyı doğrudan açamazsa iki yol var: (a) içerik kitaptaki karekodla açılıp video dosyası Drive'a yüklenir ve Drive `/view` bağlantısı verilir (Tema 2'de olduğu gibi), (b) döküm/not öğrenci tarafından yapıştırılır.
+**Sıra:** 130 (Düş Fırçası) → 144 (Dijital Tayfa) → 161 (İletişimin Önemi). Sadaka Taşı (s. 139) ve Ortak Evimiz Dünya (s. 169) için Drive kopyası yayımlanınca satırın sonuna eklenir; o zamana kadar EBA adresleri yukarıdaki tabloda duruyor.
 
 ### Tema 3 için düzeltilen noktalar
 

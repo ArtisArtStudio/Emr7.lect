@@ -69,19 +69,19 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 
 ## 3b. Tema 3 — İletişim ve Sosyal İlişkiler (s. 121–173)
 
-Tema 3'te karekodla açılan **14 içerik** var: 5 dinleme/izleme videosu, 5 etkileşimli EBA çalışması, 2 ölçme aracı, 2 tema girişi. Liste kitabın PDF'indeki gömülü bağlantılardan çıkarıldı; bağlantıların tamamı doğrulandı ([`turkce-qr-linkler.md`](turkce-qr-linkler.md) § 8).
+Tema 3'te karekodla açılan **14 içerik** var: 5 dinleme/izleme videosu, 5 etkileşimli EBA çalışması, 2 ölçme aracı, 2 tema girişi. Liste kitabın PDF'indeki gömülü bağlantılardan çıkarıldı; bağlantıların tamamı doğrulandı, beş videodan **üçünün Drive kopyası** da yayımlanmış (s. 130, 144, 161) ([`turkce-qr-linkler.md`](turkce-qr-linkler.md) § 8).
 
 | # | Kitap yeri | İçerik | Tür | Uygulamadaki karşılığı | Durum |
 | --- | --- | --- | --- | --- | --- |
 | T1 | s. 120 · tema girişi | 3. Tema E-Özeti | EBA içeriği | — | ⛔ etkinlik değil |
 | T2 | s. 120 · tema girişi | EBA Tema Alanı | EBA alanı | — | ⛔ etkinlik değil |
-| T3 | s. 130 · 7.–8. etkinlik | Düş Fırçası | İzleme | — | ⏳ döküm yok |
+| T3 | s. 130 · 7.–8. etkinlik | Düş Fırçası | İzleme | — | ⏳ döküm yok (Drive kopyası var) |
 | T4 | s. 130 · Erişelim | “Ok” oyunu | Etkileşimli | — | ⛔ oyun |
 | T5 | s. 139 · 5.–6. etkinlik | Sadaka Taşı | İzleme | — | ⏳ döküm yok |
 | T6 | s. 140 · Erişelim | “Bağlama Oyunu” | Etkileşimli | — | ⛔ oyun |
-| T7 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme | — | ⏳ döküm yok |
+| T7 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme | — | ⏳ döküm yok (Drive kopyası var) |
 | T8 | s. 154 · 10. etkinlik | “Karagöz Fidan Dikiyor” | Etkileşimli | — | ⛔ oyun |
-| T9 | s. 161 · 6. etkinlik | İletişimin Önemi | İzleme | — | ⏳ döküm yok |
+| T9 | s. 161 · 6. etkinlik | İletişimin Önemi | İzleme | — | ⏳ döküm yok (Drive kopyası var) |
 | T10 | s. 161 · Erişelim | “Zamanı Bul” | Etkileşimli | — | ⛔ oyun |
 | T11 | s. 162 · 7. etkinlik | Dereceli Puanlama Anahtarı | Değerlendirme | — | ⏭️ konuşma, kapsam dışı |
 | T12 | s. 163 · 9. etkinlik | “Şiirde Ahenk” | Etkileşimli | — | ⛔ oyun |
