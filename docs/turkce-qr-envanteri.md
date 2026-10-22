@@ -33,7 +33,7 @@ Yani artık **12 metin/video/ses içeriğinin tamamı** uygulamada bir çalışm
 | 5 | s. 48 | Şampiyonlar Müzesi | Etkileşimli oyun | — | ⛔ bilinçli olarak alınmadı |
 | 6 | s. 49 | Resimli Sözcükler | Etkileşimli oyun | — | ⛔ bilinçli olarak alınmadı |
 | 7 | s. 57 · 5. etkinlik | Osmanlı'da Astronomi… Ali Kuşçu | Dinleme | `adiny-a05`, `adiny-a06` + `adiny-review` 4. soru (rapor bağlamı) | ✅ var |
-| 8 | s. 69 · 4. etkinlik | Beyhan Budak ile Motivasyon Defteri | İzleme | `qr-motivasyon` kartı (5. hafta) | ✅ var |
+| 8 | s. 69 · 4. etkinlik | Beyhan Budak ile Motivasyon Defteri | İzleme | `qr-motivasyon` kartı (5. hafta) · döküm + AI değerlendirmesi | ✅ var |
 | 9 | s. 71 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | Tema ölçmesi 8 soru **özgün** yazıldı; karekod içeriği kullanılmadı | ⚠️ kısmi |
 
 Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısını istemez; uygulamadaki 8 soruluk tema ölçmesi özgün sorulardan oluşur. “Motivasyon Defteri” ise **tamamen boş**: bağlantı, etkinlik ve değerlendirme yok.
@@ -79,7 +79,7 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 
 | Çalışma | Hafta | Odak |
 | --- | --- | --- |
-| `qr-motivasyon` — Beyhan Budak ile Motivasyon Defteri | 5 | Hedef, öz izleme, not tutma |
+| `qr-motivasyon` — Beyhan Budak ile Motivasyon Defteri | 5 | Zaman yönetimi: planlama, kişiliğe uygun yöntem, bitiş tarihi · **döküm var, AI değerlendirmesi açık** |
 | `qr-sakarya` — Sakarya Zaferi | 7–8 | Neden–sonuç, tarih sırası |
 | `qr-milli-mucadele-sergisi` — Kahraman Çocuklar | 9 | Bölüm takibi, çıkarım, mesaj |
 | `qr-canakkale-gecilmez` — Çanakkale Geçilmez | 9 | Görüntü–ses–seslendirme, gözlem/yorum |
@@ -90,7 +90,7 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 
 Video bağlantıları ve her içerik için hazır Gemini istemi [`turkce-qr-linkler.md`](turkce-qr-linkler.md) içinde.
 
-Tasarım sınırı: video/ses dosyaları elimizde olmadığı için sorular **videoda geçtiği iddia edilen ayrıntılara** dayanmaz. Öğrencinin kendi izlediğini kaydetmesine, medya okuryazarlığına ve okuduğu metinle karşılaştırma yapmasına dayanır. Böylece içerik değişse de çalışma geçerli kalır.
+**Dökümü olan içerikte** (şu an Motivasyon Defteri) sorular videodan yanıtlanabilir; yazma görevi Groq ile değerlendirilir, anahtar modelin iç bağlamında kalır. Dökümü olmayan yedi içerikte tasarım sınırı şudur: sorular **videoda geçtiği iddia edilen ayrıntılara** dayanmaz. Öğrencinin kendi izlediğini kaydetmesine, medya okuryazarlığına ve okuduğu metinle karşılaştırma yapmasına dayanır. Böylece içerik değişse de çalışma geçerli kalır.
 
 ### 4c. Eklenmeyenler
 

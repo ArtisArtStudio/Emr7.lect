@@ -64,7 +64,7 @@ for (const unit of data.units) {
   assert.ok(unit.minutes >= 4 && unit.minutes <= 15, `${unit.id}: süre bilgisi gerçekçi olmalı.`);
   assert.equal(unit.before.length, 2, `${unit.id}: iki izleme öncesi sorusu olmalı.`);
   assert.equal(unit.notes.length, 4, `${unit.id}: dört not alanı olmalı.`);
-  assert.equal(unit.questions.length, 2, `${unit.id}: iki seçim sorusu olmalı.`);
+  assert.ok(unit.questions.length >= 2 && unit.questions.length <= 4, `${unit.id}: iki ile dört arası seçim sorusu olmalı.`);
   for (const question of unit.questions) {
     assert.ok(question.prompt && question.prompt.length > 12, `${unit.id}/${question.id}: soru metni kısa.`);
     assert.equal(question.options.length, 4, `${unit.id}/${question.id}: dört seçenek olmalı.`);
@@ -78,6 +78,18 @@ for (const unit of data.units) {
   assert.ok(write.criteria.length >= 3, `${unit.id}: en az üç ölçüt gerekli.`);
   assert.ok(write.guide && write.starter, `${unit.id}: yol gösterici ve başlangıç cümlesi gerekli.`);
   assert.ok(!/konuşma|sözlü anlat|sunum yap/i.test(`${unit.title} ${unit.kind} ${unit.focus} ${write.title}`), `${unit.id}: konuşma etkinlikleri kapsam dışı olmalı.`);
+}
+
+// Dökümü/analizi olan içerikler: kaynak dosya, özet ve değerlendirme anahtarı zorunlu.
+const analysed = data.units.filter((unit) => unit.analysis);
+for (const unit of analysed) {
+  const doc = path.join(ROOT, unit.analysis.doc);
+  assert.ok(fs.existsSync(doc), `${unit.id}: analiz dosyası yok (${unit.analysis.doc}).`);
+  assert.ok(unit.analysis.summary.length > 200, `${unit.id}: video özeti çok kısa.`);
+  assert.ok(unit.analysis.segments.length >= 3, `${unit.id}: zaman damgalı bölümler eksik.`);
+  assert.ok(unit.analysis.keyPoints.length >= 3, `${unit.id}: ana noktalar eksik.`);
+  assert.ok(Array.isArray(unit.write.answerKey) && unit.write.answerKey.length >= 3, `${unit.id}: yapay zekâ değerlendirmesi için anahtar gerekli.`);
+  assert.ok(unit.write.rubric && unit.write.rubric.length > 30, `${unit.id}: değerlendirme ölçütü (rubric) eksik.`);
 }
 
 // Konuşma etkinlikleri eklenmemeli.
@@ -124,9 +136,21 @@ for (const unit of data.units) {
   assert.ok(markup.includes(unit.title), `${unit.id} çizime yansımadı.`);
   assert.ok(markup.includes(`data-qr-check="quiz"`), `${unit.id} için kontrol düğmesi yok.`);
   assert.ok(!markup.includes('CEVAP'), `${unit.id} çiziminde cevap anahtarı geçiyor.`);
+  if (unit.analysis) {
+    for (const point of unit.analysis.keyPoints) {
+      assert.ok(!markup.includes(point), `${unit.id}: video ana noktası ekranda görünüyor (“${point.slice(0, 40)}…”).`);
+    }
+    for (const item of unit.write.answerKey) {
+      assert.ok(!markup.includes(item), `${unit.id}: değerlendirme anahtarı ekranda görünüyor.`);
+    }
+    assert.ok(markup.includes(`data-qr-ai="${unit.id}"`), `${unit.id}: analiz varken yapay zekâ düğmesi çizilmeli.`);
+  }
 }
+
+assert.ok(app.includes('api.groq.com') && app.includes('response_format'), 'Yapay zekâ değerlendirmesi Groq JSON sözleşmesini kullanmalı.');
+assert.ok(app.includes('EMR7_AI_GRADER'), 'Yapay zekâ metni ortak koçluk filtresinden geçmeli.');
 
 console.log(
   `Türkçe karekod çalışmaları hazır: ${data.units.length} içerik, ${data.units.reduce((total, unit) => total + unit.questions.length, 0)} seçim sorusu, ` +
-  `${data.units.length} yazma görevi, ${data.units.reduce((total, unit) => total + unit.notes.length, 0)} not alanı. Konuşma etkinlikleri kapsam dışı.`,
+  `${data.units.length} yazma görevi, ${data.units.reduce((total, unit) => total + unit.notes.length, 0)} not alanı, ${analysed.length} video analizi. Konuşma etkinlikleri kapsam dışı.`,
 );

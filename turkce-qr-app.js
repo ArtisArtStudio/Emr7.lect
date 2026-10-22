@@ -78,7 +78,7 @@
     <p class="qr-instruction">${escape(unit.write.instruction)}</p>
     <ul class="qr-criteria">${criteria}</ul>
     <textarea class="qr-textarea qr-write" data-qr-write="1" data-qr-unit="${escape(unit.id)}" rows="6" aria-label="${escape(unit.write.title)}">${escape(writeValue)}</textarea>
-    <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-check="write" data-qr-unit="${escape(unit.id)}">Yazımı kontrol et</button><span class="qr-count" data-qr-count="${escape(unit.id)}">${writeValue.trim().length}/${unit.write.minChars} karakter</span></div>
+    <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-check="write" data-qr-unit="${escape(unit.id)}">Yazımı kontrol et</button>${unit.analysis ? `<button class="btn qr-ai" type="button" data-qr-ai="${escape(unit.id)}">Yapay zekâ ile değerlendir</button>` : ""}<span class="qr-count" data-qr-count="${escape(unit.id)}">${writeValue.trim().length}/${unit.write.minChars} karakter</span></div>
     <p class="qr-feedback" data-qr-feedback="write" data-qr-unit="${escape(unit.id)}" aria-live="polite"${entry.writeChecked ? "" : " hidden"}>${escape(entry.writeFeedback)}</p>
   </div>
 </article>`;
@@ -131,6 +131,156 @@
     };
   }
 
+  /* Yapay zekâ değerlendirmesi yalnız dökümü/analizi olan içeriklerde açılır.
+     Model yalnızca kapalı kodlar döndürür; öğrenciye gösterilen metin bu kodlardan üretilir,
+     böylece doğru cevap hiçbir koşulda ekrana gelmez. */
+  const AI_STATUS = {
+    correct: "TAM DOĞRU",
+    partial: "KISMEN DOĞRU",
+    wrong: "YENİDEN BAK",
+    incomplete: "YANIT EKSİK",
+    unverified: "DOĞRULANAMADI",
+  };
+  const AI_ISSUES = {
+    relevance: "Yanıtın soruyla ilişkisi zayıf kalmış.",
+    evidence: "Görüşün videodaki bir örneğe dayandırılmamış.",
+    completeness: "İstenen öğelerden en az biri eksik.",
+    reasoning: "Gerekçe ile sonuç arasındaki bağ açık değil.",
+    accuracy: "Bir bilgi videodaki anlatımla örtüşmüyor.",
+    source: "Bu bilgi videodan doğrulanamıyor.",
+    selection: "Seçim ile gerekçe birbirini tutmuyor.",
+  };
+  const AI_HINTS = {
+    reread: "Videonun ilgili bölümünü bir kez daha izle; notlarınla yan yana koy.",
+    count: "İstediğin öğeleri tek tek say: hepsi yanıtında var mı?",
+    evidence: "Her görüşün yanına videodan somut bir örnek ekle.",
+    explain: "Bir cümleyi “çünkü” ile genişlet; nedeni görünür olsun.",
+    connect: "Videodaki öneriyi kendi günlük düzeninle ilişkilendir.",
+    justify: "Seçtiğin yöntemin sana neden uyduğunu gerekçelendir.",
+    context: "Yanıtı kendi hayatından bir durumla somutlaştır.",
+    compare: "İki durumu yan yana koy: benzerlik ve farkı ayrı yaz.",
+  };
+
+  function aiFeedbackText(result, length) {
+    const statusLabel = AI_STATUS[result.status] || AI_STATUS.unverified;
+    const issues = (result.issues || []).map((code) => AI_ISSUES[code]).filter(Boolean);
+    const hint = AI_HINTS[result.hint] || "";
+    const lines = [`DURUM: ${statusLabel} · ${length} karakter`];
+    lines.push(`HATA/EKSİK: ${issues.length ? issues.join(" ") : "Belirgin bir eksik görülmedi."}`);
+    if (result.guide || hint) lines.push(`YOL GÖSTERİCİ: ${result.guide || hint}`);
+    if (result.starter) lines.push(`YAZMAYA BAŞLA: ${result.starter}`);
+    lines.push("TEŞVİK: Yanıtını yüksek sesle oku; anlaşılmayan bir cümle varsa yeniden yaz.");
+    return lines.join("\n");
+  }
+
+  function aiContext(unit) {
+    const analysis = unit.analysis;
+    const segments = analysis.segments.map((segment) => `${segment.at} · ${segment.note}`).join("\n");
+    return [
+      `Video: ${unit.title} (${analysis.speaker})`,
+      `Konu: ${analysis.summary}`,
+      `Bölümler:\n${segments}`,
+      `Değerlendirmede beklenen öğeler:\n- ${unit.write.answerKey.join("\n- ")}`,
+    ].join("\n\n");
+  }
+
+  async function aiGrade(unit, entry, host, button, api) {
+    const value = String(entry.values.w || "");
+    const length = value.trim().length;
+    const box = host.querySelector(`[data-qr-feedback="write"][data-qr-unit="${unit.id}"]`);
+    if (length < unit.write.minChars) {
+      const local = writeVerdict(unit, value);
+      entry.writeState = local.state;
+      entry.writePill = local.pill;
+      entry.writeChecked = false;
+      entry.writeFeedback = local.text;
+      api.store.save();
+      api.rerender?.();
+      const fresh = document.querySelector(`[data-qr-feedback="write"][data-qr-unit="${unit.id}"]`);
+      if (fresh) { fresh.textContent = local.text; fresh.hidden = false; }
+      return;
+    }
+    const apiKey = document.getElementById("apiKey")?.value.trim();
+    if (!apiKey) {
+      if (box) {
+        box.hidden = false;
+        box.textContent = "DURUM: AI KAPALI\nYOL GÖSTERİCİ: Bu yanıtı yapay zekâ ile değerlendirmek için sayfanın üstündeki ortak yapay zekâ ayarlarına Groq API anahtarını gir. Anahtar bu tarayıcıdan dışarı kaydedilmez.";
+      }
+      const settings = document.getElementById("apiSettings");
+      if (settings) settings.open = true;
+      document.getElementById("apiKey")?.focus?.({ preventScroll: true });
+      return;
+    }
+    const model = document.getElementById("model")?.value || "openai/gpt-oss-20b";
+    button.disabled = true;
+    const original = button.textContent;
+    button.textContent = "Değerlendiriliyor…";
+    if (box) {
+      box.hidden = false;
+      box.textContent = "Yanıtın videodaki anlatıma ve ölçütlere göre inceleniyor…";
+    }
+    const systemPrompt = [
+      "Sen 7. sınıf Türkçe dersi için adil, kanıta dayalı bir değerlendiricisin. Kaynak, öğrencinin izlediği videonun kullanıcı tarafından sağlanan analizidir; videoyu izlemedin.",
+      "Öğrencinin yanıtını yalnızca verilen analizdeki bilgilerle ve ölçütlerle karşılaştır. Analizde olmayan ayrıntıyı doğrulanmış sayma; böyle bir iddia varsa status=unverified ve issue=source kullan.",
+      "Cevabı, doğru seçeneği veya örnek yanıtı hiçbir alanda yazma; yalnızca öğrencinin bir sonraki adımını anlatan kısa bir yol gösterici cümle ve tamamlanacak yarım cümle ver.",
+      "Çıktı yalnızca geçerli JSON olsun: {\"status\":\"correct|partial|wrong|incomplete|unverified\",\"issues\":[\"relevance|evidence|completeness|reasoning|accuracy|source|selection\"],\"hint\":\"reread|count|evidence|explain|connect|justify|context|compare\",\"guide\":\"en çok 220 karakter, tek cümle\",\"starter\":\"en çok 140 karakter, yarım cümle\"}.",
+      "Markdown, açıklama veya JSON dışı metin ekleme.",
+    ].join("\n");
+    const userPrompt = [
+      `Görev: ${unit.write.title}`,
+      `Yönerge: ${unit.write.instruction}`,
+      `Ölçütler:\n- ${unit.write.criteria.join("\n- ")}`,
+      `Öğrencinin yanıtı:\n${value}`,
+      `\nVideo analizi (kaynak):\n${aiContext(unit)}`,
+    ].join("\n");
+    try {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model,
+          temperature: 0.1,
+          max_completion_tokens: 500,
+          response_format: { type: "json_object" },
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low", reasoning_format: "hidden" } : {}),
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload?.error?.message || `HTTP ${response.status}`);
+      const raw = JSON.parse(payload?.choices?.[0]?.message?.content || "{}");
+      const grader = window.EMR7_AI_GRADER;
+      const guidance = grader?.sanitizeGuidance ? grader.sanitizeGuidance(raw) : { guide: "", starter: "" };
+      const result = {
+        status: AI_STATUS[raw.status] ? raw.status : "unverified",
+        issues: Array.isArray(raw.issues) ? raw.issues.slice(0, 3) : [],
+        hint: typeof raw.hint === "string" ? raw.hint : "",
+        guide: guidance.guide,
+        starter: guidance.starter,
+      };
+      const text = aiFeedbackText(result, length);
+      entry.writeState = result.status === "correct" ? "correct" : result.status === "incomplete" ? "none" : result.status === "partial" ? "partial" : "wrong";
+      entry.writePill = AI_STATUS[result.status];
+      entry.writeChecked = true;
+      entry.writeFeedback = text;
+      api.store.save();
+      api.rerender?.();
+      const fresh = document.querySelector(`[data-qr-feedback="write"][data-qr-unit="${unit.id}"]`);
+      if (fresh) { fresh.textContent = text; fresh.hidden = false; }
+    } catch (error) {
+      if (box) {
+        box.hidden = false;
+        box.textContent = `DURUM: DEĞERLENDİRİLEMEDİ\nHATA/EKSİK: İstek tamamlanamadı (${String(error.message || error).slice(0, 80)}).\nYOL GÖSTERİCİ: Bağlantını ve anahtarını denetle; gerekirse birkaç saniye sonra yeniden dene. Yazdıkların kaybolmadı.`;
+      }
+    } finally {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  }
+
   function render(unitIds, api) {
     const host = document.getElementById("turkceQrBody");
     if (!host) return;
@@ -168,6 +318,13 @@
         const counter = host.querySelector(`[data-qr-count="${area.dataset.qrUnit}"]`);
         if (counter && unit) counter.textContent = `${area.value.trim().length}/${unit.write.minChars} karakter`;
         store.save();
+      });
+    });
+    host.querySelectorAll("[data-qr-ai]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const unit = window.TURKCE_QR.units.find((item) => item.id === button.dataset.qrAi);
+        if (!unit) return;
+        aiGrade(unit, entryFor(store, unit.id), host, button, api);
       });
     });
     host.querySelectorAll("[data-qr-check]").forEach((button) => {

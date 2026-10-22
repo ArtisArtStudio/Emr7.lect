@@ -11,7 +11,7 @@ Aşağıdaki bağlantılar, 1. kitabın karekodlu içerik listesinin yayımlanm�
 
 | # | İçerik | Hafta | Yer | Bağlantı (yayımlanmış kopya) | Kitaptaki EBA bağlantısı |
 |---|---|---|---|---|---|
-| 1 | Beyhan Budak ile Motivasyon Defteri | 5 | s. 69 · 4. etkinlik | [Drive](https://drive.google.com/file/d/1Dpfaf26LDPkfXzLS7Gk2CphFGY-30zqa/view) · [YouTube](https://youtu.be/d8LR9BPEd_0) | — |
+| 1 | Beyhan Budak ile Motivasyon Defteri | 5 | s. 69 · 4. etkinlik | [Drive](https://drive.google.com/file/d/1Dpfaf26LDPkfXzLS7Gk2CphFGY-30zqa/view) · [YouTube](https://youtu.be/d8LR9BPEd_0) | ✅ analiz alındı |
 | 2 | Sakarya Zaferi | 7–8 | s. 80 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view) | — |
 | 3 | Çanakkale Geçilmez | 9 | s. 91 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1MjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view) | — |
 | 4 | Hey Onbeşli — Bir Çanakkale Ağıdı | 9 | s. 95 · Hazırlık | [Drive](https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view) | — |
@@ -87,6 +87,14 @@ BELİRSİZLİK: ...
 Bunu `docs/video-analysis/<içerik-adı>-gemini-analysis.md` olarak depoya koyarım (mevcut dört raporun yanına).
 
 ---
+
+## 4b. Gelen analizler
+
+| İçerik | Rapor | Durum |
+|---|---|---|
+| Beyhan Budak ile Motivasyon Defteri | [`video-analysis/motivasyon-defteri-gemini-analysis.md`](video-analysis/motivasyon-defteri-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+
+Analiz bağlanınca o kartta üç şey değişir: not alanları videonun gerçek bölümlerine bakar, seçim soruları videodan yanıtlanabilir olur, yazma görevinde **“Yapay zekâ ile değerlendir”** düğmesi çıkar (Groq anahtarı sayfanın üstündeki ortak ayarlardan okunur).
 
 ## 5. Analiz gelince ne değişecek
 
