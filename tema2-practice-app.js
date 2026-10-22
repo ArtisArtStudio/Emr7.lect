@@ -305,7 +305,7 @@
   /* ---------------- Çizim ---------------- */
 
   function render(unit, api) {
-    const host = document.getElementById("tema2PracticeBody");
+    const host = document.getElementById(api.bodyId || "tema2PracticeBody");
     if (!host) return;
     const store = api.store;
     const activities = activitiesOf(unit);
@@ -398,7 +398,7 @@
         flow.__index = next;
         store.save();
         api.rerender?.();
-        document.getElementById("tema2PracticeBody")?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+        document.getElementById(api.bodyId || "tema2PracticeBody")?.scrollIntoView?.({ behavior: "smooth", block: "start" });
       });
     });
     host.querySelectorAll('[data-t2-check="activity"]').forEach((button) => {
@@ -420,7 +420,109 @@
     });
   }
 
-  window.renderTema2Flow = function (unit, api) {
+
+  /* ---------------- Tema 2 ek ölçme ve değerlendirme (s. 117 karşılığı) ---------------- */
+
+  function assessmentState(store) {
+    const flow = store.get();
+    if (!flow.__assessment || typeof flow.__assessment !== "object") {
+      flow.__assessment = { answers: {}, selfCheck: {}, checked: false, feedback: "" };
+    }
+    flow.__assessment.answers = flow.__assessment.answers || {};
+    flow.__assessment.selfCheck = flow.__assessment.selfCheck || {};
+    return flow.__assessment;
+  }
+
+  function renderAssessment(api) {
+    const host = document.getElementById(api.assessmentHostId || "tema2AssessmentBody");
+    if (!host) return;
+    const assessment = api.assessment || window.TEMA2_PRACTICE?.assessment;
+    if (!assessment) { host.innerHTML = ""; return; }
+    const store = api.assessmentStore || api.store;
+    const state = assessmentState(store);
+    const total = assessment.questions.length;
+    const answered = assessment.questions.filter((question) => state.answers[question.id] !== undefined).length;
+
+    const questions = assessment.questions.map((question, index) => {
+      const options = question.options.map((option, optionIndex) => `
+        <label class="t2-choice"><input type="radio" name="t2a-${escape(question.id)}" value="${optionIndex}" data-t2a-question="${escape(question.id)}"${String(state.answers[question.id]) === String(optionIndex) ? " checked" : ""}><span><b>${LETTERS[optionIndex]})</b> ${escape(option)}</span></label>`).join("");
+      return `<fieldset class="t2-question"><legend><span class="t2-number">${index + 1}</span>${escape(question.prompt)}</legend><div class="t2-choices">${options}</div></fieldset>`;
+    }).join("");
+
+    const selfCheck = assessment.selfCheck.map((item, index) => `
+      <label class="t2-selfcheck-item"><input type="checkbox" data-t2a-self="${index}"${state.selfCheck[index] ? " checked" : ""}><span>${escape(item)}</span></label>`).join("");
+
+    host.innerHTML = `
+      <article class="t2-card t2-assessment" data-state="${escape(state.checked ? "checked" : "none")}">
+        <div class="t2-card-head">
+          <span class="t2-kind">Tema ölçmesi</span>
+          <span class="t2-pill" data-state="${escape(state.checked ? "partial" : "none")}"${state.checked ? "" : " hidden"}>${escape(state.pill || "DEĞERLENDİRİLDİ")}</span>
+        </div>
+        <h4 class="t2-title">${escape(assessment.title)}</h4>
+        <p class="t2-instruction">${escape(assessment.intro)}</p>
+        <div class="t2-body">${questions}</div>
+        <div class="t2-selfcheck">
+          <p class="t2-selfcheck-title">Öz değerlendirme · işaretlediklerin yalnızca sana görünür</p>
+          <div class="t2-selfcheck-grid">${selfCheck}</div>
+        </div>
+        <div class="t2-actions">
+          <button class="btn t2-check" type="button" data-t2a-check="1">Yanıtlarımı değerlendir</button>
+          <span class="t2-count">${answered}/${total} yanıtlandı</span>
+        </div>
+        <p class="t2-feedback" data-t2a-feedback aria-live="polite"${state.feedback ? "" : " hidden"}>${escape(state.feedback || "")}</p>
+      </article>`;
+
+    host.querySelectorAll("[data-t2a-question]").forEach((input) => {
+      input.addEventListener("change", () => {
+        state.answers[input.dataset.t2aQuestion] = Number(input.value);
+        state.checked = false;
+        store.save();
+        const counter = host.querySelector(".t2-count");
+        if (counter) counter.textContent = `${assessment.questions.filter((question) => state.answers[question.id] !== undefined).length}/${total} yanıtlandı`;
+      });
+    });
+    host.querySelectorAll("[data-t2a-self]").forEach((box) => {
+      box.addEventListener("change", () => {
+        state.selfCheck[box.dataset.t2aSelf] = box.checked;
+        store.save();
+      });
+    });
+    host.querySelectorAll("[data-t2a-check]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const missing = assessment.questions.filter((question) => state.answers[question.id] === undefined);
+        const box = host.querySelector("[data-t2a-feedback]");
+        if (missing.length) {
+          state.checked = false;
+          state.feedback = `DURUM: YANIT EKSİK · ${total - missing.length}/${total}\nHATA/EKSİK: ${missing.map((question) => assessment.questions.indexOf(question) + 1).join(", ")}. soru boş.\nYOL GÖSTERİCİ: Boş soruya dön, iki seçeneği metindeki bir cümleyle karşılaştır.`;
+        } else {
+          const correct = assessment.questions.filter((question) => Number(state.answers[question.id]) === question.answer).length;
+          const wrongs = assessment.questions
+            .map((question, index) => (Number(state.answers[question.id]) === question.answer ? null : index + 1))
+            .filter(Boolean);
+          state.checked = true;
+          state.pill = correct === total ? "TAM DOĞRU" : correct === 0 ? "YENİDEN BAK" : "KISMEN DOĞRU";
+          state.feedback = correct === total
+            ? `DURUM: TAM DOĞRU · ${correct}/${total}\nHATA/EKSİK: Yok; temanın tamamını doğru yanıtladın.\nYOL GÖSTERİCİ: ${assessment.guide}`
+            : `DURUM: ${state.pill} · ${correct}/${total}\nHATA/EKSİK: Şu sorulara yeniden bak: ${wrongs.join(", ")}.\nYOL GÖSTERİCİ: ${assessment.guide}`;
+        }
+        store.save();
+        if (box) { box.textContent = state.feedback; box.hidden = false; }
+        const pill = host.querySelector(".t2-pill");
+        if (pill) {
+          pill.hidden = !state.checked;
+          pill.textContent = state.pill || "";
+          pill.dataset.state = state.checked ? (state.pill === "TAM DOĞRU" ? "correct" : state.pill === "YENİDEN BAK" ? "wrong" : "partial") : "none";
+        }
+      });
+    });
+  }
+
+  window.renderTemaFlow = function (unit, api) {
     render(unit, api);
+    if (api.assessment || unit.themeAssessment) renderAssessment(api);
+  };
+
+  window.renderTema2Flow = function (unit, api) {
+    window.renderTemaFlow(unit, api);
   };
 })();

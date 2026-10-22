@@ -109,7 +109,7 @@ assert.equal(numbered.length, 18, 'Birinci dönem numaralı karekod içeriği 18
 assert.equal(mediaRows.length, 12, 'Metin/video/ses içeriği 12 olmalı.');
 assert.equal(coveredRows.length, 12, 'Çalışmaya bağlı metin/video/ses içeriği 12 olmalı.');
 assert.equal(missingMediaRows.length, 0, 'Metin/video/ses içeriklerinin hepsi bağlı olmalı.');
-assert.equal(missingRows.length, 1, 'Yalnızca Tema 2 ek ölçme seti eksik olmalı.');
+assert.equal(missingRows.length, 0, 'Birinci dönemde eksik içerik kalmamalı.');
 assert.equal(gameRows.length, 3, 'Oyun/etkileşimli içerik 3 olmalı.');
 assert.equal(assessRows.length, 3, 'Ölçme/puanlama aracı 3 olmalı.');
 const assessOnlyRows = rows.filter((row) => row.statusCell.includes(tags.game) && /Ölçme|Puanlama|Değerlendirme aracı/i.test(row.kind));

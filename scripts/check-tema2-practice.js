@@ -183,7 +183,10 @@ assert.ok(html.includes('id="tema2Practice"'), 'Tema 2 bölümü sayfada yok.');
 assert.ok(html.includes('tema2-practice.css?v='), 'Tema 2 stil dosyası sürüm etiketiyle yüklenmeli.');
 assert.ok(html.includes('tema2-practice.js?v=') && html.includes('tema2-practice-app.js?v='), 'Tema 2 betikleri sürüm etiketiyle yüklenmeli.');
 assert.ok(html.includes('function renderTema2Practice(w)'), 'renderTema2Practice tanımlı değil.');
-assert.ok(html.includes('renderTheme1Practice(w);renderTema2Practice(w);renderTheme1Extras(w);'), 'Tema 2 akışı ana etkinlik ve ek bölümler arasında çizilmeli.');
+const practiceCall = html.indexOf('renderTheme1Practice(w);');
+const tema2Call = html.indexOf('renderTema2Practice(w);');
+const extrasCall = html.indexOf('renderTheme1Extras(w);');
+assert.ok(practiceCall >= 0 && tema2Call > practiceCall && extrasCall > tema2Call, 'Tema 2 akışı ana etkinlik ve ek bölümler arasında çizilmeli.');
 assert.ok(html.indexOf('id="bookCard"') < html.indexOf('id="tema2Practice"'), 'Tema 2 etkinlik alanı ana metinden sonra gelmeli.');
 assert.ok(html.indexOf('id="tema2Practice"') < html.indexOf('id="theme1Practice"'), 'Tema 2 alanı mevcut etkinlik alanını itmemeli.');
 assert.ok(html.includes('window.renderTema2Flow?.(unit'), 'Akış birimini ve depolama köprüsünü almalı.');
@@ -212,5 +215,18 @@ for (const unit of data.units) {
     }
   }
 }
+
+// Tema 2 ek ölçme paneli: 8 soru, cevap göstermez, öz değerlendirme içerir.
+const assessment = data.assessment;
+assert.ok(assessment && assessment.questions.length === 8, 'Tema 2 için sekiz soruluk ölçme seti gerekli.');
+assert.ok(assessment.selfCheck.length >= 3, 'Öz değerlendirme maddeleri eksik.');
+assert.ok(assessment.questions.every((question) => question.options.length === 4 && Number.isInteger(question.answer)), 'Ölçme sorularının seçenekleri ve cevabı eksik.');
+assert.ok(html.includes('id="tema2AssessmentBody"'), 'Ölçme paneli için hedef alan yok.');
+const assessmentStore = { data: {}, get() { return this.data; }, save() {} };
+const assessmentHost = document.getElementById('tema2AssessmentBody');
+global.window.renderTema2Flow(data.units[0], { store: assessmentStore, assessment, bodyId: 'tema2PracticeBody', assessmentHostId: 'tema2AssessmentBody', rerender() {} });
+assert.ok(assessmentHost.innerHTML.includes('data-t2a-check'), 'Ölçme paneli çizilmedi.');
+assert.ok(!assessmentHost.innerHTML.includes('CEVAP'), 'Ölçme panelinde cevap anahtarı geçiyor.');
+assert.ok(!/Doğru cevap\s*:|CEVAP ANAHTARI/i.test(assessmentHost.innerHTML), 'Ölçme paneli doğru seçeneği etiketlememeli.');
 
 console.log(`Tema 2 etkinlik paketi hazır: ${data.units.length} birim, ${activityTotal} etkinlik, ${imageFiles.length} görsel, konuşma etkinliği yok.`);

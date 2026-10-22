@@ -1492,6 +1492,18 @@ def main() -> int:
                     errors.append("Theme 2 practice test did not report success")
 
             if not errors:
+                tema3_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-tema3-practice.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if tema3_test.returncode:
+                    errors.append(f"Theme 3 practice test failed:\n{tema3_test.stderr.strip()}")
+                elif "Tema 3 etkinlik paketi hazır" not in tema3_test.stdout:
+                    errors.append("Theme 3 practice test did not report success")
+
+            if not errors:
                 qr_test = subprocess.run(
                     [node, str(ROOT / "scripts/check-qr-inventory.js")],
                     capture_output=True,
@@ -1642,7 +1654,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, a 15-week first-term Social Studies plan with merged topics and variable activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 and Theme 2 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, a 15-week first-term Social Studies plan with merged topics and variable activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1, Theme 2 and Theme 3 packages, and the PDF reader are valid.")
     return 0
 
 

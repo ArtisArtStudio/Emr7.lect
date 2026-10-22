@@ -16,7 +16,7 @@
 | Ölçme / puanlama aracı | **3** |
 | Metin, video veya ses içeriği | **12** |
 | Bunlardan uygulamada çalışmaya bağlı olan | **12** |
-| Hâlâ eksik olan | **1** (Tema 2 ek ölçme seti) |
+| Hâlâ eksik olan | **0** (Tema 2 ek ölçmesi özgün sorularla yazıldı) |
 
 Yani artık **12 metin/video/ses içeriğinin tamamı** uygulamada bir çalışmaya bağlı. Dört içerik mevcut Tema 1 etkinlik akışında (metne ve rapora dayalı sorularla), sekizi yeni **karekod çalışması** kartlarında (izleme öncesi hazırlık + not çizelgesi + iki seçim sorusu + bir yazma görevi).
 
@@ -53,14 +53,16 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 | 15 | s. 100 · 6. etkinlik | Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale | Medya metni | `qr-canakkale-medya` kartı (9. hafta) · özet + AI | ✅ var |
 | 16 | s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | İzleme | `qr-18-mart` kartı (10. hafta) · özet + AI | ✅ var |
 | 17 | s. 116 · 5. soru | Çanakkale | İzleme | `qr-canakkale-son` kartı (10. hafta) · Seyit Onbaşı özeti + AI | ✅ var |
-| 18 | s. 117 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | — | ❌ eksik (ölçme seti) |
+| 18 | s. 117 | Ek Ölçme ve Değerlendirme Soruları | Ölçme | Tema 2 ölçmesi: 8 özgün soru + öz değerlendirme (`tema2-practice.js` → `assessment`) | ⚠️ kısmi (kitaptaki sorular kullanılmadı) |
 
 ### Tema 2'nin uygulamadaki durumu
 
-- Hafta 7–8 (Mustafa 1881–1920): metin + Sakarya Zaferi kartı. Quiz ve tema etkinlik seti hâlâ yok.
-- Hafta 9 (Millî Mücadele Sergisi · dinleme/izleme): dört karekod kartı var (sergi, Çanakkale Geçilmez, Hey Onbeşli, Çanakkale tanıtım metni). Haftanın kendi quiz'i yok.
-- Hafta 10 (Mustafa Kemal'in Kağnısı): metin + iki karekod kartı (18 Mart, Çanakkale).
-- Tema 3 (İletişim ve Sosyal İlişkiler) karekod listesi henüz yayımlanmamış; 14. haftadaki “Dijital Tayfa” için de elimizde içerik yok.
+- Hafta 6–10: metin etkinlikleri `tema2-practice.js` içinde; her hafta 8 etkinlik (seçim, eşleştirme, sıralama, yazma) ve haftada bir görselli soru. Bölüm ana metinden sonra, karekod kartlarından önce görünür.
+- Hafta 7–8 (Mustafa 1881–1920): metin + Sakarya Zaferi kartı + 8 etkinlik.
+- Hafta 9 (Millî Mücadele Sergisi · dinleme/izleme): dört karekod kartı (sergi, Çanakkale Geçilmez, Hey Onbeşli, Çanakkale tanıtım metni) + 8 etkinlik.
+- Hafta 10 (Mustafa Kemal'in Kağnısı): metin + iki karekod kartı (18 Mart, Çanakkale) + 8 etkinlik.
+- Tema 2 ölçmesi: 8 özgün soru ve 4 maddelik öz değerlendirme, Tema 2 etkinlik alanının altında; doğru cevap gösterilmez, yalnızca dönülecek soru numaraları söylenir.
+- Tema 3 (İletişim ve Sosyal İlişkiler): karekod listesi hâlâ yayımlanmamış; 14. haftadaki “Dijital Tayfa” için elimizde video/transkript yok. Buna karşılık hafta 11–15 için 32 etkinlik `tema3-practice.js` içinde yazıldı; 14. hafta içerikte geçtiği iddia edilen ayrıntılara dayanmayan, beceri odaklı çalışmalarla işlendi.
 
 ---
 
@@ -106,9 +108,9 @@ Video bağlantıları ve her içerik için hazır Gemini istemi [`turkce-qr-link
 Bağlantılar ve Gemini analiz şablonu: [`turkce-qr-linkler.md`](turkce-qr-linkler.md).
 
 1. **Döküm/rapor gelirse:** mevcut 8 kart, videonun ayrıntısına inen sorularla derinleştirilir (ör. Sakarya'da hangi olayın hangi sonucu doğurduğu). Şu an bu sorular bilinçli olarak içerik iddiası taşımıyor.
-2. **Tema 2 etkinlik seti:** hafta 7–10 için metne bağlı 8–10 etkinlik ve quiz. Karekod kartları bunun yerine geçmez, üstüne eklenir.
-3. **Tema 2 ek ölçme seti (s. 117):** 8 soruluk ölçme + öz değerlendirme.
-4. **Tema 3:** karekod listesi yayımlandığında “Dijital Tayfa” ve diğer içerikler aynı şablonla eklenir.
+2. ~~**Tema 2 etkinlik seti:** hafta 7–10 için metne bağlı etkinlikler.~~ ✅ 4 birim × 8 etkinlik (`tema2-practice.js`), hafta 6–10.
+3. ~~**Tema 2 ek ölçme seti (s. 117):** 8 soruluk ölçme + öz değerlendirme.~~ ✅ Özgün sorularla yazıldı.
+4. ~~**Tema 3 etkinlik seti:** hafta 11–15 için 32 etkinlik.~~ ✅ (`tema3-practice.js`). Karekod listesi yayımlandığında “Dijital Tayfa” ve diğer içerikler aynı şablonla derinleştirilir.
 
 ---
 

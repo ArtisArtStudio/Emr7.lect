@@ -1,6 +1,6 @@
-/* Tema 2 etkinlik akışının stilleri. Bütün seçiciler #tema2Practice ile
+/* Tema 2 etkinlik akışının stilleri. Bütün seçiciler .tema-practice ile
    sınırlandırılmıştır; haftalık okuyucunun geri kalanını etkilemez. */
-#tema2Practice {
+.tema-practice {
   --t2-ink: #102238;
   --t2-muted: #46576b;
   --t2-line: #d9e3f0;
@@ -17,21 +17,21 @@
   min-width: 0;
   color: var(--t2-ink);
 }
-#tema2Practice[hidden] { display: none !important; }
-#tema2Practice * { box-sizing: border-box; }
-#tema2Practice button,
-#tema2Practice select,
-#tema2Practice textarea,
-#tema2Practice input { font: inherit; }
-#tema2Practice button:focus-visible,
-#tema2Practice select:focus-visible,
-#tema2Practice textarea:focus-visible,
-#tema2Practice input:focus-visible {
+.tema-practice[hidden] { display: none !important; }
+.tema-practice * { box-sizing: border-box; }
+.tema-practice button,
+.tema-practice select,
+.tema-practice textarea,
+.tema-practice input { font: inherit; }
+.tema-practice button:focus-visible,
+.tema-practice select:focus-visible,
+.tema-practice textarea:focus-visible,
+.tema-practice input:focus-visible {
   outline: 3px solid #6590ed99;
   outline-offset: 2px;
 }
 
-#tema2Practice .t2-header {
+.tema-practice .t2-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -40,13 +40,13 @@
   padding-bottom: 12px;
   border-bottom: 1px solid #e7edf5;
 }
-#tema2Practice .t2-header .tag { color: #4263b5; }
-#tema2Practice .t2-header h3 {
+.tema-practice .t2-header .tag { color: #4263b5; }
+.tema-practice .t2-header h3 {
   margin: 4px 0 5px;
   font-size: clamp(19px, 3vw, 24px);
   letter-spacing: -.03em;
 }
-#tema2Practice .t2-lead {
+.tema-practice .t2-lead {
   margin: 0;
   max-width: 760px;
   color: var(--t2-muted);
@@ -54,7 +54,7 @@
   line-height: 1.65;
 }
 
-#tema2Practice .t2-head {
+.tema-practice .t2-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -62,49 +62,49 @@
   flex-wrap: wrap;
   margin-top: 4px;
 }
-#tema2Practice .t2-eyebrow {
+.tema-practice .t2-eyebrow {
   margin: 0 0 4px;
   color: var(--t2-muted);
   font-size: 11.5px;
   line-height: 1.55;
   max-width: 640px;
 }
-#tema2Practice .t2-title {
+.tema-practice .t2-title {
   margin: 0;
   font-size: clamp(16px, 2.4vw, 19px);
 }
-#tema2Practice .t2-meta {
+.tema-practice .t2-meta {
   margin: 3px 0 0;
   color: var(--t2-muted);
   font-size: 11.5px;
 }
-#tema2Practice .t2-progress-wrap { min-width: 190px; flex: 1 1 190px; }
-#tema2Practice .t2-progress-text {
+.tema-practice .t2-progress-wrap { min-width: 190px; flex: 1 1 190px; }
+.tema-practice .t2-progress-text {
   display: block;
   margin-bottom: 5px;
   color: var(--t2-muted);
   font-size: 11.5px;
   text-align: right;
 }
-#tema2Practice .t2-progress {
+.tema-practice .t2-progress {
   height: 8px;
   border-radius: 999px;
   background: #e8eef8;
   overflow: hidden;
 }
-#tema2Practice .t2-progress-value {
+.tema-practice .t2-progress-value {
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, #245cdb, #4f86f7);
   transition: width .25s ease;
 }
 
-#tema2Practice .t2-track {
+.tema-practice .t2-track {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-#tema2Practice .t2-step {
+.tema-practice .t2-step {
   width: 30px;
   height: 30px;
   padding: 0;
@@ -116,23 +116,23 @@
   font-weight: 750;
   cursor: pointer;
 }
-#tema2Practice .t2-step:hover { border-color: #9db6e8; color: var(--t2-blue); }
-#tema2Practice .t2-step[aria-current="step"] {
+.tema-practice .t2-step:hover { border-color: #9db6e8; color: var(--t2-blue); }
+.tema-practice .t2-step[aria-current="step"] {
   border-color: var(--t2-blue);
   background: var(--t2-blue);
   color: #fff;
 }
-#tema2Practice .t2-step[data-state="correct"] { border-color: #8ed3b0; background: var(--t2-green-soft); color: var(--t2-green); }
-#tema2Practice .t2-step[data-state="partial"] { border-color: #e2c687; background: var(--t2-gold-soft); color: var(--t2-gold); }
-#tema2Practice .t2-step[data-state="wrong"] { border-color: #e5b3ac; background: var(--t2-red-soft); color: var(--t2-red); }
-#tema2Practice .t2-step[aria-current="step"],
-#tema2Practice .t2-step[aria-current="step"][data-state] {
+.tema-practice .t2-step[data-state="correct"] { border-color: #8ed3b0; background: var(--t2-green-soft); color: var(--t2-green); }
+.tema-practice .t2-step[data-state="partial"] { border-color: #e2c687; background: var(--t2-gold-soft); color: var(--t2-gold); }
+.tema-practice .t2-step[data-state="wrong"] { border-color: #e5b3ac; background: var(--t2-red-soft); color: var(--t2-red); }
+.tema-practice .t2-step[aria-current="step"],
+.tema-practice .t2-step[aria-current="step"][data-state] {
   background: var(--t2-blue);
   border-color: var(--t2-blue);
   color: #fff;
 }
 
-#tema2Practice .t2-card {
+.tema-practice .t2-card {
   border: 1px solid #e6edf7;
   border-radius: 14px;
   background: #fbfdff;
@@ -141,22 +141,22 @@
   gap: 10px;
   min-width: 0;
 }
-#tema2Practice .t2-card[data-state="correct"] { border-color: #cbe8d8; }
-#tema2Practice .t2-card[data-state="wrong"] { border-color: #f0d3ce; }
-#tema2Practice .t2-card-head {
+.tema-practice .t2-card[data-state="correct"] { border-color: #cbe8d8; }
+.tema-practice .t2-card[data-state="wrong"] { border-color: #f0d3ce; }
+.tema-practice .t2-card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
 }
-#tema2Practice .t2-kind {
+.tema-practice .t2-kind {
   font-size: 10.5px;
   font-weight: 800;
   letter-spacing: .08em;
   text-transform: uppercase;
   color: #4263b5;
 }
-#tema2Practice .t2-pill {
+.tema-practice .t2-pill {
   padding: 3px 9px;
   border-radius: 999px;
   border: 1px solid var(--t2-line);
@@ -165,16 +165,16 @@
   font-weight: 800;
   letter-spacing: .03em;
 }
-#tema2Practice .t2-pill[data-state="correct"] { border-color: #b7e2c9; background: var(--t2-green-soft); color: var(--t2-green); }
-#tema2Practice .t2-pill[data-state="partial"] { border-color: #ead6a6; background: var(--t2-gold-soft); color: var(--t2-gold); }
-#tema2Practice .t2-pill[data-state="wrong"] { border-color: #ecc8c2; background: var(--t2-red-soft); color: var(--t2-red); }
-#tema2Practice .t2-instruction {
+.tema-practice .t2-pill[data-state="correct"] { border-color: #b7e2c9; background: var(--t2-green-soft); color: var(--t2-green); }
+.tema-practice .t2-pill[data-state="partial"] { border-color: #ead6a6; background: var(--t2-gold-soft); color: var(--t2-gold); }
+.tema-practice .t2-pill[data-state="wrong"] { border-color: #ecc8c2; background: var(--t2-red-soft); color: var(--t2-red); }
+.tema-practice .t2-instruction {
   margin: 0;
   font-size: 13px;
   line-height: 1.6;
 }
 
-#tema2Practice .t2-question {
+.tema-practice .t2-question {
   margin: 0 0 12px;
   padding: 11px 13px 13px;
   border: 1px solid #e8eff9;
@@ -182,8 +182,8 @@
   background: #fff;
   min-width: 0;
 }
-#tema2Practice .t2-question:last-child { margin-bottom: 0; }
-#tema2Practice .t2-question legend {
+.tema-practice .t2-question:last-child { margin-bottom: 0; }
+.tema-practice .t2-question legend {
   display: flex;
   gap: 8px;
   align-items: flex-start;
@@ -192,7 +192,7 @@
   font-weight: 700;
   line-height: 1.55;
 }
-#tema2Practice .t2-number {
+.tema-practice .t2-number {
   flex: 0 0 22px;
   width: 22px;
   height: 22px;
@@ -204,12 +204,12 @@
   display: grid;
   place-items: center;
 }
-#tema2Practice .t2-choices {
+.tema-practice .t2-choices {
   display: grid;
   gap: 6px;
   margin-top: 9px;
 }
-#tema2Practice .t2-choice {
+.tema-practice .t2-choice {
   display: flex;
   gap: 8px;
   align-items: flex-start;
@@ -221,25 +221,25 @@
   line-height: 1.5;
   cursor: pointer;
 }
-#tema2Practice .t2-choice:hover { border-color: #b9cdf2; background: #f7faff; }
-#tema2Practice .t2-choice input { margin: 2px 0 0; accent-color: var(--t2-blue); }
-#tema2Practice .t2-choice b { color: #4263b5; margin-right: 2px; }
+.tema-practice .t2-choice:hover { border-color: #b9cdf2; background: #f7faff; }
+.tema-practice .t2-choice input { margin: 2px 0 0; accent-color: var(--t2-blue); }
+.tema-practice .t2-choice b { color: #4263b5; margin-right: 2px; }
 
-#tema2Practice .t2-figure {
+.tema-practice .t2-figure {
   margin: 10px 0 0;
   border: 1px solid #e6edf7;
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
 }
-#tema2Practice .t2-figure img {
+.tema-practice .t2-figure img {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
-#tema2Practice .t2-figure figcaption {
+.tema-practice .t2-figure figcaption {
   padding: 7px 10px;
   color: var(--t2-muted);
   font-size: 11.5px;
@@ -247,11 +247,11 @@
   border-top: 1px solid #eef3fa;
 }
 
-#tema2Practice .t2-match {
+.tema-practice .t2-match {
   display: grid;
   gap: 8px;
 }
-#tema2Practice .t2-match-row {
+.tema-practice .t2-match-row {
   display: grid;
   grid-template-columns: minmax(120px, 1fr) minmax(180px, 1.4fr);
   gap: 10px;
@@ -261,9 +261,9 @@
   border-radius: 9px;
   background: #fff;
 }
-#tema2Practice .t2-match-label { font-size: 12.5px; font-weight: 700; }
-#tema2Practice .t2-select,
-#tema2Practice .t2-textarea {
+.tema-practice .t2-match-label { font-size: 12.5px; font-weight: 700; }
+.tema-practice .t2-select,
+.tema-practice .t2-textarea {
   width: 100%;
   border: 1px solid #cfdcee;
   border-radius: 9px;
@@ -272,16 +272,16 @@
   font-size: 12.5px;
   padding: 8px 10px;
 }
-#tema2Practice .t2-textarea { min-height: 150px; line-height: 1.6; resize: vertical; }
+.tema-practice .t2-textarea { min-height: 150px; line-height: 1.6; resize: vertical; }
 
-#tema2Practice .t2-order {
+.tema-practice .t2-order {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   gap: 7px;
 }
-#tema2Practice .t2-order-row {
+.tema-practice .t2-order-row {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -290,7 +290,7 @@
   border-radius: 9px;
   background: #fff;
 }
-#tema2Practice .t2-order-pos {
+.tema-practice .t2-order-pos {
   flex: 0 0 22px;
   width: 22px;
   height: 22px;
@@ -302,9 +302,9 @@
   display: grid;
   place-items: center;
 }
-#tema2Practice .t2-order-label { flex: 1 1 auto; font-size: 12.5px; line-height: 1.5; }
-#tema2Practice .t2-order-buttons { display: flex; gap: 4px; }
-#tema2Practice .t2-move {
+.tema-practice .t2-order-label { flex: 1 1 auto; font-size: 12.5px; line-height: 1.5; }
+.tema-practice .t2-order-buttons { display: flex; gap: 4px; }
+.tema-practice .t2-move {
   width: 28px;
   height: 28px;
   padding: 0;
@@ -315,30 +315,30 @@
   font-size: 13px;
   cursor: pointer;
 }
-#tema2Practice .t2-move:hover:not(:disabled) { border-color: #9db6e8; color: var(--t2-blue); }
-#tema2Practice .t2-move:disabled { opacity: .4; cursor: default; }
+.tema-practice .t2-move:hover:not(:disabled) { border-color: #9db6e8; color: var(--t2-blue); }
+.tema-practice .t2-move:disabled { opacity: .4; cursor: default; }
 
-#tema2Practice .t2-criteria {
+.tema-practice .t2-criteria {
   margin: 0 0 9px;
   padding-left: 20px;
   color: var(--t2-muted);
   font-size: 12px;
   line-height: 1.6;
 }
-#tema2Practice .t2-actions {
+.tema-practice .t2-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-top: 10px;
 }
-#tema2Practice .t2-count {
+.tema-practice .t2-count {
   color: var(--t2-muted);
   font-size: 11.5px;
   margin-left: auto;
 }
-#tema2Practice .t2-check,
-#tema2Practice .t2-ai {
+.tema-practice .t2-check,
+.tema-practice .t2-ai {
   border: 1px solid #c6d8f5;
   background: var(--t2-blue-soft);
   color: #1e4cbb;
@@ -348,13 +348,13 @@
   font-weight: 750;
   cursor: pointer;
 }
-#tema2Practice .t2-ai { background: #f5f0ff; border-color: #dcd0f5; color: #5b3fa8; }
-#tema2Practice .t2-check:hover,
-#tema2Practice .t2-ai:hover { filter: brightness(.97); }
-#tema2Practice .t2-check:disabled,
-#tema2Practice .t2-ai:disabled { opacity: .6; cursor: progress; }
+.tema-practice .t2-ai { background: #f5f0ff; border-color: #dcd0f5; color: #5b3fa8; }
+.tema-practice .t2-check:hover,
+.tema-practice .t2-ai:hover { filter: brightness(.97); }
+.tema-practice .t2-check:disabled,
+.tema-practice .t2-ai:disabled { opacity: .6; cursor: progress; }
 
-#tema2Practice .t2-feedback {
+.tema-practice .t2-feedback {
   margin: 0;
   padding: 11px 13px;
   border: 1px solid #e8eff9;
@@ -367,15 +367,15 @@
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
-#tema2Practice .t2-feedback[hidden] { display: none !important; }
+.tema-practice .t2-feedback[hidden] { display: none !important; }
 
-#tema2Practice .t2-tts {
+.tema-practice .t2-tts {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
-#tema2Practice .t2-tts-btn {
+.tema-practice .t2-tts-btn {
   border: 1px solid var(--t2-line);
   background: #fff;
   color: var(--t2-muted);
@@ -385,21 +385,21 @@
   font-weight: 700;
   cursor: pointer;
 }
-#tema2Practice .t2-tts-status { color: var(--t2-muted); font-size: 11px; }
+.tema-practice .t2-tts-status { color: var(--t2-muted); font-size: 11px; }
 
-#tema2Practice .t2-controls {
+.tema-practice .t2-controls {
   display: flex;
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
 }
-#tema2Practice .t2-next {
+.tema-practice .t2-next {
   border-color: var(--t2-blue);
   background: var(--t2-blue);
   color: #fff;
 }
-#tema2Practice .t2-controls .btn:disabled { opacity: .45; cursor: default; }
-#tema2Practice .t2-note {
+.tema-practice .t2-controls .btn:disabled { opacity: .45; cursor: default; }
+.tema-practice .t2-note {
   margin: 0;
   color: var(--t2-muted);
   font-size: 11px;
@@ -407,7 +407,15 @@
 }
 
 @media (max-width: 620px) {
-  #tema2Practice .t2-match-row { grid-template-columns: 1fr; gap: 6px; }
-  #tema2Practice .t2-count { margin-left: 0; }
-  #tema2Practice .t2-progress-text { text-align: left; }
+  .tema-practice .t2-match-row { grid-template-columns: 1fr; gap: 6px; }
+  .tema-practice .t2-count { margin-left: 0; }
+  .tema-practice .t2-progress-text { text-align: left; }
 }
+
+.tema-practice .t2-assessment { margin-top: 4px; border-color: #dfe6f4; background: #fff; }
+.tema-practice .t2-assessment .t2-title { margin: 2px 0 4px; }
+.tema-practice .t2-selfcheck { margin-top: 12px; padding: 11px 13px; border: 1px dashed #cfdcee; border-radius: 10px; background: #fbfdff; }
+.tema-practice .t2-selfcheck-title { margin: 0 0 8px; color: var(--t2-muted); font-size: 11.5px; font-weight: 700; }
+.tema-practice .t2-selfcheck-grid { display: grid; gap: 6px; }
+.tema-practice .t2-selfcheck-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; cursor: pointer; }
+.tema-practice .t2-selfcheck-item input { margin: 2px 0 0; accent-color: var(--t2-blue); }
