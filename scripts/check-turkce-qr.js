@@ -92,6 +92,38 @@ for (const unit of analysed) {
   assert.ok(unit.write.rubric && unit.write.rubric.length > 30, `${unit.id}: değerlendirme ölçütü (rubric) eksik.`);
 }
 
+// Sızıntı taraması: ipucu, ölçüt, yol gösterici ve giriş metinleri, video ana noktaları ve
+// değerlendirme anahtarıyla 25+ karakterlik ortak parça taşımamalı.
+const normalize = (value) => String(value).toLocaleLowerCase('tr').replace(/[^a-zçğıöşü0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+for (const unit of analysed) {
+  const exposed = [
+    unit.intro,
+    ...unit.notes.map((note) => note.hint),
+    unit.write.guide,
+    ...unit.write.criteria,
+    unit.compare?.instruction || '',
+  ].map(normalize).join(' | ');
+  const secret = [...unit.analysis.keyPoints, ...unit.write.answerKey, unit.compare?.outcome || ''].map(normalize);
+  for (const line of secret) {
+    for (let start = 0; start + 25 <= line.length; start += 1) {
+      const fragment = line.slice(start, start + 25);
+      assert.ok(!exposed.includes(fragment), `${unit.id}: ipucu/ölçüt metni anahtarı sızdırıyor (“${fragment}”).`);
+    }
+  }
+}
+
+// Karşılaştırma bloğu (kitaptaki iki videoyu karşılaştırma etkinliği).
+const compareUnits = data.units.filter((unit) => unit.compare);
+for (const unit of compareUnits) {
+  const compare = unit.compare;
+  assert.equal(compare.columns.length, 2, `${unit.id}: karşılaştırma iki sütunlu olmalı.`);
+  assert.ok(compare.rows.length >= 3, `${unit.id}: karşılaştırmada en az üç ölçüt satırı olmalı.`);
+  assert.ok(compare.criteria.length >= 2, `${unit.id}: karşılaştırma ölçütleri eksik.`);
+  assert.ok(compare.outcome && compare.outcome.length > 30, `${unit.id}: karşılaştırmanın sonucu (iç kullanım) eksik.`);
+}
+const compareIds = compareUnits.map((unit) => unit.id);
+assert.ok(compareIds.includes('qr-milli-mucadele-sergisi'), 'Kahraman Çocuklar kartında Sakarya ile karşılaştırma olmalı.');
+
 // Konuşma etkinlikleri eklenmemeli.
 const source = read('turkce-qr.js');
 assert.ok(!/Konuşma Yapalım/.test(source), 'Konuşma Yapalım çalışmaya alınmamalı.');
@@ -144,6 +176,10 @@ for (const unit of data.units) {
       assert.ok(!markup.includes(item), `${unit.id}: değerlendirme anahtarı ekranda görünüyor.`);
     }
     assert.ok(markup.includes(`data-qr-ai="${unit.id}"`), `${unit.id}: analiz varken yapay zekâ düğmesi çizilmeli.`);
+    if (unit.compare) {
+      assert.ok(markup.includes('data-qr-compare-check'), `${unit.id}: karşılaştırma kontrol düğmesi çizilmeli.`);
+      assert.ok(!markup.includes(unit.compare.outcome), `${unit.id}: karşılaştırma sonucu ekranda görünmemeli.`);
+    }
   }
 }
 

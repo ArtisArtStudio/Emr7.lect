@@ -15,7 +15,7 @@ Aşağıdaki bağlantılar, 1. kitabın karekodlu içerik listesinin yayımlanm�
 | 2 | Sakarya Zaferi | 7–8 | s. 80 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view) | ✅ analiz alındı |
 | 3 | Çanakkale Geçilmez | 9 | s. 91 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1MjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view) | ✅ analiz alındı |
 | 4 | Hey Onbeşli — Bir Çanakkale Ağıdı | 9 | s. 95 · Hazırlık | [Drive](https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view) | ✅ analiz alındı |
-| 5 | Millî Mücadele Sergisi · Kahraman Çocuklar | 9 | s. 95 | [Drive](https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view) | — |
+| 5 | Millî Mücadele Sergisi · Kahraman Çocuklar | 9 | s. 95 | [Drive](https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view) | ✅ analiz alındı |
 | 6 | Çanakkale (tanıtım medya metni) | 9 | s. 100 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view) | — |
 | 7 | 18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi | 10 | s. 107 · 6. etkinlik | [Drive](https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view) | — |
 | 8 | Çanakkale (5. soru) | 10 | s. 116 · 5. soru | [Drive](https://drive.google.com/file/d/1V_xuE7jAr9DXqmRp7p-qg7DFPeZbR2t9/view) | — |
@@ -96,6 +96,7 @@ Bunu `docs/video-analysis/<içerik-adı>-gemini-analysis.md` olarak depoya koyar
 | Sakarya Zaferi | [`video-analysis/sakarya-zaferi-gemini-analysis.md`](video-analysis/sakarya-zaferi-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Çanakkale Geçilmez | [`video-analysis/canakkale-gecilmez-gemini-analysis.md`](video-analysis/canakkale-gecilmez-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Hey Onbeşli — Bir Çanakkale Ağıdı | [`video-analysis/hey-onbesli-gemini-analysis.md`](video-analysis/hey-onbesli-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+| Millî Mücadele Sergisi · Kahraman Çocuklar | [`video-analysis/kahraman-cocuklar-gemini-analysis.md`](video-analysis/kahraman-cocuklar-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi ve Sakarya karşılaştırması açık |
 
 Analiz bağlanınca o kartta üç şey değişir: not alanları videonun gerçek bölümlerine bakar, seçim soruları videodan yanıtlanabilir olur, yazma görevinde **“Yapay zekâ ile değerlendir”** düğmesi çıkar (Groq anahtarı sayfanın üstündeki ortak ayarlardan okunur).
 
@@ -112,8 +113,9 @@ Analiz bağlanınca o kartta üç şey değişir: not alanları videonun gerçek
 
 Vaktin sınırlıysa bu sırayla ilerle — çünkü uygulamada en çok boşluk burada:
 
-1. **Millî Mücadele Sergisi · Kahraman Çocuklar** (9. hafta, haftanın tek içeriği)
-2. **Sakarya Zaferi** (7–8. hafta; 4. etkinlik iki videoyu karşılaştırıyor, ikisi birlikte gerekli)
-3. **Hey Onbeşli** (ağıt türü; dinleme becerisi)
-4. **Motivasyon Defteri** (5. hafta)
-5. Kalan dört Çanakkale içeriği
+1. ~~Millî Mücadele Sergisi · Kahraman Çocuklar~~ ✅
+2. ~~Sakarya Zaferi~~ ✅
+3. ~~Hey Onbeşli~~ ✅
+4. ~~Motivasyon Defteri~~ ✅
+5. ~~Çanakkale Geçilmez~~ ✅
+6. Kalan üç Çanakkale içeriği: tanıtım metni (s. 100), 18 Mart (s. 107), Çanakkale (s. 116)

@@ -81,6 +81,7 @@
     <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-check="write" data-qr-unit="${escape(unit.id)}">Yazımı kontrol et</button>${unit.analysis ? `<button class="btn qr-ai" type="button" data-qr-ai="${escape(unit.id)}">Yapay zekâ ile değerlendir</button>` : ""}<span class="qr-count" data-qr-count="${escape(unit.id)}">${writeValue.trim().length}/${unit.write.minChars} karakter</span></div>
     <p class="qr-feedback" data-qr-feedback="write" data-qr-unit="${escape(unit.id)}" aria-live="polite"${entry.writeChecked ? "" : " hidden"}>${escape(entry.writeFeedback)}</p>
   </div>
+  ${compareBlock(unit, entry)}
 </article>`;
   }
 
@@ -281,6 +282,49 @@
     }
   }
 
+  function compareBlock(unit, entry) {
+    if (!unit.compare) return "";
+    const compare = unit.compare;
+    const head = compare.columns.map((column) => `<th scope="col">${escape(column)}</th>`).join("");
+    const rows = compare.rows.map((row) => {
+      const cells = compare.columns.map((column, index) => {
+        const value = entry.values[`x:${row.id}:${index}`] || "";
+        return `<td><textarea class="qr-textarea qr-compare-input" data-qr-compare="${escape(row.id)}:${index}" data-qr-unit="${escape(unit.id)}" rows="2" aria-label="${escape(`${row.label} · ${column}`)}">${escape(value)}</textarea></td>`;
+      }).join("");
+      return `<tr><th scope="row"><span class="qr-compare-label">${escape(row.label)}</span><span class="qr-hint">${escape(row.hint)}</span></th>${cells}</tr>`;
+    }).join("");
+    const criteria = compare.criteria.map((item) => `<li>${escape(item)}</li>`).join("");
+    return `
+  <div class="qr-block qr-compare">
+    <div class="qr-block-head"><h5>${escape(compare.title)}</h5>${labelMarkup(entry.compareState || "none", entry.comparePill || "", !entry.compareChecked)}</div>
+    <p class="qr-instruction">${escape(compare.instruction)}</p>
+    <table class="qr-compare-table"><thead><tr><th scope="col">Ölçüt</th>${head}</tr></thead><tbody>${rows}</tbody></table>
+    <ul class="qr-criteria">${criteria}</ul>
+    <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-compare-check="1" data-qr-unit="${escape(unit.id)}">Karşılaştırmamı kontrol et</button></div>
+    <p class="qr-feedback" data-qr-feedback="compare" data-qr-unit="${escape(unit.id)}" aria-live="polite"${entry.compareChecked ? "" : " hidden"}>${escape(entry.compareFeedback || "")}</p>
+  </div>`;
+  }
+
+  function compareVerdict(unit, entry) {
+    const compare = unit.compare;
+    const total = compare.rows.length * compare.columns.length;
+    const filled = compare.rows.reduce((sum, row) => sum + compare.columns.filter((_, index) => String(entry.values[`x:${row.id}:${index}`] || "").trim().length >= 3).length, 0);
+    if (filled < total) {
+      return {
+        state: "none",
+        pill: "YANIT EKSİK",
+        checked: false,
+        text: `DURUM: YANIT EKSİK · ${filled}/${total} hücre\nHATA/EKSİK: Bazı hücreler boş ya da çok kısa.\nYOL GÖSTERİCİ: Boş hücreye dön; iki videodan birini hatırla ve tek cümleyle yaz. Ortak noktayı ve farkı ayrı hücrelere koy.`,
+      };
+    }
+    return {
+      state: "correct",
+      pill: "KARŞILAŞTIRMA TAMAM",
+      checked: true,
+      text: `DURUM: KARŞILAŞTIRMA TAMAM · ${filled}/${total} hücre\nÖLÇÜTLERİ KENDİN DENETLE: İki videonun ortak noktasını ve temel farkını tek cümlede söyleyebiliyor musun?\nYOL GÖSTERİCİ: “İki video da … anlatıyor; ancak biri … diğeri … üzerinde duruyor.” kalıbıyla bir cümle kur ve yazdıklarınla karşılaştır.`,
+    };
+  }
+
   function render(unitIds, api) {
     const host = document.getElementById("turkceQrBody");
     if (!host) return;
@@ -308,6 +352,29 @@
         entry.values[`q:${input.dataset.qrQuestion}`] = Number(input.value);
         entry.quizChecked = false;
         store.save();
+      });
+    });
+    host.querySelectorAll("[data-qr-compare]").forEach((area) => {
+      area.addEventListener("input", () => {
+        const entry = entryFor(store, area.dataset.qrUnit);
+        entry.values[`x:${area.dataset.qrCompare}`] = area.value;
+        store.save();
+      });
+    });
+    host.querySelectorAll("[data-qr-compare-check]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const unit = window.TURKCE_QR.units.find((item) => item.id === button.dataset.qrUnit);
+        if (!unit || !unit.compare) return;
+        const entry = entryFor(store, unit.id);
+        const result = compareVerdict(unit, entry);
+        entry.compareState = result.state;
+        entry.comparePill = result.pill;
+        entry.compareChecked = result.checked;
+        entry.compareFeedback = result.text;
+        store.save();
+        api.rerender?.();
+        const box = document.querySelector(`[data-qr-feedback="compare"][data-qr-unit="${unit.id}"]`);
+        if (box) { box.textContent = result.text; box.hidden = false; }
       });
     });
     host.querySelectorAll("[data-qr-write]").forEach((area) => {
