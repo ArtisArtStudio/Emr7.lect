@@ -1180,13 +1180,36 @@ def main() -> int:
         errors.append("The shared MEBİ mock-exam link or gear-based AI settings panel is missing")
     if "const EXAM_DATES_BY_WEEK=Object.freeze({9:'10 Kasım 2026'});" not in html or "[9,'9–13 Kas'" not in html or '1. sınav (${examDate})' not in html or 'id="weekExamNotice"' not in html:
         errors.append("Turkish first-term exam notices must map to the user-provided date inside week nine only")
+    if html.count('class="term-exam-plan"') != 3 or "4–8 Ocak 2027" not in html or "22 Ocak 2027’de bitiyor" not in html or ".term-exam-plan{" not in html:
+        errors.append("All three courses must show the tentative second-exam window (two weeks before 22 January)")
     if html.index('id="apiSettings"') > html.index('<section class="hero">'):
         errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v=", "ai-grader.js?v="):
         if asset not in html:
             errors.append(f"Client assets need a cache-busting version: {asset}")
+    grader_path = ROOT / "ai-grader.js"
+    grader = grader_path.read_text(encoding="utf-8") if grader_path.is_file() else ""
+    if not grader:
+        errors.append("The shared AI feedback coach (ai-grader.js) is missing")
+    else:
+        for required in ("YOL GÖSTERİCİ", "YAZMAYA BAŞLA", "TEŞVİK", "GUIDE_CONTRACT", "COACH_RULES", "sanitizeGuidance", "composeCoachBlock", "lengthCoach"):
+            if required not in grader:
+                errors.append(f"The shared AI feedback coach is missing: {required}")
+        if "window.EMR7_AI_GRADER" not in grader:
+            errors.append("The shared AI feedback coach must expose itself as window.EMR7_AI_GRADER")
+    if html.index("ai-grader.js?v=") > html.index("social-studies-content.js?v="):
+        errors.append("ai-grader.js must load before the course scripts")
+    for course_file, label in (("science.js", "Fen Bilimleri"), ("social-studies.js", "Sosyal Bilgiler"), ("theme1-practice-app.js", "Türkçe")):
+        course_path = ROOT / course_file
+        course_source = course_path.read_text(encoding="utf-8") if course_path.is_file() else ""
+        if "window.EMR7_AI_GRADER" not in course_source and "GRADER =" not in course_source:
+            errors.append(f"{label} must use the shared AI feedback coach")
+        if "composeCoachBlock" not in course_source:
+            errors.append(f"{label} must render the guided coaching block")
+        if "GUIDE_CONTRACT" not in course_source:
+            errors.append(f"{label} must request the guidance fields from the model")
     for required in ("function selectSubject(id)", "social.hidden=!isSocial", "window.SOCIAL_STUDIES?.render()", "science.hidden=!isScience", "window.SCIENCE?.render()", "socialStudies:window.SOCIAL_STUDIES?.exportProgress()", "science:window.SCIENCE?.exportProgress()", "window.SOCIAL_STUDIES?.importProgress(obj.socialStudies)", "window.SCIENCE?.importProgress(obj.science)", "function renderStudySchedule(week)", "renderStudySchedule(w)", "sourceWeeks.find(row=>Number(row[0])===Number(memberWeekId))", "Tonguç 7. sınıf Türkçe ${focus||topic}", "data[baseWeekId].studySchedule[id]", "const WEEK_GROUP_VERSION=2", "PLAN_VERSION=2", "turkcePlanVersion", ".eskiPlan", "EBA_STUDY_URL", "MEBI_STUDY_URL"):
         if required not in html:
             errors.append(f"Per-week study tracking or its saved-progress migration is missing: {required}")
@@ -1245,6 +1268,11 @@ def main() -> int:
         errors.append("Fen concept cards need the horizontal, in-flow strip styling")
     if "science-visual-image" not in science_js or "science-explain-block" not in science_js or "science-explain-block" not in science_css:
         errors.append("Fen lessons need accessible image rendering and structured explanation cards")
+    science_activities = (ROOT / "science-activities.js").read_text(encoding="utf-8")
+    if "renderVisualQuestion" not in science_js or "science-visual-question-figure" not in science_js or ".science-practice-visual" not in science_css:
+        errors.append("Fen visual questions need their own renderer, figure markup, and styling")
+    if science_activities.count("type: 'visual'") != 15 or "Görsel sorular" not in science_activities:
+        errors.append("Every Fen week needs one visual question section that keeps a 10-15 activity load")
     if "spaceVehicles" not in science_js or ".science-visual-gallery.is-vehicles" not in science_css:
         errors.append("Space-vehicle concepts need their own labelled, responsive illustration gallery")
     if "renderTermDefinitions" in science_js or "Kavram sözlüğü" in science_js or "science-key-terms" in science_css or "science-glossary" in science_css:
@@ -1440,6 +1468,66 @@ def main() -> int:
                     errors.append("Fen Bilimleri workspace test did not report success")
 
             if not errors:
+                extras_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-turkce-extras.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if extras_test.returncode:
+                    errors.append(f"Theme 1 extras test failed:\n{extras_test.stderr.strip()}")
+                elif "Tema 1 ek okuma ve etkinlikler hazır" not in extras_test.stdout:
+                    errors.append("Theme 1 extras test did not report success")
+
+            if not errors:
+                tema2_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-tema2-practice.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if tema2_test.returncode:
+                    errors.append(f"Theme 2 practice test failed:\n{tema2_test.stderr.strip()}")
+                elif "Tema 2 etkinlik paketi hazır" not in tema2_test.stdout:
+                    errors.append("Theme 2 practice test did not report success")
+
+            if not errors:
+                tema3_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-tema3-practice.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if tema3_test.returncode:
+                    errors.append(f"Theme 3 practice test failed:\n{tema3_test.stderr.strip()}")
+                elif "Tema 3 etkinlik paketi hazır" not in tema3_test.stdout:
+                    errors.append("Theme 3 practice test did not report success")
+
+            if not errors:
+                qr_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-qr-inventory.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if qr_test.returncode:
+                    errors.append(f"Turkish QR inventory test failed:\n{qr_test.stderr.strip()}")
+                elif "Türkçe karekod envanteri tutarlı" not in qr_test.stdout:
+                    errors.append("Turkish QR inventory test did not report success")
+
+            if not errors:
+                qr_flow_test = subprocess.run(
+                    [node, str(ROOT / "scripts/check-turkce-qr.js")],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if qr_flow_test.returncode:
+                    errors.append(f"Turkish QR practice test failed:\n{qr_flow_test.stderr.strip()}")
+                elif "Türkçe karekod çalışmaları hazır" not in qr_flow_test.stdout:
+                    errors.append("Turkish QR practice test did not report success")
+
+            if not errors:
                 try:
                     focus_test = focus_week_test_source(html)
                 except ValueError as exc:
@@ -1566,7 +1654,7 @@ def main() -> int:
             print(f"- {error}", file=sys.stderr)
         return 1
 
-    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, a 15-week first-term Social Studies plan with merged topics and variable activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1 packages, and the PDF reader are valid.")
+    print("Static site checks passed: assets, distinct Fen/Social course accents, focused-week navigation, darker text contrast, per-week tracking, a 15-week first-term Social Studies plan with merged topics and variable activity flows, the date-aligned 15-week Fen curriculum, refined lesson explanations and original science illustrations, safe assessment, progress isolation and backups, targeted hints, TPM retry, JSON-validation fallback, accessible sorting, correct-completion celebrations, Gemini video/audio notes, Theme 1, Theme 2 and Theme 3 packages, and the PDF reader are valid.")
     return 0
 
 

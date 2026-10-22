@@ -218,6 +218,7 @@
 .science-activity-card[data-kind="order"]{--act-accent:#8a5a12;--act-soft:#fdf5e5;--act-edge:#efe0bd}
 .science-activity-card[data-kind="tf"]{--act-accent:#146b52;--act-soft:#e9f7f1;--act-edge:#cbe9dc}
 .science-activity-card[data-kind="choice"]{--act-accent:#2f5aa8;--act-soft:#ecf2fe;--act-edge:#d5e0f7}
+.science-activity-card[data-kind="visual"]{--act-accent:#20586a;--act-soft:#eaf6f8;--act-edge:#cbe4ea}
 .science-activity-card[data-kind="text"]{--act-accent:#8a3d58;--act-soft:#fbeff4;--act-edge:#ecd3de}
 .science-activity-card[data-check-state="correct"]{--act-accent:#247647;--act-soft:#effaf2;--act-edge:#b7dfc1;border-left:5px solid #26834d}
 .science-activity-card[data-check-state="partial"],.science-activity-card[data-check-state="incomplete"],.science-activity-card[data-check-state="unverified"]{--act-accent:#8a5a12;--act-soft:#fff9e7;--act-edge:#ecd99c;border-left:5px solid #d19a13}
@@ -325,3 +326,11 @@
   .science-feedback{border-left-width:3px}
   .science-sort-zone{min-height:0;background:#fff}
 }
+
+/* Görsel sorular: illüstrasyon sorunun kanıtıdır; etiketler okunabilir kalmalı. */
+.science-practice-visual{display:grid;gap:14px}
+.science-visual-question-figure{margin:0;padding:12px;border:1px solid #d7e6ea;border-radius:16px;background:linear-gradient(150deg,#f2fbfc,#f8f5f9);display:grid;gap:9px}
+.science-visual-question-image{display:block;width:100%;height:auto;border-radius:12px;object-fit:cover}
+.science-visual-question-figure figcaption{font-size:12px;line-height:1.5;color:#456070}
+.science-practice-visual .science-choice-row{margin:0}
+@media(max-width:520px){.science-visual-question-figure{padding:9px;border-radius:13px}.science-visual-question-figure figcaption{font-size:11px}}
