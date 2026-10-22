@@ -63,6 +63,9 @@ for (const unit of data.units) {
     seenWeeks.add(week);
   }
   assert.ok(unit.minutes >= 4 && unit.minutes <= 15, `${unit.id}: süre bilgisi gerçekçi olmalı.`);
+  // Kartın üstündeki kaynak bağlantısı zorunlu ve yalnız https olabilir.
+  assert.ok(/^https:\/\//.test(String(unit.sourceUrl || "")), `${unit.id}: kartın üstüne konacak kaynak bağlantısı yok.`);
+  assert.ok(unit.sourceLinkLabel && String(unit.sourceLinkLabel).trim().length > 4, `${unit.id}: bağlantı etiketi eksik.`);
   assert.equal(unit.before.length, 2, `${unit.id}: iki izleme öncesi sorusu olmalı.`);
   assert.equal(unit.notes.length, 4, `${unit.id}: dört not alanı olmalı.`);
   assert.ok(unit.questions.length >= 2 && unit.questions.length <= 4, `${unit.id}: iki ile dört arası seçim sorusu olmalı.`);
@@ -177,6 +180,11 @@ for (const unit of data.units) {
       assert.ok(!markup.includes(item), `${unit.id}: değerlendirme anahtarı ekranda görünüyor.`);
     }
     assert.ok(markup.includes(`data-qr-ai="${unit.id}"`), `${unit.id}: analiz varken yapay zekâ düğmesi çizilmeli.`);
+    // Ortak kart biçimi ve üstteki video/dinleme bağlantısı.
+    assert.ok(markup.includes('activity-card') && markup.includes('class="activity-top"'), `${unit.id}: karekod kartı ortak etkinlik kartı biçiminde değil.`);
+    assert.ok(markup.includes('class="question-card"'), `${unit.id}: karekod bölümleri soru kartına dönüşmeli.`);
+    assert.ok(markup.includes('check-button') && markup.includes('✦ Kontrol et'), `${unit.id}: kontrol düğmesi ortak değil.`);
+    assert.ok(markup.includes('class="reader-links"') && markup.includes('class="source-link'), `${unit.id}: kartın üstünde kaynak (video) bağlantısı yok.`);
     if (unit.compare) {
       assert.ok(markup.includes('data-qr-compare-check'), `${unit.id}: karşılaştırma kontrol düğmesi çizilmeli.`);
       assert.ok(!markup.includes(unit.compare.outcome), `${unit.id}: karşılaştırma sonucu ekranda görünmemeli.`);

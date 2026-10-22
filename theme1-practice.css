@@ -1447,3 +1447,26 @@
   #theme1Practice .sort-visual-guide { background: white; box-shadow: none; }
   #theme1Practice .theme1-practice-header::after { display: none; }
 }
+
+/* Ana metinden sonraki ek okuma adımı: aynı etkinlik kartı, kitap metni düzeni. */
+#theme1Practice .reading-card .activity-icon { background: linear-gradient(145deg, #fff, #fdf3e2); }
+#theme1Practice .reading-body {
+  padding: 18px clamp(14px, 3vw, 26px) 4px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #16283e;
+}
+#theme1Practice .reading-body p { margin: 0 0 14px; }
+#theme1Practice .reading-note {
+  margin: 0 0 16px;
+  padding: 11px 13px;
+  border-left: 4px solid #d9a441;
+  border-radius: 0 10px 10px 0;
+  background: #fffaf0;
+  color: #6b5a2e;
+  font-size: 13px;
+  line-height: 1.6;
+}
+#theme1Practice .reading-card .question-actions { margin: 8px clamp(14px, 3vw, 26px) 22px; }
+#theme1Practice .step-dot-reading { background: #fdf3e2; color: #7a5c22; }
+#theme1Practice .step-dot-reading.is-answered { background: #e8f8f1; color: #197559; }

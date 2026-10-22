@@ -176,8 +176,8 @@ assert.ok(html.includes('tema3-practice.js?v='), 'Tema 3 verisi sürüm etiketiy
 assert.ok(html.includes('function renderTema3Practice(w)'), 'renderTema3Practice tanımlı değil.');
 const tema2Call = html.indexOf('renderTema2Practice(w);');
 const tema3Call = html.indexOf('renderTema3Practice(w);');
-const extrasCall = html.indexOf('renderTheme1Extras(w);');
-assert.ok(tema3Call > tema2Call && extrasCall > tema3Call, 'Tema 3 akışı Tema 2 ile ek bölümler arasında çizilmeli.');
+const qrCall = html.indexOf('renderTurkceQr(w);');
+assert.ok(tema3Call > tema2Call && qrCall >= 0, 'Tema 3 akışı Tema 2 akışından sonra çizilmeli.');
 assert.ok(html.indexOf('id="tema2Practice"') < html.indexOf('id="tema3Practice"'), 'Tema 3 bölümü Tema 2 bölümünden sonra gelmeli.');
 assert.ok(html.includes("data[current].tema3PracticeFlow"), 'Tema 3 yanıtları haftanın kaydında ayrı tutulmalı.');
 assert.ok(html.includes('function tema3UnitComplete('), 'Tema 3 tamamlanması haftalık çizelgeye bağlanmalı.');
@@ -195,6 +195,11 @@ for (const unit of data.units) {
   const first = unit.groups[0].activities[0];
   assert.ok(markup.includes(first.title), `${unit.id} çizime yansımadı.`);
   assert.ok(markup.includes('data-t2-check="activity"'), `${unit.id} için kontrol düğmesi yok.`);
+  // Ortak etkinlik kartı biçimi: tema 1 ile aynı sınıflar ve aynı düğme metni.
+  assert.ok(markup.includes('class="t2-card activity-card"'), `${unit.id} etkinlik kartı ortak biçimi kullanmıyor.`);
+  assert.ok(markup.includes('class="activity-top"') && markup.includes('class="activity-kicker"'), `${unit.id} kart başlığı ortak düzende değil.`);
+  assert.ok(markup.includes('class="question-list"') && markup.includes('class="question-card"'), `${unit.id} soru kartları ortak biçimde değil.`);
+  assert.ok(markup.includes('check-button') && markup.includes('✦ Kontrol et'), `${unit.id} kontrol düğmesi ortak değil.`);
   assert.ok(!/CEVAP ANAHTARI|Doğru cevap:/.test(markup), `${unit.id} çiziminde cevap anahtarı geçiyor.`);
   for (const activity of unit.groups.flatMap((group) => group.activities)) {
     if (activity.type !== 'write') continue;

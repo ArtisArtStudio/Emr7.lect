@@ -105,8 +105,8 @@
       <ul class="t2-criteria">${criteria}</ul>
       <textarea class="t2-textarea" data-t2-write="1" data-t2-activity="${escape(activity.id)}" rows="7" maxlength="3000" aria-label="${escape(activity.title)} yanıtı">${escape(value)}</textarea>
       <div class="t2-actions">
-        <button class="btn t2-check" type="button" data-t2-check="write" data-t2-activity="${escape(activity.id)}">Yazımı kontrol et</button>
-        ${activity.answerKey && activity.answerKey.length ? `<button class="btn t2-ai" type="button" data-t2-ai="${escape(activity.id)}">Yapay zekâ ile değerlendir</button>` : ""}
+        <button class="check-button btn t2-check" type="button" data-t2-check="write" data-t2-activity="${escape(activity.id)}">✦ Kontrol et</button>
+        ${activity.answerKey && activity.answerKey.length ? `<button class="btn t2-ai ai-button" type="button" data-t2-ai="${escape(activity.id)}">Yapay zekâ ile değerlendir</button>` : ""}
         <span class="t2-count" data-t2-count="${escape(activity.id)}">${value.trim().length}/${activity.minChars} karakter</span>
       </div>`;
   }
@@ -334,15 +334,30 @@
         </div>
       </div>
       <nav class="t2-track" aria-label="Bu birimin etkinlikleri">${track}</nav>
-      <article class="t2-card" data-t2-card="${escape(activity.id)}" data-state="${escape(entry.state)}">
-        <div class="t2-card-head">
-          <span class="t2-kind">${escape(activity.type === "write" ? "Yazma" : activity.type === "choice" ? "Seçim" : activity.type === "match" ? "Eşleştirme" : "Sıralama")}</span>
+      <article class="t2-card activity-card" data-t2-card="${escape(activity.id)}" data-state="${escape(entry.state)}" data-kind="${escape(activity.type === "write" ? "writing" : activity.type === "choice" ? "choice" : "puzzle")}">
+        <header class="activity-top">
+          <div class="activity-heading-row">
+            <span class="activity-icon" aria-hidden="true">${escape(activity.type === "write" ? "✍️" : activity.type === "choice" ? "🎯" : activity.type === "match" ? "🧩" : "🔀")}</span>
+            <div class="activity-title-copy">
+              <p class="activity-kicker">${escape(activity.group || unit.title)} · Etkinlik ${index + 1}</p>
+              <h2 class="activity-title">${escape(activity.title)}</h2>
+            </div>
+          </div>
+          <p class="activity-instruction">${escape(activity.instruction)}</p>
+        </header>
+        <div class="activity-meta">
+          <span>${escape(activity.type === "write" ? "Yazma" : activity.type === "choice" ? "Seçim" : activity.type === "match" ? "Eşleştirme" : "Sıralama")}</span>
+          <span>${escape(activity.skill || "")}</span>
+          <span>Kaynak: ${escape(unit.title)}</span>
           ${statusPill(entry)}
         </div>
-        <p class="t2-instruction">${escape(activity.instruction)}</p>
-        <div class="t2-body">${bodyMarkup(activity, entry)}</div>
-        ${activity.type === "write" ? "" : `<div class="t2-actions"><button class="btn t2-check" type="button" data-t2-check="activity" data-t2-activity="${escape(activity.id)}">Yanıtımı kontrol et</button></div>`}
-        ${feedbackMarkup(activity, entry)}
+        <div class="question-list">
+          <article class="question-card" data-state="${escape(entry.state)}">
+            <div class="t2-body">${bodyMarkup(activity, entry)}</div>
+            ${activity.type === "write" ? "" : `<div class="question-actions"><button class="check-button btn t2-check" type="button" data-t2-check="activity" data-t2-activity="${escape(activity.id)}">✦ Kontrol et</button></div>`}
+            ${feedbackMarkup(activity, entry)}
+          </article>
+        </div>
       </article>
       <div class="t2-controls">
         <button class="btn" type="button" data-t2-nav="prev"${index === 0 ? " disabled" : ""}>← Önceki etkinlik</button>
