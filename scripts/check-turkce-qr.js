@@ -45,8 +45,8 @@ require('../turkce-qr-app.js');
 
 const data = global.window.TURKCE_QR;
 assert.ok(data && Array.isArray(data.units), 'TURKCE_QR.units bulunamadı.');
-// 8 kart Tema 1–2 (1. kitabın ilk iki teması) + 3 kart Tema 3 (s. 130, 144, 161).
-assert.equal(data.units.length, 11, `Beklenen 11 karekod çalışması var, bulunan: ${data.units.length}`);
+// 8 kart Tema 1–2 (1. kitabın ilk iki teması) + 5 kart Tema 3 (s. 130, 139, 144, 161, 169).
+assert.equal(data.units.length, 13, `Beklenen 13 karekod çalışması var, bulunan: ${data.units.length}`);
 
 const ids = new Set();
 const seenWeeks = new Set();
@@ -199,7 +199,7 @@ for (const unit of analysed) {
   assert.ok(unit.analysis.keyPoints.length <= 5, `${unit.id}: ana nokta sayısı 5'i geçmemeli.`);
   assert.ok(unit.write.answerKey.length <= 4, `${unit.id}: anahtar maddeleri 4'ü geçmemeli.`);
 }
-assert.equal(analysed.length, data.units.length, 'Sekiz karekod içeriğinin tamamı için video analizi olmalı.');
+assert.equal(analysed.length, data.units.length, 'Bütün karekod içerikleri için video analizi olmalı.');
 assert.ok(app.includes('EMR7_AI_GRADER'), 'Yapay zekâ metni ortak koçluk filtresinden geçmeli.');
 
 console.log(

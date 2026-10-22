@@ -75,21 +75,21 @@ Tema 3'te karekodla açılan **14 içerik** var: 5 dinleme/izleme videosu, 5 etk
 | --- | --- | --- | --- | --- | --- |
 | T1 | s. 120 · tema girişi | 3. Tema E-Özeti | EBA içeriği | — | ⛔ etkinlik değil |
 | T2 | s. 120 · tema girişi | EBA Tema Alanı | EBA alanı | — | ⛔ etkinlik değil |
-| T3 | s. 130 · 7.–8. etkinlik | Düş Fırçası | İzleme | — | ⏳ döküm yok (Drive kopyası var) |
+| T3 | s. 130 · 7.–8. etkinlik | Düş Fırçası | İzleme | `qr-dus-fircasi` kartı (11. hafta) | ✅ analiz var, karta bağlandı |
 | T4 | s. 130 · Erişelim | “Ok” oyunu | Etkileşimli | — | ⛔ oyun |
-| T5 | s. 139 · 5.–6. etkinlik | Sadaka Taşı | İzleme | — | ⏳ döküm/analiz yok |
+| T5 | s. 139 · 5.–6. etkinlik | Sadaka Taşı | İzleme | `qr-sadaka-tasi` kartı (12–13. hafta) | ✅ analiz var, karta bağlandı |
 | T6 | s. 140 · Erişelim | “Bağlama Oyunu” | Etkileşimli | — | ⛔ oyun |
-| T7 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme | — | ⏳ döküm yok (Drive kopyası var) |
+| T7 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme | `qr-dijital-tayfa` kartı (14. hafta) | ✅ analiz var, karta bağlandı |
 | T8 | s. 154 · 10. etkinlik | “Karagöz Fidan Dikiyor” | Etkileşimli | — | ⛔ oyun |
-| T9 | s. 161 · 6. etkinlik | İletişimin Önemi | İzleme | — | ⏳ döküm yok (Drive kopyası var) |
+| T9 | s. 161 · 6. etkinlik | İletişimin Önemi | İzleme | `qr-iletisimin-onemi` kartı (15. hafta) | ✅ analiz var, karta bağlandı |
 | T10 | s. 161 · Erişelim | “Zamanı Bul” | Etkileşimli | — | ⛔ oyun |
 | T11 | s. 162 · 7. etkinlik | Dereceli Puanlama Anahtarı | Değerlendirme | — | ⏭️ konuşma, kapsam dışı |
 | T12 | s. 163 · 9. etkinlik | “Şiirde Ahenk” | Etkileşimli | — | ⛔ oyun |
-| T13 | s. 169 · 4.–6. soru | Ortak Evimiz Dünya | İzleme | — | ⏳ döküm/analiz yok |
+| T13 | s. 169 · 4.–6. soru | Ortak Evimiz Dünya | İzleme | `qr-ortak-evimiz-dunya` kartı (15. hafta) | ✅ analiz var, karta bağlandı |
 | T14 | s. 169 · tema sonu | Ek Ölçme ve Değerlendirme Soruları | Ölçme | — | ⏳ |
 
 - Beş video da **EBA oturumu isteyen** `ders.eba.gov.tr` sayfalarına gider; uygulamada doğrudan oynatılamaz. Tema 2'de olduğu gibi Drive'a yüklenmiş kopya ya da döküm gelirse karekod kartı yazılabilir.
-- Tema 3'ün üç videosu (s. 130, 144, 161) Gemini analizleriyle **karta bağlandı** (`qr-dus-fircasi`, `qr-dijital-tayfa`, `qr-iletisimin-onemi`); kartlar `turkce-qr.js` içinde, 11, 14 ve 15. haftalarda görünür. Kalan iki video (s. 139, 169) için analiz bekleniyor.
+- Tema 3'ün **beş videosunun tamamı** Gemini analizleriyle **karta bağlandı**: `qr-dus-fircasi` (11), `qr-sadaka-tasi` (12–13), `qr-dijital-tayfa` (14), `qr-iletisimin-onemi` ve `qr-ortak-evimiz-dunya` (15). Kartlar `turkce-qr.js` içinde; her biri dört not alanı, üç seçim sorusu ve bir yazma görevi taşır.
 - Tema 3 etkinlikleri (`tema3-practice.js`, 32 etkinlik) karekod içeriğine **atıf yapmaz**; metne ve beceriye dayanır. Karekod çalışmaları ayrı bir katmandır ve ana metinden sonra görünür.
 
 ---

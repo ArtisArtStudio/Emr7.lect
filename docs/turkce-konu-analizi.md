@@ -11,7 +11,7 @@
 | `index.html` · `BOOK_QUIZZES`, `specific` | 8 quiz seti (48 soru), 4 haftada yazma görevi | Uygulamanın kendi verisi |
 | `theme1-practice.js` + `-forms.js` | Tema 1 için 43 özgün etkinlik | Uygulamanın kendi verisi |
 | `docs/theme1-activity-inventory.md` | Tema 1, PDF s. 11–73, etkinlik etkinlik döküm | Kitaptan çıkarılmış, doğrulanmış envanter |
-| `docs/video-analysis/*` | 4 dinleme/izleme içeriğinin Gemini raporu | Kullanıcı sağladı; bağımsız doğrulanmadı |
+| `docs/video-analysis/*` | 13 dinleme/izleme/medya içeriğinin Gemini raporu (Tema 3'ün beş videosu dahil) | Kullanıcı sağladı; bağımsız doğrulanmadı |
 
 > **Sınır:** `turkce7-1.pdf` depoda yok. Tema 1 için sayfa düzeyinde envanter var; **Tema 2 ve Tema 3 için sayfa düzeyinde envanter henüz çıkarılmadı.** Bu belgede Tema 2–3, plandaki eser adları, uygulamadaki metinler ve kitabın bilinen yapısı üzerinden değerlendirildi; sayfa numarası verilen yerler yalnızca Tema 1'e aittir.
 

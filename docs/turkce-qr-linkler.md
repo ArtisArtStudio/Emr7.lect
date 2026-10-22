@@ -104,6 +104,8 @@ Bunu `docs/video-analysis/<içerik-adı>-gemini-analysis.md` olarak depoya koyar
 | Düş Fırçası (3. tema · s. 130) | [`video-analysis/dus-fircasi-gemini-analysis.md`](video-analysis/dus-fircasi-gemini-analysis.md) | ✅ `qr-dus-fircasi` kartına bağlandı (11. hafta) |
 | Dijital Tayfa — Komik mi Şimdi? (3. tema · s. 144) | [`video-analysis/dijital-tayfa-komik-mi-simdi-gemini-analysis.md`](video-analysis/dijital-tayfa-komik-mi-simdi-gemini-analysis.md) | ✅ `qr-dijital-tayfa` kartına bağlandı (14. hafta) |
 | İletişimin Önemi (3. tema · s. 161) | [`video-analysis/iletisimin-onemi-gemini-analysis.md`](video-analysis/iletisimin-onemi-gemini-analysis.md) | ✅ `qr-iletisimin-onemi` kartına bağlandı (15. hafta) |
+| Sadaka Taşı (3. tema · s. 139) | [`video-analysis/sadaka-tasi-gemini-analysis.md`](video-analysis/sadaka-tasi-gemini-analysis.md) | ✅ `qr-sadaka-tasi` kartına bağlandı (12–13. haftalar) |
+| Ortak Evimiz Dünya (3. tema · s. 169) | [`video-analysis/ortak-evimiz-dunya-gemini-analysis.md`](video-analysis/ortak-evimiz-dunya-gemini-analysis.md) | ✅ `qr-ortak-evimiz-dunya` kartına bağlandı (15. hafta) |
 
 **Eşleştirme notu:** Özet raporlar başlıklarına göre eşlendi. “Çanakkale Geçilmez” raporu mevcut kartla aynı ada sahip olduğu için oraya **ek ayrıntı** olarak işlendi; “Seyit Onbaşı” raporu s. 116'daki “Çanakkale”, “Şehitlikler/Tarihî Miras” raporu s. 107'deki 18 Mart anma kartı ile eşleştirildi. Farklıysa söyle, taşırım.
 
@@ -210,8 +212,8 @@ EBA adresleri oturum istediği için videoların **Drive kopyaları** ayrıca ar
 | s. 130 | Düş Fırçası | https://drive.google.com/file/d/1kUbDmqpzWQKch_yPLLhFf2P27fcbagiJ/view |
 | s. 144 | Dijital Tayfa — Komik mi Şimdi? | https://drive.google.com/file/d/1wjrLH3SNBAzyvyEuzAeUJhOd3ex6KPkO/view |
 | s. 161 | İletişimin Önemi | https://drive.google.com/file/d/14thzmqR2hblOivxAa1OJA__563LqvCql/view |
-| s. 139 | Sadaka Taşı | ⏳ yayımlanmamış |
-| s. 169 | Ortak Evimiz Dünya | ⏳ yayımlanmamış |
+| s. 139 | Sadaka Taşı | ⏳ yayımlanmamış (Gemini analizi var, `qr-sadaka-tasi` kartına bağlı) |
+| s. 169 | Ortak Evimiz Dünya | ⏳ yayımlanmamış (Gemini analizi var, `qr-ortak-evimiz-dunya` kartına bağlı) |
 
 Aynı sayfadaki etkileşimli içerik adresleri, PDF'ten çıkardığım `resourceId`'lerle **birebir aynı** (7c9f11a4…, 1a2d3dc3…, 56d3ee5c…, f435c891…, 25bb53c3…). İki bağımsız kaynağın örtüşmesi, PDF taramasının doğru olduğunu doğruluyor.
 
@@ -233,7 +235,8 @@ https://drive.google.com/file/d/1kUbDmqpzWQKch_yPLLhFf2P27fcbagiJ/view, https://
 - s. 162'deki karekod **konuşma** dereceli puanlama anahtarıdır; konuşma etkinlikleri kapsam dışı olduğu için uygulamaya alınmaz.
 - “Bağlama Oyunu” s. 140'ta doğrulandı (önceki notta s. 140 için ad yazılmamıştı).
 - Üç video analizi geldi ve karta bağlandı: **Düş Fırçası** (11. hafta), **Dijital Tayfa** (14. hafta), **İletişimin Önemi** (15. hafta). Kartlar `turkce-qr.js` içinde, Tema 2 şablonuyla.
-- **Sadaka Taşı** (s. 139) ve **Ortak Evimiz Dünya** (s. 169) için analiz hâlâ yok; kart açılmadı.
+- **Sadaka Taşı** (s. 139) ve **Ortak Evimiz Dünya** (s. 169) analizleri geldi; `qr-sadaka-tasi` (12–13. hafta) ve `qr-ortak-evimiz-dunya` (15. hafta) kartlarına bağlandı. Beş video da artık kartlı.
+- **Dijital Tayfa raporu yenilendi:** ilk rapor sahneyi okul olarak anlatıyordu ve kitabın cevap sayfalarıyla uyuşmuyordu. Yeni rapor (01:00–12:00) kitaptaki akışla örtüşüyor: Espri Piri, Hayri, Hale, Kâmil, Sevim ve “Hayri ile Mobil İbret” sunumu. Kart bu rapora göre yeniden yazıldı.
 
 > Uygulama notu: `tema3-practice.js` içinde karekod kartı **yok**; 32 etkinlik metne ve beceriye dayalı. Döküm geldiğinde 11, 12–13, 14 ve 15. haftalara Tema 2'deki şablonla kart eklenebilir.
 
