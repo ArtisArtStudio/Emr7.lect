@@ -125,7 +125,9 @@ const html = read('index.html');
 assert.ok(html.includes('id="theme1Extras"'), 'The extras card must exist in the page.');
 assert.ok(html.includes('theme1-extras.js?v=') && html.includes('theme1-extras-app.js?v='), 'Extras assets need cache-busting versions.');
 assert.ok(html.includes('function renderTheme1Extras(w)'), 'The extras renderer must be defined.');
-assert.ok(html.includes('renderTheme1Practice(w);renderTheme1Extras(w);'), 'The extras renderer must run after the main practice area is drawn.');
+const practiceCall = html.indexOf('renderTheme1Practice(w);');
+const extrasCall = html.indexOf('renderTheme1Extras(w);');
+assert.ok(practiceCall >= 0 && extrasCall > practiceCall, 'The extras renderer must run after the main practice area is drawn.');
 assert.ok(html.indexOf('id="theme1Practice"') < html.indexOf('id="theme1Extras"'), 'Extras must come after the main activity area, not replace it.');
 assert.ok(html.includes('window.renderTheme1ExtrasFlow?.(unit'), 'The extras flow must receive its unit and storage bridge.');
 
