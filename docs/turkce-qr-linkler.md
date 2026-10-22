@@ -155,3 +155,41 @@ https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view, https://
 **Sıra:** 80 → 91 → 95 (Hey Onbeşli) → 95 (Sergi) → 100 (PDF) → 107 → 116. Gemini çıktısında içerik adı geçmiyorsa bu sıraya göre eşleştir.
 
 > Erişim notu: Bu adresler dosyanın **görüntüleme** bağlantısıdır. Gemini'nin dosyayı açabilmesi için Drive'da “bağlantıya sahip olan herkes” görüntüleyebilir olmalı; değilse Gemini erişim isteyebilir veya dosyayı açamaz.
+
+---
+
+## 8. Tema 3 — İletişim ve Sosyal İlişkiler (hafta 11–15) karekod listesi
+
+Tema 3'te karekodla açılan **8 içerik** var: üçü izleme videosu, beşi etkileşimli EBA çalışması. Liste, etkinlik metinlerindeki “İzlediğiniz içerikten hareketle…” ve “Erişelim: karekodu okutarak …” ifadelerinden çıkarıldı; içerik adları kitaptaki etkinlik yönergesinde geçtiği biçimde yazıldı.
+
+| # | Sayfa · etkinlik | İçerik | Tür | Hafta | Uygulamadaki kart | Bağlantı |
+|---|---|---|---|---|---|---|
+| 1 | s. 130 · 7. ve 8. etkinlik | Düş Fırçası (Ayşe ve dedesinin yolculuğu) | İzleme videosu | 11 | — | ⏳ bekliyor |
+| 2 | s. 130 · Erişelim | “Ok” oyunu | Etkileşimli | 11 | — | ⏳ bekliyor |
+| 3 | s. 139 · 5. ve 6. etkinlik | Sadaka taşları | İzleme videosu | 12–13 | — | ⏳ bekliyor |
+| 4 | s. 140 · Erişelim | “Bağlama Oyunu” | Etkileşimli | 12–13 | — | ⏳ bekliyor |
+| 5 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme videosu | 14 | — | ⏳ bekliyor |
+| 6 | s. 154 · 10. etkinlik | “Karagöz Fidan Dikiyor” | Etkileşimli | 14 | — | ⏳ bekliyor |
+| 7 | s. 161 · 6. etkinlik | “Zamanı Bul” | Etkileşimli | 15 | — | ⏳ bekliyor |
+| 8 | s. 163 · 9. etkinlik | “Şiirde Ahenk” | Etkileşimli | 15 | — | ⏳ bekliyor |
+
+Doğrulanmayı bekleyen yerler: Öğüt metninin 6.–7. etkinliklerinde (s. 161–162) “izlediğiniz içerik” diye anılan ayrı bir video, s. 166 “Sevgilerde” serbest okuma metni ve s. 167–173 tema ölçmesi. Bunların karekod taşıyıp taşımadığı kitap sayfasından teyit edilmediği için tabloya alınmadı.
+
+### Bağlantılar neden boş
+
+- **Yayımlanmış liste yok:** 7. sınıf Türkçe karekodlu içerik listelerini toplayan kaynaklarda 1. ve 2. tema yayımlandı, 3. tema bölümü hâlâ “Hazırlanıyor…” durumunda.
+- **Drive'da dosya yok:** “3. Tema”, “Eskici”, “Dijital Tayfa”, “Öğüt”, “Karagöz” adlarıyla yapılan Drive aramaları 0 sonuç verdi; hesapta yalnız 1. ve 2. tema videoları var.
+- **Kitap PDF'i okunamıyor:** Drive'daki `turkce7-1.pdf` 77 MB; metin çıkarma aracının 25 MB sınırını aşıyor. Karekod görüntüsü zaten metne dönüşmediği için bu yolla da çözülemez.
+- **Kural:** doğrulanmamış bağlantı listeye yazılmaz. Uydurulmuş bir ID, Gemini'ye yanlış video izletmekten daha zararlı.
+
+### Gemini'ye toplu verilecek bağlantılar (virgülle ayrılmış)
+
+Bağlantılar doğrulandığında bu satır **sayfa sırasıyla** doldurulacak; biçim Tema 2 ile aynı:
+
+```text
+<Düş Fırçası · s.130>, <Sadaka taşları · s.139>, <Dijital Tayfa · s.144>
+```
+
+**Sıra:** 130 (Düş Fırçası) → 139 (sadaka taşları) → 144 (Dijital Tayfa). Etkileşimli çalışmalar (Ok, Bağlama Oyunu, Karagöz Fidan Dikiyor, Zamanı Bul, Şiirde Ahenk) EBA uygulamasıdır; Gemini'ye verilecek video değildir, bu yüzden virgüllü satıra girmez.
+
+> Uygulama notu: `tema3-practice.js` içinde karekod kartı **yok**; 32 etkinlik metne ve beceriye dayalı. Video dökümü geldiğinde 11, 12–13 ve 14. haftalara Tema 2'deki şablonla kart eklenebilir.

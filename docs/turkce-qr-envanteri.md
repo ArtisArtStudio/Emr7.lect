@@ -17,6 +17,7 @@
 | Metin, video veya ses içeriği | **12** |
 | Bunlardan uygulamada çalışmaya bağlı olan | **12** |
 | Hâlâ eksik olan | **0** (Tema 2 ek ölçmesi özgün sorularla yazıldı) |
+| Tema 3 karekodlu içerik (ayrı sayım) | **8** (3 izleme + 5 etkileşimli) — bağlantıların hiçbiri doğrulanmadı |
 
 Yani artık **12 metin/video/ses içeriğinin tamamı** uygulamada bir çalışmaya bağlı. Dört içerik mevcut Tema 1 etkinlik akışında (metne ve rapora dayalı sorularla), sekizi yeni **karekod çalışması** kartlarında (izleme öncesi hazırlık + not çizelgesi + iki seçim sorusu + bir yazma görevi).
 
@@ -62,7 +63,27 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 - Hafta 9 (Millî Mücadele Sergisi · dinleme/izleme): dört karekod kartı (sergi, Çanakkale Geçilmez, Hey Onbeşli, Çanakkale tanıtım metni) + 8 etkinlik.
 - Hafta 10 (Mustafa Kemal'in Kağnısı): metin + iki karekod kartı (18 Mart, Çanakkale) + 8 etkinlik.
 - Tema 2 ölçmesi: 8 özgün soru ve 4 maddelik öz değerlendirme, Tema 2 etkinlik alanının altında; doğru cevap gösterilmez, yalnızca dönülecek soru numaraları söylenir.
-- Tema 3 (İletişim ve Sosyal İlişkiler): karekod listesi hâlâ yayımlanmamış; 14. haftadaki “Dijital Tayfa” için elimizde video/transkript yok. Buna karşılık hafta 11–15 için 32 etkinlik `tema3-practice.js` içinde yazıldı; 14. hafta içerikte geçtiği iddia edilen ayrıntılara dayanmayan, beceri odaklı çalışmalarla işlendi.
+- Tema 3 (İletişim ve Sosyal İlişkiler): karekodlu içeriklerin listesi çıkarıldı (bkz. 3b), ancak **bağlantıların hiçbiri doğrulanamadı**; 14. haftadaki “Dijital Tayfa” için de video/transkript yok. Buna karşılık hafta 11–15 için 32 etkinlik `tema3-practice.js` içinde yazıldı; 14. hafta içerikte geçtiği iddia edilen ayrıntılara dayanmayan, beceri odaklı çalışmalarla işlendi.
+
+---
+
+## 3b. Tema 3 — İletişim ve Sosyal İlişkiler (s. 121–173)
+
+Tema 3'te karekodla açılan **8 içerik** var. Yukarıdaki 19'luk sayıma dâhil değildir; Tema 3 ayrı sayılır.
+
+| # | Kitap yeri | İçerik | Tür | Uygulamadaki karşılığı | Durum |
+| --- | --- | --- | --- | --- | --- |
+| T1 | s. 130 · 7.–8. etkinlik | Düş Fırçası (Ayşe ve dedesi) | İzleme | — | ⏳ bağlantı doğrulanmadı |
+| T2 | s. 130 · Erişelim | “Ok” oyunu | Etkileşimli | — | ⏳ bağlantı doğrulanmadı |
+| T3 | s. 139 · 5.–6. etkinlik | Sadaka taşları | İzleme | — | ⏳ bağlantı doğrulanmadı |
+| T4 | s. 140 · Erişelim | “Bağlama Oyunu” | Etkileşimli | — | ⏳ bağlantı doğrulanmadı |
+| T5 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme | — | ⏳ bağlantı doğrulanmadı |
+| T6 | s. 154 · 10. etkinlik | “Karagöz Fidan Dikiyor” | Etkileşimli | — | ⏳ bağlantı doğrulanmadı |
+| T7 | s. 161 · 6. etkinlik | “Zamanı Bul” | Etkileşimli | — | ⏳ bağlantı doğrulanmadı |
+| T8 | s. 163 · 9. etkinlik | “Şiirde Ahenk” | Etkileşimli | — | ⏳ bağlantı doğrulanmadı |
+
+- Tema 3 için **hiçbir bağlantı yayımlanmış değil**: karekod listelerini toplayan kaynaklarda 3. tema bölümü “Hazırlanıyor…” durumunda, Drive'da 3. temaya ait dosya yok, kitap PDF'i (77 MB) metin çıkarma sınırını aşıyor. Ayrıntı ve doldurulacak virgüllü satır: [`turkce-qr-linkler.md`](turkce-qr-linkler.md) § 8.
+- Bu yüzden Tema 3 etkinlikleri (`tema3-practice.js`, 32 etkinlik) karekod içeriğine **atıf yapmaz**; metne, beceriye ve öğrencinin kendi izlediğini kaydetmesine dayanır.
 
 ---
 
@@ -110,7 +131,8 @@ Bağlantılar ve Gemini analiz şablonu: [`turkce-qr-linkler.md`](turkce-qr-link
 1. **Döküm/rapor gelirse:** mevcut 8 kart, videonun ayrıntısına inen sorularla derinleştirilir (ör. Sakarya'da hangi olayın hangi sonucu doğurduğu). Şu an bu sorular bilinçli olarak içerik iddiası taşımıyor.
 2. ~~**Tema 2 etkinlik seti:** hafta 7–10 için metne bağlı etkinlikler.~~ ✅ 4 birim × 8 etkinlik (`tema2-practice.js`), hafta 6–10.
 3. ~~**Tema 2 ek ölçme seti (s. 117):** 8 soruluk ölçme + öz değerlendirme.~~ ✅ Özgün sorularla yazıldı.
-4. ~~**Tema 3 etkinlik seti:** hafta 11–15 için 32 etkinlik.~~ ✅ (`tema3-practice.js`). Karekod listesi yayımlandığında “Dijital Tayfa” ve diğer içerikler aynı şablonla derinleştirilir.
+4. ~~**Tema 3 etkinlik seti:** hafta 11–15 için 32 etkinlik.~~ ✅ (`tema3-practice.js`).
+5. **Tema 3 karekod bağlantıları:** içerik listesi çıkarıldı (§ 3b), bağlantılar bekliyor. Kitaptaki karekod sayfalarının fotoğrafı ya da çözülmüş bağlantı listesi gelirse `turkce-qr-linkler.md` § 8 tablosu ve virgüllü satırı doldurulur; ardından 11, 12–13 ve 14. haftalara Tema 2 şablonuyla kart eklenir.
 
 ---
 
