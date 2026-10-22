@@ -101,6 +101,9 @@ Bunu `docs/video-analysis/<içerik-adı>-gemini-analysis.md` olarak depoya koyar
 | Çanakkale (kent tanıtımı) | [`video-analysis/canakkale-kent-tanitim-gemini-analysis.md`](video-analysis/canakkale-kent-tanitim-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | 18 Mart anma · şehitlikler | [`video-analysis/18-mart-anma-gemini-analysis.md`](video-analysis/18-mart-anma-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
 | Çanakkale · Seyit Onbaşı | [`video-analysis/seyit-onbasi-canakkale-gemini-analysis.md`](video-analysis/seyit-onbasi-canakkale-gemini-analysis.md) | ✅ karta bağlandı, yapay zekâ değerlendirmesi açıldı |
+| Düş Fırçası (3. tema · s. 130) | [`video-analysis/dus-fircasi-gemini-analysis.md`](video-analysis/dus-fircasi-gemini-analysis.md) | ✅ `qr-dus-fircasi` kartına bağlandı (11. hafta) |
+| Dijital Tayfa — Komik mi Şimdi? (3. tema · s. 144) | [`video-analysis/dijital-tayfa-komik-mi-simdi-gemini-analysis.md`](video-analysis/dijital-tayfa-komik-mi-simdi-gemini-analysis.md) | ✅ `qr-dijital-tayfa` kartına bağlandı (14. hafta) |
+| İletişimin Önemi (3. tema · s. 161) | [`video-analysis/iletisimin-onemi-gemini-analysis.md`](video-analysis/iletisimin-onemi-gemini-analysis.md) | ✅ `qr-iletisimin-onemi` kartına bağlandı (15. hafta) |
 
 **Eşleştirme notu:** Özet raporlar başlıklarına göre eşlendi. “Çanakkale Geçilmez” raporu mevcut kartla aynı ada sahip olduğu için oraya **ek ayrıntı** olarak işlendi; “Seyit Onbaşı” raporu s. 116'daki “Çanakkale”, “Şehitlikler/Tarihî Miras” raporu s. 107'deki 18 Mart anma kartı ile eşleştirildi. Farklıysa söyle, taşırım.
 
@@ -229,6 +232,8 @@ https://drive.google.com/file/d/1kUbDmqpzWQKch_yPLLhFf2P27fcbagiJ/view, https://
 - s. 120'de iki karekod var: **3. Tema E-Özeti** ve **EBA Tema Alanı**. Bunlar etkinlik değil, tema girişi.
 - s. 162'deki karekod **konuşma** dereceli puanlama anahtarıdır; konuşma etkinlikleri kapsam dışı olduğu için uygulamaya alınmaz.
 - “Bağlama Oyunu” s. 140'ta doğrulandı (önceki notta s. 140 için ad yazılmamıştı).
+- Üç video analizi geldi ve karta bağlandı: **Düş Fırçası** (11. hafta), **Dijital Tayfa** (14. hafta), **İletişimin Önemi** (15. hafta). Kartlar `turkce-qr.js` içinde, Tema 2 şablonuyla.
+- **Sadaka Taşı** (s. 139) ve **Ortak Evimiz Dünya** (s. 169) için analiz hâlâ yok; kart açılmadı.
 
 > Uygulama notu: `tema3-practice.js` içinde karekod kartı **yok**; 32 etkinlik metne ve beceriye dayalı. Döküm geldiğinde 11, 12–13, 14 ve 15. haftalara Tema 2'deki şablonla kart eklenebilir.
 

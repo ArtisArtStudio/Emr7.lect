@@ -832,5 +832,303 @@ window.TURKCE_QR = {
       },
       skill: "Olay örgüsü, neden–sonuç, belirsizlik farkındalığı",
     },
+
+    {
+      id: "qr-dus-fircasi",
+      weekIds: [11],
+      title: "Düş Fırçası",
+      kind: "İzleme",
+      where: "Tema 3 · s. 130 · 7.–8. etkinlik",
+      minutes: 8,
+      focus: "Hayal gücü, sanatla kendini ifade etme, rehberliğin rolü",
+      analysis: {
+        doc: "docs/video-analysis/dus-fircasi-gemini-analysis.md",
+        speaker: "Dış ses anlatımı",
+        summary:
+          "Video bir atölyede geçiyor. Hayal gücünün insan hayatındaki yeri ve çocukların dünyayı algılama biçimleri anlatılarak başlıyor. Sonra çocuklar fırça ve renklerle buluşuyor, hayallerini tuvale aktarıyor. Ortada düş gücünün sanata dönüşme süreci, renklerin psikolojik etkileri ve özgür ifade alanlarının önemi var. Kapanışta ortaya çıkan eserler ve çocukların mutluluğu vurgulanıyor. Yetişkin, süreçte yol gösteren kişi olarak görünüyor.",
+        segments: [
+          { at: "00:00", note: "Açılış: hayal gücü ve çocukların dünyayı algılama biçimi." },
+          { at: "00:25", note: "Çocuklar fırça ve renklerle buluşuyor; tuval üzerine hayaller." },
+          { at: "01:10", note: "Düş gücünün sanata dönüşmesi; renklerin psikolojik etkisi." },
+          { at: "02:00", note: "Eserler ve çocukların duyduğu mutluluk." },
+        ],
+        keyPoints: [
+          "Sanatsal üretim, çocuğun iç dünyasını ve duygu birikimini dışa aktarmasını sağlar.",
+          "Özgür ifade için uygun araç kadar yol gösteren bir yetişkin de gerekir.",
+          "Renklerin psikolojik etkisi ve ifade alanının açıklığı yaratıcılığı besler.",
+          "Eserin ortaya çıkması çocukta mutluluk ve özgüven yaratır.",
+        ],
+      },
+      intro: "Video bir atölyede geçiyor: hayal gücünün somut bir ürüne dönüşmesi ve bu süreçte yetişkinin yeri anlatılıyor. İzlerken çocukların ne yaptığına ve yetişkinin ne yapmadığına dikkat et.",
+      before: [
+        "En son neyi hayal ettin ve o hayali başkasına anlatmak için neye ihtiyaç duydun?",
+        "Sence bir çocuk resim yaparken en çok neye ihtiyaç duyar? Tahminini yaz.",
+      ],
+      notes: [
+        { id: "n1", label: "Açılışta hayal gücü neyle ilişkilendiriliyor?", hint: "Çocukların dünyayı algılama biçimiyle." },
+        { id: "n2", label: "Çocuklar hayallerini hangi araçlarla görünür kılıyor?", hint: "İki sözcük: boyalar ve ..." },
+        { id: "n3", label: "Renklerin hangi yönü üzerinde duruluyor?", hint: "Duygularla ilgili bir etki." },
+        { id: "n4", label: "Yetişkinin süreçteki görevi nedir?", hint: "Yön vermek, eşlik etmek." },
+      ],
+      questions: [
+        {
+          id: "q1",
+          prompt: "Videonun temel mesajı aşağıdakilerden hangisidir?",
+          options: [
+            "Çocukların duygularını özgürce ifade edebilmesi için araç ve rehberlik gerekir",
+            "Resim yapmak yalnızca yetenekli çocuklar için anlamlıdır",
+            "Sanat etkinlikleri yerine test çözmek yeğlenmelidir",
+            "Çocuklar hayallerini ancak yazarak anlatabilir",
+          ],
+          answer: 0,
+          guide: "Kapanışta çocukların eserlerinden duyduğu mutluluk öne çıkarılıyor; videonun baştan beri savunduğu şey bu mutluluğun kaynağı.",
+        },
+        {
+          id: "q2",
+          prompt: "Videoda yetişkinin rolü nasıl gösteriliyor?",
+          options: [
+            "Hiç karışmadan uzaktan izleyen biri",
+            "Süreçte yol gösteren ve eşlik eden biri",
+            "Yalnızca kural koyan biri",
+            "Eserleri birbiriyle yarıştıran biri",
+          ],
+          answer: 1,
+          guide: "Çocukların yanında duran ama fırçayı ellerinden almayan bir yetişkin var; not alırken dördüncü alana yazdığın şey buydu.",
+        },
+        {
+          id: "q3",
+          prompt: "Videonun sonunda ne vurgulanıyor?",
+          options: [
+            "Eserlerin sergilenmesi",
+            "Bir yarışmanın sonucu",
+            "Çocukların eserlerinden duyduğu mutluluk",
+            "Yeni alınan boya ve fırçalar",
+          ],
+          answer: 2,
+          guide: "Son bölümde öne çıkan şey ürünün kendisi değil, üretmenin çocukta bıraktığı duygu.",
+        },
+      ],
+      write: {
+        id: "w",
+        title: "Kendi düş fırçanı tarif et",
+        instruction:
+          "Hayalini kurduğun bir şeyi anlat: neyi hayal ediyorsun, onu görünür kılmak için hangi aracı seçerdin (resim, müzik, yazı, başka bir şey) ve bu süreçte kime, nasıl bir desteğe ihtiyacın olurdu? Üç bölüm hâlinde yaz.",
+        minChars: 150,
+        criteria: [
+          "Hayal edilen şey somut olarak anlatılmış.",
+          "Seçilen ifade aracı ve gerekçesi yazılmış.",
+          "İhtiyaç duyulan destek, kimden ve nasıl alınacağı belirtilerek yazılmış.",
+        ],
+        guide: "Üç paragraf kur: hayal, araç, destek. Her paragrafta tek bir soruya yanıt ver.",
+        starter: "Hayalini kurduğum şey ...",
+        rubric:
+          "Öğrenci hayalini somut biçimde anlatmalı, seçtiği ifade aracını gerekçelendirmeli ve ihtiyaç duyduğu rehberliği kimden/nasıl alacağını belirtmelidir.",
+        answerKey: [
+          "Sanatsal üretim, çocuğun iç dünyasını ve duygu birikimini dışa aktarmasını sağlar.",
+          "Özgür ifade için uygun araç kadar yol gösteren bir yetişkin de gerekir.",
+          "Renklerin ve eserin ortaya çıkması çocukta mutluluk ve özgüven yaratır.",
+          "Öğrenci bu üç öğeyi kendi hayaliyle birleştirmelidir.",
+        ],
+      },
+      skill: "Hayal gücü, sanatla ifade, öz farkındalık",
+    },
+    {
+      id: "qr-dijital-tayfa",
+      weekIds: [14],
+      title: "Dijital Tayfa — Komik mi Şimdi?",
+      kind: "İzleme",
+      where: "Tema 3 · s. 144 · Hazırlık / Dinleme-İzleme",
+      minutes: 9,
+      focus: "Mizah ile alay arasındaki sınır, akran zorbalığı, ben dili",
+      analysis: {
+        doc: "docs/video-analysis/dijital-tayfa-komik-mi-simdi-gemini-analysis.md",
+        speaker: "Dış ses anlatımı ve karakter diyalogları",
+        summary:
+          "Video bir arkadaş grubunda geçiyor. Yapılan bir şakaya verilen tepkisizlik ve ortaya çıkan huzursuzlukla başlıyor. Devamında “şaka yapıyorum” bahanesiyle karşıdakinin rencide edildiği durumlar ve empati eksikliği işleniyor. Suçlayıcı sen dili ile duyguyu sahiplenen ben dili yan yana gösteriliyor. Sonunda yanlış tutumu sergileyen kişi hatasını anlıyor, özür diliyor ve ortam sağlıklı iletişimle düzeliyor. Mesaj net: eğlence, kimseyi incitmeyecek sınırda kalmalıdır.",
+        segments: [
+          { at: "00:00", note: "Şaka ve tepkisizlik; grupta huzursuzluk." },
+          { at: "00:30", note: "Şakayı haklı gösterme bahanesi ve empati eksikliği." },
+          { at: "01:20", note: "Sen diliyle suçlama; ben dili ve empatiyle yapıcı iletişim." },
+          { at: "02:10", note: "Hatanın anlaşılması, özür ve ortamın düzelmesi." },
+        ],
+        keyPoints: [
+          "Mizahın ölçüsü, karşıdakinin incinip incinmemesidir; incitiyorsa o davranış zorbalıktır.",
+          "Suçlayıcı sen dili yerine duyguyu sahiplenen ben dili kullanılmalıdır.",
+          "Empati, karşıdakinin duygusunu fark etmeyi ve bunu davranışa yansıtmayı gerektirir.",
+          "Hatanın anlaşılması ve özür dilemesi ilişkiyi onarır.",
+        ],
+      },
+      intro: "Video bir arkadaş grubunda geçiyor: şaka diye başlayan bir davranışın nasıl incittiğini, sonra iletişimin nasıl düzeldiğini gösteriyor. İzlerken hangi cümlenin suçlayıcı, hangisinin yapıcı olduğuna dikkat et.",
+      before: [
+        "Şaka ile alay arasındaki farkı tek cümleyle nasıl anlatırdın?",
+        "Bir arkadaşın şakandan rahatsız olduğunu fark ettiğinde ne yaparsın?",
+      ],
+      notes: [
+        { id: "n1", label: "Videonun başında grupta ortaya çıkan duygu", hint: "Herkes gülmüyor." },
+        { id: "n2", label: "Şakayı haklı göstermek için kullanılan bahane", hint: "İki sözcüklü bir kalıp." },
+        { id: "n3", label: "Suçlayıcı konuşma biçimine verilen ad", hint: "Hangi dil? İki sözcük." },
+        { id: "n4", label: "Yapıcı iletişimin dayandığı iki şey", hint: "Bir duygu, bir konuşma biçimi." },
+      ],
+      questions: [
+        {
+          id: "q1",
+          prompt: "Video, şaka ile zorbalık arasındaki sınırı neye bağlıyor?",
+          options: [
+            "Şakayı kimin yaptığına",
+            "Karşıdakinin bundan zarar görüp görmediğine",
+            "Şakanın ne kadar uzun sürdüğüne",
+            "Şakanın yazılı mı sözlü mü olduğuna",
+          ],
+          answer: 1,
+          guide: "Videonun sonunda bir kişi hatasını anlayıp özür diliyor; bu, şakanın neden yanlış sayıldığını açıklıyor.",
+        },
+        {
+          id: "q2",
+          prompt: "Videoda önerilen konuşma biçimi hangisidir?",
+          options: [
+            "Karşı tarafı suçlayan sen dili",
+            "Konuyu hiç açmadan kapatmak",
+            "Duyguyu kendi adına söyleyen ben dili",
+            "Şakayı büyüterek karşılık vermek",
+          ],
+          answer: 2,
+          guide: "Üçüncü not alanına yazdığın kavramın karşıtı, videoda olumsuz örnek olarak gösteriliyor.",
+        },
+        {
+          id: "q3",
+          prompt: "Videonun sonunda ne oluyor?",
+          options: [
+            "Şaka yapan kişi hatasını anlayıp özür diliyor",
+            "Grup şakaya kaldığı yerden devam ediyor",
+            "Maruz kalan kişi gruptan ayrılıyor",
+            "Konu hiç konuşulmadan kapanıyor",
+          ],
+          answer: 0,
+          guide: "Son bölüm, ilişkinin onarıldığını gösteren bir davranışla bitiyor.",
+        },
+      ],
+      write: {
+        id: "w",
+        title: "Şakanın sınırını sen çiz",
+        instruction:
+          "Şaka olduğu söylenen ama karşıdakini inciten bir durumu (yaşadığın ya da tanık olduğun) anlat: ne oldu, karşıdaki ne hissetmiş olabilir, aynı durumda ben diliyle nasıl konuşurdun? Sonunda şakaya dair tek cümlelik bir kural yaz.",
+        minChars: 160,
+        criteria: [
+          "Durum somut olarak anlatılmış.",
+          "Karşıdakinin duygusu empatiyle tahmin edilmiş.",
+          "Ben diliyle kurulmuş örnek bir cümle yazılmış.",
+        ],
+        guide: "Üç adım: ne oldu → karşıdaki ne hissetmiş olabilir → “Ben ... hissettim, çünkü ...” kalıbıyla bir cümle.",
+        starter: "Geçenlerde ...",
+        rubric:
+          "Durumun somut anlatımı, karşıdakinin duygusuna dair empatik tahmin, ben diliyle kurulmuş bir cümle ve şakanın sınırına dair tek cümlelik kural beklenir.",
+        answerKey: [
+          "Mizahın ölçüsü, karşıdakinin incinip incinmemesidir; incitiyorsa o davranış zorbalıktır.",
+          "Suçlayıcı sen dili yerine duyguyu sahiplenen ben dili kullanılmalıdır.",
+          "Empati, karşıdakinin duygusunu fark etmeyi ve bunu davranışa yansıtmayı gerektirir.",
+          "Hatanın anlaşılması ve özür dilemesi ilişkiyi onarır; öğrenci bunu kendi örneğine uygulamalıdır.",
+        ],
+      },
+      skill: "Empati, akran ilişkileri, çatışma çözme",
+    },
+    {
+      id: "qr-iletisimin-onemi",
+      weekIds: [15],
+      title: "İletişimin Önemi",
+      kind: "İzleme",
+      where: "Tema 3 · s. 161 · 6. etkinlik",
+      minutes: 8,
+      focus: "Etkin dinleme, ben dili, beden dili, iletişim engelleri",
+      analysis: {
+        doc: "docs/video-analysis/iletisimin-onemi-gemini-analysis.md",
+        speaker: "Anlatıcı / uzman dış ses",
+        summary:
+          "Video, iletişimin tanımı ve insan hayatındaki yeriyle başlıyor; toplumsal bağların kurulmasındaki rolünü açıklıyor. Ardından iletişim engellerini örnek olaylarla gösteriyor: yargılama, alay etme, dinlememe ve sen dili kullanımı. Sonra doğru yöntemlere geçiyor: etkin dinleme, jest ve mimiklerin uyumu, beden dili ve empati. Kapanışta etkili iletişimin bireysel ve toplumsal huzura katkısı özetleniyor.",
+        segments: [
+          { at: "00:00", note: "İletişimin tanımı ve toplumsal bağları kurmadaki rolü." },
+          { at: "00:20", note: "İletişim engelleri: yargılama, alay etme, dinlememe, sen dili." },
+          { at: "00:50", note: "Doğru yöntemler: etkin dinleme, jest ve mimik uyumu, empati." },
+          { at: "01:20", note: "Etkili iletişimin bireysel ve toplumsal huzura katkısı." },
+        ],
+        keyPoints: [
+          "Yargılama, alay etme, dinlememe ve sen dili iletişimi bozar.",
+          "Etkin dinleme, karşıdakini gerçekten duymayı ve uygun geri bildirimi gerektirir.",
+          "Beden dili, jest ve mimikler söyleneni desteklediğinde iletişim güçlenir.",
+          "Karşılıklı saygı ve empati sağlıklı ilişkinin temelidir.",
+        ],
+      },
+      intro: "Video, iletişimi bozan davranışlarla iletişimi güçlendiren davranışları yan yana gösteriyor. İzlerken her davranışın hangi sonucu doğurduğunu not al.",
+      before: [
+        "Gün içinde en çok hangi iletişim engeliyle karşılaşıyorsun?",
+        "Karşındaki konuşurken göz teması kurmak sence neyi değiştirir?",
+      ],
+      notes: [
+        { id: "n1", label: "İletişimi bozan dört davranış", hint: "Dördüncüsü bir konuşma biçimi; ilk üçü tutum ve davranış." },
+        { id: "n2", label: "Etkin dinlemenin karşıdakine hissettirdiği", hint: "Duyulduğunu ve değer verildiğini." },
+        { id: "n3", label: "Beden diliyle uyum neyle sağlanıyor?", hint: "Jest ve mimikler." },
+        { id: "n4", label: "Etkili iletişimin topluma katkısı", hint: "Huzur ve birlikte yaşama." },
+      ],
+      questions: [
+        {
+          id: "q1",
+          prompt: "Aşağıdakilerden hangisi videoda iletişim engeli olarak sayılıyor?",
+          options: [
+            "Etkin dinleme",
+            "Göz teması kurma",
+            "Yargılama ve alay etme",
+            "Ben dili kullanma",
+          ],
+          answer: 2,
+          guide: "İkinci bölümde olumsuz örnekler sıralanıyor; dördüncü not alanınla karıştırma, orada topluma katkı vardı.",
+        },
+        {
+          id: "q2",
+          prompt: "Etkin dinleme neyi gerektirir?",
+          options: [
+            "Sözü kesmeden beklemekle birlikte karşıdakini gerçekten duymak ve geri bildirim vermek",
+            "Yalnızca başını sallayıp susmak",
+            "Konuyu hemen değiştirmek",
+            "Kendi düşüncesini öne almadan hiç konuşmamak",
+          ],
+          answer: 0,
+          guide: "Videoda dinleme, sessiz kalmaktan farklı bir beceri olarak anlatılıyor; not alırken ikinci alana yazdığın duygu bunun sonucu.",
+        },
+        {
+          id: "q3",
+          prompt: "Videoya göre sağlıklı ilişkinin temelinde ne var?",
+          options: [
+            "Karşılıklı saygı ve empati",
+            "Her konuda aynı fikirde olmak",
+            "Mümkün olduğunca uzun konuşmak",
+            "Sık sık mesajlaşmak",
+          ],
+          answer: 0,
+          guide: "Kapanış bölümü, iletişimin kişisel ve toplumsal sonucunu tek bir temele bağlıyor.",
+        },
+      ],
+      write: {
+        id: "w",
+        title: "Bir diyaloğu yeniden kur",
+        instruction:
+          "Yakın zamanda istemediğin bir sonuçla biten bir konuşma seç. O konuşmada hangi iletişim engeli vardı? Aynı konuşmayı ben dili, etkin dinleme ve beden dilini kullanarak yeniden yaz (en az altı cümle).",
+        minChars: 180,
+        criteria: [
+          "Seçilen konuşma ve iletişim engeli açıkça belirtilmiş.",
+          "Yeniden yazılan konuşmada ben dili kullanılmış.",
+          "Dinleme ve beden dili davranışları yazıya yansıtılmış.",
+        ],
+        guide: "Önce kısa bir çerçeve ver: kim, ne oldu, hangi engel. Sonra eski cümle – yeni cümle ikilisi hâlinde ilerle.",
+        starter: "Geçen hafta ... ile konuşurken ...",
+        rubric:
+          "Konuşmanın bağlamı, seçilen iletişim engeli, ben diliyle kurulmuş yeni cümleler ve dinleme ile beden diline dair göstergeler beklenir.",
+        answerKey: [
+          "Yargılama, alay etme, dinlememe ve sen dili iletişimi bozar.",
+          "Etkin dinleme, karşıdakini gerçekten duymayı ve uygun geri bildirimi gerektirir.",
+          "Beden dili, jest ve mimikler söyleneni desteklediğinde iletişim güçlenir.",
+          "Karşılıklı saygı ve empati sağlıklı ilişkinin temelidir; öğrenci bunu kendi örneğine uygulamalıdır.",
+        ],
+      },
+      skill: "Etkin dinleme, ben dili, beden dili",
+    },
   ],
 };

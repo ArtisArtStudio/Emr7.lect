@@ -45,7 +45,8 @@ require('../turkce-qr-app.js');
 
 const data = global.window.TURKCE_QR;
 assert.ok(data && Array.isArray(data.units), 'TURKCE_QR.units bulunamadı.');
-assert.equal(data.units.length, 8, `Beklenen 8 karekod çalışması var, bulunan: ${data.units.length}`);
+// 8 kart Tema 1–2 (1. kitabın ilk iki teması) + 3 kart Tema 3 (s. 130, 144, 161).
+assert.equal(data.units.length, 11, `Beklenen 11 karekod çalışması var, bulunan: ${data.units.length}`);
 
 const ids = new Set();
 const seenWeeks = new Set();

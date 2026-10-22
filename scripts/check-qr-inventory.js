@@ -130,8 +130,13 @@ assert.ok(inventory.includes('Kapsam dışı'), 'Envanter, konuşma etkinlikleri
 
 // 7) Karekod çalışmaları sayısı envanterle uyuşmalı.
 const qrRows = coveredRows.filter((row) => row.ids.some((id) => id.startsWith('qr-')));
+// Ana tablo (Tema 1–2) 8 kart taşır; Tema 3 kartları (§ 3b) ayrı sayılır.
 assert.equal(qrRows.length, 8, 'Envanterde 8 karekod çalışması satırı olmalı.');
-assert.equal(qrUnits.size, 8, 'Uygulamada 8 karekod çalışması olmalı.');
+assert.equal(qrUnits.size, 11, 'Uygulamada 11 karekod çalışması olmalı (8 Tema 1–2 + 3 Tema 3).');
+for (const id of ['qr-dus-fircasi', 'qr-dijital-tayfa', 'qr-iletisimin-onemi']) {
+  assert.ok(qrUnits.has(id), `${id} karekod çalışması turkce-qr.js içinde yok.`);
+  assert.ok(inventory.includes(id), `${id} envanterde (§ 3b) geçmiyor.`);
+}
 
 console.log(
   `Türkçe karekod envanteri tutarlı: ${rows.length} içerik · ${coveredRows.length} bağlı (${qrRows.length} kart) · ` +
