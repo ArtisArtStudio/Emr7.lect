@@ -13,6 +13,9 @@ window.TURKCE_QR = {
   units: [
     {
       id: "qr-motivasyon",
+      sourceUrl: "https://drive.google.com/file/d/1Dpfaf26LDPkfXzLS7Gk2CphFGY-30zqa/view",
+      sourceLinkLabel: "Beyhan Budak ile Motivasyon Defteri",
+      sourceLinkType: "video",
       weekIds: [5],
       title: "Beyhan Budak ile Motivasyon Defteri",
       kind: "İzleme",
@@ -111,6 +114,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-sakarya",
+      sourceUrl: "https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view",
+      sourceLinkLabel: "Sakarya Zaferi",
+      sourceLinkType: "video",
       weekIds: [7, 8],
       title: "Sakarya Zaferi",
       kind: "İzleme",
@@ -211,6 +217,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-milli-mucadele-sergisi",
+      sourceUrl: "https://drive.google.com/file/d/1lZY_YFOXgvlnOjcGwKLDQ3Ok7qxrBr6T/view",
+      sourceLinkLabel: "Millî Mücadele Sergisi · Kahraman Çocuklar",
+      sourceLinkType: "video",
       weekIds: [9],
       title: "Millî Mücadele Sergisi · Kahraman Çocuklar",
       kind: "İzleme",
@@ -325,6 +334,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-canakkale-gecilmez",
+      sourceUrl: "https://drive.google.com/file/d/1MjjggTtbiExqqTYC9lLgXQzdJHvglXsqv/view",
+      sourceLinkLabel: "Çanakkale Geçilmez",
+      sourceLinkType: "video",
       weekIds: [9],
       title: "Çanakkale Geçilmez",
       kind: "İzleme",
@@ -437,6 +449,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-hey-onbesli",
+      sourceUrl: "https://drive.google.com/file/d/1wdkHc_BktLSuAUv6SghlJOCIVBVjWAUm/view",
+      sourceLinkLabel: "Hey Onbeşli — Bir Çanakkale Ağıdı",
+      sourceLinkType: "video",
       weekIds: [9],
       title: "Hey Onbeşli — Bir Çanakkale Ağıdı",
       kind: "İzleme / Dinleme",
@@ -537,6 +552,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-canakkale-medya",
+      sourceUrl: "https://drive.google.com/file/d/1pmgStt4DIz_4gj6kWng_DXQUxXgSI-5g/view",
+      sourceLinkLabel: "Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale",
+      sourceLinkType: "pdf",
       weekIds: [9],
       title: "Tarih, Kültür ve Doğanın İç İçe Olduğu Bir Kent: Çanakkale",
       kind: "Medya metni",
@@ -636,6 +654,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-18-mart",
+      sourceUrl: "https://drive.google.com/file/d/1yf1mO-SSyOZ5V2c9c5Bm1oznN__LPZ4a/view",
+      sourceLinkLabel: "18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi",
+      sourceLinkType: "video",
       weekIds: [10],
       title: "18 Mart Şehitleri Anma Günü ve Çanakkale Deniz Zaferi",
       kind: "İzleme",
@@ -735,6 +756,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-canakkale-son",
+      sourceUrl: "https://drive.google.com/file/d/1V_xuE7jAr9DXqmRp7p-qg7DFPeZbR2t9/view",
+      sourceLinkLabel: "Çanakkale · Seyit Onbaşı",
+      sourceLinkType: "video",
       weekIds: [10],
       title: "Çanakkale",
       kind: "İzleme",
@@ -835,6 +859,9 @@ window.TURKCE_QR = {
 
     {
       id: "qr-dus-fircasi",
+      sourceUrl: "https://drive.google.com/file/d/1kUbDmqpzWQKch_yPLLhFf2P27fcbagiJ/view",
+      sourceLinkLabel: "Düş Fırçası",
+      sourceLinkType: "video",
       weekIds: [11],
       title: "Düş Fırçası",
       kind: "İzleme",
@@ -934,6 +961,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-dijital-tayfa",
+      sourceUrl: "https://drive.google.com/file/d/1wjrLH3SNBAzyvyEuzAeUJhOd3ex6KPkO/view",
+      sourceLinkLabel: "Dijital Tayfa — Komik mi Şimdi?",
+      sourceLinkType: "video",
       weekIds: [14],
       title: "Dijital Tayfa — Komik mi Şimdi?",
       kind: "İzleme",
@@ -1034,6 +1064,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-sadaka-tasi",
+      sourceUrl: "https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=96d3b5324b741511cb62bb00f3344d0f&resourceType=1&resourceLocation=2",
+      sourceLinkLabel: "Sadaka Taşı (EBA)",
+      sourceLinkType: "video",
       weekIds: [12, 13],
       title: "Sadaka Taşı",
       kind: "İzleme",
@@ -1133,6 +1166,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-ortak-evimiz-dunya",
+      sourceUrl: "https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=75e91ff4e295f41c8bd97c7b304e31dd&resourceType=1&resourceLocation=2",
+      sourceLinkLabel: "Ortak Evimiz Dünya (EBA)",
+      sourceLinkType: "video",
       weekIds: [15],
       title: "Ortak Evimiz Dünya",
       kind: "İzleme",
@@ -1233,6 +1269,9 @@ window.TURKCE_QR = {
     },
     {
       id: "qr-iletisimin-onemi",
+      sourceUrl: "https://drive.google.com/file/d/14thzmqR2hblOivxAa1OJA__563LqvCql/view",
+      sourceLinkLabel: "İletişimin Önemi",
+      sourceLinkType: "video",
       weekIds: [15],
       title: "İletişimin Önemi",
       kind: "İzleme",

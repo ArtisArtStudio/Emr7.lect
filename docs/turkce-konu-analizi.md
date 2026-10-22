@@ -124,7 +124,7 @@ Yani haftada **8–10 etkinlik + 6 soruluk quiz**; 9 eksik hafta için yaklaşı
 
 ## 5b. Uygulanan ilk adım: Tema 1 ek okuma ve etkinlikler
 
-Tema 1'in ana metinlerinden **sonra** gösterilen ayrı bir ek bölüm eklendi (`theme1-extras.js`, `theme1-extras-app.js`). Mevcut Tema 1 etkinlik alanı (`theme1-practice.js`, `theme1-practice-app.js`) değiştirilmedi; ek bölüm onun altında ayrı bir kart olarak duruyor.
+Tema 1'in ana metinlerinden **sonra** gelen ek okuma ve etkinlikler (`theme1-extras.js`) ana etkinlik akışının içine alındı. Ek metin, aynı akışta bir okuma adımı olarak açılır; ek etkinlikler ana metnin etkinliklerinden sonra aynı kart biçimiyle numaralanır. Ayrı bir ek bölüm/kart yoktur.
 
 | Hafta | Tür | Ek metin | Etkinlikler | Beceri odağı |
 | --- | --- | --- | --- | --- |

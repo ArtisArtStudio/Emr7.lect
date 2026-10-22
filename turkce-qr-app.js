@@ -27,6 +27,17 @@
     return all[unitId];
   }
 
+  function sourceChip(unit) {
+    const raw = String(unit.sourceUrl || "").trim();
+    if (!raw) return "";
+    const isAudio = String(unit.sourceLinkType || "").toLowerCase() === "audio";
+    const isPdf = String(unit.sourceLinkType || "").toLowerCase() === "pdf";
+    const icon = isAudio ? "🎧" : isPdf ? "📄" : "🎥";
+    const action = isAudio ? "Dinlemeyi aç" : isPdf ? "Metni aç" : "Videoyu aç";
+    const className = isAudio ? "audio-source-link" : isPdf ? "pdf-source-link" : "video-source-link";
+    return `<a class="source-link qr-source-link ${className}" href="${escape(raw)}" target="_blank" rel="noopener noreferrer" aria-label="${escape(action)}: ${escape(unit.sourceLinkLabel || unit.title)}"><span class="qr-link-icon" aria-hidden="true">${icon}</span><span class="qr-link-title">${escape(unit.sourceLinkLabel || unit.title)}</span><strong class="qr-link-action">${action}</strong><span class="qr-link-external" aria-hidden="true">↗</span></a>`;
+  }
+
   function labelMarkup(state, text, hidden) {
     return `<span class="qr-pill" data-state="${escape(state)}"${hidden ? " hidden" : ""}>${escape(text)}</span>`;
   }
@@ -52,34 +63,39 @@
     const writeValue = entry.values.w || "";
 
     return `
-<article class="qr-card" data-qr-card="${escape(unit.id)}">
-  <header class="qr-head">
-    <span class="qr-kind">${escape(unit.kind)}</span>
-    <h4>${escape(unit.title)}</h4>
-    <p class="qr-meta">${escape(unit.where)} · yaklaşık ${unit.minutes} dk · ${escape(unit.focus)}</p>
+<article class="qr-card activity-card" data-qr-card="${escape(unit.id)}" data-kind="media">
+  <header class="activity-top">
+    <div class="activity-heading-row"><span class="activity-icon" aria-hidden="true">${unit.sourceLinkType === "audio" ? "🎧" : unit.sourceLinkType === "pdf" ? "📄" : "🎬"}</span><div class="activity-title-copy">
+      <p class="activity-kicker">${escape(unit.kind)} · ${escape(unit.where)}</p>
+      <h2 class="activity-title">${escape(unit.title)}</h2>
+    </div></div>
+    <p class="activity-instruction">${escape(unit.intro)}</p>
   </header>
-  <p class="qr-intro">${escape(unit.intro)}</p>
-  <div class="qr-block">
+  <div class="activity-meta"><span>${escape(unit.kind)}</span><span>yaklaşık ${Number(unit.minutes)} dk</span><span>${escape(unit.focus)}</span></div>
+  ${sourceChip(unit) ? `<div class="reader-links">${sourceChip(unit)}</div>` : ""}
+  <div class="question-list">
+  <article class="question-card">
     <h5>İzlemeden önce</h5>
     <ul class="qr-before">${before}</ul>
-  </div>
-  <div class="qr-block">
+  </article>
+  <article class="question-card">
     <h5>İzlerken not al</h5>
     <div class="qr-notes">${notes}</div>
-  </div>
-  <div class="qr-block">
+  </article>
+  <article class="question-card">
     <div class="qr-block-head"><h5>İzledikten sonra</h5>${labelMarkup(entry.quizState, entry.quizPill || "", !entry.quizChecked)}</div>
     <div class="qr-quiz">${questions}</div>
-    <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-check="quiz" data-qr-unit="${escape(unit.id)}">Seçimlerimi kontrol et</button></div>
+    <div class="qr-actions"><button class="btn qr-check check-button" type="button" data-qr-check="quiz" data-qr-unit="${escape(unit.id)}">✦ Kontrol et</button></div>
     <p class="qr-feedback" data-qr-feedback="quiz" data-qr-unit="${escape(unit.id)}" aria-live="polite"${entry.quizChecked ? "" : " hidden"}>${escape(entry.quizFeedback)}</p>
-  </div>
-  <div class="qr-block">
+  </article>
+  <article class="question-card">
     <div class="qr-block-head"><h5>${escape(unit.write.title)}</h5>${labelMarkup(entry.writeState, entry.writePill || "", !entry.writeChecked)}</div>
     <p class="qr-instruction">${escape(unit.write.instruction)}</p>
     <ul class="qr-criteria">${criteria}</ul>
     <textarea class="qr-textarea qr-write" data-qr-write="1" data-qr-unit="${escape(unit.id)}" rows="6" aria-label="${escape(unit.write.title)}">${escape(writeValue)}</textarea>
-    <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-check="write" data-qr-unit="${escape(unit.id)}">Yazımı kontrol et</button>${unit.analysis ? `<button class="btn qr-ai" type="button" data-qr-ai="${escape(unit.id)}">Yapay zekâ ile değerlendir</button>` : ""}<span class="qr-count" data-qr-count="${escape(unit.id)}">${writeValue.trim().length}/${unit.write.minChars} karakter</span></div>
+    <div class="qr-actions"><button class="btn qr-check check-button" type="button" data-qr-check="write" data-qr-unit="${escape(unit.id)}">✦ Kontrol et</button>${unit.analysis ? `<button class="btn qr-ai ai-button" type="button" data-qr-ai="${escape(unit.id)}">Yapay zekâ ile değerlendir</button>` : ""}<span class="qr-count" data-qr-count="${escape(unit.id)}">${writeValue.trim().length}/${unit.write.minChars} karakter</span></div>
     <p class="qr-feedback" data-qr-feedback="write" data-qr-unit="${escape(unit.id)}" aria-live="polite"${entry.writeChecked ? "" : " hidden"}>${escape(entry.writeFeedback)}</p>
+  </article>
   </div>
   ${compareBlock(unit, entry)}
 </article>`;
@@ -301,7 +317,7 @@
     <p class="qr-instruction">${escape(compare.instruction)}</p>
     <table class="qr-compare-table"><thead><tr><th scope="col">Ölçüt</th>${head}</tr></thead><tbody>${rows}</tbody></table>
     <ul class="qr-criteria">${criteria}</ul>
-    <div class="qr-actions"><button class="btn qr-check" type="button" data-qr-compare-check="1" data-qr-unit="${escape(unit.id)}">Karşılaştırmamı kontrol et</button></div>
+    <div class="qr-actions"><button class="btn qr-check check-button" type="button" data-qr-compare-check="1" data-qr-unit="${escape(unit.id)}">✦ Kontrol et</button></div>
     <p class="qr-feedback" data-qr-feedback="compare" data-qr-unit="${escape(unit.id)}" aria-live="polite"${entry.compareChecked ? "" : " hidden"}>${escape(entry.compareFeedback || "")}</p>
   </div>`;
   }

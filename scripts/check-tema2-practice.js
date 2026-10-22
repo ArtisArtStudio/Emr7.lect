@@ -185,8 +185,8 @@ assert.ok(html.includes('tema2-practice.js?v=') && html.includes('tema2-practice
 assert.ok(html.includes('function renderTema2Practice(w)'), 'renderTema2Practice tanımlı değil.');
 const practiceCall = html.indexOf('renderTheme1Practice(w);');
 const tema2Call = html.indexOf('renderTema2Practice(w);');
-const extrasCall = html.indexOf('renderTheme1Extras(w);');
-assert.ok(practiceCall >= 0 && tema2Call > practiceCall && extrasCall > tema2Call, 'Tema 2 akışı ana etkinlik ve ek bölümler arasında çizilmeli.');
+const tema3Call = html.indexOf('renderTema3Practice(w);');
+assert.ok(practiceCall >= 0 && tema2Call > practiceCall && tema3Call > tema2Call, 'Tema 2 akışı ana etkinlik alanından sonra, Tema 3 akışından önce çizilmeli.');
 assert.ok(html.indexOf('id="bookCard"') < html.indexOf('id="tema2Practice"'), 'Tema 2 etkinlik alanı ana metinden sonra gelmeli.');
 assert.ok(html.indexOf('id="tema2Practice"') < html.indexOf('id="theme1Practice"'), 'Tema 2 alanı mevcut etkinlik alanını itmemeli.');
 assert.ok(html.includes('window.renderTema2Flow?.(unit'), 'Akış birimini ve depolama köprüsünü almalı.');
@@ -207,6 +207,11 @@ for (const unit of data.units) {
   const first = unit.groups[0].activities[0];
   assert.ok(markup.includes(first.title), `${unit.id} çizime yansımadı.`);
   assert.ok(markup.includes('data-t2-check="activity"'), `${unit.id} için kontrol düğmesi yok.`);
+  // Ortak etkinlik kartı biçimi: tema 1 ile aynı sınıflar ve aynı düğme metni.
+  assert.ok(markup.includes('class="t2-card activity-card"'), `${unit.id} etkinlik kartı ortak biçimi kullanmıyor.`);
+  assert.ok(markup.includes('class="activity-top"') && markup.includes('class="activity-kicker"'), `${unit.id} kart başlığı ortak düzende değil.`);
+  assert.ok(markup.includes('class="question-list"') && markup.includes('class="question-card"'), `${unit.id} soru kartları ortak biçimde değil.`);
+  assert.ok(markup.includes('check-button') && markup.includes('✦ Kontrol et'), `${unit.id} kontrol düğmesi ortak değil.`);
   assert.ok(!markup.includes('CEVAP'), `${unit.id} çiziminde cevap anahtarı geçiyor.`);
   for (const activity of unit.groups.flatMap((group) => group.activities)) {
     if (activity.type !== 'write') continue;

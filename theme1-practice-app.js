@@ -70,6 +70,7 @@
     flow.answers = flow.answers && typeof flow.answers === "object" ? flow.answers : {};
     flow.feedback = flow.feedback && typeof flow.feedback === "object" ? flow.feedback : {};
     flow.celebratedActivities = Array.isArray(flow.celebratedActivities) ? flow.celebratedActivities : [];
+    flow.readings = flow.readings && typeof flow.readings === "object" ? flow.readings : {};
     flow.themeCelebrated = flow.themeCelebrated === true;
     window.turkceProgressData = root;
     return flow;
@@ -85,6 +86,92 @@
     } catch (error) {
       savedNote.textContent = "Tarayıcı depolaması dolu; ilerleme kaydedilemedi.";
     }
+  }
+
+  /* Ana metinden sonraki ek okuma birimleri (window.THEME1_EXTRAS) aynı etkinlik akışına
+     katılır. Görsel ve davranış biçimi tema 1 etkinlik kartlarıyla aynıdır; ayrı bir bölüm açılmaz. */
+  function extrasForWeek(weekId) {
+    const units = window.THEME1_EXTRAS?.units || [];
+    return units.find(unit => Number(unit.weekId) === Number(weekId)) || null;
+  }
+
+  function registerExtraForm(activity, extras) {
+    if (Array.isArray(forms[activity.id]) && forms[activity.id].length) return;
+    if (activity.type === "match") {
+      const categories = (activity.options || []).map(option => ({ id: option.id, label: option.label }));
+      const items = (activity.items || []).map(item => ({ id: item.id, label: item.label }));
+      forms[activity.id] = [{
+        id: "match",
+        prompt: activity.instruction,
+        fields: [{
+          id: "match",
+          label: "Kavramları tanımlarla eşleştir",
+          type: "sort",
+          categories,
+          items,
+          expectedAssignments: { ...(activity.answers || {}) },
+          instructions: "Kavramı oku, tanım kutusunu incele. Kartı kutuya sürükle ya da önce karta, sonra kutuya dokun. Gerekirse kartı geri taşı.",
+          guide: ["Kavramı oku", "Tanımı incele", "Uyan kutuya taşı"]
+        }],
+        responseType: "matching",
+        rubric: "Eşleşmeleri tek tek kontrol et. Yanlışta kavramı ve tanımı yeniden okumasını öner; doğru eşleşmeyi söyleme."
+      }];
+      return;
+    }
+    if (activity.type === "choice") {
+      forms[activity.id] = (activity.questions || []).map(question => ({
+        id: question.id,
+        prompt: question.prompt,
+        fields: [{
+          id: "answer",
+          label: "Seçimin",
+          type: "radio",
+          options: (question.options || []).map(option => ({ value: option, label: option }))
+        }],
+        answerKey: (question.options || [])[question.answer],
+        rubric: "Seçimin metindeki bir ayrıntıyla gerekçelendirilmesini bekle; doğru seçeneği söyleme."
+      }));
+      return;
+    }
+    forms[activity.id] = [{
+      id: "write",
+      prompt: activity.instruction,
+      fields: [{ id: "answer", label: "Yanıtın", type: "textarea", rows: 6 }],
+      guide: activity.guide,
+      starter: activity.starter,
+      rubric: (activity.criteria || []).join(" ")
+    }];
+  }
+
+  function extrasSteps(extras, startNumber) {
+    if (!extras) return [];
+    const storyText = (extras.paragraphs || []).join("\n\n");
+    const steps = [{ kind: "reading", groupTitle: `Ana metinden sonra · ${extras.kind}`, reading: extras }];
+    (extras.activities || []).forEach((rawActivity, index) => {
+      registerExtraForm(rawActivity, extras);
+      steps.push({
+        groupTitle: extras.title,
+        activity: {
+          ...rawActivity,
+          number: String(startNumber + index),
+          format: rawActivity.format || "Çalışma",
+          source: `Ana metinden sonra · ${extras.kind}`,
+          skill: rawActivity.skill || "",
+          gradingText: storyText
+        }
+      });
+    });
+    return steps;
+  }
+
+  const readingKey = reading => `ek-okuma:${reading.weekId}`;
+  const readingDone = reading => Boolean(flowState(reading.weekId).readings?.[readingKey(reading)]);
+
+  function markReadingDone(reading) {
+    const flow = flowState(reading.weekId);
+    flow.readings = flow.readings && typeof flow.readings === "object" ? flow.readings : {};
+    flow.readings[readingKey(reading)] = true;
+    persist();
   }
 
   function questionList(activity) {
@@ -523,6 +610,11 @@
 
   function renderStepTrack() {
     stepTrack.innerHTML = allSteps.map((step, index) => {
+      if (step.kind === "reading") {
+        const read = readingDone(step.reading);
+        const label = step.reading.title;
+        return `<button type="button" class="step-dot step-dot-reading${read ? " is-answered" : ""}" data-step-index="${index}" aria-label="Ek okuma: ${escapeHTML(label)}${read ? ", okundu" : ""}" title="${escapeHTML(label)}" ${index === stepIndex ? 'aria-current="step"' : ""}>${read ? "✓" : "📖"}</button>`;
+      }
       const questions = questionList(step.activity);
       const hasAnswer = questions.some((question, questionIndex) => answered(question, currentAnswer(step.activity, question, questionIndex)));
       const label = `${step.activity.number}. ${step.activity.title}`;
@@ -674,7 +766,8 @@
   }
 
   function isUnitFullyCorrect() {
-    return allSteps.length > 0 && allSteps.every(step => isActivityFullyCorrect(step.activity));
+    const activitySteps = allSteps.filter(step => step.activity);
+    return activitySteps.length > 0 && activitySteps.every(step => isActivityFullyCorrect(step.activity));
   }
 
   function isThemeFullyCorrect() {
@@ -704,9 +797,46 @@
     launchConfetti(false);
   }
 
+  function renderReadingStep(step) {
+    const reading = step.reading;
+    const done = readingDone(reading);
+    const paragraphs = (reading.paragraphs || []).map(text => `<p>${escapeHTML(text)}</p>`).join("");
+    const progress = Math.round(((stepIndex + 1) / allSteps.length) * 100);
+    stepTitle.textContent = `Ek okuma · ${reading.title}`;
+    flowCount.textContent = "Okuma adımı";
+    progressValue.style.width = `${progress}%`;
+    progressTrack.setAttribute("aria-valuenow", String(progress));
+    previousButton.disabled = stepIndex === 0;
+    nextButton.textContent = stepIndex === allSteps.length - 1 ? "Çalışmayı tamamla ✓" : "Sonraki etkinlik →";
+    stage.innerHTML = `<article class="activity-card reading-card" data-kind="reading">
+      <header class="activity-top">
+        <div class="activity-heading-row"><span class="activity-icon" aria-hidden="true">📖</span><div class="activity-title-copy">
+          <p class="activity-kicker">Ana metinden sonra · ${escapeHTML(reading.kind)}</p>
+          <h2 class="activity-title">${escapeHTML(reading.title)}</h2>
+        </div></div>
+        <p class="activity-instruction">${escapeHTML(reading.subtitle || "")}</p>
+      </header>
+      <div class="activity-meta"><span>${escapeHTML(reading.kind)}</span><span>${(reading.paragraphs || []).length} paragraf</span><span>${escapeHTML(reading.after || "")} metninden sonra</span></div>
+      <div class="reading-body">${reading.readingNote ? `<p class="reading-note">${escapeHTML(reading.readingNote)}</p>` : ""}${paragraphs}</div>
+      <div class="question-actions"><button type="button" class="check-button" data-reading-done="1">${done ? "Okudum · etkinliklere geç →" : "Okudum, etkinliklere geç →"}</button><span class="question-save-status">Metni okuduktan sonra bu düğmeye bas.</span></div>
+    </article>`;
+    stage.querySelectorAll("[data-reading-done]").forEach(button => {
+      button.addEventListener("click", () => {
+        markReadingDone(reading);
+        if (stepIndex < allSteps.length - 1) goToStep(stepIndex + 1);
+        else renderStep();
+      });
+    });
+    renderStepTrack();
+  }
+
   function renderStep() {
     if (!activeUnit || !allSteps.length) return;
     const step = allSteps[stepIndex];
+    if (step.kind === "reading") {
+      renderReadingStep(step);
+      return;
+    }
     const { activity, groupTitle } = step;
     const questions = questionList(activity);
     const progress = Math.round(((stepIndex + 1) / allSteps.length) * 100);
@@ -1024,6 +1154,7 @@
       return { text, note: contextNotes.join(" "), videoUnavailable, hasVideoSource, hasVideoAnalysis: Boolean(analysisNotes), answerKeyAvailable };
     }
     if (activity.sourceText) return { text: activity.sourceText, note: "Etkinlikte görünen özgün kısa kaynak metin.", videoUnavailable, hasVideoSource, answerKeyAvailable };
+    if (activity.gradingText) return { text: String(activity.gradingText).slice(0, 18000), note: "Etkinlik, ana metinden sonra okunan ek metne dayanır; metin aşağıda verilmiştir.", videoUnavailable, hasVideoSource, answerKeyAvailable };
     return { text: "", note: "Bu etkinlikte öğrenci kendi gözlem, deneyim veya kaynak notunu kullanır.", videoUnavailable, hasVideoSource, answerKeyAvailable };
   }
 
@@ -1335,12 +1466,18 @@
     const nextUnit = unitMap.get(Number(weekId));
     if (!nextUnit || !section) return;
     activeUnit = nextUnit;
-    allSteps = activeUnit.groups.flatMap(group => group.activities.map(activity => ({ groupTitle: group.title, activity })));
+    const mainSteps = activeUnit.groups.flatMap(group => group.activities.map(activity => ({ groupTitle: group.title, activity })));
+    const lastNumber = mainSteps.reduce((max, step) => Math.max(max, Number(step.activity.number) || 0), 0);
+    const extras = extrasForWeek(activeUnit.weekId);
+    allSteps = [...mainSteps, ...extrasSteps(extras, lastNumber + 1)];
     const flow = flowState(activeUnit.weekId);
     stepIndex = Math.max(0, Math.min(allSteps.length - 1, Number(flow.stepIndex) || 0));
     titleNode.textContent = `${activeUnit.label} · ${activeUnit.title}`;
-    const questionTotal = allSteps.reduce((sum, item) => sum + questionList(item.activity).length, 0);
-    metaNode.textContent = `${activeUnit.inventoryCount} · ${allSteps.length} etkinlik · ${questionTotal} soru · PDF ${activeUnit.pages}`;
+    const activitySteps = allSteps.filter(step => step.activity);
+    const questionTotal = activitySteps.reduce((sum, item) => sum + questionList(item.activity).length, 0);
+    const extrasNote = extras ? ` · ${extras.kind.toLowerCase()} + ${(extras.activities || []).length} ek etkinlik` : "";
+    const pagesLabel = /^PDF/i.test(String(activeUnit.pages || "")) ? activeUnit.pages : `PDF ${activeUnit.pages}`;
+    metaNode.textContent = `${activeUnit.inventoryCount} · ${activitySteps.length} etkinlik · ${questionTotal} soru · ${pagesLabel}${extrasNote}`;
     savedNote.textContent = "Yanıtlar bu tarayıcıda saklanır";
     section.hidden = false;
     renderStep();

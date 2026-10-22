@@ -126,6 +126,33 @@ Kurallar:
 - Tarih değişirse üç dosyada birlikte değişir; `check-static.py` Türkçe tarihini, `check-science.js`
   ve `check-social-studies.js` kendi tarihlerini doğrular.
 
+**Sınav kartları ve ortak kart biçimi**
+
+**Sınav kartları (haftalık görünüm).** Her dersin sol panelinde sıra şöyledir:
+1. kırmızı **1. sınav** kartı (`.term-exam-plan--first`),
+2. **2. sınav · tahmini 4–8 Ocak 2027** kartı (`.term-exam-plan`),
+3. tema/hafta listesi,
+4. listenin sonunda 2. sınav kartının tekrarı (`.term-exam-plan--end`).
+
+1. sınav tarihleri ders bazında yukarıdaki tablodadır; metin biçimi `1. sınav` + tarih + “<ders> yazılısı · <hafta>. hafta”.
+
+**Etkinlik kartı biçimi (tek ölçü).** Tema 1'in 1. haftası ölçüdür. Tema 2, Tema 3 ve karekod
+çalışmaları aynı yapıyı kullanır:
+
+- `activity-card` → `activity-top` (ikon + `activity-kicker` + `activity-title` + `activity-instruction`),
+- `activity-meta` rozetleri (tür, süre/odak, kaynak),
+- kaynağı olan etkinliklerde kartın üstünde `reader-links` + `source-link` (🎥/🎧/📄),
+- her bölüm `question-card`, düğmeler `check-button` (**✦ Kontrol et**) ve `ai-button`
+  (**Yapay zekâ ile değerlendir**).
+
+Ortak biçim `activity-cards.css` içinde tanımlıdır ve sayfada **en son** yüklenir; yeni bir
+etkinlik alanı eklenirse bu dosyaya seçici eklenir, ayrı bir görünüm yazılmaz.
+
+**Ek okuma ve etkinlikler.** Ana metinden sonra gelen ek metinler ayrı bölüm açmaz. Ek metin,
+aynı akışta bir **okuma adımı** (`reading-card`) olarak gösterilir; ek etkinlikler ana metnin
+etkinliklerinden sonra aynı kart biçimiyle numaralanır. Okuma adımı tamamlanma hesabına etkinlik
+gibi girmez.
+
 ---
 
 ## 5. Metin standardı (konu anlatımı)

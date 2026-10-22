@@ -47,7 +47,6 @@ global.window = { localStorage: { getItem: (key) => storage.get(key) ?? null, se
 global.document = documentMock;
 
 require('../theme1-extras.js');
-require('../theme1-extras-app.js');
 
 const extras = global.window.THEME1_EXTRAS;
 assert.ok(extras && Array.isArray(extras.units), 'Theme 1 extras must expose a units list.');
@@ -120,35 +119,33 @@ for (const art of ['benzetme', 'kişileştirme', 'abartma', 'konuşturma']) {
   assert.ok(joined.includes(art), `Poem matching activity should cover ${art}.`);
 }
 
-// Uygulamaya bağlanma: kart, render fonksiyonu ve çağrı yeri.
+// Uygulamaya bağlanma: ek okuma birimleri ana etkinlik akışının içine, ana metnin
+// etkinliklerinden SONRA aynı kart biçimiyle eklenir. Ayrı bir bölüm/ızgara yoktur.
 const html = read('index.html');
-assert.ok(html.includes('id="theme1Extras"'), 'The extras card must exist in the page.');
-assert.ok(html.includes('theme1-extras.js?v=') && html.includes('theme1-extras-app.js?v='), 'Extras assets need cache-busting versions.');
-assert.ok(html.includes('function renderTheme1Extras(w)'), 'The extras renderer must be defined.');
-const practiceCall = html.indexOf('renderTheme1Practice(w);');
-const extrasCall = html.indexOf('renderTheme1Extras(w);');
-assert.ok(practiceCall >= 0 && extrasCall > practiceCall, 'The extras renderer must run after the main practice area is drawn.');
-assert.ok(html.indexOf('id="theme1Practice"') < html.indexOf('id="theme1Extras"'), 'Extras must come after the main activity area, not replace it.');
-assert.ok(html.includes('window.renderTheme1ExtrasFlow?.(unit'), 'The extras flow must receive its unit and storage bridge.');
-
-// Mevcut etkinlik alanı değişmemeli: theme1-practice dosyaları ek veriyi içermemeli.
-const practiceSource = read('theme1-practice.js') + read('theme1-practice-app.js');
-assert.ok(!practiceSource.includes('THEME1_EXTRAS'), 'The main practice area must stay independent of the extras.');
-assert.ok(!practiceSource.includes('extra-activity'), 'The main practice area must not be restyled by extras classes.');
-
-// Cevap anahtarı sızması: geri bildirim metinleri doğru seçeneğin kendisini yazmamalı.
-const app = read('theme1-extras-app.js');
-for (const unit of extras.units) {
-  for (const activity of unit.activities) {
-    if (activity.type === 'choice') {
-      for (const question of activity.questions) {
-        const correct = question.options[question.answer];
-        if (correct.length < 8) continue; // "4" gibi kısa sayısal seçenekler kaynakta rastgele eşleşebilir.
-        assert.ok(!app.includes(correct), `The extras renderer must not print the answer "${correct}".`);
-      }
-    }
-  }
+const practiceApp = read('theme1-practice-app.js');
+assert.ok(!html.includes('id="theme1Extras"'), 'Ek okuma için ayrı bir bölüm kalmamalı; aynı akışa eklenmeli.');
+assert.ok(!html.includes('renderTheme1Extras('), 'Ek okuma için ayrı çizim çağrısı kalmamalı.');
+assert.ok(html.includes('theme1-extras.js?v='), 'Ek okuma verisi sayfaya yüklenmeli.');
+assert.ok(html.includes('function renderTheme1Practice(w)'), 'Ana etkinlik alanı çizicisi korunmalı.');
+assert.ok(practiceApp.includes('THEME1_EXTRAS'), 'Ana etkinlik akışı ek okuma birimlerini okumalı.');
+assert.ok(/function extrasForWeek\(/.test(practiceApp) && /function extrasSteps\(/.test(practiceApp), 'Ek okuma birimleri akış adımlarına çevrilmeli.');
+assert.ok(/kind: "reading"/.test(practiceApp) && /class="activity-card reading-card"/.test(practiceApp), 'Ek metin, aynı etkinlik kartı biçiminde bir okuma adımı olarak çizilmeli.');
+assert.ok(practiceApp.includes('registerExtraForm'), 'Ek etkinlikler ortak soru biçimine çevrilmeli.');
+for (const activityId of ids) {
+  assert.ok(!new RegExp(`${activityId}["']?:`).test(read('theme1-practice-forms.js')), `${activityId} ana formlara elle eklenmemeli; dönüştürücü kullanılmalı.`);
 }
-assert.ok(app.includes('DURUM:') && app.includes('YOL GÖSTERİCİ:'), 'Extras feedback should use the shared status and guidance labels.');
+// Ek etkinlikler ana metnin etkinliklerinden sonra gelmeli: adımlar önce ana gruplardan üretilir.
+const mainStepsIndex = practiceApp.indexOf('activeUnit.groups.flatMap');
+const extrasIndex = practiceApp.indexOf('...extrasSteps(extras');
+assert.ok(mainStepsIndex >= 0 && extrasIndex > mainStepsIndex, 'Ek okuma adımları ana metin etkinliklerinden sonra eklenmeli.');
+// Okuma adımı tamamlanana kadar etkinlik sayılmaz; tamamlanma hesabı yalnız etkinlik adımlarına bakar.
+assert.ok(/allSteps\.filter\(step => step\.activity\)/.test(practiceApp), 'Okuma adımı tamamlanma hesabına etkinlik gibi girmemeli.');
 
-console.log(`Tema 1 ek okuma ve etkinlikler hazır: ${extras.units.length} birim, ${activityTotal} etkinlik, ${poemUnits} şiir. Ana etkinlik alanı değişmedi.`);
+// Aynı biçim: ek etkinlikler tema 1 etkinlik kartı sınıflarını kullanır, ayrı ek sınıf üretmez.
+assert.ok(!practiceApp.includes('extra-activity'), 'Ana etkinlik alanı ayrı ek sınıflarla biçimlendirilmemeli.');
+
+// Cevap anahtarı sızması: dönüştürücü, doğru seçeneği ekrana basmaz.
+assert.ok(/answerKey: \(question\.options \|\| \[\]\)\[question\.answer\]/.test(practiceApp), 'Çoktan seçmeli ek etkinliklerin anahtarı yalnız değerlendirmeye verilmeli.');
+assert.ok(/expectedAssignments: \{ \.\.\.\(activity\.answers/.test(practiceApp), 'Eşleştirme anahtarı yalnız değerlendirmeye verilmeli.');
+
+console.log(`Tema 1 ek okuma ve etkinlikler hazır: ${extras.units.length} birim, ${activityTotal} etkinlik, ${poemUnits} şiir. Hepsi ana etkinlik akışına, aynı kart biçimiyle ekleniyor.`);
