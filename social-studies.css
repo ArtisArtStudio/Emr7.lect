@@ -376,3 +376,16 @@
 .social-quest-number{color:#1f6b46;font-size:11px;font-weight:900;text-align:center}
 @media(max-width:620px){.social-quest-path ol{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{.social-quest-path{break-inside:avoid}}
+
+/* Karekod çalışmaları: Türkçe'deki kart düzeninin Sosyal Bilgiler karşılığı.
+   Ortak .qr-* ve .activity-card kuralları index.html ile activity-cards.css içinde;
+   burada yalnız Sosyal Bilgiler kapsayıcısı ve bölüm gizleme kuralı tanımlanır. */
+#socialQr[hidden]{display:none!important}
+.social-qr-entry .qr-lead{font-size:13px;color:var(--social-muted,#5b6b7c);margin:0 0 14px}
+#socialQrBody{display:grid;gap:16px}
+
+/* Karekod çalışmaları: Türkçe alanındaki karekod kartlarıyla aynı düzen (qr-* kuralları ortak). */
+#socialQr[hidden]{display:none!important}
+#socialQrBody{display:grid;gap:16px}
+.social-qr-entry .qr-lead{font-size:13px;color:var(--social-muted);margin:0 0 14px}
+@media print{#socialQr{break-before:page}}

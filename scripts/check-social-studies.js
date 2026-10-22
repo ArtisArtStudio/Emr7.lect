@@ -38,7 +38,9 @@ class MockElement {
 require('../ai-grader.js');
 require('../ai-grader.js');
 require('../social-studies-content.js');
+require('../social-studies-extras.js');
 require('../social-studies.js');
+require('../social-studies-qr.js');
 const social = global.window.SOCIAL_STUDIES;
 assert.ok(social, 'The Social Studies workspace should expose its module API.');
 assert.equal(social.weeks.length, 15, 'The first-term plan must fit 15 teaching weeks.');
@@ -56,6 +58,17 @@ assert.ok(social.weeks.some((week) => /deniz seyahatleri/i.test(week.topic)), 'T
 assert.ok(social.weeks.every((week) => week.date && week.topic && week.focus && week.tasks.length >= 4));
 assert.ok(social.weeks.every((week) => week.summary.length > 100 && week.summaryPoints.length >= 3 && week.keyTerms.length >= 3), 'Every week needs a meaningful topic summary, learning points, and key terms.');
 assert.ok(social.weeks.every((week) => week.source.includes('MEB 7. Sınıf')));
+
+// Ders kitabının (2026) sayfa aralıkları: 1. alan 10–55, 2. alan 56–83, 3. alan 84–159.
+assert.deepEqual(social.units.map((unit) => unit.pages), ['10–55', '56–83', '84–159'], 'Unit page ranges must match the textbook.');
+
+// Kitaptaki sıraya göre sonradan eklenen konular ilgili haftalarda geçmeli.
+const heritageText = (id) => { const week = social.weeks.find((item) => item.id === id); return `${week.topic} ${week.focus} ${week.tasks.join(' ')} ${week.summary}`; };
+assert.ok(/sömürgecilik/i.test(heritageText(12)), 'Week 12 should cover colonialism as in the textbook (p. 113–116).');
+assert.ok(/Fransız İhtilali/i.test(heritageText(14)) && /Lale Devri/i.test(heritageText(14)), 'Week 14 should cover the French Revolution and the Tulip Period in textbook order.');
+assert.ok(/vakıf/i.test(heritageText(15)) && /ahi/i.test(heritageText(15)), 'Week 15 should cover waqf culture and the Akhi order.');
+assert.ok(social.weeks.filter((week) => week.id >= 9).every((week) => week.summary.length > 900), 'Weeks 9–15 need a full topic summary, not a stub.');
+
 
 const renewedWeekFlows = {
   3: ['perspective-reading', 'language-sort', 'rewrite-and-reflect'],
@@ -129,14 +142,24 @@ assert.ok(typesReading.sourceText.includes('Sözlü iletişim') && typesReading.
 assert.equal(findActivity('classify-communication-types').questions.length, 6, 'Week two should have six varied examples to classify.');
 assert.ok(findActivity('same-message-three-ways').questions.some((question) => question.id === 'nonverbal-version'));
 
+// Ek katman (ek okuma + kitap teknikleriyle çalışma) her haftanın akışının sonuna eklenir.
+const extras = global.window.SOCIAL_EXTRAS;
+assert.ok(extras && extras.weeks, 'The extras layer (social-studies-extras.js) should expose weekly activities.');
+assert.deepEqual(Object.keys(extras.weeks).map(Number).sort((a, b) => a - b), Array.from({ length: 15 }, (_, index) => index + 1), 'Every teaching week should have an extras entry.');
+
 for (const week of social.weeks) {
-  assert.ok(week.activities.length >= 3, `Week ${week.id} should have a complete activity flow.`);
-  if (mergedFlows[week.id]) {
-    assert.deepEqual(week.activities.map((activity) => activity.id), mergedFlows[week.id], `Week ${week.id} should merge its source weeks' activity flows in order.`);
-  } else {
-    assert.equal(week.activities.length, 3, `Week ${week.id} should retain its existing flow outside the refreshed learning areas.`);
-    assert.deepEqual(week.activities.map((activity) => activity.id), ['self-check', 'book', 'apply']);
-  }
+  const extraIds = (extras.weeks[week.id].activities || []).map((activity) => activity.id);
+  const baseFlow = mergedFlows[week.id] || ['self-check', 'book', 'apply'];
+  assert.deepEqual(
+    week.activities.map((activity) => activity.id),
+    [...baseFlow, ...extraIds],
+    `Week ${week.id} should keep its merged flow and append the extras in order.`,
+  );
+  assert.ok(week.activities.length >= 5, `Week ${week.id} should have a complete activity flow of at least five steps.`);
+  assert.ok(extraIds.length >= 4, `Week ${week.id} should add at least four extras activities.`);
+  const extraFormats = (extras.weeks[week.id].activities || []).map((activity) => activity.format || activity.sourceStyle);
+  assert.ok(new Set(extraFormats).size >= 3, `Week ${week.id} should vary its extras techniques instead of repeating one format.`);
+  assert.equal(new Set(extraIds).size, extraIds.length, `Week ${week.id} has repeated extras activity ids.`);
 
   const ids = new Set();
   for (const activity of week.activities) {
@@ -299,15 +322,17 @@ for (const week of worldWeeks) {
 }
 assert.ok(findActivity('globalization-definition').questions.some((question) => question.id === 'dictionary-comparison'), 'The globalisation week should compare a learner-made definition with a dictionary explanation.');
 assert.ok(findActivity('neighbor-map-source').sourceProviders.includes('eba') && findActivity('neighbor-map-source').sourceProviders.includes('mebi'), 'The Turkey-role week should offer approved source links for its map-based research.');
+const extrasIdsFor = (id) => ((global.window.SOCIAL_EXTRAS?.weeks?.[id]?.activities) || []).map((activity) => activity.id);
 assert.deepEqual(
   worldWeeks.map((week) => week.activities.map((activity) => activity.id)),
-  [[13, 14], [15, 16], [17, 18]].map(([first, second]) => ['self-check', ...secondLearningAreaFlows[first], ...secondLearningAreaFlows[second]]),
-  'The Evimiz Dünya weeks should merge their source-week flows in order.',
+  [[13, 14], [15, 16], [17, 18]].map(([first, second], index) => ['self-check', ...secondLearningAreaFlows[first], ...secondLearningAreaFlows[second], ...extrasIdsFor(6 + index)]),
+  'The Evimiz Dünya weeks should merge their source-week flows in order and append their extras.',
 );
+// Ortak Mirasımız haftaları kitaptaki sırayla etkinlik akışı kazanır: temel üç adım + ek çalışmalar.
 assert.deepEqual(
   social.weeks.filter((week) => week.unitId === 'heritage').map((week) => week.activities.map((activity) => activity.id)),
-  Array.from({ length: 7 }, () => ['self-check', 'book', 'apply']),
-  'The third learning area should keep its existing activity flows.',
+  social.weeks.filter((week) => week.unitId === 'heritage').map((week) => ['self-check', 'book', 'apply', ...extrasIdsFor(week.id)]),
+  'The third learning area should build its activity flow from the textbook topics plus the extras.',
 );
 assert.ok(findActivity('same-message-three-ways').scenario.includes('Proje grubunun'), 'The communication-types week should use an original transfer situation.');
 
@@ -701,3 +726,30 @@ runSocialAIRegressionChecks().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+// Karekod envanteri: ders kitabının gömülü EBA bağlantılarından çözülmüş içerikler.
+const qr = global.window.SOCIAL_QR;
+assert.ok(qr && Array.isArray(qr.units) && qr.units.length >= 15, 'Karekod çalışmaları envanteri eksik.');
+const qrIds = qr.units.map((unit) => unit.id);
+assert.equal(new Set(qrIds).size, qrIds.length, 'Karekod kartı kimlikleri benzersiz olmalı.');
+for (const unit of qr.units) {
+  assert.ok(unit.title && unit.kind && unit.where && unit.intro, `Karekod kartı eksik alan içeriyor: ${unit.id}`);
+  assert.ok(/^https:\/\/ders\.eba\.gov\.tr\//.test(unit.sourceUrl || ''), `Karekod bağlantısı EBA adresi olmalı: ${unit.id}`);
+  assert.ok(unit.weekIds.length > 0 && unit.weekIds.every((id) => id >= 1 && id <= 15), `Karekod kartı geçerli haftaya bağlanmalı: ${unit.id}`);
+  assert.ok(unit.before.length >= 2, `Karekod kartında izleme öncesi en az iki soru olmalı: ${unit.id}`);
+  assert.ok(unit.notes.length >= 3, `Karekod kartında en az üç not alanı olmalı: ${unit.id}`);
+  assert.ok(unit.questions.length >= 2, `Karekod kartında en az iki soru olmalı: ${unit.id}`);
+  for (const question of unit.questions) {
+    assert.ok(question.options.length >= 3 && Number.isInteger(question.answer) && question.answer >= 0 && question.answer < question.options.length, `Karekod sorusunda geçerli yanıt yok: ${unit.id}/${question.id}`);
+  }
+  assert.ok(unit.write && unit.write.minChars > 0 && unit.write.criteria.length >= 2, `Karekod yazma görevi eksik: ${unit.id}`);
+}
+const qrWeeks = [...new Set(qr.units.flatMap((unit) => unit.weekIds))].sort((a, b) => a - b);
+assert.ok(qrWeeks.length >= 10, 'Karekod kartları en az on haftaya yayılmalı.');
+
+// Kitaptaki etkinlik teknikleri dönem boyunca çeşitlenmeli; aynı teknik her hafta tekrarlanmaz.
+const allFormats = social.weeks.flatMap((week) => week.activities.map((activity) => activity.format || activity.sourceStyle)).join(' | ').toLocaleLowerCase('tr-TR');
+for (const technique of ['Balık kılçığı', 'GZFT', 'Dallanmış ağaç', 'Zaman şeridi', 'Kelime bulutu', 'Bulmaca', 'Kavram haritası', 'Tanılayıcı test']) {
+  assert.ok(allFormats.includes(technique.toLocaleLowerCase('tr-TR')), `Dönem boyunca ${technique} tekniği en az bir kez kullanılmalı.`);
+}
+console.log(`Social Studies karekod envanteri tutarlı: ${qr.units.length} kart · ${qrWeeks.length} hafta · ${qr.units.filter((unit) => unit.sourceLinkType === 'video').length} video.`);

@@ -144,7 +144,7 @@ Kitabın kendi tekniğiyle, uygulamanın alan türleriyle yazılabilir:
 | Hafta | Kitap | Önerilen etkinlik türleri | Karekod |
 |---|---|---|---|
 | 9 | s. 86–92 | Harita okuma (`sort`), GZFT (`textarea`), soru kartı | — |
-| 10 | s. 88–95 | Balık kılçığı (`textarea`), sınıflandırma (`sort`), zaman şeridi (`sort`) | s. 96 mimarlar |
+| 10 | s. 88–95 | Balık kılçığı (`textarea`), sınıflandırma (`sort`), zaman şeridi (`sort`) | s. 96 dönemler ve hükümdarlar |
 | 11 | s. 96–102 | Neden sınıflandırma (`sort`), hazırlık–sonuç eşleştirme (`multi`), çalışma yaprağı | s. 101 (etiketsiz) |
 | 12 | s. 103–109 | Harita + ticaret yolu (`sort`), balık kılçığı, Mısır Seferi sonuç tablosu | s. 105 Barbaros, s. 106 etkileşimli harita |
 | 13 | s. 112–122 | Zaman şeridi (`sort`), “3-2-1” (`text`), neden–sonuç tablosu | s. 130 yenilikler |
@@ -153,9 +153,75 @@ Kitabın kendi tekniğiyle, uygulamanın alan türleriyle yazılabilir:
 
 Her hafta için hedef: 3 etkinlik + 1 görselli soru + en az 1 karekod bağlantısı; konu özeti 900–1.300 karaktere çıkarılmalı (hafta 1–12 düzeyi).
 
-## 8. Karar bekleyen noktalar
+## 8. Uygulanan kararlar (2026-10-22)
 
-1. Hafta 9–15 etkinlik akışı yazılsın mı, yoksa önce yayın mı?
-2. Karekod kartları Türkçe’deki `TURKCE_QR` düzeninde mi (izleme öncesi/izlerken/sonrası), yoksa haftalık çalışma çizelgesine bağlantı olarak mı eklensin?
-3. Eksik konular (Fransız İhtilali, sömürgecilik, Lale Devri, vakıf/ahi) mevcut haftalara sıkıştırılsın mı, yoksa ayrı etkinlik olarak mı eklensin?
-4. Birim sayfa aralıkları (`12–58`, `68–83`) kitaba göre düzeltilsin mi?
+Dört karar sorusu yanıtlandı ve içerik uygulandı. 15 haftalık dönem planı korunmuş, eksik konular kitaptaki sıraya göre mevcut haftalara iliştirilmiştir.
+
+### 8.1 Birim sayfa aralıkları
+
+| Öğrenme alanı | Eski | Yeni (kitap) |
+|---|---|---|
+| 1. Birlikte Yaşamak | 12–58 | **10–55** |
+| 2. Evimiz Dünya | 68–83 | **56–83** |
+| 3. Ortak Mirasımız | 86–155 | **84–159** |
+
+Kitapta 4. öğrenme alanı yoktur; `KİTABIMIZI TANIYALIM` sayfasındaki “4. Öğrenme Alanı” yalnızca gösterge örneğidir. EK-1 (origami, s. 159) ve sözlük–kaynakça–cevap anahtarı (s. 161–164) öğretim süresine dâhil edilmemiştir.
+
+### 8.2 Eksik konuların yerleşimi (kitaptaki sıra korunarak)
+
+| Konu | Kitap yeri | Eklendiği hafta |
+|---|---|---|
+| Sömürgecilik ve yerli halklar | s. 113–116 | 12 |
+| Fransız İhtilali | s. 123–124 | 14 |
+| Lale Devri | s. 125–126 | 14 |
+| III. Selim / Nizam-ı Cedid, II. Mahmud | s. 127–131 | 14 |
+| Türk modası ve yerli üretim tartışması | s. 133 | 14 |
+| Divan teşkilatı | s. 140–141 | 15 |
+| Vakıf kültürü ve ahi-lonca teşkilatı | s. 148–150 | 15 |
+
+### 8.3 Etkinlik akışı (15 hafta)
+
+Her hafta temel akışın ardına dört ek çalışma eklenir: bir ek okuma (özgün metin + sorular) ve üç teknik çalışması. Teknikler konuya göre dağıtılmıştır (balık kılçığı, GZFT, tanılayıcı dallanmış ağaç, zaman şeridi, kelime bulutu, bulmaca, kavram haritası, tanılayıcı test, sınıflandırma). Toplam 60 ek çalışma; dönem genelinde 139 etkinlik adımı.
+
+| Hafta | Etkinlik adımı | Teknikler |
+|---|---|---|
+| 1 | 14 | Balık kılçığı, dallanmış ağaç |
+| 2 | 10 | Dallanmış ağaç, kavram haritası |
+| 3 | 10 | GZFT, bulmaca |
+| 4 | 10 | Kavram haritası, kelime bulutu |
+| 5 | 13 | Zaman şeridi, balık kılçığı |
+| 6 | 11 | GZFT, tanılayıcı test |
+| 7 | 11 | Balık kılçığı, kavram haritası |
+| 8 | 11 | Bulmaca, dallanmış ağaç |
+| 9 | 7 | GZFT, zaman şeridi |
+| 10 | 7 | Balık kılçığı, kavram haritası |
+| 11 | 7 | Zaman şeridi, tanılayıcı test |
+| 12 | 7 | Balık kılçığı, kavram haritası |
+| 13 | 7 | Kavram haritası, tanılayıcı test |
+| 14 | 7 | Dallanmış ağaç, zaman şeridi |
+| 15 | 7 | Bulmaca, kavram haritası |
+
+### 8.4 Karekod kartları
+
+`social-studies-qr.js` (18 kart) ve `social-qr-app.js` (Türkçe’deki `TURKCE_QR` düzeni: izlemeden önce → izlerken not al → izledikten sonra quiz + yazma). Kartlar 14 haftaya bağlıdır; yalnızca 13. haftada kitaba ait karekod içeriği yoktur ve bölüm gizlenir.
+
+| Hafta | Karekod |
+|---|---|
+| 1 | s. 15 iletişim videosu |
+| 2 | s. 23 olumlu-olumsuz iletişim, s. 27 “Uzlaşmanın Gücü” |
+| 3 | s. 32 engelleri aşan gençler, s. 34 “Engelleri Aşıyorum” |
+| 4, 5 | s. 45 “Millî Meselelerde Biz” |
+| 6 | s. 60 küreselleşme, s. 63 kahvenin yolculuğu |
+| 7 | s. 72 jeopolitik konum |
+| 8 | s. 75–76 insani yardım |
+| 9, 10, 11 | s. 96 dönemler ve hükümdarlar (dijital içerik) |
+| 11 | s. 96 ile birlikte fetih anlatımı |
+| 12 | s. 105 Barbaros Hayreddin Paşa, s. 106 XVI. yüzyıl etkileşimli haritası |
+| 14 | s. 130 sanayileşme videosu ve yenilikler etkileşimli videosu |
+| 15 | s. 146 Fetih Marşı, s. 147 3D gündelik yaşam, s. 150 ahi teşkilatı, s. 151 kültür-medeniyet etkileşimli videosu |
+
+### 8.5 Açık kalanlar
+
+- 13. hafta (Rönesans, Reform, Aydınlanma) için kitapta karekod yok; kart eklenmedi.
+- İçerik dosyasındaki 35–37 numaralı dersler dönem planında kullanılmıyor; ileride temizlenebilir veya plana bağlanabilir.
+- Haftalık görselli soru (1–2) henüz Sosyal Bilgiler alanında yok; Fen’deki illüstrasyon standardı Sosyal için ayrıca üretilmeli.

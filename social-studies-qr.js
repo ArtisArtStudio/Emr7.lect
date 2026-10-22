@@ -1,0 +1,1175 @@
+/*
+ * Sosyal Bilgiler karekod çalışmaları — MEB 7. sınıf ders kitabının (2026) gömülü
+ * EBA bağlantılarından çözülmüş içerikler. Kart düzeni Türkçe'deki `TURKCE_QR`
+ * ile aynıdır: izleme öncesi hazırlık → izlerken not → izledikten sonra düşünme →
+ * yazma görevi.
+ *
+ * İçerik sınırı: Video dosyaları ve dökümleri depoda yok. Bu yüzden sorular videoda
+ * geçtiği iddia edilen ayrıntılara değil; öğrencinin izleme sürecini planlamasına,
+ * medya okuryazarlığına ve konuyla bağ kurmasına dayanır. Cevap anahtarı gösterilmez.
+ */
+(function () {
+  "use strict";
+
+  const eba = (id) =>
+    `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=${id}&resourceType=1&resourceLocation=2`;
+
+  window.SOCIAL_QR = {
+    note:
+      "Kartlar izleme öncesi hazırlık, izlerken not alma ve izledikten sonra düşünme adımlarından oluşur. Yanıtların bu tarayıcıda saklanır; doğru cevap gösterilmez, yalnızca nerede düzeltme yapacağın söylenir. Bağlantı açılmazsa kitabındaki karekodu kullan.",
+    units: [
+      {
+        id: "qr-iletisim-video",
+        weekIds: [1],
+        kind: "İzleme",
+        where: "s. 15 · 1. öğrenme alanı",
+        title: "İletişimle ilgili video",
+        sourceUrl: eba("2d41a7a29aa74f64bbc61e22fca5a389"),
+        sourceLinkLabel: "EBA · İletişimle ilgili video",
+        sourceLinkType: "video",
+        minutes: 5,
+        focus: "İletişim hatalarını fark etme, gözlem ve ben dili",
+        intro:
+          "Kitabın iletişim konusundaki videosu, günlük yaşamda yapılan iletişim hatalarını örneklendirir. İzlerken hangi davranışın iletişimi kopardığını işaretle; sonra aynı davranışı kendi çevrenden bir örnekle eşleştir.",
+        before: [
+          "Son bir haftada iletişimini zorlaştıran bir anı kısaca yaz. Ne oldu, kimler vardı?",
+          "Sence bir konuşmayı bozan en yaygın davranış hangisi? Tahminini yaz; izlerken kontrol et.",
+        ],
+        notes: [
+          { id: "n1", label: "Videoda görülen ilk iletişim hatası", hint: "Dinlememe, söz kesme, alay, sen dili… hangisi?" },
+          { id: "n2", label: "Hatayı yapan kişi nasıl bir tepki aldı?", hint: "Karşı tarafın yüzü, sesi ya da susması." },
+          { id: "n3", label: "Aynı durumda yapılabilecek doğru davranış", hint: "Tek cümleyle yaz." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Bir iletişim sorununu çözmek için ilk adım hangisi olmalıdır?",
+            options: [
+              "Karşı tarafı suçlayan bir cümleyle başlamak",
+              "Sorunu fark edip ne olduğunu somut olarak tanımlamak",
+              "Konuyu değiştirip unutmaya çalışmak",
+              "Üçüncü bir kişiden aracılık istemek",
+            ],
+            answer: 1,
+            explanation: "Sorunu çözmenin ilk adımı, ne olduğunu yargısız biçimde tanımlamaktır; suçlama savunmaya yol açar.",
+            hint: "Hangi seçenek gözlem yapmayı, hangisi yargılamayı içeriyor?",
+          },
+          {
+            id: "q2",
+            prompt: "İzlediğin bir içerikten not almanın en önemli yararı nedir?",
+            options: [
+              "İçeriği ezberlemek",
+              "Gördüğünü kendi cümlelerinle kaydedip sonra karşılaştırabilmek",
+              "İçeriği arkadaşlarına anlatmamak",
+              "Notu olduğu gibi kopyalamak",
+            ],
+            answer: 1,
+            explanation: "Not, içeriği kendi cümlelerinle sabitlediğin için karşılaştırma ve yeniden düşünme zemini oluşturur.",
+            hint: "Not ile kopya arasındaki farkı düşün.",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: aynı durumu yeniden kurdum",
+          instruction:
+            "Videodaki bir iletişim hatasını kendi çevrenden bir örnekle anlat; hatanın yerine ne söylenebileceğini ben diliyle yaz.",
+          criteria: [
+            "Durumu yargısız ve somut anlat.",
+            "En az bir ben dili cümlesi kullan.",
+            "Yerine önerdiğin davranışın neden işe yarayacağını açıkla.",
+          ],
+          guide: "Durum → hata → ben dili cümlesi sırasını izle; sonunda bir cümlede sonucu yaz.",
+          starter: "Videodaki hataya benzer bir durumda …",
+          minChars: 160,
+        },
+      },
+      {
+        id: "qr-iletisim-yollari",
+        weekIds: [2],
+        kind: "İzleme",
+        where: "s. 23 · 1. öğrenme alanı",
+        title: "Olumlu ve olumsuz iletişim yolları",
+        sourceUrl: eba("da18b420babd56dfbcf9da975fd86b01"),
+        sourceLinkLabel: "EBA · Olumlu ve olumsuz iletişim yolları",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "İletişim çatışmaları, engeller ve onarıcı davranış",
+        intro:
+          "Kitabın iletişim çatışmaları sayfasındaki video, aynı durumun olumlu ve olumsuz iki kuruluşunu gösterir. İzlerken hangi davranışın çatışmayı büyüttüğünü, hangisinin onardığını ayır.",
+        before: [
+          "Bir arkadaşınla yaşadığın küçük bir anlaşmazlığı tek cümleyle yaz.",
+          "Sence bir çatışmayı onaran ilk davranış nedir? Tahminini not et.",
+        ],
+        notes: [
+          { id: "n1", label: "Çatışmayı büyüten iki davranış", hint: "Ses yükseltmek, söz kesmek, suçlamak…" },
+          { id: "n2", label: "Çatışmayı onaran davranış", hint: "Özür, açıklama, dinleme, ortak çözüm." },
+          { id: "n3", label: "Video sonunda ilişki nasıl değişti?", hint: "Tek sözcükle de yazabilirsin." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Aşağıdakilerden hangisi iletişim engeli sayılmaz?",
+            options: [
+              "Karşıdakinin sözünü sık sık kesmek",
+              "Alaycı bir tonla konuşmak",
+              "Anlamadığı yerde açıklayıcı soru sormak",
+              "Öğüt verir gibi konuşup dinlememek",
+            ],
+            answer: 2,
+            explanation: "Açıklayıcı soru, anlamayı doğrulayan bir davranıştır; engel değil, onarıcı bir adımdır.",
+            hint: "Hangisi karşı tarafı anlamaya yönelik?",
+          },
+          {
+            id: "q2",
+            prompt: "Çatışmadan sonra özür dilemek neden ilişkiyi güçlendirir?",
+            options: [
+              "Haklı olduğunu kanıtladığı için",
+              "Karşı tarafın duygusunu ciddiye aldığını gösterdiği için",
+              "Konunun kapanmasını sağladığı için",
+              "Özür dileyen kişiyi güçlü gösterdiği için",
+            ],
+            answer: 1,
+            explanation: "Özür, duygunun ciddiye alındığını gösterir; bu da güveni onarır.",
+            hint: "Özrün kime ne söylediğini düşün.",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: çatışmayı onaran cümle",
+          instruction:
+            "İzlediğin olumsuz örneklerden birini seç. Aynı durumda söylenecek onarıcı iki cümleyi yaz ve neden işe yarayacağını açıkla.",
+          criteria: [
+            "Suçlayıcı dil kullanma.",
+            "Duyguyu ve beklentiyi ayrı ayrı belirt.",
+            "İki cümlenin işlevini karşılaştır.",
+          ],
+          guide: "Önce durumu, sonra söylenecek cümleyi, en sonunda etkisini yaz.",
+          starter: "Aynı durumda şöyle söylerdim: …",
+          minChars: 150,
+        },
+      },
+      {
+        id: "qr-uzlasma-hikayesi",
+        weekIds: [2],
+        kind: "İzleme",
+        where: "s. 27 · 1. öğrenme alanı",
+        title: "“Uzlaşmanın Gücü” hikâyesinin devamı",
+        sourceUrl: eba("026223ec3b49bfa0b7fa72a539a4a1d9"),
+        sourceLinkLabel: "EBA · Uzlaşmanın Gücü hikâyesinin devamı",
+        sourceLinkType: "video",
+        minutes: 5,
+        focus: "Uzlaşma, sıra alma ve ortak çözüm",
+        intro:
+          "Kitapta yarım bırakılan hikâyenin devamı karekodla açılıyor. Önce kendi tahminini yaz, sonra izle: tahmininle anlatılan çözüm arasındaki farkı işaretle.",
+        before: [
+          "Hikâyenin nasıl biteceğini tahmin et: taraflar ne yapacak?",
+          "Uzlaşma ile boyun eğme arasındaki farkı tek cümleyle yaz.",
+        ],
+        notes: [
+          { id: "n1", label: "Hikâyedeki asıl anlaşmazlık neydi?", hint: "Kim, neyi istiyordu?" },
+          { id: "n2", label: "Çözümü kolaylaştıran adım", hint: "Sıra verme, dinleme, ortak nokta…" },
+          { id: "n3", label: "Tahminimle örtüşen ve ayrılan yön", hint: "İki sütun gibi düşün." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Uzlaşmayı en iyi anlatan ifade hangisidir?",
+            options: [
+              "Taraflardan birinin isteğinden tamamen vazgeçmesi",
+              "Her iki tarafın da kabul edebileceği ortak bir noktada buluşması",
+              "Anlaşmazlığın konuşulmadan kapatılması",
+              "Kararın en yaşlı kişi tarafından verilmesi",
+            ],
+            answer: 1,
+            explanation: "Uzlaşmada taraflar karşılıklı olarak bir adım atar; biri tamamen vazgeçmez.",
+            hint: "“Karşılıklı” sözcüğüne dikkat et.",
+          },
+          {
+            id: "q2",
+            prompt: "Bir hikâyenin devamını tahmin etmek okura ne kazandırır?",
+            options: [
+              "Metni ezberlemeyi kolaylaştırır",
+              "Okurun kendi çıkarımını metinle karşılaştırmasını sağlar",
+              "Metnin sonunu değiştirir",
+              "Okuma süresini kısaltır",
+            ],
+            answer: 1,
+            explanation: "Tahmin, okurun kendi çıkarımını görünür kılar; metinle karşılaştırma düşünmeyi derinleştirir.",
+            hint: "Tahmin ettikten sonra ne yapıyorsun?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: kendi uzlaşma sahneni kur",
+          instruction:
+            "İki kişinin küçük bir anlaşmazlığını yaz; uzlaşma adımlarını sırayla göster. Sonunda uzlaşmanın neden adil olduğunu açıkla.",
+          criteria: [
+            "Her iki tarafın isteğini de yaz.",
+            "En az iki uzlaşma adımı göster.",
+            "Sonuçta neden adil olduğunu gerekçelendir.",
+          ],
+          guide: "Kişi → istek → çatışma → adım → sonuç sırasını izle.",
+          starter: "İki arkadaş aynı görevi paylaşamıyordu, çünkü …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-engelleri-asanlar",
+        weekIds: [3],
+        kind: "İzleme",
+        where: "s. 32 · 1. öğrenme alanı",
+        title: "Engelleri aşan gençler",
+        sourceUrl: eba("2edd5069ff032e00a221a9a0545791bf"),
+        sourceLinkLabel: "EBA · Engelleri aşan üç genç",
+        sourceLinkType: "video",
+        minutes: 7,
+        focus: "Fırsat eşitliği, destek ortamı ve azim",
+        intro:
+          "Kitapta üç sporcunun hikâyesi anlatılıyor; karekodda bu gençlerin görüntüleri var. İzlerken başarıyı getiren desteği işaretle: aile, antrenör, okul, arkadaş ya da kurum.",
+        before: [
+          "Bir insanın başarısında çevrenin payı ne kadardır? Kısaca yaz.",
+          "“Fırsat eşitliği” deyince aklına gelen ilk üç şeyi sırala.",
+        ],
+        notes: [
+          { id: "n1", label: "Sporcunun karşılaştığı engel", hint: "Fiziksel ortam mı, erişim mi, ön yargı mı?" },
+          { id: "n2", label: "Engeli aşmasını sağlayan destek", hint: "Kim, neyi sağladı?" },
+          { id: "n3", label: "Bu hikâyeden çıkarılabilecek ilke", hint: "Tek cümle." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Fırsat eşitliğini sağlamak için önce neyi değiştirmek gerekir?",
+            options: [
+              "Kişinin beklentilerini",
+              "Kişinin katılımını zorlaştıran çevresel ve kurumsal düzenlemeleri",
+              "Etkinliğin konusunu",
+              "Katılımcı sayısını",
+            ],
+            answer: 1,
+            explanation: "Fırsat eşitliği çoğu zaman kişiyi değil, katılımı zorlaştıran düzenlemeleri değiştirmeyi gerektirir.",
+            hint: "Engel kişide mi, ortamda mı?",
+          },
+          {
+            id: "q2",
+            prompt: "Bir başarı hikâyesini izlerken hangi soru daha verimli bir not aldırır?",
+            options: [
+              "Bu kişi ünlü mü?",
+              "Başarıyı mümkün kılan koşullar nelerdi?",
+              "Video kaç dakika sürdü?",
+              "Kaç madalya kazandı?",
+            ],
+            answer: 1,
+            explanation: "Koşulları sormak, olayı genellenebilir bir ilkeye dönüştürür.",
+            hint: "Hangi soru aktarılabilir bir bilgi üretir?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: okulumda bir engel, bir çözüm",
+          instruction:
+            "Okulunda ya da mahallende katılımı zorlaştıran bir düzeni belirle; bu engeli kaldıracak iki somut öneri yaz.",
+          criteria: [
+            "Engeli gözleme dayandır.",
+            "İki öneriden birini maliyeti düşük olacak biçimde kur.",
+            "Önerinin kime ne kazandıracağını yaz.",
+          ],
+          guide: "Engel → kim etkileniyor → öneri → beklenen katkı sırasını izle.",
+          starter: "Okulumuzda … katılımı zorlaştırıyor, çünkü …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-engelleri-asiyorum",
+        weekIds: [3],
+        kind: "İzleme",
+        where: "s. 34 · 1. öğrenme alanı",
+        title: "“Engelleri Aşıyorum” içeriği",
+        sourceUrl: eba("b3ec73b3a189e78a00451537774edb5f"),
+        sourceLinkLabel: "EBA · Engelleri Aşıyorum",
+        sourceLinkType: "video",
+        minutes: 5,
+        focus: "Erişilebilirlik, bağımsız yaşam ve saygı",
+        intro:
+          "Karekod, erişilebilirliğin günlük yaşamdaki karşılığını gösteriyor. İzlerken “rampa dışında ne var?” sorusuna yanıt arayan üç ayrıntı seç.",
+        before: [
+          "Erişilebilirlik denince yalnızca rampa mı geliyor? Başka neler olabilir?",
+          "Bir mekânın herkes için uygun olup olmadığını nasıl anlarsın?",
+        ],
+        notes: [
+          { id: "n1", label: "Fiziksel erişimi kolaylaştıran düzenleme", hint: "Kapı, eşik, asansör, tutamak…" },
+          { id: "n2", label: "Bilgiye erişimi kolaylaştıran düzenleme", hint: "Sesli anons, büyük yazı, işaret dili, betimleme…" },
+          { id: "n3", label: "Katılımı kolaylaştıran sosyal davranış", hint: "Sıra vermek, yavaş konuşmak, varsayımda bulunmamak…" },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Aşağıdakilerden hangisi erişilebilirlik düzenlemesi değildir?",
+            options: [
+              "Asansörde kabartma tuş",
+              "Ders materyalinin sesli sürümü",
+              "Etkinlik saatini katılımcıya sormadan değiştirmek",
+              "Yaya geçidinde sesli uyarı",
+            ],
+            answer: 2,
+            explanation: "Katılımcıya sorulmadan yapılan değişiklik katılımı azaltır; erişilebilirlik düzenlemesi değildir.",
+            hint: "Hangisi katılımı artırmıyor?",
+          },
+          {
+            id: "q2",
+            prompt: "Özel gereksinimli bir arkadaşınla konuşurken en doğru yaklaşım hangisidir?",
+            options: [
+              "Yerine karar vermek",
+              "Ne istediğini sormak ve yanıtına göre davranmak",
+              "Konuyu tamamen değiştirmek",
+              "Yardımı zorla sunmak",
+            ],
+            answer: 1,
+            explanation: "Saygı, varsayım yerine sormayı gerektirir; bireyin kendi kararı esastır.",
+            hint: "Varsayım mı, soru mu?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: erişilebilirlik denetimi",
+          instruction:
+            "Okulundan bir alanı seç ve üç ölçütle denetle: fiziksel erişim, bilgiye erişim, sosyal katılım. Her ölçüt için bir bulgu yaz.",
+          criteria: [
+            "Üç ölçütü ayrı ayrı ele al.",
+            "Bulgunu gözleme dayandır.",
+            "Bir iyileştirme önerisi ekle.",
+          ],
+          guide: "Alan → ölçüt → bulgu → öneri düzenini kullan.",
+          starter: "Denetlediğim alan …; ilk ölçütte …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-milli-meseleler",
+        weekIds: [4, 5],
+        kind: "İzleme",
+        where: "s. 45 · 1. öğrenme alanı",
+        title: "“Millî Meselelerde Biz” videosu",
+        sourceUrl: eba("6e1f6955aeff331cc85451f6a8231cc5"),
+        sourceLinkLabel: "EBA · Millî Meselelerde Biz",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Millî mesele, ortak değer ve toplumsal tutum",
+        intro:
+          "Karekod, millî meseleler karşısında toplumun gösterdiği ortak tutumu anlatıyor. İzlerken hangi değerin öne çıktığını ve bu değerin hangi davranışa dönüştüğünü not et.",
+        before: [
+          "“Millî mesele” ifadesini kendi cümlelerinle tanımla.",
+          "Toplumun bir sorun karşısında birlikte hareket etmesini sağlayan şey nedir?",
+        ],
+        notes: [
+          { id: "n1", label: "Videoda öne çıkan ortak değer", hint: "Dayanışma, vefa, bağımsızlık, sorumluluk…" },
+          { id: "n2", label: "Bu değerin görünür olduğu davranış", hint: "Ne yapıldı?" },
+          { id: "n3", label: "Benzer bir güncel örnek", hint: "Afet, spor, bilim, eğitim…" },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Bir sorunun “millî mesele” sayılması için en belirleyici ölçüt hangisidir?",
+            options: [
+              "Yalnızca bir bölgeyi ilgilendirmesi",
+              "Toplumun tamamını ya da bağımsızlığını doğrudan ilgilendirmesi",
+              "Yalnızca devlet kurumlarının görev alması",
+              "Kısa sürede çözülmesi",
+            ],
+            answer: 1,
+            explanation: "Millî mesele, toplumun bütününü veya bağımsızlığını ilgilendiren, ortak tutum gerektiren konudur.",
+            hint: "Kapsamı kimleri içine alıyor?",
+          },
+          {
+            id: "q2",
+            prompt: "Ortak değerlerin toplumsal işlevi nedir?",
+            options: [
+              "Farklı görüşleri tamamen ortadan kaldırmak",
+              "Kriz anlarında birlikte hareket etmeyi kolaylaştırmak",
+              "Ekonomik geliri artırmak",
+              "Yönetim biçimini belirlemek",
+            ],
+            answer: 1,
+            explanation: "Ortak değerler, farklılıklara rağmen birlikte davranmayı mümkün kılar.",
+            hint: "Kriz anında ne oluyor?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: ortak değerden davranışa",
+          instruction:
+            "Bir ortak değer seç (dayanışma, vefa, sorumluluk vb.). Bu değerin bir millî mesele sırasında hangi somut davranışa dönüştüğünü örnekle anlat.",
+          criteria: [
+            "Değeri tek cümlede tanımla.",
+            "Somut bir olay ya da uygulama göster.",
+            "Değerin bugün neden gerekli olduğunu açıkla.",
+          ],
+          guide: "Değer → olay → davranış → günümüz bağlantısı sırasını izle.",
+          starter: "Seçtiğim değer …; bu değer … sırasında …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-kuresellesme",
+        weekIds: [6],
+        kind: "İzleme",
+        where: "s. 60 · 2. öğrenme alanı",
+        title: "Küreselleşme içeriği",
+        sourceUrl: eba("a9e7ce50bc4c0fa37a38be23b4a8af35"),
+        sourceLinkLabel: "EBA · Küreselleşme içeriği",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Küreselleşmenin alanları ve günlük hayata etkisi",
+        intro:
+          "Karekod, küreselleşmenin hangi alanlarda görüldüğünü örneklerle anlatıyor. İzlerken sayılan alanları işaretle, sonra kendi günlük hayatından bir karşılık yaz.",
+        before: [
+          "Bugün kullandığın üç ürünün nerede üretildiğini tahmin et.",
+          "Küreselleşme senin için olumlu mu, olumsuz mu? Neden?",
+        ],
+        notes: [
+          { id: "n1", label: "İçerikte sayılan etki alanları", hint: "Ekonomi, ulaşım, iletişim, kültür, sağlık, çevre…" },
+          { id: "n2", label: "Bir olumlu, bir olumsuz etki", hint: "İki sütun gibi düşün." },
+          { id: "n3", label: "Benim hayatımdan bir küresel bağlantı", hint: "Bir ürün, bir dizi, bir oyun, bir haber." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Aşağıdakilerden hangisi küreselleşmenin bir sonucu değildir?",
+            options: [
+              "Ülkeler arası ticaretin artması",
+              "Bilginin saniyeler içinde yayılması",
+              "Yerel kültürlerin tamamen yok olması",
+              "Ulaşım sürelerinin kısalması",
+            ],
+            answer: 2,
+            explanation: "Yerel kültürler etkilenir ama “tamamen yok olma” genellenemez; kültürler değişir, dönüşür ve yaşar.",
+            hint: "Hangi seçenek kesin bir yargı içeriyor?",
+          },
+          {
+            id: "q2",
+            prompt: "Küresel bir ürünü değerlendirirken en sağlıklı soru hangisidir?",
+            options: [
+              "Bu ürün popüler mi?",
+              "Bu ürünün üretim, taşıma ve tüketim yolculuğu nasıl?",
+              "Bu ürün pahalı mı?",
+              "Bu ürünü kimler kullanıyor?",
+            ],
+            answer: 1,
+            explanation: "Üretim ve taşıma yolculuğunu sormak, ekonomik ve çevresel etkiyi görmeyi sağlar.",
+            hint: "Hangi soru süreci görünür kılar?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: bir ürünün yolculuğu",
+          instruction:
+            "Günlük hayatında kullandığın bir ürünü seç. Üretim, taşıma ve tüketim aşamalarını yaz; bu yolculuğun olumlu ve olumsuz iki sonucunu belirt.",
+          criteria: [
+            "Üç aşamayı ayrı ayrı yaz.",
+            "En az bir ülke ya da bölge adı kullan.",
+            "Olumlu ve olumsuz sonucu karşılaştır.",
+          ],
+          guide: "Ürün → üretim → taşıma → tüketim → sonuç sırasını izle.",
+          starter: "Seçtiğim ürün …; üretimi …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-kahvenin-yolculugu",
+        weekIds: [6],
+        kind: "İzleme",
+        where: "s. 63 · 2. öğrenme alanı",
+        title: "Kahvenin yolculuğu",
+        sourceUrl: eba("0a91216d32df2405b32be9c6a740c34a"),
+        sourceLinkLabel: "EBA · Kahvenin yolculuğu",
+        sourceLinkType: "video",
+        minutes: 5,
+        focus: "Üretim–ticaret–marka zinciri, yerel kültür ve katma değer",
+        intro:
+          "İçerik, ithal edilen bir ürünün yerel emek ve kültürle nasıl markaya dönüştüğünü anlatıyor. İzlerken zincirin halkalarını sırayla not et.",
+        before: [
+          "Bir ürünü “marka” yapan nedir? Üç özellik yaz.",
+          "Ham madde ile işlenmiş ürün arasındaki fiyat farkı neden oluşur?",
+        ],
+        notes: [
+          { id: "n1", label: "Zincirin ilk halkası", hint: "Ham madde nereden geliyor?" },
+          { id: "n2", label: "Değeri artıran aşama", hint: "İşleme, sunum, kültür, tanıtım…" },
+          { id: "n3", label: "Yerel kültürün kattığı fark", hint: "Sunum biçimi, gelenek, hikâye." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Bir ürünün katma değerini artıran en güçlü adım hangisidir?",
+            options: [
+              "Ham maddeyi olduğu gibi satmak",
+              "Ürünü işleyip kültürel bir anlatıyla sunmak",
+              "Yalnızca ambalaj rengini değiştirmek",
+              "Üretimi tamamen durdurmak",
+            ],
+            answer: 1,
+            explanation: "İşleme ve kültürel anlatı, ürünün değerini ve ayırt ediciliğini artırır.",
+            hint: "Hangisi hem emek hem kültür içeriyor?",
+          },
+          {
+            id: "q2",
+            prompt: "Küresel ticarette yerel üreticiyi güçlendiren yol hangisidir?",
+            options: [
+              "Ürün çeşitliliğini azaltmak",
+              "Kaliteyi ve hikâyeyi öne çıkarıp marka oluşturmak",
+              "Yalnızca iç pazara yönelmek",
+              "Aracı sayısını artırmak",
+            ],
+            answer: 1,
+            explanation: "Kalite ve anlatı birlikte marka değeri üretir; bu da üreticinin pazarlık gücünü artırır.",
+            hint: "Hangisi ürüne ayırt edicilik katar?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: yerel bir ürünü markalaştırma",
+          instruction:
+            "Yaşadığın yerden bir ürün seç (gıda, el sanatı, dokuma vb.). Bu ürünü güçlendirecek üç adımı ve her adımın katkısını yaz.",
+          criteria: [
+            "Üç adımı sırayla ver.",
+            "Her adımın ürünün değerine katkısını belirt.",
+            "Yerel kültürle bağ kur.",
+          ],
+          guide: "Ürün → sorun → adım → katkı sırasını izle.",
+          starter: "Yöremizde üretilen …; bu ürünü güçlendirmek için …",
+          minChars: 160,
+        },
+      },
+      {
+        id: "qr-jeopolitik-konum",
+        weekIds: [7],
+        kind: "İzleme",
+        where: "s. 72 · 2. öğrenme alanı",
+        title: "Türkiye’nin jeopolitik konumu ve dış politikası",
+        sourceUrl: eba("d8e6ad2d9687967f09a69ce26cff8a2e"),
+        sourceLinkLabel: "EBA · Jeopolitik konum ve dış politika",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Konum, ulaşım koridorları ve diplomasi",
+        intro:
+          "Karekod, Türkiye’nin konumunu bölgesel ve küresel sorunlardaki rolüyle ilişkilendiriyor. İzlerken konumun sağladığı üç avantajı ve bu avantajın doğurduğu bir sorumluluğu not et.",
+        before: [
+          "Türkiye’nin hangi iki kıtayı birleştirdiğini yaz.",
+          "Bir ülkenin konumu dış politikasını nasıl etkiler? Tahminin ne?",
+        ],
+        notes: [
+          { id: "n1", label: "Konumun sağladığı iki avantaj", hint: "Ticaret yolu, enerji hattı, ulaşım koridoru…" },
+          { id: "n2", label: "Bu konumun getirdiği sorumluluk", hint: "Güvenlik, arabuluculuk, insani yardım…" },
+          { id: "n3", label: "İçerikte geçen bir iş birliği örneği", hint: "Kurum ya da proje adı." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Bir ülkenin “jeopolitik konumu” ifadesi neyi anlatır?",
+            options: [
+              "Yüzölçümünün büyüklüğünü",
+              "Coğrafi yerinin siyasi ve ekonomik etkilerini",
+              "Nüfus yoğunluğunu",
+              "İklim özelliklerini",
+            ],
+            answer: 1,
+            explanation: "Jeopolitik konum, coğrafyanın siyaset ve ekonomiyle kesişen etkisidir.",
+            hint: "“Jeo” ve “politik” sözcüklerini ayır.",
+          },
+          {
+            id: "q2",
+            prompt: "Türkiye’nin insani yardım faaliyetleri dış politikada ne sağlar?",
+            options: [
+              "Yalnızca ekonomik kazanç",
+              "Uluslararası güven ve iş birliği zemini",
+              "Askerî üstünlük",
+              "İç politikada istikrar",
+            ],
+            answer: 1,
+            explanation: "İnsani yardım, güven ve iş birliği üretir; ülkenin arabuluculuk kapasitesini güçlendirir.",
+            hint: "Yardım hangi ilişkiyi güçlendirir?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: konumdan role",
+          instruction:
+            "Türkiye’nin konumunun sağladığı bir avantajı seç; bu avantajın bölgesel bir sorunda nasıl sorumluluğa dönüştüğünü açıkla.",
+          criteria: [
+            "Avantajı somut bir örnekle yaz.",
+            "Bir sorun ve bu sorundaki rolü belirt.",
+            "Rolün gerekçesini yaz.",
+          ],
+          guide: "Konum → avantaj → sorun → rol sırasını izle.",
+          starter: "Türkiye’nin … konumu, … sorununda … rolünü gerektiriyor.",
+          minChars: 160,
+        },
+      },
+      {
+        id: "qr-insani-yardim",
+        weekIds: [8],
+        kind: "İzleme",
+        where: "s. 75–76 · 2. öğrenme alanı",
+        title: "İnsani yardım ve girişimci dış politika",
+        sourceUrl: eba("a1da14c0d38310a7068eefd025ec8f8f"),
+        sourceLinkLabel: "EBA · İnsani yardım ve dış politika",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "İnsani diplomasi, yardımın planlanması ve sürdürülebilirlik",
+        intro:
+          "Karekod, Türkiye’nin insani yardım alanındaki çalışmalarını gösteriyor. İzlerken yardımın hangi ihtiyaca yanıt verdiğini ve sürecin nasıl planlandığını not et.",
+        before: [
+          "Bir yardımın işe yaraması için önce neyin belirlenmesi gerekir?",
+          "“Yardım” ile “sürdürülebilir destek” arasındaki fark ne olabilir?",
+        ],
+        notes: [
+          { id: "n1", label: "Yardımın yanıt verdiği ihtiyaç", hint: "Sağlık, eğitim, barınma, gıda…" },
+          { id: "n2", label: "Yardımı yürüten kurum ya da kuruluş", hint: "Kurum adı geçiyorsa yaz." },
+          { id: "n3", label: "Süreklilik sağlayan adım", hint: "Eğitim, yerel ortaklık, kapasite…" },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "İnsani yardımın en temel ölçütü nedir?",
+            options: [
+              "Yardımı yapan ülkenin tanıtımı",
+              "İhtiyacın gerçekliği ve yardımın ulaşılabilirliği",
+              "Yardımın büyüklüğü",
+              "Medyada görünürlüğü",
+            ],
+            answer: 1,
+            explanation: "Yardım, gerçek ihtiyaca dayanmalı ve ihtiyaç sahibine ulaşmalıdır.",
+            hint: "Kimin ihtiyacı, ne kadar ulaşıyor?",
+          },
+          {
+            id: "q2",
+            prompt: "Acil yardımın ardından atılacak en doğru adım hangisidir?",
+            options: [
+              "Çalışmayı sonlandırmak",
+              "Yerel kapasiteyi güçlendirecek kalıcı desteğe geçmek",
+              "Yardımı yalnızca bir bölgeye yoğunlaştırmak",
+              "Yardımı aynı biçimde sürdürmek",
+            ],
+            answer: 1,
+            explanation: "Kalıcı destek, yerel kapasiteyi güçlendirerek bağımlılığı azaltır.",
+            hint: "İki hafta sonra ne değişmeli?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: yardım planı",
+          instruction:
+            "Bir ihtiyaç belirle (okul, mahalle ya da başka bir topluluk). Acil, orta ve uzun vadeli üç adımdan oluşan bir destek planı yaz.",
+          criteria: [
+            "İhtiyacı kanıtla tanımla.",
+            "Üç zaman dilimini ayır.",
+            "Kalıcılığı sağlayan adımı işaretle.",
+          ],
+          guide: "İhtiyaç → acil → orta → uzun vade sırasını izle.",
+          starter: "Belirlediğim ihtiyaç …; ilk adım …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-cihan-devleti-hukumdarlar",
+        weekIds: [9, 10, 11],
+        kind: "Dijital içerik",
+        where: "s. 96 · 3. öğrenme alanı",
+        title: "Cihan devletine giden dönemler ve hükümdarlar",
+        sourceUrl: eba("3bb79a4a924568a745198daba651f7c8"),
+        sourceLinkLabel: "EBA · Dönemler ve hükümdarlar",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Kuruluştan cihan devletine: dönemler, hükümdarlar ve kurumlar",
+        intro:
+          "Karekod, Osmanlı Devleti’nin kuruluşundan cihan devletine uzanan dönemlerini ve bu dönemlerde öne çıkan hükümdarları anlatıyor. İzlerken her dönemin hangi soruna çözüm ürettiğini not et.",
+        before: [
+          "Bir devletin “cihan devleti” sayılması için hangi ölçütler gerekir? Üçünü yaz.",
+          "Bir hükümdarın başarısını değerlendirirken hangi kanıtlara bakılır?",
+        ],
+        notes: [
+          { id: "n1", label: "İçerikte ayrılan dönemler", hint: "Kuruluş, yükselme…" },
+          { id: "n2", label: "Bir dönemin öne çıkan hükümdarı ve uygulaması", hint: "Fetih, iskân, teşkilatlanma…" },
+          { id: "n3", label: "Dönemin çözdüğü sorun", hint: "Savunma, ticaret, merkezî otorite…" },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Dönemleri sıralarken en güvenilir ölçüt hangisidir?",
+            options: [
+              "Hükümdarların portrelerinin sırası",
+              "Olayların tarihleri ve neden–sonuç ilişkisi",
+              "Sayfaların kitaptaki yeri",
+              "Dönem adlarının uzunluğu",
+            ],
+            answer: 1,
+            explanation: "Tarihlendirme ve neden–sonuç ilişkisi dönemleri nesnel biçimde sıralamayı sağlar.",
+            hint: "Tarih ve neden–sonuç.",
+          },
+          {
+            id: "q2",
+            prompt: "Bir hükümdarın uygulamasını değerlendirirken hangi soru daha verimlidir?",
+            options: [
+              "Uygulama hangi soruna yanıt olarak yapıldı ve sonucu ne oldu?",
+              "Uygulama kaç gün sürdü?",
+              "Uygulamayı kim yazıya geçirdi?",
+              "Uygulama hangi dilde adlandırıldı?",
+            ],
+            answer: 0,
+            explanation: "Amaç ve sonuç birlikte bakıldığında uygulamanın etkisi değerlendirilebilir.",
+            hint: "Amaç → sonuç.",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: bir dönemin çözdüğü sorun",
+          instruction:
+            "İçerikte adı geçen bir dönemi seç. O dönemin hangi soruna yanıt verdiğini, hangi uygulamayla bunu yaptığını ve sonucunu kendi cümlelerinle yaz.",
+          criteria: [
+            "Dönemi ve hükümdarı adlandır.",
+            "Sorunu ve uygulamayı somutlaştır.",
+            "Sonucu bir kanıtla destekle.",
+          ],
+          guide: "Dönem → sorun → uygulama → sonuç sırasını izle.",
+          starter: "Seçtiğim dönemde … sorunu vardı; bu nedenle …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-barbaros",
+        weekIds: [12],
+        kind: "İzleme",
+        where: "s. 105 · 3. öğrenme alanı",
+        title: "Barbaros Hayreddin Paşa ve deniz kuvvetleri",
+        sourceUrl: eba("64347117dac0957fbdbc54a5c18d6e50"),
+        sourceLinkLabel: "EBA · Barbaros Hayreddin Paşa",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Deniz gücü, Preveze ve Akdeniz siyaseti",
+        intro:
+          "Karekod, Osmanlı deniz gücünün Akdeniz’deki etkisini anlatıyor. İzlerken deniz gücünün neden hem askerî hem ekonomik olduğunu not et.",
+        before: [
+          "Bir devlet için deniz gücü neden önemlidir? İki neden yaz.",
+          "Preveze Deniz Zaferi’nin günümüzde bir gün olarak anılması ne gösterir?",
+        ],
+        notes: [
+          { id: "n1", label: "Deniz gücünün ekonomik karşılığı", hint: "Ticaret yolları, limanlar, güvenlik." },
+          { id: "n2", label: "İçerikte öne çıkan bir olay ya da sefer", hint: "Adı ve sonucu." },
+          { id: "n3", label: "Deniz gücü ile kara gücü arasındaki fark", hint: "Hız, erişim, süreklilik." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Deniz ticaret yollarını denetlemek bir devlete ne kazandırır?",
+            options: [
+              "Yalnızca askerî üstünlük",
+              "Ekonomik gelir ve siyasi pazarlık gücü",
+              "Nüfus artışı",
+              "Tarımsal verim",
+            ],
+            answer: 1,
+            explanation: "Ticaret yollarının denetimi gelir ve pazarlık gücü üretir; askerî güç bunun aracıdır.",
+            hint: "Gelir ve güç ilişkisini düşün.",
+          },
+          {
+            id: "q2",
+            prompt: "Tarihî bir zaferin günümüzde anma günü olması ne sağlar?",
+            options: [
+              "Olayın tarihini değiştirir",
+              "Toplumsal hafızayı canlı tutar",
+              "Askerî gücü artırır",
+              "Ekonomik gelir sağlar",
+            ],
+            answer: 1,
+            explanation: "Anma günleri ortak hafızayı ve kuşaklar arası aktarımı canlı tutar.",
+            hint: "Hatırlamak neyi korur?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: denizden gelen güç",
+          instruction:
+            "Osmanlı’nın denizlerde güçlenmesinin iki sonucunu yaz; bu sonuçlardan birinin günümüz Türkiye’sine uzanan izini açıkla.",
+          criteria: [
+            "İki sonucu ayrı yaz.",
+            "Birini ekonomik, birini siyasi açıdan kur.",
+            "Günümüzle bağ kur.",
+          ],
+          guide: "Gelişme → sonuç → günümüz bağlantısı sırasını izle.",
+          starter: "Osmanlı’nın denizlerde güçlenmesi … sonucunu doğurdu.",
+          minChars: 160,
+        },
+      },
+      {
+        id: "qr-etkilesimli-harita",
+        weekIds: [12],
+        kind: "Etkileşimli harita",
+        where: "s. 106 · 3. öğrenme alanı",
+        title: "Osmanlı Devleti’nin XVI. yüzyıl haritası",
+        sourceUrl: eba("1761fd63303ecc07765ffc8e7d22ac92"),
+        sourceLinkLabel: "EBA · Etkileşimli Osmanlı haritası",
+        sourceLinkType: "harita",
+        minutes: 7,
+        focus: "Harita okuma, sınırlar ve ticaret yolları",
+        intro:
+          "Karekod, Osmanlı Devleti’nin XVI. yüzyıldaki hâkimiyet alanlarını etkileşimli olarak gösteriyor. Haritayı açmadan önce tahminini yaz; açtıktan sonra tahmininle karşılaştır.",
+        before: [
+          "XVI. yüzyılda Osmanlı Devleti’nin üç kıtada hangi bölgelere ulaştığını tahmin et.",
+          "Haritada önce neye bakarsın: sınırlar mı, denizler mi, ticaret yolları mı? Neden?",
+        ],
+        notes: [
+          { id: "n1", label: "Haritada gördüğüm üç bölge", hint: "Bölge ya da deniz adı yaz." },
+          { id: "n2", label: "Ticaret yollarının geçtiği iki liman", hint: "Liman kenti adı." },
+          { id: "n3", label: "Tahminimle örtüşmeyen nokta", hint: "Beklediğimden farklı olan yer." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Bir haritayı okurken önce neye bakmak gerekir?",
+            options: [
+              "Renklere",
+              "Başlığa, lejanta ve ölçeğe",
+              "Yazı tipine",
+              "Sayfanın boyutuna",
+            ],
+            answer: 1,
+            explanation: "Başlık konuyu, lejant işaretlerin anlamını, ölçek mesafeyi verir; okuma bunlarla başlar.",
+            hint: "Haritanın “anahtarı” hangisi?",
+          },
+          {
+            id: "q2",
+            prompt: "Ticaret yollarının yön değiştirmesi Osmanlı ekonomisini neden etkiler?",
+            options: [
+              "Yollar yalnızca ulaşımı ilgilendirdiği için",
+              "Gelir kaynağı olan güzergâh ve limanların önemini değiştirdiği için",
+              "Haritalar yeniden çizildiği için",
+              "Nüfus azaldığı için",
+            ],
+            answer: 1,
+            explanation: "Osmanlı gelirinin önemli bir kısmı ticaret yolları ve limanlardan geliyordu; yön değişimi bu geliri etkiler.",
+            hint: "Gelir nereden geliyordu?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: haritadan üç çıkarım",
+          instruction:
+            "Etkileşimli haritayı inceledikten sonra üç çıkarım yaz: bir sınır, bir ekonomi, bir siyaset çıkarımı. Her birine haritadan kanıt ekle.",
+          criteria: [
+            "Üç çıkarımı ayrı yaz.",
+            "Her çıkarıma bir kanıt ekle.",
+            "Bir çıkarımı kendi cümlenle değerlendir.",
+          ],
+          guide: "Gözlem → çıkarım → kanıt sırasını izle.",
+          starter: "Haritada … gördüm; bundan … çıkarımını yapıyorum.",
+          minChars: 160,
+        },
+      },
+      {
+        id: "qr-osmanli-yenilikler",
+        weekIds: [14],
+        kind: "İzleme",
+        where: "s. 130 · 3. öğrenme alanı",
+        title: "Osmanlı Devleti’nde sanayileşme çabaları",
+        sourceUrl: eba("ea26c7d6df42f305e0ec140ccf58402d"),
+        sourceLinkLabel: "EBA · Osmanlı’da sanayileşme",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Sanayi İnkılabı’nın Osmanlı ekonomisine etkisi ve yenilik arayışı",
+        intro:
+          "Karekod, Osmanlı’nın fabrikalaşma çabalarını ve bu çabaların neden beklenen sonucu vermediğini anlatıyor. İzlerken nedenleri ve sonuçları ayrı ayrı not et.",
+        before: [
+          "El tezgâhı ile fabrika üretimi arasındaki iki farkı yaz.",
+          "Bir ülkenin sanayileşmesini engelleyen üç etken say.",
+        ],
+        notes: [
+          { id: "n1", label: "Osmanlı’nın sanayileşme adımı", hint: "Mektep, fabrika, teşvik…" },
+          { id: "n2", label: "Çabaları sınırlayan iki neden", hint: "Sermaye, teknoloji, nitelikli iş gücü, ulaşım." },
+          { id: "n3", label: "Bu dönemin günümüze bakan sonucu", hint: "Sanayi mirası ya da eksik kalan alan." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Sanayi İnkılabı’nın Osmanlı esnafı üzerindeki ilk etkisi ne oldu?",
+            options: [
+              "Üretim maliyetlerinin düşmesi",
+              "Ucuz ithal mallarla rekabet edememek",
+              "İhracatın artması",
+              "Nüfusun köylere dönmesi",
+            ],
+            answer: 1,
+            explanation: "Seri üretim ucuz mal üretti; el tezgâhı ürünleri rekabette geriledi.",
+            hint: "Fiyat farkı kimin aleyhineydi?",
+          },
+          {
+            id: "q2",
+            prompt: "Bir yeniliğin başarısını değerlendirmek için hangi üçlü gereklidir?",
+            options: [
+              "Tarih, yer, kişi",
+              "Amaç, uygulama, sonuç",
+              "Ad, bütçe, süre",
+              "Belge, fotoğraf, harita",
+            ],
+            answer: 1,
+            explanation: "Amaç, uygulama ve sonuç birlikte okunmadan bir yenilik değerlendirilemez.",
+            hint: "Neden yapıldı, nasıl yapıldı, ne oldu?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: bir yeniliğin bilançosu",
+          instruction:
+            "Osmanlı’nın yeniliklerinden birini seç. Amaç, uygulama ve sonucu yaz; sonucun neden beklenenden farklı olduğunu gerekçelendir.",
+          criteria: [
+            "Üç başlığı ayrı ayrı ele al.",
+            "Bir sınırlılık belirt.",
+            "Gerekçeni somut bir nedene bağla.",
+          ],
+          guide: "Amaç → uygulama → sonuç → gerekçe sırasını izle.",
+          starter: "Seçtiğim yenilik …; amacı …",
+          minChars: 170,
+        },
+      },
+      {
+        id: "qr-fetih-marsi",
+        weekIds: [15],
+        kind: "İzleme",
+        where: "s. 146 · 3. öğrenme alanı",
+        title: "Fetih Marşı videosu",
+        sourceUrl: eba("8bb724f386e46afc6d07b4cf1094ab70"),
+        sourceLinkLabel: "EBA · Fetih Marşı",
+        sourceLinkType: "video",
+        minutes: 4,
+        focus: "Edebî metin, ortak hafıza ve kültürel aktarım",
+        intro:
+          "Karekod, Osmanlı kültür ve medeniyeti bölümünde geçen Fetih Marşı’nı seslendiriyor. Dinlerken metnin hangi duyguyu öne çıkardığını ve hangi tarihî olaya gönderme yaptığını belirle.",
+        before: [
+          "Bir marşın toplum hayatındaki işlevi ne olabilir? İki madde yaz.",
+          "“Fetih” sözcüğü sende hangi çağrışımları uyandırıyor?",
+        ],
+        notes: [
+          { id: "n1", label: "Marşın öne çıkardığı duygu", hint: "Coşku, gurur, kararlılık, umut…" },
+          { id: "n2", label: "Gönderme yapılan olay", hint: "Hangi fetih, hangi dönem?" },
+          { id: "n3", label: "Metinde tekrar eden söz ya da imge", hint: "Bir dize yeter." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Tarihî bir olayın marş ya da şiirle aktarılması ne sağlar?",
+            options: [
+              "Olayın tarihini kesinleştirir",
+              "Duyguyu ve ortak hafızayı kuşaklara taşır",
+              "Olayı belgeye dönüştürür",
+              "Olayın yorumunu tekilleştirir",
+            ],
+            answer: 1,
+            explanation: "Edebî metinler olayı duyguyla birlikte taşır; bu da ortak hafızayı canlı tutar.",
+            hint: "Marş mı, belge mi?",
+          },
+          {
+            id: "q2",
+            prompt: "Bir edebî metni tarih kaynağı olarak kullanırken neye dikkat etmelisin?",
+            options: [
+              "Metni olduğu gibi kanıt saymak",
+              "Metnin duygu ve yorum içerdiğini hesaba katmak",
+              "Yalnızca kafiye düzenine bakmak",
+              "Yazarın yaşını öğrenmek",
+            ],
+            answer: 1,
+            explanation: "Edebî metin yorum ve duygu içerir; tarihî kanıtla birlikte değerlendirilmelidir.",
+            hint: "Metin neyi doğrudan kanıtlar?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: bir dizeyi yorumla",
+          instruction:
+            "Dinlediğin marştan bir dize seç. Bu dizenin hangi tarihî olaya, hangi duyguya ve hangi değere bağlandığını yaz.",
+          criteria: [
+            "Dizeyi alıntıla.",
+            "Olay ve duyguyu ayrı ayrı belirt.",
+            "Değerle bağlantısını kur.",
+          ],
+          guide: "Dize → olay → duygu → değer sırasını izle.",
+          starter: "Seçtiğim dize …; bu dize … olayını hatırlatıyor.",
+          minChars: 150,
+        },
+      },
+      {
+        id: "qr-3d-gunluk-yasam",
+        weekIds: [15],
+        kind: "Artırılmış gerçeklik",
+        where: "s. 147 · 3. öğrenme alanı",
+        title: "3D: günlük yaşam ve toplum hayatı",
+        sourceUrl: eba("a1ed545e12246ab79b8cf219aeb4b619"),
+        sourceLinkLabel: "EBA · 3D günlük yaşam içeriği",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Gündelik yaşam, toplumsal roller ve mekân",
+        intro:
+          "Karekod, Osmanlı’da günlük yaşamı üç boyutlu olarak gösteriyor. İzlerken bir günün hangi mekânlarda geçtiğini ve kimlerin hangi rolleri üstlendiğini not et.",
+        before: [
+          "Bir gününü hangi mekânlarda geçiriyorsun? Üçünü yaz.",
+          "Gündelik yaşamı en çok ne belirler: inanç, ekonomi, gelenek, teknoloji?",
+        ],
+        notes: [
+          { id: "n1", label: "İçerikte görülen iki mekân", hint: "Ev, cami, çarşı, medrese, hamam…" },
+          { id: "n2", label: "İki toplumsal rol", hint: "Esnaf, öğrenci, vakıf görevlisi…" },
+          { id: "n3", label: "Bugünle benzerlik ve fark", hint: "Bir benzerlik, bir fark yeter." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Gündelik yaşam tarihini incelemek ne kazandırır?",
+            options: [
+              "Yalnızca saray hayatını öğretir",
+              "Sıradan insanın yaşamını ve toplumsal rolleri görünür kılar",
+              "Savaşları tarihlendirir",
+              "Ekonomiyi ölçer",
+            ],
+            answer: 1,
+            explanation: "Gündelik yaşam, sıradan insanı ve toplumsal rolleri görünür kılar; tarih yalnızca yönetenlerden ibaret değildir.",
+            hint: "Kimin hayatı görünür oluyor?",
+          },
+          {
+            id: "q2",
+            prompt: "Üç boyutlu bir içeriği incelerken hangi yaklaşım daha verimlidir?",
+            options: [
+              "Yalnızca görüntüyü beğenmek",
+              "Mekânı, kişileri ve eylemleri ayrı ayrı gözlemlemek",
+              "İçeriği hızlıca kapatmak",
+              "Yalnızca sesi dinlemek",
+            ],
+            answer: 1,
+            explanation: "Mekân, kişi ve eylem ayrımı gözlemi düzenler; not almayı ve çıkarım yapmayı kolaylaştırır.",
+            hint: "Neyi, kimle, ne yaparken?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: bir günün öyküsü",
+          instruction:
+            "Osmanlı’da yaşayan bir kişinin bir gününü kendi cümlelerinle yaz. Üç mekân, iki rol ve bir gelenek yer alsın.",
+          criteria: [
+            "Üç mekânı adlandır.",
+            "İki toplumsal rolü göster.",
+            "Bir geleneği somut bir davranışla anlat.",
+          ],
+          guide: "Sabah → iş → toplumsal yaşam → akşam sırasını izle.",
+          starter: "Sabah … mektebine giden …",
+          minChars: 180,
+        },
+      },
+      {
+        id: "qr-ahi-teskilati",
+        weekIds: [15],
+        kind: "İzleme",
+        where: "s. 150 · 3. öğrenme alanı",
+        title: "Ahi teşkilatı",
+        sourceUrl: eba("218994cef89cb74b5ae00d91da2c821d"),
+        sourceLinkLabel: "EBA · Ahi teşkilatı",
+        sourceLinkType: "video",
+        minutes: 5,
+        focus: "Esnaf örgütlenmesi, meslek ahlakı ve dayanışma",
+        intro:
+          "Karekod, ahilik kültürünü ve lonca teşkilatını anlatıyor. İzlerken bir esnafın uyması gereken ilkeleri ve bu ilkelerin günümüzdeki karşılığını not et.",
+        before: [
+          "Bir esnafın güven kazanması için ne yapması gerekir? Üç madde yaz.",
+          "“Meslek ahlakı” ifadesi sana ne anlatıyor?",
+        ],
+        notes: [
+          { id: "n1", label: "Ahiliğin iki temel ilkesi", hint: "Dürüstlük, cömertlik, kalite, dayanışma…" },
+          { id: "n2", label: "Teşkilatın üstlendiği toplumsal işlev", hint: "Eğitim, denetim, yardımlaşma." },
+          { id: "n3", label: "Bugünkü karşılığı", hint: "Esnaf odası, meslek lisansı, tüketici hakları…" },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Ahilikte üreticiyi denetleyen temel ölçüt neydi?",
+            options: [
+              "Ürünün fiyatının en düşük olması",
+              "Kalite ve dürüstlük ilkelerine uygunluk",
+              "Satış sayısının yüksekliği",
+              "Dükkânın büyüklüğü",
+            ],
+            answer: 1,
+            explanation: "Ahilikte kalite ve dürüstlük esastı; denetim bunlar üzerinden yapılırdı.",
+            hint: "Fiyat mı, ilke mi?",
+          },
+          {
+            id: "q2",
+            prompt: "Meslek örgütlerinin günümüzdeki işlevi hangisiyle örtüşür?",
+            options: [
+              "Rekabeti tamamen kaldırmak",
+              "Standart belirlemek ve meslek etiğini gözetmek",
+              "Fiyatları tek elden saptamak",
+              "Üyelerin işini devralmak",
+            ],
+            answer: 1,
+            explanation: "Meslek örgütleri standart ve etik gözetir; rekabeti kaldırmaz.",
+            hint: "Standart ve etik kelimelerine bak.",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: günümüz esnafı için üç ilke",
+          instruction:
+            "Ahiliğin ilkelerinden yararlanarak günümüz esnafı için üç ilke yaz; her ilkeyi somut bir davranışla örneklendir.",
+          criteria: [
+            "Üç ilkeyi ayrı yaz.",
+            "Her ilkeye bir davranış örneği ekle.",
+            "Bir ilkenin neden önemli olduğunu açıkla.",
+          ],
+          guide: "İlke → davranış → gerekçe sırasını izle.",
+          starter: "İlk ilke …; bu ilke … demektir.",
+          minChars: 160,
+        },
+      },
+      {
+        id: "qr-etkilesimli-kultur-video",
+        weekIds: [15],
+        kind: "Etkileşimli video",
+        where: "s. 151 · 3. öğrenme alanı",
+        title: "Osmanlı kültür ve medeniyeti etkileşimli videosu",
+        sourceUrl: eba("c2768a5382050f9c7ec0b81934dcd743"),
+        sourceLinkLabel: "EBA · Kültür ve medeniyet etkileşimli video",
+        sourceLinkType: "video",
+        minutes: 8,
+        focus: "Yönetim, eğitim, hukuk, sanat ve gündelik yaşamın birlikte okunması",
+        intro:
+          "Karekod, Osmanlı kültür ve medeniyetini yönetim, eğitim, hukuk, sanat ve gündelik yaşam başlıklarıyla ilişkilendiriyor. İzlerken her başlık için bir örnek not et.",
+        before: [
+          "“Kültür” ve “medeniyet” kavramlarını birer örnekle ayırt et.",
+          "Bir toplumun gündelik yaşamından hangi bilgiler tarihe kaynaklık eder?",
+        ],
+        notes: [
+          { id: "n1", label: "Yönetim ve hukukla ilgili bir örnek", hint: "Divan, kadı, kanun…" },
+          { id: "n2", label: "Eğitim veya sanatla ilgili bir örnek", hint: "Mektep, medrese, hat, minyatür…" },
+          { id: "n3", label: "Gündelik yaşamdan bir ayrıntı", hint: "Ev, mutfak, giyim, eğlence…" },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Kültür ile medeniyet arasındaki ilişki hangisiyle açıklanır?",
+            options: [
+              "Birbirini dışlayan iki alandır.",
+              "Kültür bir toplumun yaşayışını, medeniyet ortak kurum ve birikimi anlatır.",
+              "İkisi de yalnızca sanatla ilgilidir.",
+              "Medeniyet yalnızca yönetim biçimidir.",
+            ],
+            answer: 1,
+            explanation: "Kültür toplumun yaşayışını, medeniyet ise kurumlar ve ortak birikimi kapsar; biri diğerini dışlamaz.",
+            hint: "Yaşayış mı, kurumlar mı?",
+          },
+          {
+            id: "q2",
+            prompt: "Etkileşimli bir içerikten en iyi yararlanma yolu hangisidir?",
+            options: [
+              "Yalnızca başlıkları okumak",
+              "Duraklatıp not almak ve soruları içerikle yanıtlamak",
+              "İçeriği sonuna kadar hızlı geçmek",
+              "Yalnızca görselleri izlemek",
+            ],
+            answer: 1,
+            explanation: "Duraklayıp not almak ve yanıtları içerikte aramak kalıcı öğrenmeyi sağlar.",
+            hint: "Not al ve doğrula.",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: beş başlıkta Osmanlı kültürü",
+          instruction:
+            "Yönetim, eğitim, hukuk, sanat ve gündelik yaşam başlıklarından üçünü seç. Her biri için bir örnek ve bu örneğin bugüne kalan izini yaz.",
+          criteria: [
+            "Üç başlığı ayrı paragrafta ele al.",
+            "Her başlıkta somut bir örnek ver.",
+            "En az bir örnek için bugüne kalan izi açıkla.",
+          ],
+          guide: "Başlık → örnek → işlev → bugüne kalan iz sırasını izle.",
+          starter: "Yönetim alanında …; bu uygulama … işlevini görüyordu.",
+          minChars: 190,
+        },
+      },
+    ],
+  };
+})();

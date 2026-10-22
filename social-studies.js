@@ -31,9 +31,9 @@
   const SOCIAL_AI_HINTS = new Set(['reread', 'evidence', 'explain', 'compare', 'recheck', 'connect', 'example', 'source']);
 
   const UNITS = [
-    { id: 'together', label: '1. Öğrenme Alanı', title: 'Birlikte Yaşamak', pages: '12–58' },
-    { id: 'world', label: '2. Öğrenme Alanı', title: 'Evimiz Dünya', pages: '68–83' },
-    { id: 'heritage', label: '3. Öğrenme Alanı', title: 'Ortak Mirasımız', pages: '86–155' },
+    { id: 'together', label: '1. Öğrenme Alanı', title: 'Birlikte Yaşamak', pages: '10–55' },
+    { id: 'world', label: '2. Öğrenme Alanı', title: 'Evimiz Dünya', pages: '56–83' },
+    { id: 'heritage', label: '3. Öğrenme Alanı', title: 'Ortak Mirasımız', pages: '84–159' },
   ];
   const UNIT_BY_ID = new Map(UNITS.map((unit) => [unit.id, unit]));
 
@@ -403,10 +403,10 @@
     { id: 9, date: '9–13 Kas', unitId: 'heritage', olds: [19, 20], topic: 'Anadolu’da Türk beylikleri ve Osmanlı Beyliği’nin kuruluşu', focus: 'Haritadan yararlanarak Anadolu’nun siyasi yapısını açıkla; kuruluş yerinin güçlü, zayıf, fırsat ve tehdit yönlerini değerlendir.', tasks: ['Anadolu’daki beyliklerin dağılışını haritadan oku.','Kuruluş yerinin iki güçlü yönünü yaz.','Bir fırsat ve bir tehdit belirle.','Beylikten devlete geçişin nedenlerini sırala.'] },
     { id: 10, date: '23–27 Kas', unitId: 'heritage', olds: [21, 22], topic: 'Osmanlı’nın büyüme politikaları ve ilk genişleme', focus: 'Gaza, fetih, iskân ve istimalet kavramlarını örneklerle açıkla; Osman Bey’den Orhan Bey’e yaşanan gelişmeleri zaman sırasına koy.', tasks: ['Dört büyüme politikasını birer örnekle açıkla.','Kuruluş dönemi gelişmelerini tarih sırasına diz.','İskân ve istimaletin işlevini karşılaştır.','Bir fetih kararının nedenlerini yaz.'] },
     { id: 11, date: '30 Kas–4 Ara', unitId: 'heritage', olds: [23, 24], topic: 'Balkanlarda genişleme ve İstanbul’un fethi', focus: 'Balkanlardaki genişlemenin devleti güçlendirmesini ve İstanbul’un fethinin neden, hazırlık ve sonuçlarını neden–sonuç ilişkisi içinde açıkla.', tasks: ['Balkanlarda izlenen yerleşim politikasını açıkla.','Fethin iki nedenini ve iki hazırlığını yaz.','Fethin sonuçlarını dünya tarihi açısından değerlendir.','Bir olayın neden–sonuç zincirini kur.'] },
-    { id: 12, date: '7–11 Ara', unitId: 'heritage', olds: [25, 26], topic: 'Yavuz ve Kanuni dönemleri, deniz seyahatleri ve ekonomi', focus: 'Harita ve ticaret yollarından yararlanarak Osmanlı’nın doğu ve Akdeniz siyasetini, deniz yollarının ekonomiye etkisini açıkla.', tasks: ['Yavuz ve Kanuni dönemi kazanımlarını haritada işaretle.','Ticaret yollarının yön değiştirmesinin sonucunu yaz.','Osmanlı ekonomisini etkileyen iki gelişmeyi açıkla.','Bir haritadan üç çıkarım yaz.'] },
+    { id: 12, date: '7–11 Ara', unitId: 'heritage', olds: [25, 26], topic: 'Yavuz ve Kanuni dönemleri, deniz seyahatleri, sömürgecilik ve ekonomi', focus: 'Harita ve ticaret yollarından yararlanarak Osmanlı’nın doğu ve Akdeniz siyasetini, deniz yollarının ekonomiye etkisini açıkla; büyük deniz seyahatlerinin sömürgecilik boyutunu ve yerli halklar üzerindeki etkisini değerlendir.', tasks: ['Yavuz ve Kanuni dönemi kazanımlarını haritada işaretle.','Ticaret yollarının yön değiştirmesinin sonucunu yaz.','Sömürgeciliğin yerli halk ve Osmanlı ekonomisi için sonucunu yaz.','Bir haritadan üç çıkarım yaz.'] },
     { id: 13, date: '14–18 Ara', unitId: 'heritage', olds: [27, 28, 29], topic: 'Rönesans, Reform ve Aydınlanma: değişen dünya', focus: 'Avrupa’daki bilim, sanat ve düşünce değişimini neden ve sonuçlarıyla açıkla; bu değişimlerin Osmanlı’ya yansımalarını değerlendir.', tasks: ['Rönesans’ın iki sonucunu yaz.','Reformun nedenlerini ve sonuçlarını ayır.','Aydınlanma düşüncesinin bilime etkisini açıkla.','Bu değişimlerin Osmanlı’ya yansımasına bir örnek ver.'] },
-    { id: 14, date: '21–25 Ara', unitId: 'heritage', olds: [30, 31, 32], topic: 'Sanayi İnkılabı ve Osmanlı’nın yenilik arayışları', focus: 'Makineleşmenin üretim ve toplum hayatını nasıl değiştirdiğini açıkla; Osmanlı yeniliklerini amaç, uygulama ve sonuç bakımından yorumla.', tasks: ['Sanayi İnkılabı’nın üç sonucunu yaz.','Bir Osmanlı yeniliğinin amacını ve sonucunu açıkla.','Yeniliklerin neden beklenen sonucu vermediğini tartış.','Üretim biçimindeki değişimi örnekle göster.'] },
-    { id: 15, date: '28–31 Ara', unitId: 'heritage', olds: [33, 34], topic: 'Osmanlı kültür ve medeniyeti, kültürel miras araştırması', focus: 'Eğitim, hukuk, sanat ve gündelik yaşamdan izleri yorumla; kültürel miras için sorunu, kanıtı ve öneriyi içeren bir araştırma raporu hazırla.', tasks: ['Kültür ve medeniyete üç örnek ver.','Bir miras öğesinin bugüne kalan izini açıkla.','Rapor için soru, kaynak ve kanıt planı yaz.','Dönem boyunca öğrendiğin üç kavramı ilişkilendir.'] },
+    { id: 14, date: '21–25 Ara', unitId: 'heritage', olds: [30, 31, 32], topic: 'Sanayi İnkılabı, Fransız İhtilali, Lale Devri ve Osmanlı’nın yenilik arayışları', focus: 'Makineleşmenin üretim ve toplum hayatını nasıl değiştirdiğini açıkla; Fransız İhtilali’nin yaydığı fikirlerin ve Lale Devri’nde görülen yeniliklerin Osmanlı’daki yansımalarını amaç, uygulama ve sonuç bakımından yorumla.', tasks: ['Sanayi İnkılabı’nın üç sonucunu yaz.','Fransız İhtilali’nin yaydığı iki fikri ve Osmanlı’ya yansımasını yaz.','Lale Devri’nde görülen iki yeniliği alanıyla eşleştir.','Bir Osmanlı yeniliğinin amacını ve sonucunu açıkla.'] },
+    { id: 15, date: '28–31 Ara', unitId: 'heritage', olds: [33, 34], topic: 'Osmanlı kültür ve medeniyeti: yönetim, eğitim, hukuk, sanat, vakıf ve ahi kültürü', focus: 'Divan teşkilatını, eğitim ve hukuk kurumlarını, sanat dallarını, vakıf kültürünü ve ahi-lonca teşkilatını günümüzdeki karşılıklarıyla eşleştir; kültürel miras için sorunu, kanıtı ve öneriyi içeren bir araştırma raporu hazırla.', tasks: ['Divan üyelerini günümüzdeki görevlerle eşleştir.','Vakıf ve ahi kültürünün toplumsal işlevini iki örnekle açıkla.','Bir miras öğesinin bugüne kalan izini açıkla.','Rapor için soru, kaynak ve kanıt planı yaz.'] },
   ];
 
   const SOURCE_WEEK_BY_ID = new Map(SOURCE_WEEKS.map((item) => [item.id, item]));
@@ -568,6 +568,26 @@
         },
       ];
     }
+  }
+
+  // Ek katman: haftalık ek okuma metinleri ve kitaptaki tekniklerle kurulmuş ek
+  // çalışmalar (balık kılçığı, GZFT, sınıflama, kelime bulutu, zaman şeridi).
+  // Ek çalışmalar ana etkinliklerin ardına aynı kart biçimiyle eklenir; 9–15. haftalarda
+  // konu anlatımını genişleten ek paragraf da bu dosyadan gelir.
+  const EXTRAS = window.SOCIAL_EXTRAS && window.SOCIAL_EXTRAS.weeks ? window.SOCIAL_EXTRAS.weeks : {};
+  for (const item of WEEKS) {
+    const extra = EXTRAS[item.id];
+    if (!extra) continue;
+    if (extra.summaryExtra) item.summary = `${item.summary}\n\n${extra.summaryExtra}`;
+    if (!Array.isArray(extra.activities) || !extra.activities.length) continue;
+    const extraActivities = extra.activities.map((activityItem) => ({
+      ...activityItem,
+      fields: Array.isArray(activityItem.fields)
+        ? activityItem.fields
+        : (Array.isArray(activityItem.questions) ? activityItem.questions.flatMap((questionItem) => questionItem.fields || []) : []),
+    }));
+    item.activities = [...item.activities, ...extraActivities];
+    item.flowDescription = `${item.flowDescription} Ek okuma, sınıflandırma ve yazma çalışmaları aynı akışın sonunda yer alır.`;
   }
 
   const WEEK_BY_ID = new Map(WEEKS.map((item) => [item.id, item]));
@@ -1234,6 +1254,13 @@
     </section>`;
   }
 
+  // Karekod çalışmaları: Türkçe'deki karekod kartlarıyla aynı düzen. İçerik
+  // `social-studies-qr.js` dosyasından gelir; haftanın kartı yoksa bölüm gizlenir.
+  function socialQrSectionHTML() {
+    if (!window.SOCIAL_QR || !Array.isArray(window.SOCIAL_QR.units) || !window.SOCIAL_QR.units.length) return '';
+    return `<section class="card social-qr-entry" id="socialQr" hidden aria-label="Karekod izleme ve etkileşimli içerik çalışmaları"><h3 id="socialQrTitle">Karekod çalışmaları · izleme ve etkileşimli içerik</h3><p class="qr-lead">Bu haftanın karekodla açılan içeriği için izleme öncesi hazırlık, izlerken not alma ve izledikten sonra düşünme adımları. Kaynak bağlantısı kartın üstünde duruyor; açılmazsa kitabındaki karekodu kullan. Yanıtların bu tarayıcıda, ders ilerlemesinden ayrı saklanır.</p><div id="socialQrBody"></div></section>`;
+  }
+
   function renderSelectedWeek() {
     const prompt = document.getElementById('socialWeekPrompt');
     const content = document.getElementById('socialWeekContent');
@@ -1263,6 +1290,7 @@
         <div class="social-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul class="social-summary-points">${item.summaryPoints.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div><div class="social-key-terms"><h4>Anahtar kavramlar</h4><div>${item.keyTerms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div></div></div>
       </section>
       ${renderActivityFlow(item, saved)}
+      ${socialQrSectionHTML()}
       <div class="social-grid-two">
         <section class="card social-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(item.source)}</small></section>
         <section class="card social-mini-plan"><h3>Öğrenci için mini plan</h3><p>Görevleri tamamladıkça işaretle. Yanıtlar bu tarayıcıda saklanır.</p><div class="social-task-list">${item.tasks.map((task, index) => `<label class="social-task"><input type="checkbox" data-social-task="${index}" data-social-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section>
@@ -1274,6 +1302,7 @@
         <td><a class="social-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ çalışmaları ↗</a><small class="social-provider-note">MEBİ Sosyal Bilgiler öğrenci bölümü.</small><label class="social-provider-check"><input type="checkbox" data-social-provider="mebi" data-social-week="${item.id}" ${saved.platforms.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
       </tr></tbody></table></div></section>
       <p class="social-plan-source">${escapeHTML(item.source)} Haftalık dağılım ev çalışması için öneridir; sınıfta işlenen sıra ve öğretmen planı önceliklidir. Etkinlik yönergeleri özgündür; kitaptaki soru ve metinler kopyalanmamıştır.</p>`;
+    if (typeof window.renderSocialQrFlow === 'function') window.renderSocialQrFlow(item.id);
   }
 
   function refreshProgressUI() {
