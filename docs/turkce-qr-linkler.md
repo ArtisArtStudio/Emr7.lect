@@ -9,7 +9,7 @@
 
 Aşağıdaki bağlantılar, 1. kitabın karekodlu içerik listesinin yayımlanmış hâlinden alındı (MEB 2026–2027 listesi). **Kitaptaki karekod doğrudan EBA'ya gider**; buradakiler aynı içeriğin yayımlanmış kopyasıdır. Kalıcı ve resmî olan, PDF'te gömülü EBA bağlantısıdır — onu da aynı tabloya ekleyebilirsin (bkz. bölüm 2).
 
-| # | İçerik | Hafta | Yer | Bağlantı (yayımlanmış kopya) | Kitaptaki EBA bağlantısı |
+| # | İçerik | Hafta | Yer | Bağlantı (yayımlanmış kopya) | Analiz durumu |
 |---|---|---|---|---|---|
 | 1 | Beyhan Budak ile Motivasyon Defteri | 5 | s. 69 · 4. etkinlik | [Drive](https://drive.google.com/file/d/1Dpfaf26LDPkfXzLS7Gk2CphFGY-30zqa/view) · [YouTube](https://youtu.be/d8LR9BPEd_0) | ✅ analiz alındı |
 | 2 | Sakarya Zaferi | 7–8 | s. 80 · 5. etkinlik | [Drive](https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view) | ✅ analiz alındı |
@@ -154,42 +154,76 @@ https://drive.google.com/file/d/1usInrv7jmJTtB-yHiluRAfZMyRgOjmVF/view, https://
 
 **Sıra:** 80 → 91 → 95 (Hey Onbeşli) → 95 (Sergi) → 100 (PDF) → 107 → 116. Gemini çıktısında içerik adı geçmiyorsa bu sıraya göre eşleştir.
 
+
+### Tema 2 — kitaptaki karekodun gerçek hedefi (EBA)
+
+Tema 3 listesi çıkarılırken aynı PDF taraması Tema 2 sayfalarındaki gömülü bağlantıları da verdi. Yukarıdaki Drive adresleri izleme kolaylığı için; **karekodun kitapta açtığı adres** aşağıdakiler:
+
+| Sayfa | İçerik | EBA bağlantısı |
+|---|---|---|
+| s. 93 | Konuşma Yapalım (kapsam dışı) | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c49a87fcbf6056901fa8ad6e0c3d336c&resourceType=1&resourceLocation=2 |
+| s. 95 · Hazırlık | Hey Onbeşli — Bir Çanakkale Ağıdı | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=1e663948289faea80982e4c1e04f93ef&resourceType=1&resourceLocation=2 |
+| s. 95 | Millî Mücadele Sergisi · Kahraman Çocuklar | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=67132a896a692f6a9cbeb7a0f5d14dbd&resourceType=1&resourceLocation=2 |
+| s. 100 · 6. etkinlik | Çanakkale medya metni | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=408ee74471cdf911c3b147ff707553a8&resourceType=1&resourceLocation=2 |
+| s. 107 · 6. etkinlik | 18 Mart Şehitleri Anma Günü | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=b9de66045e13bf0a84c5e281c468cfbb&resourceType=1&resourceLocation=2 |
+| s. 116 · 5. soru | Çanakkale | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=4ad051e18b4f0d3636e40d818864f9bf&resourceType=1&resourceLocation=2 |
+| s. 117 | Ek Ölçme ve Değerlendirme Soruları | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=22a349717e6034ab13508008db3cf7e6&resourceType=1&resourceLocation=2 |
+
+s. 80 (Sakarya Zaferi), s. 82 (dereceli puanlama anahtarı) ve s. 91 (Çanakkale Geçilmez) 1. ciltte kaldığı için bu taramada çıkmadı; onların bağlantısı yukarıdaki Drive listesiyle veriliyor.
+
 > Erişim notu: Bu adresler dosyanın **görüntüleme** bağlantısıdır. Gemini'nin dosyayı açabilmesi için Drive'da “bağlantıya sahip olan herkes” görüntüleyebilir olmalı; değilse Gemini erişim isteyebilir veya dosyayı açamaz.
 
 ---
 
 ## 8. Tema 3 — İletişim ve Sosyal İlişkiler (hafta 11–15) karekod listesi
 
-Tema 3'te karekodla açılan **8 içerik** var: üçü izleme videosu, beşi etkileşimli EBA çalışması. Liste, etkinlik metinlerindeki “İzlediğiniz içerikten hareketle…” ve “Erişelim: karekodu okutarak …” ifadelerinden çıkarıldı; içerik adları kitaptaki etkinlik yönergesinde geçtiği biçimde yazıldı.
+Tema 3'te karekodla açılan **14 içerik** var: **5 dinleme/izleme videosu**, 5 etkileşimli EBA çalışması, 2 ölçme aracı ve 2 tema girişi. Liste **kitabın kendi PDF'inden** çıkarıldı: karekodların hedefi PDF'te bağlantı (link annotation) olarak gömülü, adresler `pymupdf` ile okundu. Sayfa numaraları kitabın basılı sayfa numaralarıdır.
 
-| # | Sayfa · etkinlik | İçerik | Tür | Hafta | Uygulamadaki kart | Bağlantı |
-|---|---|---|---|---|---|---|
-| 1 | s. 130 · 7. ve 8. etkinlik | Düş Fırçası (Ayşe ve dedesinin yolculuğu) | İzleme videosu | 11 | — | ⏳ bekliyor |
-| 2 | s. 130 · Erişelim | “Ok” oyunu | Etkileşimli | 11 | — | ⏳ bekliyor |
-| 3 | s. 139 · 5. ve 6. etkinlik | Sadaka taşları | İzleme videosu | 12–13 | — | ⏳ bekliyor |
-| 4 | s. 140 · Erişelim | “Bağlama Oyunu” | Etkileşimli | 12–13 | — | ⏳ bekliyor |
-| 5 | s. 144 · Hazırlık | Dijital Tayfa — Komik mi Şimdi? | İzleme videosu | 14 | — | ⏳ bekliyor |
-| 6 | s. 154 · 10. etkinlik | “Karagöz Fidan Dikiyor” | Etkileşimli | 14 | — | ⏳ bekliyor |
-| 7 | s. 161 · 6. etkinlik | “Zamanı Bul” | Etkileşimli | 15 | — | ⏳ bekliyor |
-| 8 | s. 163 · 9. etkinlik | “Şiirde Ahenk” | Etkileşimli | 15 | — | ⏳ bekliyor |
+| # | Kitap yeri | İçerik | Tür | Hafta | Bağlantı |
+|---|---|---|---|---|---|
+| 1 | s. 120 · tema girişi | 3. Tema E-Özeti | EBA içeriği | — | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=f1d3b582e8a047ebb9ee86a65d6dfa49&resourceType=1&resourceLocation=2 |
+| 2 | s. 120 · tema girişi | EBA Tema Alanı | EBA alanı | — | https://www.eba.gov.tr/c?q=U19875_d8c6fb69 |
+| 3 | s. 130 · 7.–8. etkinlik | Düş Fırçası — Ayşe ve dedesinin yolculuğu | Dinleme/İzleme (video) | 11 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c37474f2ec4a8a22af545ead325b7ad9&resourceType=1&resourceLocation=2 |
+| 4 | s. 130 · Erişelim | “Ok” oyunu | Etkileşimli | 11 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=7c9f11a45b578a42f18f26bdf0e88ca6&resourceType=1&resourceLocation=2 |
+| 5 | s. 139 · 5.–6. etkinlik | Sadaka Taşı | Dinleme/İzleme (video) | 12–13 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=96d3b5324b741511cb62bb00f3344d0f&resourceType=1&resourceLocation=2 |
+| 6 | s. 140 · Erişelim | “Bağlama Oyunu” | Etkileşimli | 12–13 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=1a2d3dc3cfeec550b909ed5806d1b002&resourceType=1&resourceLocation=2 |
+| 7 | s. 144 · Hazırlık / Dinleme-İzleme | Dijital Tayfa — Komik mi Şimdi? | Dinleme/İzleme (video) | 14 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c72246e9ade8b155baf3316a6eac2f00&resourceType=1&resourceLocation=2 |
+| 8 | s. 154 · 10. etkinlik · Erişelim | “Karagöz Fidan Dikiyor” | Etkileşimli | 14 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=56d3ee5c72b3bc1c471f5dc80282d0c8&resourceType=1&resourceLocation=2 |
+| 9 | s. 161 · 6. etkinlik | İletişimin Önemi | Dinleme/İzleme (video) | 15 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=4a23110004f17e70a17055512a1addbc&resourceType=1&resourceLocation=2 |
+| 10 | s. 161 · Erişelim | “Zamanı Bul” | Etkileşimli | 15 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=f435c8914f904a81c9b0b201717cb18e&resourceType=1&resourceLocation=2 |
+| 11 | s. 162 · 7. etkinlik (C) | Dereceli Puanlama Anahtarı (konuşma) | Değerlendirme aracı | 15 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=79d3a6fde9274a775cdd6c0452d4f599&resourceType=1&resourceLocation=2 |
+| 12 | s. 163 · 9. etkinlik · Erişelim | “Şiirde Ahenk” | Etkileşimli | 15 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=25bb53c39838dd9e0175704eda64deb2&resourceType=1&resourceLocation=2 |
+| 13 | s. 169 · 4.–6. soru | Ortak Evimiz Dünya | Dinleme/İzleme (video) | 15 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=75e91ff4e295f41c8bd97c7b304e31dd&resourceType=1&resourceLocation=2 |
+| 14 | s. 169 · tema sonu | Ek Ölçme ve Değerlendirme Soruları | Ölçme | 15 | https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=cedea51cf082783763389f668425825c&resourceType=1&resourceLocation=2 |
 
-Doğrulanmayı bekleyen yerler: Öğüt metninin 6.–7. etkinliklerinde (s. 161–162) “izlediğiniz içerik” diye anılan ayrı bir video, s. 166 “Sevgilerde” serbest okuma metni ve s. 167–173 tema ölçmesi. Bunların karekod taşıyıp taşımadığı kitap sayfasından teyit edilmediği için tabloya alınmadı.
-
-### Bağlantılar neden boş
-
-- **Yayımlanmış liste yok:** 7. sınıf Türkçe karekodlu içerik listelerini toplayan kaynaklarda 1. ve 2. tema yayımlandı, 3. tema bölümü hâlâ “Hazırlanıyor…” durumunda.
-- **Drive'da dosya yok:** “3. Tema”, “Eskici”, “Dijital Tayfa”, “Öğüt”, “Karagöz” adlarıyla yapılan Drive aramaları 0 sonuç verdi; hesapta yalnız 1. ve 2. tema videoları var.
-- **Kitap PDF'i okunamıyor:** Drive'daki `turkce7-1.pdf` 77 MB; metin çıkarma aracının 25 MB sınırını aşıyor. Karekod görüntüsü zaten metne dönüşmediği için bu yolla da çözülemez.
-- **Kural:** doğrulanmamış bağlantı listeye yazılmaz. Uydurulmuş bir ID, Gemini'ye yanlış video izletmekten daha zararlı.
+**Not:** Karekodun kendisi (görüntü) ayrıca çözülmeye çalışıldı; bu PDF'te karekodlar vektör olarak çizildiği için `opencv` okuyamadı. Ancak PDF'in bağlantı katmanı karekodun hedefini birebir verir; adresler buradan alındı.
 
 ### Gemini'ye toplu verilecek bağlantılar (virgülle ayrılmış)
 
-Bağlantılar doğrulandığında bu satır **sayfa sırasıyla** doldurulacak; biçim Tema 2 ile aynı:
+Yalnız **dinleme/izleme videoları**, sayfa sırasıyla:
 
 ```text
-<Düş Fırçası · s.130>, <Sadaka taşları · s.139>, <Dijital Tayfa · s.144>
+https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c37474f2ec4a8a22af545ead325b7ad9&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=96d3b5324b741511cb62bb00f3344d0f&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=c72246e9ade8b155baf3316a6eac2f00&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=4a23110004f17e70a17055512a1addbc&resourceType=1&resourceLocation=2, https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=75e91ff4e295f41c8bd97c7b304e31dd&resourceType=1&resourceLocation=2
 ```
 
-**Sıra:** 130 (Düş Fırçası) → 139 (sadaka taşları) → 144 (Dijital Tayfa). Etkileşimli çalışmalar (Ok, Bağlama Oyunu, Karagöz Fidan Dikiyor, Zamanı Bul, Şiirde Ahenk) EBA uygulamasıdır; Gemini'ye verilecek video değildir, bu yüzden virgüllü satıra girmez.
+**Sıra:** 130 (Düş Fırçası) → 139 (Sadaka Taşı) → 144 (Dijital Tayfa) → 161 (İletişimin Önemi) → 169 (Ortak Evimiz Dünya). Gemini çıktısında içerik adı geçmiyorsa bu sıraya göre eşleştir.
 
-> Uygulama notu: `tema3-practice.js` içinde karekod kartı **yok**; 32 etkinlik metne ve beceriye dayalı. Video dökümü geldiğinde 11, 12–13 ve 14. haftalara Tema 2'deki şablonla kart eklenebilir.
+> **Erişim uyarısı:** Bu adresler `ders.eba.gov.tr` yönlendirme sayfalarıdır; EBA oturumu istemeden video akışını vermez. Gemini bağlantıyı doğrudan açamazsa iki yol var: (a) içerik kitaptaki karekodla açılıp video dosyası Drive'a yüklenir ve Drive `/view` bağlantısı verilir (Tema 2'de olduğu gibi), (b) döküm/not öğrenci tarafından yapıştırılır.
+
+### Tema 3 için düzeltilen noktalar
+
+- Öğüt metninin 6. etkinliğinde (s. 161) anılan “izlediğiniz içerik” **“İletişimin Önemi”** videosudur; ilk envanterde eksikti.
+- s. 169'daki **“Ortak Evimiz Dünya”** videosu tema ölçmesinin 4.–6. sorularına kaynaklık eder; ilk envanterde yoktu.
+- s. 120'de iki karekod var: **3. Tema E-Özeti** ve **EBA Tema Alanı**. Bunlar etkinlik değil, tema girişi.
+- s. 162'deki karekod **konuşma** dereceli puanlama anahtarıdır; konuşma etkinlikleri kapsam dışı olduğu için uygulamaya alınmaz.
+- “Bağlama Oyunu” s. 140'ta doğrulandı (önceki notta s. 140 için ad yazılmamıştı).
+
+> Uygulama notu: `tema3-practice.js` içinde karekod kartı **yok**; 32 etkinlik metne ve beceriye dayalı. Döküm geldiğinde 11, 12–13, 14 ve 15. haftalara Tema 2'deki şablonla kart eklenebilir.
+
+### Ek — Tema 1–2'de PDF'ten çıkan, listede olmayan bağlantılar
+
+Aynı PDF taraması Tema 1–2'de üç bağlantı daha gösterdi; bunlar etkinlik/video değil, tema girişi:
+
+- s. 10 — 1. Tema E-Özeti · EBA Tema Alanı (`https://www.eba.gov.tr/c?q=U19885_f401a650`)
+- s. 74 — 2. Tema E-Özeti · EBA Tema Alanı (`https://www.eba.gov.tr/c?q=U19880_06324c4b`)
+- s. 22 — bir Dinleme/İzleme içeriği (`resourceId=ab2060050335dcb6bdda8ec51554453e`); envanterdeki 19 içerikle eşleştirilmedi, adı etiketlenmemiş.
