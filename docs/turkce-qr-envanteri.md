@@ -88,6 +88,8 @@ Not: Tema 1'in sonundaki ölçme sayfası, ders kitabındaki soruların aynısı
 | `qr-18-mart` — 18 Mart anma içeriği | 10 | Tarih–olay, mesaj ve kanıt |
 | `qr-canakkale-son` — Çanakkale | 10 | İki içeriği karşılaştırma |
 
+Video bağlantıları ve her içerik için hazır Gemini istemi [`turkce-qr-linkler.md`](turkce-qr-linkler.md) içinde.
+
 Tasarım sınırı: video/ses dosyaları elimizde olmadığı için sorular **videoda geçtiği iddia edilen ayrıntılara** dayanmaz. Öğrencinin kendi izlediğini kaydetmesine, medya okuryazarlığına ve okuduğu metinle karşılaştırma yapmasına dayanır. Böylece içerik değişse de çalışma geçerli kalır.
 
 ### 4c. Eklenmeyenler
@@ -100,6 +102,8 @@ Tasarım sınırı: video/ses dosyaları elimizde olmadığı için sorular **vi
 ---
 
 ## 5. Sıradaki adımlar
+
+Bağlantılar ve Gemini analiz şablonu: [`turkce-qr-linkler.md`](turkce-qr-linkler.md).
 
 1. **Döküm/rapor gelirse:** mevcut 8 kart, videonun ayrıntısına inen sorularla derinleştirilir (ör. Sakarya'da hangi olayın hangi sonucu doğurduğu). Şu an bu sorular bilinçli olarak içerik iddiası taşımıyor.
 2. **Tema 2 etkinlik seti:** hafta 7–10 için metne bağlı 8–10 etkinlik ve quiz. Karekod kartları bunun yerine geçmez, üstüne eklenir.
