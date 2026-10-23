@@ -67,8 +67,15 @@
   function sourceChip(unit) {
     const chips = [];
     const driveUrl = String(unit.driveUrl || "").trim();
+    const publicUrl = String(unit.publicUrl || "").trim();
+    if (publicUrl) {
+      chips.push(chipLink(publicUrl, unit.publicLabel || `${unit.title} · YouTube`, "İzle", "▶️", "video-source-link public-source-link"));
+    }
     if (driveUrl) {
       chips.push(chipLink(driveUrl, `${unit.sourceLinkLabel || unit.title} · Drive kopyası`, "Drive'dan aç", chipIcon(unit), "video-source-link drive-source-link"));
+    }
+    if (!publicUrl && !driveUrl) {
+      chips.push(chipLink(searchUrl(unit), `${unit.title} · girişsiz arama`, "Ara", "🔎", "search-source-link"));
     }
     const url = String(unit.sourceUrl || "").trim();
     if (url) {
@@ -77,11 +84,11 @@
       const className = type === "harita" || type === "pdf" ? "pdf-source-link" : type === "audio" ? "audio-source-link" : "video-source-link";
       chips.push(chipLink(url, `${unit.sourceLinkLabel || unit.title} · EBA hesabı gerekir`, action, chipIcon(unit), className));
     }
-    if (!driveUrl) {
-      chips.push(chipLink(searchUrl(unit), `${unit.title} · girişsiz arama`, "Ara", "🔎", "search-source-link"));
-    }
     if (!chips.length) return "";
-    return `<div class="reader-links">${chips.join("")}<p class="qr-link-note">EBA bağlantısı hesap istiyorsa “Ara” düğmesi aynı başlıkla girişsiz sonuçları açar; kitabındaki karekodu okutmak da aynı içeriğe gider.</p></div>`;
+    const note = publicUrl || driveUrl
+      ? "Giriş yapmadan izlemek için ilk bağlantıyı kullan; EBA bağlantısı hesap ister. Kitabındaki karekod da aynı içeriğe gider."
+      : "EBA bağlantısı hesap istiyorsa “Ara” düğmesi aynı başlıkla girişsiz sonuçları açar; kitabındaki karekodu okutmak da aynı içeriğe gider.";
+    return `<div class="reader-links">${chips.join("")}<p class="qr-link-note">${escape(note)}</p></div>`;
   }
 
   function labelMarkup(state, text, hidden) {

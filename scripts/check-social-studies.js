@@ -756,5 +756,12 @@ for (const technique of ['Balık kılçığı', 'GZFT', 'Dallanmış ağaç', 'Z
 const appSource = require('fs').readFileSync(require('path').join(__dirname, '..', 'social-qr-app.js'), 'utf8');
 assert.ok(appSource.includes('youtube.com/results?search_query'), 'Karekod kartları girişsiz arama bağlantısı sunmalı.');
 assert.ok(appSource.includes('driveUrl'), 'Karekod kartları Drive kopyası bağlantısını desteklemeli.');
+assert.ok(appSource.includes('publicUrl'), 'Karekod kartları girişsiz (yayımlanmış) kopya bağlantısını desteklemeli.');
+const publicCards = qr.units.filter((unit) => unit.publicUrl);
+assert.ok(publicCards.length >= 5, 'En az beş karekod kartında girişsiz video kopyası bulunmalı.');
+for (const unit of publicCards) {
+  assert.ok(/^https:\/\/youtu\.be\/[A-Za-z0-9_-]{11}$/.test(unit.publicUrl), `Girişsiz kopya YouTube adresi olmalı: ${unit.id}`);
+  assert.ok(unit.publicLabel, `Girişsiz kopyanın etiketi olmalı: ${unit.id}`);
+}
 assert.ok(appSource.includes('EBA hesabı gerekir'), 'EBA bağlantısının oturum istediği kartta belirtilmeli.');
 console.log(`Social Studies karekod envanteri tutarlı: ${qr.units.length} kart · ${qrWeeks.length} hafta · ${qr.units.filter((unit) => unit.sourceLinkType === 'video').length} video.`);
