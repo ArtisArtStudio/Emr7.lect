@@ -21,7 +21,8 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 | 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
 | 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
 | 34 | “Engelleri Aşıyorum” | 3 | — (yayımlanmamış) | `b3ec73b3a189e78a00451537774edb5f` |
-| 45 | Millî Meselelerde Biz | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
+| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
+| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) | 4–5 | — (yayımlanmamış) | `b14529259e0b211f8d6ae3a4bb6ab951` |
 | 60 | Küreselleşme | 6 | — (yayımlanmamış) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
 | 63 | Kahvenin yolculuğu | 6 | https://youtu.be/pSoAZkgKTP4 | `0a91216d32df2405b32be9c6a740c34a` |
 | 72 | Jeopolitik konum ve dış politika | 7 | https://youtu.be/093b1nTbSmo | `d8e6ad2d9687967f09a69ce26cff8a2e` |
@@ -40,9 +41,11 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; beş kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; altı kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
+
+s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” videosu (analizli) ve “15 Temmuz Darbe Girişimi” videosu (henüz analiz yok; kart kitap metnine ve izleme planlamasına dayanır).
 
 | Sayfa | Kart | Video | Analiz dosyası |
 |---|---|---|---|
@@ -51,6 +54,7 @@ s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç k
 | 32 | `qr-paralimpik-kahramanlar` | Türkiye’nin gururu paralimpik kahramanlarımız | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
 | 32 | `qr-engelleri-asanlar` | Engelleri aşan üç genç | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
 | 32 | `qr-engellerine-ragmen-alti-isim` | Engellerine rağmen büyük başarılara imza atmış altı isim | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
+| 45 | `qr-milli-meseleler` | Millî Meselelerde Biz (Yakup Kadri, İstiklal Yolu) | `docs/video-analysis/milli-meselelerde-biz-gemini-analysis.md` |
 
 Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
 

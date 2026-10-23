@@ -773,6 +773,14 @@ for (const unit of analysedCards) {
   assert.ok(unit.analysis.doc && unit.analysis.summary && unit.analysis.keyPoints.length <= 4, `Video analizi alanları eksik: ${unit.id}`);
   assert.ok(fs.existsSync(path.join(__dirname, '..', unit.analysis.doc)), `Video analizi dosyası yok: ${unit.analysis.doc}`);
 }
+// s. 45 sayfasında iki karekod vardır; ikisi de karta bağlanmalı.
+const sayfa45 = qr.units.filter((unit) => String(unit.where || '').startsWith('s. 45'));
+assert.equal(sayfa45.length, 2, 's. 45 sayfasındaki iki karekodun ikisi de karta bağlanmalı.');
+for (const resourceId of ['6e1f6955aeff331cc85451f6a8231cc5', 'b14529259e0b211f8d6ae3a4bb6ab951']) {
+  assert.ok(sayfa45.some((unit) => unit.sourceUrl.includes(resourceId)), `s. 45 karekodu eksik: ${resourceId}`);
+}
+const milliMeseleler = qr.units.find((unit) => unit.id === 'qr-milli-meseleler');
+assert.ok(milliMeseleler && /milli-meselelerde-biz/.test(milliMeseleler.analysis.doc), 'Millî Meselelerde Biz kartı analiz dosyasına bağlanmalı.');
 // s. 32 sayfasında üç karekod vardır; üçü de ayrı karta bağlanmalı.
 const sayfa32 = qr.units.filter((unit) => String(unit.where || '').startsWith('s. 32'));
 assert.equal(sayfa32.length, 3, 's. 32 sayfasındaki üç karekodun üçü de karta bağlanmalı.');
