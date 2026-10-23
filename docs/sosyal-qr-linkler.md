@@ -17,7 +17,9 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 | 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
 | 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
 | 27 | “Uzlaşmanın Gücü” hikâyesinin devamı | 2 | — (ses kaydı, .rar) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
-| 32 | Engelleri aşan üç genç | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
+| 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | — (yayımlanmamış) | `63c076451e7fbbd14870627408def2c4` |
+| 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
+| 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
 | 34 | “Engelleri Aşıyorum” | 3 | — (yayımlanmamış) | `b3ec73b3a189e78a00451537774edb5f` |
 | 45 | Millî Meselelerde Biz | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
 | 60 | Küreselleşme | 6 | — (yayımlanmamış) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
@@ -38,12 +40,17 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; iki kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; beş kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+
+s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
 | Sayfa | Kart | Video | Analiz dosyası |
 |---|---|---|---|
 | 15 | `qr-iletisim-video` | Okul-veli iletişimi (Özlem Hanım, Şebnem Hanım, okul müdürü, Can) | `docs/video-analysis/okul-veli-iletisimi-gemini-analysis.md` |
 | 23 | `qr-iletisim-yollari` | Etkili iletişim ve unsurları (ben dili–sen dili, empati, beden dili, etkin dinleme, farklılıklara saygı) | `docs/video-analysis/etkili-iletisim-ve-unsurlari-gemini-analysis.md` |
+| 32 | `qr-paralimpik-kahramanlar` | Türkiye’nin gururu paralimpik kahramanlarımız | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
+| 32 | `qr-engelleri-asanlar` | Engelleri aşan üç genç | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
+| 32 | `qr-engellerine-ragmen-alti-isim` | Engellerine rağmen büyük başarılara imza atmış altı isim | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
 
 Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
 

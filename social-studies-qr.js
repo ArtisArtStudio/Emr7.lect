@@ -284,57 +284,77 @@
         weekIds: [3],
         kind: "İzleme",
         where: "s. 32 · 1. öğrenme alanı",
-        title: "Engelleri aşan gençler",
+        title: "Engelleri aşan üç genç",
         sourceUrl: eba("2edd5069ff032e00a221a9a0545791bf"),
         sourceLinkLabel: "EBA · Engelleri aşan üç genç",
         publicUrl: "https://youtu.be/E3lz6LefMys",
         publicLabel: "Engelleri aşan üç genç · YouTube",
         sourceLinkType: "video",
-        minutes: 7,
-        focus: "Fırsat eşitliği, destek ortamı ve azim",
+        minutes: 5,
+        focus: "Ön yargı, erişilebilirlik ve desteğin başarıya etkisi",
+        analysis: {
+          doc: "docs/video-analysis/sayfa32-uc-video-gemini-analysis.md",
+          speaker: "Gençlerin kendi anlatımı (röportaj)",
+          summary:
+            "Üç genç kendi hikâyesini anlatır. Yüzme sporuyla tanışan ve 120’ye yakın madalya kazanan sporcu, havuz bulmakta zorlanmış; kulüp açarak engelli bireylere eğitim vermiş, otobüste ön yargıyla karşılaşmıştır. Paraplejik doğan hekim, lise öğretmeninin “Gidilmemiş yolu sen aç” sözüyle cesaret bulup tıp fakültesini bitirmiş; şehirde rampa ve engelli tuvaletinin işgali gibi erişilebilirlik sorunlarıyla karşılaşmaktadır. Altı yaşında elektrik kazasında iki kolunu kaybeden sanatçı, yurtta büyümüş, ağzıyla kalem tutarak çizim yapmış, moda-tekstil alanında lisans ve yüksek lisansı tamamlamıştır.",
+          segments: [
+            { at: "00:00", note: "Yüzücü: 14 yaşında yüzmeye başlar, yaklaşık 120 madalya; havuz bulma zorluğu ve kulüp açma." },
+            { at: "01:39", note: "Hekim: paraplejik doğum, “Gidilmemiş yolu sen aç” sözü, tıp fakültesi, rampa ve engelli tuvaleti sorunu." },
+            { at: "03:13", note: "Sanatçı: 6 yaşında elektrik kazası, yurtta 17 yıl, ağzıyla çizim, sergiler ve yüksek lisans." },
+          ],
+          keyPoints: [
+            "Engel çoğu zaman bedende değil; ön yargıda, duyarsızlıkta ve erişilebilirliği düşünmeyen düzenlemelerdedir.",
+            "Doğru zamanda verilen destek (aile, öğretmen, kulüp) başarıyı mümkün kılar.",
+            "Bireyler acınmaya değil, eşit imkân ve haklara ihtiyaç duyar.",
+            "Aktarılabilir ilke: katılımı kolaylaştıran düzenleme, kişinin çabasından önce gelir.",
+          ],
+        },
         intro:
-          "Kitapta üç sporcunun hikâyesi anlatılıyor; karekodda bu gençlerin görüntüleri var. İzlerken başarıyı getiren desteği işaretle: aile, antrenör, okul, arkadaş ya da kurum.",
+          "Karekodda üç genç kendi hikâyesini anlatıyor: sporcu, hekim ve sanatçı. İzlerken iki şeyi ayır: hangi engel bedensel, hangisi toplumun kurduğu engel?",
         before: [
-          "Bir insanın başarısında çevrenin payı ne kadardır? Kısaca yaz.",
-          "“Fırsat eşitliği” deyince aklına gelen ilk üç şeyi sırala.",
+          "“Engel” sözcüğü sence yalnızca bedensel bir durumu mu anlatır? Kısaca yaz.",
+          "Okulunda ya da mahallende bir kişinin katılımını zorlaştıran bir düzen var mı? Tahminini not et.",
         ],
         notes: [
-          { id: "n1", label: "Sporcunun karşılaştığı engel", hint: "Fiziksel ortam mı, erişim mi, ön yargı mı?" },
-          { id: "n2", label: "Engeli aşmasını sağlayan destek", hint: "Kim, neyi sağladı?" },
-          { id: "n3", label: "Bu hikâyeden çıkarılabilecek ilke", hint: "Tek cümle." },
+          { id: "n1", label: "Sporcunun aşmak zorunda kaldığı iki zorluk", hint: "Biri imkânla, biri insanların bakışıyla ilgili." },
+          { id: "n2", label: "Hekime cesaret veren cümle", hint: "Öğretmeninin söylediği kısa söz." },
+          { id: "n3", label: "Şehirde karşılaşılan erişilebilirlik sorunları", hint: "İki örnek sayılıyor: biri rampa, biri tuvalet." },
+          { id: "n4", label: "Sanatçının başarısını mümkün kılan destek", hint: "Kurum ve aile büyükleri." },
         ],
         questions: [
           {
             id: "q1",
-            prompt: "Fırsat eşitliğini sağlamak için önce neyi değiştirmek gerekir?",
+            prompt: "Hekimin hikâyesinde lise öğretmeninin rolü ne olmuştur?",
             options: [
-              "Kişinin beklentilerini",
-              "Etkinliğin konusunu",
-              "Katılımcı sayısını",
-              "Kişinin katılımını zorlaştıran çevresel ve kurumsal düzenlemeleri",
+              "Tıp eğitimini maddi olarak desteklemek",
+              "Hekimlik hayalinden vazgeçmesini önermek",
+              "“Gidilmemiş yolu sen aç” diyerek cesaret vermek",
+              "Şehirdeki rampaları onartmak",
             ],
-            answer: 3,
-            explanation: "Fırsat eşitliği çoğu zaman kişiyi değil, katılımı zorlaştıran düzenlemeleri değiştirmeyi gerektirir.",
-            hint: "Engel kişide mi, ortamda mı?",
+            answer: 2,
+            explanation:
+              "Öğretmenin sözü, hekimin hayalini sürdürmesini sağlayan dönüm noktasıdır; destek çoğu zaman tek bir cümleyle başlar.",
+            hint: "Videoda öğretmenin söylediği tek cümleyi hatırla.",
           },
           {
             id: "q2",
-            prompt: "Bir başarı hikâyesini izlerken hangi soru daha verimli bir not aldırır?",
+            prompt: "Video, engelin kaynağı konusunda hangi sonuca götürür?",
             options: [
-              "Başarıyı mümkün kılan koşullar nelerdi?",
-              "Bu kişi ünlü mü?",
-              "Video kaç dakika sürdü?",
-              "Kaç madalya kazandı?",
+              "Engel yalnızca kişinin bedenindedir, toplumun payı yoktur",
+              "Engelli bireylerin desteğe ihtiyacı yoktur",
+              "Başarı yalnızca kişinin çabasına bağlıdır",
+              "Engel çoğu zaman ön yargıda ve erişilebilirliği düşünmeyen düzenlemelerdedir",
             ],
-            answer: 0,
-            explanation: "Koşulları sormak, olayı genellenebilir bir ilkeye dönüştürür.",
-            hint: "Hangi soru aktarılabilir bir bilgi üretir?",
+            answer: 3,
+            explanation:
+              "Üç hikâyede de asıl zorluk, kişinin bedeni kadar toplumun bakışı ve kentin düzenlenmesidir.",
+            hint: "Rampa, tuvalet ve otobüs örneklerini düşün.",
           },
         ],
         write: {
           title: "Kısa yazma: okulumda bir engel, bir çözüm",
           instruction:
-            "Okulunda ya da mahallende katılımı zorlaştıran bir düzeni belirle; bu engeli kaldıracak iki somut öneri yaz.",
+            "Okulunda ya da mahallende katılımı zorlaştıran bir düzeni belirle; bu engeli kaldıracak iki somut öneri yaz. Son cümlede önerinin kime ne kazandıracağını belirt.",
           criteria: [
             "Engeli gözleme dayandır.",
             "İki öneriden birini maliyeti düşük olacak biçimde kur.",
@@ -343,6 +363,209 @@
           guide: "Engel → kim etkileniyor → öneri → beklenen katkı sırasını izle.",
           starter: "Okulumuzda … katılımı zorlaştırıyor, çünkü …",
           minChars: 170,
+        },
+      },
+      {
+        id: "qr-paralimpik-kahramanlar",
+        weekIds: [3],
+        kind: "İzleme",
+        where: "s. 32 · 1. öğrenme alanı",
+        title: "Paralimpik kahramanlar",
+        sourceUrl: eba("63c076451e7fbbd14870627408def2c4"),
+        sourceLinkLabel: "EBA · Paralimpik kahramanlar",
+        sourceLinkType: "video",
+        minutes: 7,
+        focus: "Paralimpik oyunlar, Türkiye’nin katılımı ve takım başarısı",
+        analysis: {
+          doc: "docs/video-analysis/sayfa32-uc-video-gemini-analysis.md",
+          speaker: "Anlatıcı (dış ses)",
+          summary:
+            "Paralimpik Oyunları 1960’ta başlar; Türkiye 2004’ten itibaren düzenli katılır. Pekin 2008’de Gizem Girişmen okçulukta Türkiye’nin ilk Paralimpik altın madalyasını kazanır. Londra 2012’de Nazmiye Muratlı halterde altın madalya alır. Rio 2016’da Kadın Golball Milli Takımı ilk takım şampiyonluğunu kazanır (Çin’i 4-1 yener); Nazmiye Muratlı ve Abdullah Öztürk de altın alır. Tokyo 2020’de takım üst üste ikinci kez şampiyon olur (ABD’yi 9-2 yener). Paris 2024’te takım üst üste üçüncü kez şampiyon olur; Mahmut Bozteke, Umut Ünlü, İbrahim Bölükbaşı ve Öznur Cüre Girdi altın madalya kazanır.",
+          segments: [
+            { at: "00:00", note: "Paralimpik Oyunları’nın tanımı (1960) ve Türkiye’nin 2004’ten itibaren katılımı." },
+            { at: "01:04", note: "Pekin 2008: Gizem Girişmen, okçulukta ilk altın madalya." },
+            { at: "01:29", note: "Londra 2012: Nazmiye Muratlı, halterde altın." },
+            { at: "02:01", note: "Rio 2016: Kadın Golball Milli Takımı’nın ilk şampiyonluğu (Çin 4-1)." },
+            { at: "03:29", note: "Tokyo 2020: takım üst üste ikinci kez şampiyon (ABD 9-2)." },
+            { at: "04:34", note: "Paris 2024: üst üste üçüncü şampiyonluk ve dört bireysel altın." },
+          ],
+          keyPoints: [
+            "Türkiye Paralimpik Oyunları’na 2004’ten itibaren düzenli katılır.",
+            "İlk altın madalya 2008 Pekin’de okçulukta kazanılmıştır.",
+            "Kadın Golball Milli Takımı Rio 2016, Tokyo 2020 ve Paris 2024’te üst üste üç kez şampiyon olmuştur.",
+            "Başarı hem bireysel hem takım sporlarında sürmektedir.",
+          ],
+        },
+        intro:
+          "Karekodda Türkiye’nin Paralimpik Oyunları tarihi ve altın madalya kazanan sporcular anlatılıyor. İzlerken yılları ve branşları eşleştir: hangi başarı hangi oyunda geldi?",
+        before: [
+          "Paralimpik Oyunları ile olimpiyatlar arasındaki farkı biliyor musun? Tahminini yaz.",
+          "Sence bir ülkenin oyunlara düzenli katılması neden önemlidir?",
+        ],
+        notes: [
+          { id: "n1", label: "Türkiye’nin düzenli katılımının başladığı yıl", hint: "2000’lerin ortası." },
+          { id: "n2", label: "İlk altın madalya: sporcu, branş ve oyun", hint: "Okçuluk, Pekin." },
+          { id: "n3", label: "Üst üste üç kez şampiyon olan takım", hint: "Hangi branş, hangi takım?" },
+          { id: "n4", label: "Paris 2024’te altın kazanan dört sporcu", hint: "Tekfando, yüzme, judo, okçuluk." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Türkiye’nin ilk Paralimpik altın madalyası hangi oyunlarda kazanılmıştır?",
+            options: [
+              "Pekin 2008",
+              "Londra 2012",
+              "Rio 2016",
+              "Tokyo 2020",
+            ],
+            answer: 0,
+            explanation:
+              "İlk altın madalya 2008 Pekin’de okçuluk klasik yay kategorisinde kazanılmıştır; video bunu bir dönüm noktası olarak verir.",
+            hint: "Oyunların sırasını düşün: ilk altın, ilk katılımdan birkaç yıl sonra geldi.",
+          },
+          {
+            id: "q2",
+            prompt: "Kadın Golball Milli Takımı’nın Paris 2024’teki şampiyonluğu neyi gösterir?",
+            options: [
+              "Takımın oyunlara ilk kez katıldığını",
+              "Takımın üst üste üçüncü kez şampiyon olduğunu",
+              "Golballun bireysel bir spor olduğunu",
+              "Takımın yalnızca bir kez altın aldığını",
+            ],
+            answer: 1,
+            explanation:
+              "Takım Rio 2016, Tokyo 2020 ve Paris 2024’te şampiyon olarak üst üste üç kez bu başarıya ulaşmıştır.",
+            hint: "Video aynı takımın üç oyundaki sonucunu sıralıyor.",
+          },
+          {
+            id: "q3",
+            prompt: "Video boyunca başarılar hangi sırayla anlatılır?",
+            options: [
+              "Branşlara göre alfabetik",
+              "Sporcuların yaşına göre",
+              "Madalya sayısına göre",
+              "Kronolojik olarak oyun yıllarına göre",
+            ],
+            answer: 3,
+            explanation:
+              "Anlatım Pekin 2008’den Paris 2024’e doğru ilerler; yıl sırası, başarıların gelişimini görmeyi kolaylaştırır.",
+            hint: "Bölüm başlıklarındaki şehir ve yıllara bak.",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: bir başarıyı duyur",
+          instruction:
+            "Videodaki başarılardan birini seç ve okul panosu için kısa bir duyuru metni yaz. Duyuruda sporcuyu ya da takımı, oyunu, branşı ve başarının önemini belirt; sonunda okuyucuyu harekete geçiren bir cümle kur.",
+          criteria: [
+            "Oyun yılı ve branş doğru yazılsın.",
+            "Başarının neden önemli olduğu bir cümleyle açıklansın.",
+            "Duyuru dili kısa, açık ve saygılı olsun.",
+          ],
+          guide: "Kim → hangi oyun → hangi branş → neden önemli → çağrı sırasını izle.",
+          starter: "Okulumuzda gururla duyururuz: …",
+          minChars: 150,
+        },
+      },
+      {
+        id: "qr-engellerine-ragmen-alti-isim",
+        weekIds: [3],
+        kind: "İzleme",
+        where: "s. 32 · 1. öğrenme alanı",
+        title: "Engellerine rağmen büyük başarılara imza atmış altı isim",
+        sourceUrl: eba("c5c2fbcab508be24681e00d60dabd6ac"),
+        sourceLinkLabel: "EBA · Engellerine rağmen altı isim",
+        sourceLinkType: "video",
+        minutes: 6,
+        focus: "Engelin üretime engel olmadığı: sanat, edebiyat, bilim",
+        analysis: {
+          doc: "docs/video-analysis/sayfa32-uc-video-gemini-analysis.md",
+          speaker: "Anlatıcı (belgesel tonunda dış ses)",
+          summary:
+            "Altı ismin engellerine rağmen üretmeyi sürdürdüğü anlatılır: Âşık Veysel 7 yaşında çiçek hastalığı sonucu görme yetisini kaybeder, bağlama çalar ve “Uzun İnce Bir Yoldayım”ı bırakır. Cemil Meriç ileri derecede miyopluk sonrası görme kaybı yaşar, “Bu Ülke” eserini yazar. Frida Kahlo ağır bir trafik kazası sonrası yatağına monte edilen şövaleyle resim yapmaya başlar. Beethoven tam sağırlığa varan işitme kaybına rağmen senfoniler besteler. Prof. Dr. Onur Güntürkün çocukluk felcine rağmen 35 yaşında profesör olur ve Leibniz Ödülü’nü kazanır. Thomas Edison işitme kaybına rağmen binden fazla patent alır.",
+          segments: [
+            { at: "00:00", note: "Giriş: engellerine rağmen insanlığa yön veren isimler ve azim mesajı." },
+            { at: "00:47", note: "Âşık Veysel: 7 yaşında görme kaybı, bağlama, “Uzun İnce Bir Yoldayım”." },
+            { at: "01:53", note: "Cemil Meriç: miyopluk sonrası görme kaybı, “Bu Ülke”." },
+            { at: "02:54", note: "Frida Kahlo: trafik kazası, yatağa monte şövalye, resim." },
+            { at: "03:49", note: "Beethoven: tam sağırlık, senfoniler." },
+            { at: "04:47", note: "Onur Güntürkün: çocukluk felci, 35 yaşında profesörlük, Leibniz Ödülü." },
+            { at: "05:41", note: "Edison: işitme kaybı, 1000’den fazla patent, ampul." },
+          ],
+          keyPoints: [
+            "Altı isim de engelini üretimin sonu değil, koşullarından biri hâline getirmiştir.",
+            "Eser ve buluşlar, engel ortaya çıktıktan sonra da üretilmiştir.",
+            "Ortak nokta tutku, düzenli çalışma ve ısrardır.",
+            "Engel farklı alanlarda görünür: görme, işitme, hareket.",
+          ],
+        },
+        intro:
+          "Karekodda engellerine rağmen sanat, edebiyat, bilim ve düşünce dünyasında iz bırakmış altı isim anlatılıyor. İzlerken her isim için iki şey not al: engeli neydi, engelinden sonra ne üretti?",
+        before: [
+          "Adını duyduğun bir sanatçı ya da bilim insanı var mı? Ne ürettiğini bir cümleyle yaz.",
+          "Sence bir engel, üretmeyi nasıl etkiler? Tahminini not et.",
+        ],
+        notes: [
+          { id: "n1", label: "Âşık Veysel’in engeli ve bıraktığı eser", hint: "Yedi yaşında ne oldu, hangi türkü anılıyor?" },
+          { id: "n2", label: "Cemil Meriç’in eseri", hint: "İki sözcüklü kitap adı." },
+          { id: "n3", label: "Frida Kahlo’nun resme başlamasını sağlayan düzenek", hint: "Yatağa monte edilen araç." },
+          { id: "n4", label: "Ortak nokta", hint: "Altı isimde de görülen iki özellik." },
+        ],
+        questions: [
+          {
+            id: "q1",
+            prompt: "Frida Kahlo’nun resim yapmaya başlamasını sağlayan koşul hangisidir?",
+            options: [
+              "Bir resim okuluna bursla başlaması",
+              "Ailesinin atölye açması",
+              "Trafik kazası sonrası yatağına monte edilen şövalye",
+              "Ünlü bir ressamdan ders alması",
+            ],
+            answer: 2,
+            explanation:
+              "Kaza sonrası yatağa bağlı kalan Kahlo, yatağına monte edilen şövalye sayesinde resim yapmaya başlar.",
+            hint: "Videoda yatakla birlikte anılan nesneyi düşün.",
+          },
+          {
+            id: "q2",
+            prompt: "Prof. Dr. Onur Güntürkün ile ilgili hangi bilgi videoda verilir?",
+            options: [
+              "Müzik bestelediği",
+              "Elektrik ampulünü icat ettiği",
+              "Roman yazdığı",
+              "Çocukluk felcine rağmen 35 yaşında profesör olduğu",
+            ],
+            answer: 3,
+            explanation:
+              "Güntürkün’ün çocukluk felci ve yürüme engeline rağmen 35 yaşında profesör olduğu, beyin üzerine çalıştığı ve Leibniz Ödülü’nü kazandığı anlatılır.",
+            hint: "Bilim insanı olan tek isim hangisi?",
+          },
+          {
+            id: "q3",
+            prompt: "Video, altı ismin ortak yönünü nasıl açıklar?",
+            options: [
+              "Engellerine rağmen tutku ve çalışmayla üretmeyi sürdürmüşlerdir",
+              "Hepsi aynı ülkede doğmuştur",
+              "Hepsi çocukken engelini kaybetmiştir",
+              "Hepsi yalnızca sanat alanında eser vermiştir",
+            ],
+            answer: 0,
+            explanation:
+              "İsimler farklı ülke, dönem ve alanlardan; ortak nokta engelin üretimi durdurmaması ve ısrarlı çalışma.",
+            hint: "Alanlar farklı, dönemler farklı; geriye ne kalıyor?",
+          },
+        ],
+        write: {
+          title: "Kısa yazma: engelden sonra üretim",
+          instruction:
+            "Videodaki isimlerden birini seç. Engelinin ne olduğunu, engelinden sonra ne ürettiğini ve bunu nasıl başardığını kendi cümlelerinle yaz. Sonunda bu örneğin bugün bir öğrenciye ne söylediğini bir cümleyle belirt.",
+          criteria: [
+            "Engel ile üretim arasındaki ilişki açık kurulsun.",
+            "En az bir somut eser ya da buluş adı geçsin.",
+            "Sonuç cümlesi günlük hayata bağlansın.",
+          ],
+          guide: "Kişi → engel → üretim → yöntem → bugüne mesaj sırasını izle.",
+          starter: "Seçtiğim isim …; engeli …",
+          minChars: 160,
         },
       },
       {

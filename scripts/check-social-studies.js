@@ -773,6 +773,13 @@ for (const unit of analysedCards) {
   assert.ok(unit.analysis.doc && unit.analysis.summary && unit.analysis.keyPoints.length <= 4, `Video analizi alanları eksik: ${unit.id}`);
   assert.ok(fs.existsSync(path.join(__dirname, '..', unit.analysis.doc)), `Video analizi dosyası yok: ${unit.analysis.doc}`);
 }
+// s. 32 sayfasında üç karekod vardır; üçü de ayrı karta bağlanmalı.
+const sayfa32 = qr.units.filter((unit) => String(unit.where || '').startsWith('s. 32'));
+assert.equal(sayfa32.length, 3, 's. 32 sayfasındaki üç karekodun üçü de karta bağlanmalı.');
+for (const resourceId of ['2edd5069ff032e00a221a9a0545791bf', '63c076451e7fbbd14870627408def2c4', 'c5c2fbcab508be24681e00d60dabd6ac']) {
+  assert.ok(sayfa32.some((unit) => unit.sourceUrl.includes(resourceId)), `s. 32 karekodu eksik: ${resourceId}`);
+}
+assert.ok(sayfa32.every((unit) => unit.analysis && /sayfa32-uc-video/.test(unit.analysis.doc)), 's. 32 kartları üç videoluk analiz dosyasına bağlanmalı.');
 const iletisimVideo = qr.units.find((unit) => unit.id === 'qr-iletisim-video');
 const iletisimYollari = qr.units.find((unit) => unit.id === 'qr-iletisim-yollari');
 assert.ok(iletisimVideo && /okul-veli-iletisimi/.test(iletisimVideo.analysis.doc), 's. 15 kartı okul-veli iletişimi analizine bağlanmalı.');
