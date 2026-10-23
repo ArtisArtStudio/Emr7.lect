@@ -752,4 +752,9 @@ const allFormats = social.weeks.flatMap((week) => week.activities.map((activity)
 for (const technique of ['Balık kılçığı', 'GZFT', 'Dallanmış ağaç', 'Zaman şeridi', 'Kelime bulutu', 'Bulmaca', 'Kavram haritası', 'Tanılayıcı test']) {
   assert.ok(allFormats.includes(technique.toLocaleLowerCase('tr-TR')), `Dönem boyunca ${technique} tekniği en az bir kez kullanılmalı.`);
 }
+// EBA derin bağlantıları oturum ister; her kartta girişsiz arama bağlantısı da bulunmalı.
+const appSource = require('fs').readFileSync(require('path').join(__dirname, '..', 'social-qr-app.js'), 'utf8');
+assert.ok(appSource.includes('youtube.com/results?search_query'), 'Karekod kartları girişsiz arama bağlantısı sunmalı.');
+assert.ok(appSource.includes('driveUrl'), 'Karekod kartları Drive kopyası bağlantısını desteklemeli.');
+assert.ok(appSource.includes('EBA hesabı gerekir'), 'EBA bağlantısının oturum istediği kartta belirtilmeli.');
 console.log(`Social Studies karekod envanteri tutarlı: ${qr.units.length} kart · ${qrWeeks.length} hafta · ${qr.units.filter((unit) => unit.sourceLinkType === 'video').length} video.`);

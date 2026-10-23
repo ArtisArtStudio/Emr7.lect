@@ -1258,7 +1258,7 @@
   // `social-studies-qr.js` dosyasından gelir; haftanın kartı yoksa bölüm gizlenir.
   function socialQrSectionHTML() {
     if (!window.SOCIAL_QR || !Array.isArray(window.SOCIAL_QR.units) || !window.SOCIAL_QR.units.length) return '';
-    return `<section class="card social-qr-entry" id="socialQr" hidden aria-label="Karekod izleme ve etkileşimli içerik çalışmaları"><h3 id="socialQrTitle">Karekod çalışmaları · izleme ve etkileşimli içerik</h3><p class="qr-lead">Bu haftanın karekodla açılan içeriği için izleme öncesi hazırlık, izlerken not alma ve izledikten sonra düşünme adımları. Kaynak bağlantısı kartın üstünde duruyor; açılmazsa kitabındaki karekodu kullan. Yanıtların bu tarayıcıda, ders ilerlemesinden ayrı saklanır.</p><div id="socialQrBody"></div></section>`;
+    return `<section class="card social-qr-entry" id="socialQr" hidden aria-label="Karekod izleme ve etkileşimli içerik çalışmaları"><h3 id="socialQrTitle">Karekod çalışmaları · izleme ve etkileşimli içerik</h3><p class="qr-lead">Bu haftanın karekodla açılan içeriği için izleme öncesi hazırlık, izlerken not alma ve izledikten sonra düşünme adımları. Kaynak bağlantısı kartın üstünde duruyor. EBA bağlantıları EBA hesabı ister; “Ara” düğmesi aynı başlıkla girişsiz sonuçları açar. Yanıtların bu tarayıcıda, ders ilerlemesinden ayrı saklanır.</p><div id="socialQrBody"></div></section>`;
   }
 
   function renderSelectedWeek() {

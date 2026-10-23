@@ -389,3 +389,10 @@
 #socialQrBody{display:grid;gap:16px}
 .social-qr-entry .qr-lead{font-size:13px;color:var(--social-muted);margin:0 0 14px}
 @media print{#socialQr{break-before:page}}
+
+/* Karekod kaynak satırı: EBA girişi istemeyen arama bağlantısı ve not */
+#socialQr .qr-link-note{flex:1 0 100%;margin:2px 0 0;color:var(--social-muted);font-size:11.5px;line-height:1.5}
+#socialQr .source-link.search-source-link{border-color:#c9b7e0;color:#432c66;background:#f6f1fd}
+#socialQr .source-link.search-source-link .qr-link-action{background:#5b3f8c}
+#socialQr .source-link.drive-source-link{border-color:#b6d3c1;color:#1d5b3c;background:#f0faf3}
+#socialQr .source-link.drive-source-link .qr-link-action{background:#1f6b46}

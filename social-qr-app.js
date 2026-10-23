@@ -52,13 +52,36 @@
     return "🎥";
   }
 
+  // EBA derin bağlantıları oturum ister: giriş yapılmamış tarayıcıda bağlantı
+  // EBA giriş sayfasına düşer. Bu yüzden her kartta EBA bağlantısının yanına,
+  // giriş gerektirmeyen bir arama bağlantısı ve varsa Drive kopyası eklenir.
+  function chipLink(url, label, action, icon, className) {
+    return `<a class="source-link qr-source-link ${className}" href="${escape(url)}" target="_blank" rel="noopener noreferrer" aria-label="${escape(action)}: ${escape(label)}"><span class="qr-link-icon" aria-hidden="true">${icon}</span><span class="qr-link-title">${escape(label)}</span><strong class="qr-link-action">${escape(action)}</strong><span class="qr-link-external" aria-hidden="true">↗</span></a>`;
+  }
+
+  function searchUrl(unit) {
+    const query = `${unit.title} 7. sınıf Sosyal Bilgiler`.replace(/\s+/g, " ").trim();
+    return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+  }
+
   function sourceChip(unit) {
+    const chips = [];
+    const driveUrl = String(unit.driveUrl || "").trim();
+    if (driveUrl) {
+      chips.push(chipLink(driveUrl, `${unit.sourceLinkLabel || unit.title} · Drive kopyası`, "Drive'dan aç", chipIcon(unit), "video-source-link drive-source-link"));
+    }
     const url = String(unit.sourceUrl || "").trim();
-    if (!url) return "";
-    const type = String(unit.sourceLinkType || "").toLowerCase();
-    const action = type === "harita" ? "Haritayı aç" : type === "pdf" ? "Metni aç" : type === "audio" ? "Dinlemeyi aç" : "Videoyu aç";
-    const className = type === "harita" || type === "pdf" ? "pdf-source-link" : type === "audio" ? "audio-source-link" : "video-source-link";
-    return `<a class="source-link qr-source-link ${className}" href="${escape(url)}" target="_blank" rel="noopener noreferrer" aria-label="${escape(action)}: ${escape(unit.sourceLinkLabel || unit.title)}"><span class="qr-link-icon" aria-hidden="true">${chipIcon(unit)}</span><span class="qr-link-title">${escape(unit.sourceLinkLabel || unit.title)}</span><strong class="qr-link-action">${action}</strong><span class="qr-link-external" aria-hidden="true">↗</span></a>`;
+    if (url) {
+      const type = String(unit.sourceLinkType || "").toLowerCase();
+      const action = type === "harita" ? "Haritayı aç" : type === "pdf" ? "Metni aç" : type === "audio" ? "Dinlemeyi aç" : "Videoyu aç";
+      const className = type === "harita" || type === "pdf" ? "pdf-source-link" : type === "audio" ? "audio-source-link" : "video-source-link";
+      chips.push(chipLink(url, `${unit.sourceLinkLabel || unit.title} · EBA hesabı gerekir`, action, chipIcon(unit), className));
+    }
+    if (!driveUrl) {
+      chips.push(chipLink(searchUrl(unit), `${unit.title} · girişsiz arama`, "Ara", "🔎", "search-source-link"));
+    }
+    if (!chips.length) return "";
+    return `<div class="reader-links">${chips.join("")}<p class="qr-link-note">EBA bağlantısı hesap istiyorsa “Ara” düğmesi aynı başlıkla girişsiz sonuçları açar; kitabındaki karekodu okutmak da aynı içeriğe gider.</p></div>`;
   }
 
   function labelMarkup(state, text, hidden) {
@@ -95,7 +118,7 @@
     <p class="activity-instruction">${escape(unit.intro)}</p>
   </header>
   <div class="activity-meta"><span>${escape(unit.kind)}</span><span>yaklaşık ${Number(unit.minutes)} dk</span><span>${escape(unit.focus)}</span></div>
-  ${sourceChip(unit) ? `<div class="reader-links">${sourceChip(unit)}</div>` : ""}
+  ${sourceChip(unit)}
   <div class="question-list">
   <article class="question-card">
     <h5>İzlemeden önce</h5>
