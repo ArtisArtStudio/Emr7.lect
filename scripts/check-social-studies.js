@@ -764,4 +764,21 @@ for (const unit of publicCards) {
   assert.ok(unit.publicLabel, `Girişsiz kopyanın etiketi olmalı: ${unit.id}`);
 }
 assert.ok(appSource.includes('EBA hesabı gerekir'), 'EBA bağlantısının oturum istediği kartta belirtilmeli.');
+// İki iletişim kartı kullanıcının sağladığı video analizine dayanır; rapor dosyaları depoda bulunmalı.
+const fs = require('fs');
+const path = require('path');
+const analysedCards = qr.units.filter((unit) => unit.analysis);
+assert.ok(analysedCards.length >= 2, 'İletişim kartlarında video analizi bulunmalı.');
+for (const unit of analysedCards) {
+  assert.ok(unit.analysis.doc && unit.analysis.summary && unit.analysis.keyPoints.length <= 4, `Video analizi alanları eksik: ${unit.id}`);
+  assert.ok(fs.existsSync(path.join(__dirname, '..', unit.analysis.doc)), `Video analizi dosyası yok: ${unit.analysis.doc}`);
+}
+const iletisimVideo = qr.units.find((unit) => unit.id === 'qr-iletisim-video');
+const iletisimYollari = qr.units.find((unit) => unit.id === 'qr-iletisim-yollari');
+assert.ok(iletisimVideo && /okul-veli-iletisimi/.test(iletisimVideo.analysis.doc), 's. 15 kartı okul-veli iletişimi analizine bağlanmalı.');
+assert.ok(iletisimYollari && /etkili-iletisim/.test(iletisimYollari.analysis.doc), 's. 23 kartı etkili iletişim analizine bağlanmalı.');
+// Doğru yanıtlar tek şıkta toplanmaz: her kartta yanıt konumları çeşitlenmeli.
+for (const unit of qr.units.filter((item) => item.questions.length >= 2)) {
+  assert.ok(new Set(unit.questions.map((question) => question.answer)).size >= 2, `Karekod kartında yanıt konumları çeşitlenmeli: ${unit.id}`);
+}
 console.log(`Social Studies karekod envanteri tutarlı: ${qr.units.length} kart · ${qrWeeks.length} hafta · ${qr.units.filter((unit) => unit.sourceLinkType === 'video').length} video.`);

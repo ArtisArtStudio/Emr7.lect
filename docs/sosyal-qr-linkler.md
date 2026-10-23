@@ -14,8 +14,8 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 
 | Sayfa | İçerik | Hafta | Girişsiz kopya | EBA `resourceId` |
 |---|---|---|---|---|
-| 15 | İletişim videosu | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
-| 23 | Olumlu ve olumsuz iletişim yolları | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
+| 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
+| 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
 | 27 | “Uzlaşmanın Gücü” hikâyesinin devamı | 2 | — (ses kaydı, .rar) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
 | 32 | Engelleri aşan üç genç | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
 | 34 | “Engelleri Aşıyorum” | 3 | — (yayımlanmamış) | `b3ec73b3a189e78a00451537774edb5f` |
@@ -35,6 +35,19 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 | 151 | Kültür-medeniyet etkileşimli video | 15 | — (yayımlanmamış) | `c2768a5382050f9c7ec0b81934dcd743` |
 
 Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resourceType=1&resourceLocation=2`
+
+## 2b. Analizi eklenen videolar
+
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; iki kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+
+| Sayfa | Kart | Video | Analiz dosyası |
+|---|---|---|---|
+| 15 | `qr-iletisim-video` | Okul-veli iletişimi (Özlem Hanım, Şebnem Hanım, okul müdürü, Can) | `docs/video-analysis/okul-veli-iletisimi-gemini-analysis.md` |
+| 23 | `qr-iletisim-yollari` | Etkili iletişim ve unsurları (ben dili–sen dili, empati, beden dili, etkin dinleme, farklılıklara saygı) | `docs/video-analysis/etkili-iletisim-ve-unsurlari-gemini-analysis.md` |
+
+Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
+
+Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/video-analysis/` altına konur, karta `analysis` alanı eklenir, sorular rapordaki doğrulanabilir bilgilere dayandırılır.
 
 ## 3. Google Drive durumu
 
