@@ -114,6 +114,11 @@
 
     const criteria = unit.write.criteria.map((item) => `<li>${escape(item)}</li>`).join("");
     const writeValue = entry.values.w || "";
+    // İçerik ses kaydıysa başlıklar "dinleme" diline geçer; kitap da s. 27'de "dinleyiniz" diyor.
+    const isAudio = String(unit.sourceLinkType || "").toLowerCase() === "audio";
+    const beforeTitle = isAudio ? "Dinlemeden önce" : "İzlemeden önce";
+    const notesTitle = isAudio ? "Dinlerken not al" : "İzlerken not al";
+    const afterTitle = isAudio ? "Dinledikten sonra" : "İzledikten sonra";
 
     return `
 <article class="qr-card activity-card social-qr-card" data-sqr-card="${escape(unit.id)}" data-kind="media">
@@ -128,15 +133,15 @@
   ${sourceChip(unit)}
   <div class="question-list">
   <article class="question-card">
-    <h5>İzlemeden önce</h5>
+    <h5>${beforeTitle}</h5>
     <ul class="qr-before">${before}</ul>
   </article>
   <article class="question-card">
-    <h5>İzlerken not al</h5>
+    <h5>${notesTitle}</h5>
     <div class="qr-notes">${notes}</div>
   </article>
   <article class="question-card"${entry.quizState && entry.quizState !== "none" ? ` data-state="${escape(entry.quizState)}"` : ""}>
-    <div class="qr-block-head"><h5>İzledikten sonra</h5>${labelMarkup(entry.quizState, entry.quizPill || "", !entry.quizChecked)}</div>
+    <div class="qr-block-head"><h5>${afterTitle}</h5>${labelMarkup(entry.quizState, entry.quizPill || "", !entry.quizChecked)}</div>
     <div class="qr-quiz">${questions}</div>
     <div class="qr-actions"><button class="btn qr-check check-button" type="button" data-sqr-check="quiz" data-sqr-unit="${escape(unit.id)}">✦ Kontrol et</button></div>
     <p class="qr-feedback" data-sqr-feedback="quiz" data-sqr-unit="${escape(unit.id)}" aria-live="polite"${entry.quizChecked ? "" : " hidden"}>${escape(entry.quizFeedback || "")}</p>

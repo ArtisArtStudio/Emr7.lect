@@ -218,28 +218,76 @@
       {
         id: "qr-uzlasma-hikayesi",
         weekIds: [2],
-        kind: "İzleme",
+        kind: "Dinleme",
         where: "s. 27 · 1. öğrenme alanı",
         title: "“Uzlaşmanın Gücü” hikâyesinin devamı",
         sourceUrl: eba("026223ec3b49bfa0b7fa72a539a4a1d9"),
         sourceLinkLabel: "EBA · Uzlaşmanın Gücü hikâyesinin devamı",
-        sourceLinkType: "video",
+        sourceLinkType: "audio",
         minutes: 5,
-        focus: "Uzlaşma, sıra alma ve ortak çözüm",
+        focus: "Çatışmayı uzlaşmaya çeviren davranışlar: düşünmeye zaman ayırma, ortak çözüm",
+        analysis: {
+          doc: "docs/video-analysis/uzlasmanin-gucu-devami-gemini-analysis.md",
+          speaker: "Anlatıcı ve canlandırma: Ahmet, Merve",
+          summary:
+            "Ahmet ile Merve proje konusunda fikir ayrılığı yaşar ve aralarında kısa süreli bir gerginlik olur. Ahmet duygusal tepki vermek yerine “Çözüm yolu bulmak için biraz düşünmeliyiz” der. Kısa süre sonra Merve, yalnızca klasik bir sunumun sıkıcı olacağını, projeyi görsel ve dijital sunumla birleştirebileceklerini önerir. Ahmet fikri onaylar; projeyi ortaklaşa tamamlarlar. Sunum gününde öğretmenler ve arkadaşları çalışmayı eğlenceli ve bilgilendirici bulur.",
+          segments: [
+            { at: "1", note: "Fikir ayrılığı: iki arkadaşın proje yaklaşımı çatışır, gerginlik oluşur." },
+            { at: "2", note: "Düşünme süreci: Ahmet “biraz düşünmeliyiz” diyerek tepki yerine çözüm önerir." },
+            { at: "3", note: "Yaratıcı çözüm: Merve dijital + görsel sunum fikrini ortaya atar." },
+            { at: "4", note: "Ortak çalışma: fikirler birleşir, proje tamamlanır, birbirlerini tebrik ederler." },
+            { at: "5", note: "Sunum: öğretmenler ve sınıf çalışmayı eğlenceli ve bilgilendirici bulur." },
+          ],
+          keyPoints: [
+            "Fikir ayrılığı tek başına çatışma değildir; çatışmaya dönüşmesini önleyen şey verilen tepkidir.",
+            "Duygusal tepki yerine düşünmeye zaman ayırmak çözümün ilk adımıdır.",
+            "Farklı ilgi alanları (teknoloji ve resim) birleştiğinde ürün zenginleşir.",
+            "Ortak çözüm, taraflardan birinin fikrinden tamamen vazgeçmesi değil; iki fikrin birleşmesidir.",
+          ],
+        },
         intro:
-          "Kitapta yarım bırakılan hikâyenin devamı karekodla açılıyor. Önce kendi tahminini yaz, sonra izle: tahmininle anlatılan çözüm arasındaki farkı işaretle.",
+          "s. 26’da hikâye yarım kalmıştı. Karekodda devamı var: iki arkadaşın proje anlaşmazlığı nasıl uzlaşmaya dönüşüyor? Önce kendi tahminini yaz, sonra dinle.",
         before: [
           "Hikâyenin nasıl biteceğini tahmin et: taraflar ne yapacak?",
-          "Uzlaşma ile boyun eğme arasındaki farkı tek cümleyle yaz.",
+          "Bir tartışmada “biraz düşünelim” demek neden işe yarar? Kısaca yaz.",
         ],
         notes: [
-          { id: "n1", label: "Hikâyedeki asıl anlaşmazlık neydi?", hint: "Kim, neyi istiyordu?" },
-          { id: "n2", label: "Çözümü kolaylaştıran adım", hint: "Sıra verme, dinleme, ortak nokta…" },
-          { id: "n3", label: "Tahminimle örtüşen ve ayrılan yön", hint: "İki sütun gibi düşün." },
+          { id: "n1", label: "Anlaşmazlığın konusu", hint: "İki arkadaş projeyi hangi yöntemle hazırlamak istiyordu?" },
+          { id: "n2", label: "Ahmet’in gerginlik anındaki teklifi", hint: "Tepki vermek yerine ne öneriyor?" },
+          { id: "n3", label: "Merve’nin çözüm fikri", hint: "İki sunum biçimi birleşiyor." },
+          { id: "n4", label: "Tahminimle örtüşen ve ayrılan yön", hint: "İki sütun gibi düşün." },
         ],
         questions: [
           {
             id: "q1",
+            prompt: "Ahmet, gerginlik sırasında hangi yolu seçer?",
+            options: [
+              "Kendi fikrinde ısrar edip tartışmayı sürdürmeyi",
+              "Projeyi tek başına yapmayı",
+              "Konuyu öğretmene şikâyet etmeyi",
+              "“Çözüm yolu bulmak için biraz düşünmeliyiz” demeyi",
+            ],
+            answer: 3,
+            explanation:
+              "Ahmet duygusal tepki yerine düşünmeye zaman ayırmayı önerir; çatışmayı uzlaşmaya çeviren ilk adım budur.",
+            hint: "Rapordaki “düşünme süreci” adımını hatırla.",
+          },
+          {
+            id: "q2",
+            prompt: "Merve’nin önerisi iki arkadaşın fikrini nasıl birleştirir?",
+            options: [
+              "Yalnızca resim ve afiş kullanılır",
+              "Görsel ve dijital sunum birlikte kullanılır",
+              "Proje sunulmadan bırakılır",
+              "Sunum yalnızca öğretmene yapılır",
+            ],
+            answer: 1,
+            explanation:
+              "Merve, klasik sunum yerine görsel ve dijital sunumu birleştirmeyi önerir; böylece iki ilgi alanı da işe katılır.",
+            hint: "İki arkadaşın ilgi alanı: biri teknoloji, biri resim.",
+          },
+          {
+            id: "q3",
             prompt: "Uzlaşmayı en iyi anlatan ifade hangisidir?",
             options: [
               "Taraflardan birinin isteğinden tamamen vazgeçmesi",
@@ -248,21 +296,9 @@
               "Kararın en yaşlı kişi tarafından verilmesi",
             ],
             answer: 2,
-            explanation: "Uzlaşmada taraflar karşılıklı olarak bir adım atar; biri tamamen vazgeçmez.",
-            hint: "“Karşılıklı” sözcüğüne dikkat et.",
-          },
-          {
-            id: "q2",
-            prompt: "Bir hikâyenin devamını tahmin etmek okura ne kazandırır?",
-            options: [
-              "Metni ezberlemeyi kolaylaştırır",
-              "Metnin sonunu değiştirir",
-              "Okuma süresini kısaltır",
-              "Okurun kendi çıkarımını metinle karşılaştırmasını sağlar",
-            ],
-            answer: 3,
-            explanation: "Tahmin, okurun kendi çıkarımını görünür kılar; metinle karşılaştırma düşünmeyi derinleştirir.",
-            hint: "Tahmin ettikten sonra ne yapıyorsun?",
+            explanation:
+              "Uzlaşmada taraflar karşılıklı adım atar; biri tamamen vazgeçmez, iki fikir birleşerek yeni bir çözüm doğar.",
+            hint: "Hikâyenin sonunda kaç fikir kullanıldı?",
           },
         ],
         write: {

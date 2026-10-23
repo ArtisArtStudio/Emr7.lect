@@ -773,6 +773,11 @@ for (const unit of analysedCards) {
   assert.ok(unit.analysis.doc && unit.analysis.summary && unit.analysis.keyPoints.length <= 4, `Video analizi alanları eksik: ${unit.id}`);
   assert.ok(fs.existsSync(path.join(__dirname, '..', unit.analysis.doc)), `Video analizi dosyası yok: ${unit.analysis.doc}`);
 }
+const uzlasma = qr.units.find((unit) => unit.id === 'qr-uzlasma-hikayesi');
+assert.ok(uzlasma && /uzlasmanin-gucu-devami/.test(uzlasma.analysis.doc), 'Uzlaşmanın Gücü kartı analiz dosyasına bağlanmalı.');
+assert.equal(uzlasma.sourceLinkType, 'audio', 's. 27 içeriği ses kaydıdır; kart dinleme olarak işaretlenmeli.');
+assert.ok(uzlasma.kind === 'Dinleme', 'Ses kaydı kartının türü Dinleme olmalı.');
+assert.ok(/dinle/i.test(uzlasma.intro), 'Dinleme kartının girişi dinlemeye yönlendirmeli.');
 // s. 45 sayfasında iki karekod vardır; ikisi de karta bağlanmalı.
 const sayfa45 = qr.units.filter((unit) => String(unit.where || '').startsWith('s. 45'));
 assert.equal(sayfa45.length, 2, 's. 45 sayfasındaki iki karekodun ikisi de karta bağlanmalı.');

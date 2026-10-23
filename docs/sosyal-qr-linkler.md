@@ -16,7 +16,7 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 |---|---|---|---|---|
 | 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
 | 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
-| 27 | “Uzlaşmanın Gücü” hikâyesinin devamı | 2 | — (ses kaydı, .rar) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
+| 27 | “Uzlaşmanın Gücü” hikâyesinin devamı (ses kaydı) · **analiz eklendi** | 2 | — (yayımlanmamış) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
 | 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | — (yayımlanmamış) | `63c076451e7fbbd14870627408def2c4` |
 | 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
 | 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
@@ -41,7 +41,7 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; altı kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; yedi kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -55,6 +55,9 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” videosu (analiz
 | 32 | `qr-engelleri-asanlar` | Engelleri aşan üç genç | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
 | 32 | `qr-engellerine-ragmen-alti-isim` | Engellerine rağmen büyük başarılara imza atmış altı isim | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
 | 45 | `qr-milli-meseleler` | Millî Meselelerde Biz (Yakup Kadri, İstiklal Yolu) | `docs/video-analysis/milli-meselelerde-biz-gemini-analysis.md` |
+| 27 | `qr-uzlasma-hikayesi` | Uzlaşmanın Gücü hikâyesinin devamı (Ahmet ve Merve, proje anlaşmazlığı) — **ses kaydı** | `docs/video-analysis/uzlasmanin-gucu-devami-gemini-analysis.md` |
+
+Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
 Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
 
