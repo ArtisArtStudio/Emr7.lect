@@ -607,7 +607,7 @@
       },
       {
         id: "qr-milli-meseleler",
-        weekIds: [4, 5],
+        weekIds: [4],
         kind: "İzleme",
         where: "s. 45 · 1. öğrenme alanı",
         title: "“Millî Meselelerde Biz” videosu",
@@ -706,7 +706,7 @@
       },
       {
         id: "qr-15-temmuz",
-        weekIds: [4, 5],
+        weekIds: [4],
         kind: "İzleme",
         where: "s. 45 · 1. öğrenme alanı",
         title: "15 Temmuz Darbe Girişimi",
@@ -1381,7 +1381,7 @@
       },
       {
         id: "qr-cihan-devleti-hukumdarlar",
-        weekIds: [9, 10, 11],
+        weekIds: [11],
         kind: "İzleme",
         where: "s. 96 · 3. öğrenme alanı",
         title: "Cihan devletinin mimarları",

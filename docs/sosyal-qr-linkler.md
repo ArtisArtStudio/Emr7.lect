@@ -10,6 +10,10 @@ Kitaptaki karekodlar `ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=…` 
 
 ## 2. Karekod kartları ve bağlantılar
 
+Karekod etkinlikleri artık ayrı bir bölümde değil, haftanın **etkinlik setinin son adımları** olarak görünür: önce konu anlatımı, sonra konu etkinlikleri, en sonda o haftanın video/harita (karekod) etkinlikleri. Böylece video, konu bütünüyle işlendikten sonra açılır ve tek bir etkinlik akışı kalır.
+
+Her karekod kartı **tek haftaya** bağlıdır; aynı video iki haftada tekrarlanmaz. Sayfa → hafta eşlemesi bu tablodaki “Hafta” kolonundadır (s. 45 kartları → 4. hafta, s. 96 kartı → 11. hafta).
+
 Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**; video analizi yapılırken hangi videonun izlendiğini belgelemek için tutulur. Karta bağlanan tek adres EBA kolonundaki `resourceId`'dir.
 
 | Sayfa | İçerik | Hafta | YouTube (yalnızca kayıt) | EBA `resourceId` |
@@ -21,14 +25,14 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys (4:41) | `2edd5069ff032e00a221a9a0545791bf` |
 | 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
 | 34 | “Engelleri Aşıyorum” — **video değil, sürükle-bırak etkinliği** (karta bağlanmadı) | 3 | — | `b3ec73b3a189e78a00451537774edb5f` |
-| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI (2:44) | `6e1f6955aeff331cc85451f6a8231cc5` |
-| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) · **analiz eklendi** | 4–5 | https://youtu.be/vyQOjbeDGXw (1:28) | `b14529259e0b211f8d6ae3a4bb6ab951` |
+| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4 | https://youtu.be/CP8diE-CstI (2:44) | `6e1f6955aeff331cc85451f6a8231cc5` |
+| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) · **analiz eklendi** | 4 | https://youtu.be/vyQOjbeDGXw (1:28) | `b14529259e0b211f8d6ae3a4bb6ab951` |
 | 60 | Küreselleşme · **analiz eklendi** | 6 | https://youtu.be/SWW7mIEBY38 (1:10) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
 | 63 | **Türk kahvesi** (kültürel miras) · **analiz eklendi** | 6 | https://youtu.be/pSoAZkgKTP4 (2:41) | `0a91216d32df2405b32be9c6a740c34a` |
 | 72 | **Jeopolitik konum ve insani dış politika** (kitapta etkileşimli etkinlik; kartta EBA videosu) · **analiz eklendi** | 7 | https://youtu.be/093b1nTbSmo (9:00) | `d8e6ad2d9687967f09a69ce26cff8a2e` |
 | 75 | **Ülkemizin girişimci politikası** (Somali örneği) · **analiz eklendi** | 8 | https://youtu.be/_ANGiyPhWYs (3:15) | `a1da14c0d38310a7068eefd025ec8f8f` |
 | 76 | **Türkiye Gazze’ye yardımda ilk sırada** (“iyilik gemileri”) · **analiz eklendi** | 8 | https://youtu.be/nM0aLYOWaIA (1:52) | `0ce320747764d0c8c4c7b744dc4da505` |
-| 96 | **Cihan devletinin mimarları** (dönemler, padişahlar, kurumlar) · **analiz eklendi** | 9–11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
+| 96 | **Cihan devletinin mimarları** (dönemler, padişahlar, kurumlar) · **analiz eklendi** | 11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
 | 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
 | 105 | **Preveze Deniz Zaferi** (Barbaros Hayreddin Paşa) · **analiz eklendi** | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
 | 106 | **Haritalarla Osmanlı Devleti: sultan sultan büyüme** (dokuz dönem görseli, yatay buton şeridi) | 12 | — (etkileşimli harita) | `1761fd63303ecc07765ffc8e7d22ac92` |
@@ -76,7 +80,7 @@ Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/vid
 
 ## 2b-2. s. 106 etkileşimli harita galerisi
 
-s. 106’daki EBA karekodu haritanın kendisini açar. Karta ek olarak kullanıcının verdiği **dokuz dönem haritası** işlendi; öğrenci sayfayı açtığında Osman Bey dönemi seçili gelir, yatay buton şeridinden sultan seçince o dönemin haritası görünür.
+s. 106’daki EBA karekodu haritanın kendisini açar. Karta ek olarak kullanıcının verdiği **dokuz dönem haritası** işlendi; öğrenci sayfayı açtığında Osman Bey dönemi seçili gelir, yatay buton şeridinden sultan seçince o dönemin haritası görünür. Kart, **12. haftanın etkinlik setinin son adımıdır** (9/9: “Haritalarla Osmanlı Devleti: sultan sultan büyüme”); ayrı bir karekod bölümü yoktur.
 
 | Sıra | Buton | Başkent | Dosya |
 |---|---|---|---|

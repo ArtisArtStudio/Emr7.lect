@@ -510,6 +510,10 @@
     ));
   }
 
+  // Son kitap adımıyla aynı görevi isteyen aktarım adımı akışa eklenmez; aksi hâlde
+  // öğrenci aynı işi iki kez yapar (GZFT, zaman çizelgesi, güzergâh, rapor).
+  const TRANSFER_SKIP_WEEKS = new Set([9, 10, 12, 13, 14, 15]);
+
   for (const item of WEEKS) {
     const content = mergedLesson(item.id);
     const quiz = mergedChecks(item.id);
@@ -526,7 +530,13 @@
       ? `Konu anlatımını oku; ardından ${customFlowTitles.join(' → ')} etkinliklerini sırayla tamamla.`
       : 'Kısa sınama, kitaba dayalı özgün çalışma ve konuya özel uygulama adımlarını sırayla tamamla.');
     const transfer = content.transfer || {};
-    const bookActivity = { ...item.activity, id: 'book' };
+    // Her kaynak haftanın kitap çalışması kendi yönergesiyle ayrı bir adım olur; iki
+    // konunun yönergeleri tek metinde birleştirilmez.
+    const bookActivities = groupIds(item.id)
+      .map((oldId) => SOURCE_WEEK_BY_ID.get(oldId))
+      .filter((part) => part && part.activity)
+      .map((part) => ({ ...part.activity, id: `book-${part.id}`, context: part.topic }));
+    const fallbackBookActivity = { ...item.activity, id: 'book' };
     if (hasCustomActivities) {
       const mappedActivities = customActivities.map((activityItem) => ({
         ...activityItem,
@@ -556,8 +566,8 @@
           fields: quiz.map(makeChoiceField),
           hint: 'Yanlış seçimde ipucunu oku; konu özetine dönüp yeniden dene.',
         },
-        bookActivity,
-        {
+        ...(bookActivities.length ? bookActivities : [fallbackBookActivity]),
+        ...(TRANSFER_SKIP_WEEKS.has(item.id) ? [] : [{
           id: 'apply',
           sourceStyle: transfer.format || 'Uygulama · kısa yanıt · öz değerlendirme',
           title: transfer.title || 'Öğrendiklerimi uyguluyorum',
@@ -565,7 +575,7 @@
           scenario: transfer.scenario || '',
           fields: transferFields(transfer),
           hint: transfer.hint || 'Yanıtını konu özeti ve kullandığın kaynakla karşılaştır.',
-        },
+        }]),
       ];
     }
   }
@@ -1200,65 +1210,104 @@
   let activeActivityWeekId = null;
   let activeActivityIndex = 0;
 
+  function qrUnitsFor(item) {
+    return (window.SOCIAL_QR?.units || []).filter((unit) => Array.isArray(unit.weekIds) && unit.weekIds.includes(item.id));
+  }
+
+  // Akıştaki toplam adım: konu etkinlikleri + haftanın karekod etkinlikleri.
+  function activityStepCount(item) {
+    return item.activities.length + qrUnitsFor(item).length;
+  }
+
   function renderActivityFlow(item, saved) {
     if (activeActivityWeekId !== item.id) {
       activeActivityWeekId = item.id;
       activeActivityIndex = 0;
     }
     const activities = item.activities;
-    activeActivityIndex = Math.max(0, Math.min(activeActivityIndex, activities.length - 1));
-    const activeActivity = activities[activeActivityIndex];
+    // Konu etkinlikleri tamamlandıktan sonra haftanın karekod etkinlikleri (video, harita,
+    // etkileşimli içerik) aynı akışın son adımları olarak gelir; ayrı bölüm açılmaz.
+    const qrUnits = qrUnitsFor(item);
+    const flowDescription = qrUnits.length
+      ? `${item.flowDescription} Haftanın video ve harita etkinlikleri bu adımların ardından gelir.`
+      : item.flowDescription;
+    const steps = activities.map((activityItem) => ({ type: 'activity', data: activityItem }))
+      .concat(qrUnits.map((unit) => ({ type: 'qr', data: unit })));
+    activeActivityIndex = Math.max(0, Math.min(activeActivityIndex, steps.length - 1));
+    const activeStep = steps[activeActivityIndex];
+    const activeActivity = activeStep.type === 'activity' ? activeStep.data : null;
+    const activeQr = activeStep.type === 'qr' ? activeStep.data : null;
     const completeCount = activities.filter((activityItem) => isActivityComplete(item, saved, activityItem)).length;
-    const currentComplete = isActivityComplete(item, saved, activeActivity);
-    const currentStatus = currentComplete ? 'Tamamlandı' : 'Devam ediyor';
-    const activityFeedback = (saved && saved.aiFeedback && saved.aiFeedback[activeActivity.id]) || {};
+    const currentComplete = activeActivity ? isActivityComplete(item, saved, activeActivity) : false;
+    const currentStatus = activeActivity ? (currentComplete ? 'Tamamlandı' : 'Devam ediyor') : `${Number(activeQr.minutes)} dk · karekod`;
+    const activityFeedback = (activeActivity && saved && saved.aiFeedback && saved.aiFeedback[activeActivity.id]) || {};
     const verdictState = Object.values(activityFeedback).map((entry) => entry && entry.state).filter((state) => state && state !== 'pending' && state !== 'system')[0] || '';
     const verdictLabel = verdictState ? (SOCIAL_AI_STATE_LABELS[verdictState] || '') : '';
-    const questPathHTML = `<nav class="social-quest-path" aria-label="Etkinlik adımları"><span class="social-quest-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol><li><span class="social-quest-number">1</span><span>Yönergeyi oku</span></li><li><span class="social-quest-number">2</span><span>Kaynağı incele</span></li><li><span class="social-quest-number">3</span><span>Yanıtını yaz</span></li><li><span class="social-quest-number">4</span><span>Kontrol et, geri bildirimi uygula</span></li></ol></nav>`;
-    const sourceTextHTML = activeActivity.sourceText
+    const questionHTML = activeActivity
+      ? (Array.isArray(activeActivity.questions) && activeActivity.questions.length
+        ? `<div class="social-question-list">${activeActivity.questions.map((questionItem, questionIndex) => `<section class="social-question-card"><div class="social-question-heading"><span class="social-question-number">${questionIndex + 1}</span><p>${escapeHTML(questionItem.prompt)}</p></div><div class="social-activity-fields">${(questionItem.fields || []).map((field, fieldIndex) => fieldHTML(item, activeActivity, field, saved, fieldIndex, false, false)).join('')}</div>${socialAICheckHTML(item, activeActivity, questionItem.fields || [], `question-${questionItem.id}`, questionItem.prompt, saved)}</section>`).join('')}</div>`
+        : `<div class="social-activity-fields">${activeActivity.fields.map((field, index) => fieldHTML(item, activeActivity, field, saved, index)).join('')}</div>`)
+      : '';
+    const trackHTML = steps.map((step, index) => {
+      const active = index === activeActivityIndex;
+      const complete = step.type === 'activity' && isActivityComplete(item, saved, step.data);
+      const isMedia = step.type === 'qr';
+      const stepKey = step.data.id;
+      const stepTitle = step.data.title;
+      const stepDetail = isMedia
+        ? `${step.data.kind} · ${Number(step.data.minutes)} dk`
+        : (step.data.count || (Array.isArray(step.data.questions) ? `${step.data.questions.length} soru` : `${step.data.fields.length} yanıt alanı`));
+      const stepMark = isMedia ? '▶' : (complete ? '✓' : '');
+      const stepLabel = isMedia ? 'Karekod etkinliği' : 'Etkinlik';
+      return `<button type="button" class="social-practice-step${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}${isMedia ? ' social-practice-step--media' : ''}" data-social-activity-select="${index}" aria-label="${stepLabel} ${index + 1}: ${escapeHTML(stepTitle)}${complete ? ', tamamlandı' : ''}" ${active ? 'aria-current="step"' : ''}><span class="social-practice-step-no">${index + 1}</span><span class="social-practice-step-copy"><b>${escapeHTML(stepTitle)}</b><small>${escapeHTML(stepDetail)}</small></span><span class="social-practice-step-status" id="social-activity-step-status-${item.id}-${escapeHTML(stepKey)}" aria-label="${complete ? 'Tamamlandı' : (isMedia ? 'Karekod etkinliği' : 'Devam ediyor')}">${stepMark}</span></button>`;
+    }).join('');
+
+    const stepBody = activeQr
+      ? `<div class="social-qr-inline" data-social-qr-inline="${escapeHTML(activeQr.id)}"></div>
+        <p class="social-answer-note">Kart; etkinliği açmadan önce düşünme, içeriği incelerken not alma ve sonrasında yanıtlama adımlarına ayrılır. Bağlantı EBA hesabı ister; yanıtlar bu tarayıcıda, ders ilerlemesinden ayrı saklanır.</p>`
+      : `<div class="social-activity-badges"><span class="social-result-pill" id="socialResultPill-${item.id}" data-state="${verdictState || 'none'}" role="status" aria-live="polite"${verdictLabel ? '' : ' hidden'}>${escapeHTML(verdictLabel)}</span><span class="social-activity-state${currentComplete ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${currentStatus}</span></div>`;
+
+    const stepHeading = activeQr
+      ? `<header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${steps.length} · Karekod etkinliği</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeQr.title)}</h4><p>${escapeHTML(activeQr.where)} · ${escapeHTML(activeQr.focus)}</p></div>${stepBody}</header>`
+      : `<header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${steps.length}${activeActivity.context ? ` · ${escapeHTML(activeActivity.context)}` : ''}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p></div>${stepBody}</header>`;
+
+    const questPathHTML = activeActivity ? `<nav class="social-quest-path" aria-label="Etkinlik adımları"><span class="social-quest-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol><li><span class="social-quest-number">1</span><span>Yönergeyi oku</span></li><li><span class="social-quest-number">2</span><span>Kaynağı incele</span></li><li><span class="social-quest-number">3</span><span>Yanıtını yaz</span></li><li><span class="social-quest-number">4</span><span>Kontrol et, geri bildirimi uygula</span></li></ol></nav>` : '';
+    const sourceTextHTML = activeActivity && activeActivity.sourceText
       ? `<section class="social-reading-source" aria-label="${escapeHTML(activeActivity.sourceTitle || 'Özgün kaynak metin')}"><div class="social-reading-heading"><span>ÖZGÜN METİN</span><h5>${escapeHTML(activeActivity.sourceTitle || 'Kaynak metin')}</h5>${activeActivity.sourceLabel ? `<small>${escapeHTML(activeActivity.sourceLabel)}</small>` : ''}</div><div class="social-reading-text">${renderSourceText(activeActivity.sourceText)}</div></section>`
       : '';
-    const dialogueHTML = Array.isArray(activeActivity.dialogue) && activeActivity.dialogue.length
+    const dialogueHTML = activeActivity && Array.isArray(activeActivity.dialogue) && activeActivity.dialogue.length
       ? `<section class="social-dialogue" aria-label="Örnek cep telefonu sohbeti"><div class="social-reading-heading"><span>SOHBET</span><h5>${escapeHTML(activeActivity.sourceTitle || 'Özgün örnek sohbet')}</h5>${activeActivity.sourceLabel ? `<small>${escapeHTML(activeActivity.sourceLabel)}</small>` : ''}</div><ol>${activeActivity.dialogue.map((message) => `<li><b>${escapeHTML(message.speaker)}</b><span>${escapeHTML(message.text)}</span></li>`).join('')}</ol></section>`
       : '';
-    const caseStudiesHTML = Array.isArray(activeActivity.caseStudies) && activeActivity.caseStudies.length
+    const caseStudiesHTML = activeActivity && Array.isArray(activeActivity.caseStudies) && activeActivity.caseStudies.length
       ? `<section class="social-case-study-list" aria-label="Örnek durumlar">${activeActivity.caseStudies.map((caseStudy, index) => `<article class="social-case-study"><span>${escapeHTML(caseStudy.title || `Örnek durum ${index + 1}`)}</span><p>${escapeHTML(caseStudy.text)}</p></article>`).join('')}</section>`
       : '';
     const providerLinks = getProviderLinks(item);
     const providerLabels = { eba: 'EBA Sosyal Bilgiler', tonguc: 'Tonguç konu araması', mebi: 'MEBİ öğrenci bölümü' };
-    const sourceProvidersHTML = Array.isArray(activeActivity.sourceProviders)
+    const sourceProvidersHTML = activeActivity && Array.isArray(activeActivity.sourceProviders)
       ? activeActivity.sourceProviders.filter((provider) => PROVIDERS.includes(provider) && providerLinks[provider]).map((provider) => `<a class="social-source-provider-link" href="${escapeHTML(providerLinks[provider])}" target="_blank" rel="noopener noreferrer">${escapeHTML(providerLabels[provider] || provider)} ↗</a>`).join('')
       : '';
-    const questionHTML = Array.isArray(activeActivity.questions) && activeActivity.questions.length
-      ? `<div class="social-question-list">${activeActivity.questions.map((questionItem, questionIndex) => `<section class="social-question-card"><div class="social-question-heading"><span class="social-question-number">${questionIndex + 1}</span><p>${escapeHTML(questionItem.prompt)}</p></div><div class="social-activity-fields">${(questionItem.fields || []).map((field, fieldIndex) => fieldHTML(item, activeActivity, field, saved, fieldIndex, false, false)).join('')}</div>${socialAICheckHTML(item, activeActivity, questionItem.fields || [], `question-${questionItem.id}`, questionItem.prompt, saved)}</section>`).join('')}</div>`
-      : `<div class="social-activity-fields">${activeActivity.fields.map((field, index) => fieldHTML(item, activeActivity, field, saved, index)).join('')}</div>`;
-    return `<section class="card social-practice-flow" aria-labelledby="socialPracticeTitle">
-      <div class="social-practice-heading"><div><div class="tag">ETKİNLİK SETİ</div><h3 id="socialPracticeTitle">Konu etkinlikleri: ${escapeHTML(item.topic)}</h3><p>${escapeHTML(item.flowDescription)}</p></div><strong class="social-practice-count" id="socialActivityCompleteCount">${completeCount}/${activities.length} etkinlik tamamlandı</strong></div>
-      <div class="social-practice-progress" id="socialActivityProgress" role="progressbar" aria-label="Haftalık etkinliklerin tamamlanma durumu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round((completeCount / activities.length) * 100)}"><span id="socialActivityProgressBar" style="width:${Math.round((completeCount / activities.length) * 100)}%"></span></div>
-      <nav class="social-practice-track" aria-label="Bu haftanın etkinlik adımları">${activities.map((activityItem, index) => {
-        const complete = isActivityComplete(item, saved, activityItem);
-        const active = index === activeActivityIndex;
-        const stepDetail = activityItem.count || (Array.isArray(activityItem.questions) ? `${activityItem.questions.length} soru` : `${activityItem.fields.length} yanıt alanı`);
-        return `<button type="button" class="social-practice-step${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}" data-social-activity-select="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(activityItem.title)}${complete ? ', tamamlandı' : ''}" ${active ? 'aria-current="step"' : ''}><span class="social-practice-step-no">${index + 1}</span><span class="social-practice-step-copy"><b>${escapeHTML(activityItem.title)}</b><small>${escapeHTML(stepDetail)}</small></span><span class="social-practice-step-status" id="social-activity-step-status-${item.id}-${activityItem.id}" aria-label="${complete ? 'Tamamlandı' : 'Devam ediyor'}">${complete ? '✓' : ''}</span></button>`;
-      }).join('')}</nav>
-      <article class="social-activity-step" id="socialActivityStep" aria-labelledby="socialActivityTitle-${item.id}">
-        <header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${activities.length}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p></div><div class="social-activity-badges"><span class="social-result-pill" id="socialResultPill-${item.id}" data-state="${verdictState || 'none'}" role="status" aria-live="polite"${verdictLabel ? '' : ' hidden'}>${escapeHTML(verdictLabel)}</span><span class="social-activity-state${currentComplete ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${currentStatus}</span></div></header>
-        ${questPathHTML}
-        ${activeActivity.scenario ? `<blockquote class="social-case-stem"><b>Örnek durum</b><span>${escapeHTML(activeActivity.scenario)}</span></blockquote>` : ''}
+    const activityMetaHTML = activeActivity && (activeActivity.format || activeActivity.count || activeActivity.sourceLabel)
+      ? `<div class="social-activity-meta">${activeActivity.format || activeActivity.sourceStyle ? `<span>${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}</span>` : ''}${activeActivity.count ? `<span>${escapeHTML(activeActivity.count)}</span>` : ''}<span>${steps.length} adım</span></div>`
+      : '';
+    const activityExtraHTML = activeActivity
+      ? `${activeActivity.scenario ? `<blockquote class="social-case-stem"><b>Örnek durum</b><span>${escapeHTML(activeActivity.scenario)}</span></blockquote>` : ''}
         <p class="social-style-note"><b>Etkinlik biçimi:</b> ${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}${activeActivity.hint ? `<span>${escapeHTML(activeActivity.hint)}</span>` : ''}</p>
-        ${(activeActivity.format || activeActivity.count || activeActivity.sourceLabel) ? `<div class="social-activity-meta">${activeActivity.format || activeActivity.sourceStyle ? `<span>${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}</span>` : ''}${activeActivity.count ? `<span>${escapeHTML(activeActivity.count)}</span>` : ''}<span>${activities.length} etkinlik</span></div>` : ''}
+        ${activityMetaHTML}
         ${sourceTextHTML}${dialogueHTML}${caseStudiesHTML}${sourceProvidersHTML ? `<div class="social-research-links" aria-label="Araştırma için bağlantılar">${sourceProvidersHTML}</div>` : ''}${questionHTML}
-        <p class="social-answer-note">✦ Kontrol et düğmesi ortak Groq ayarlarını kullanır; yanıtın Groq’a doğrudan gönderilir, güvenli geri bildirim kodlarla oluşturulur ve doğru cevap gösterilmez. Anahtarı yalnızca kişisel cihazında kullan.</p>
-        <div class="social-activity-controls"><button type="button" class="social-activity-nav" data-social-activity-move="-1" ${activeActivityIndex === 0 ? 'disabled' : ''}>← Önceki etkinlik</button><span>${activeActivityIndex + 1} / ${activities.length}</span><button type="button" class="social-activity-nav" data-social-activity-move="1" ${activeActivityIndex === activities.length - 1 ? 'disabled' : ''}>Sonraki etkinlik →</button></div>
+        <p class="social-answer-note">✦ Kontrol et düğmesi ortak Groq ayarlarını kullanır; yanıtın Groq’a doğrudan gönderilir, güvenli geri bildirim kodlarla oluşturulur ve doğru cevap gösterilmez. Anahtarı yalnızca kişisel cihazında kullan.</p>`
+      : '';
+
+    return `<section class="card social-practice-flow" aria-labelledby="socialPracticeTitle">
+      <div class="social-practice-heading"><div><div class="tag">ETKİNLİK SETİ</div><h3 id="socialPracticeTitle">Etkinlikler: ${escapeHTML(item.topic)}</h3><p>${escapeHTML(flowDescription)}</p></div><strong class="social-practice-count" id="socialActivityCompleteCount">${completeCount}/${activities.length} konu etkinliği tamamlandı</strong></div>
+      <div class="social-practice-progress" id="socialActivityProgress" role="progressbar" aria-label="Haftalık etkinliklerin tamamlanma durumu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round((completeCount / activities.length) * 100)}"><span id="socialActivityProgressBar" style="width:${Math.round((completeCount / activities.length) * 100)}%"></span></div>
+      <nav class="social-practice-track" aria-label="Bu haftanın etkinlik adımları">${trackHTML}</nav>
+      <article class="social-activity-step" id="socialActivityStep" aria-labelledby="socialActivityTitle-${item.id}">
+        ${stepHeading}
+        ${questPathHTML}
+        ${activityExtraHTML}
+        <div class="social-activity-controls"><button type="button" class="social-activity-nav" data-social-activity-move="-1" ${activeActivityIndex === 0 ? 'disabled' : ''}>← Önceki adım</button><span>${activeActivityIndex + 1} / ${steps.length}</span><button type="button" class="social-activity-nav" data-social-activity-move="1" ${activeActivityIndex === steps.length - 1 ? 'disabled' : ''}>Sonraki adım →</button></div>
       </article>
     </section>`;
-  }
-
-  // Karekod çalışmaları: Türkçe'deki karekod kartlarıyla aynı düzen. İçerik
-  // `social-studies-qr.js` dosyasından gelir; haftanın kartı yoksa bölüm gizlenir.
-  function socialQrSectionHTML() {
-    if (!window.SOCIAL_QR || !Array.isArray(window.SOCIAL_QR.units) || !window.SOCIAL_QR.units.length) return '';
-    return `<section class="card social-qr-entry" id="socialQr" hidden aria-label="Karekod izleme ve etkileşimli içerik çalışmaları"><h3 id="socialQrTitle">Karekod çalışmaları · izleme ve etkileşimli içerik</h3><p class="qr-lead">Bu haftanın karekodla açılan içeriği için izleme öncesi hazırlık, izlerken not alma ve izledikten sonra düşünme adımları. Kaynak bağlantısı kartın üstünde duruyor. EBA bağlantıları EBA hesabı ister; “Ara” düğmesi aynı başlıkla girişsiz sonuçları açar. Yanıtların bu tarayıcıda, ders ilerlemesinden ayrı saklanır.</p><div id="socialQrBody"></div></section>`;
   }
 
   function renderSelectedWeek() {
@@ -1290,7 +1339,6 @@
         <div class="social-summary-bottom"><div><h4>Hatırlamam gerekenler</h4><ul class="social-summary-points">${item.summaryPoints.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul></div><div class="social-key-terms"><h4>Anahtar kavramlar</h4><div>${item.keyTerms.map((term) => `<span>${escapeHTML(term)}</span>`).join('')}</div></div></div>
       </section>
       ${renderActivityFlow(item, saved)}
-      ${socialQrSectionHTML()}
       <div class="social-grid-two">
         <section class="card social-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(item.source)}</small></section>
         <section class="card social-mini-plan"><h3>Öğrenci için mini plan</h3><p>Görevleri tamamladıkça işaretle. Yanıtlar bu tarayıcıda saklanır.</p><div class="social-task-list">${item.tasks.map((task, index) => `<label class="social-task"><input type="checkbox" data-social-task="${index}" data-social-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section>
@@ -1302,7 +1350,11 @@
         <td><a class="social-provider-link" href="${escapeHTML(links.mebi)}" target="_blank" rel="noopener noreferrer">MEBİ çalışmaları ↗</a><small class="social-provider-note">MEBİ Sosyal Bilgiler öğrenci bölümü.</small><label class="social-provider-check"><input type="checkbox" data-social-provider="mebi" data-social-week="${item.id}" ${saved.platforms.mebi ? 'checked' : ''}><span>MEBİ çalışmam bitti</span></label></td>
       </tr></tbody></table></div></section>
       <p class="social-plan-source">${escapeHTML(item.source)} Haftalık dağılım ev çalışması için öneridir; sınıfta işlenen sıra ve öğretmen planı önceliklidir. Etkinlik yönergeleri özgündür; kitaptaki soru ve metinler kopyalanmamıştır.</p>`;
-    if (typeof window.renderSocialQrFlow === 'function') window.renderSocialQrFlow(item.id);
+    // Karekod etkinliği seçiliyse kart, etkinlik akışının içindeki alana çizilir.
+    const inlineQr = typeof content.querySelector === 'function' ? content.querySelector('[data-social-qr-inline]') : null;
+    if (inlineQr && typeof window.SOCIAL_QR_API?.renderUnit === 'function') {
+      window.SOCIAL_QR_API.renderUnit(inlineQr.dataset.socialQrInline, inlineQr);
+    }
   }
 
   function refreshProgressUI() {
@@ -1349,17 +1401,20 @@
     const completeCount = document.getElementById('socialActivityCompleteCount');
     if (progressMeter) progressMeter.setAttribute('aria-valuenow', String(completeActivities));
     if (progressMeterBar) progressMeterBar.style.width = `${Math.round((completeActivities / activities.length) * 100)}%`;
-    if (completeCount) completeCount.textContent = `${completeActivities}/${activities.length} etkinlik tamamlandı`;
+    if (completeCount) completeCount.textContent = `${completeActivities}/${activities.length} konu etkinliği tamamlandı`;
 
-    const currentActivity = activities[activeActivityIndex] || activities[0];
-    const currentComplete = isActivityComplete(selected, saved, currentActivity);
+    const activeStepIsQr = activeActivityIndex >= activities.length;
+    const currentActivity = activeStepIsQr ? null : (activities[activeActivityIndex] || activities[0]);
+    const currentComplete = currentActivity ? isActivityComplete(selected, saved, currentActivity) : false;
     const activityStatus = document.getElementById(`socialActivityState-${selected.id}`);
     if (activityStatus) {
       activityStatus.textContent = currentComplete ? 'Tamamlandı' : 'Devam ediyor';
       activityStatus.classList.toggle('is-done', currentComplete);
     }
-    activities.forEach((activityItem, index) => {
-      const activityComplete = isActivityComplete(selected, saved, activityItem);
+    const stepItems = activities.map((activityItem) => ({ type: 'activity', data: activityItem }))
+      .concat(qrUnitsFor(selected).map((unit) => ({ type: 'qr', data: unit })));
+    stepItems.forEach((step, index) => {
+      const activityComplete = step.type === 'activity' && isActivityComplete(selected, saved, step.data);
       const button = document.querySelector(`#socialWeekContent [data-social-activity-select="${index}"]`);
       if (button) {
         button.classList.toggle('is-current', index === activeActivityIndex);
@@ -1367,10 +1422,10 @@
         if (index === activeActivityIndex) button.setAttribute('aria-current', 'step');
         else button.removeAttribute('aria-current');
       }
-      const stepStatus = document.getElementById(`social-activity-step-status-${selected.id}-${activityItem.id}`);
+      const stepStatus = document.getElementById(`social-activity-step-status-${selected.id}-${step.data.id}`);
       if (stepStatus) {
-        stepStatus.textContent = activityComplete ? '✓' : '';
-        stepStatus.setAttribute('aria-label', activityComplete ? 'Tamamlandı' : 'Devam ediyor');
+        stepStatus.textContent = step.type === 'qr' ? '▶' : (activityComplete ? '✓' : '');
+        stepStatus.setAttribute('aria-label', step.type === 'qr' ? 'Karekod etkinliği' : (activityComplete ? 'Tamamlandı' : 'Devam ediyor'));
       }
     });
   }
@@ -1443,7 +1498,7 @@
       if (activitySelect) {
         const selected = WEEK_BY_ID.get(progress.selectedWeek);
         const nextIndex = Number(activitySelect.dataset.socialActivitySelect);
-        if (!selected || !Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= selected.activities.length) return;
+        if (!selected || !Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= activityStepCount(selected)) return;
         activeActivityWeekId = selected.id;
         activeActivityIndex = nextIndex;
         renderSelectedWeek();
@@ -1456,7 +1511,7 @@
       if (moveButton) {
         const selected = WEEK_BY_ID.get(progress.selectedWeek);
         const nextIndex = activeActivityIndex + Number(moveButton.dataset.socialActivityMove);
-        if (!selected || !Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= selected.activities.length) return;
+        if (!selected || !Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= activityStepCount(selected)) return;
         activeActivityWeekId = selected.id;
         activeActivityIndex = nextIndex;
         renderSelectedWeek();

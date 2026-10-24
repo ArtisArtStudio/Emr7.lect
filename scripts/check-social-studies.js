@@ -149,7 +149,9 @@ assert.deepEqual(Object.keys(extras.weeks).map(Number).sort((a, b) => a - b), Ar
 
 for (const week of social.weeks) {
   const extraIds = (extras.weeks[week.id].activities || []).map((activity) => activity.id);
-  const baseFlow = mergedFlows[week.id] || ['self-check', 'book', 'apply'];
+  // 9–15. haftalarda kitap çalışması kaynak hafta başına ayrı adımdır (book-<kaynak hafta>).
+  const transferStep = [9, 10, 12, 13, 14, 15].includes(week.id) ? [] : ['apply'];
+  const baseFlow = mergedFlows[week.id] || ['self-check', ...(week.sourceIds || []).map((sourceId) => `book-${sourceId}`), ...transferStep];
   assert.deepEqual(
     week.activities.map((activity) => activity.id),
     [...baseFlow, ...extraIds],
@@ -331,8 +333,8 @@ assert.deepEqual(
 // Ortak Mirasımız haftaları kitaptaki sırayla etkinlik akışı kazanır: temel üç adım + ek çalışmalar.
 assert.deepEqual(
   social.weeks.filter((week) => week.unitId === 'heritage').map((week) => week.activities.map((activity) => activity.id)),
-  social.weeks.filter((week) => week.unitId === 'heritage').map((week) => ['self-check', 'book', 'apply', ...extrasIdsFor(week.id)]),
-  'The third learning area should build its activity flow from the textbook topics plus the extras.',
+  social.weeks.filter((week) => week.unitId === 'heritage').map((week) => ['self-check', ...(week.sourceIds || []).map((sourceId) => `book-${sourceId}`), ...([9, 10, 12, 13, 14, 15].includes(week.id) ? [] : ['apply']), ...extrasIdsFor(week.id)]),
+  'The third learning area should build its activity flow from one textbook step per source week plus the extras.',
 );
 assert.ok(findActivity('same-message-three-ways').scenario.includes('Proje grubunun'), 'The communication-types week should use an original transfer situation.');
 
@@ -539,15 +541,15 @@ const week20Button = { dataset: { socialSelect: '9' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week20Button : null } });
 assert.equal(social.exportProgress().selectedWeek, 9);
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Osmanlı Beyliği’nin kuruluşu'));
-assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT’yi gerekçeyle doldur'));
+assert.ok(mockElements.socialWeekContent.innerHTML.includes('Konumun güçlü ve zayıf yönleri'), 'Week nine should open with its own textbook step, not a merged prompt.');
 const responseInput = {
-  dataset: { socialWeek: '9', socialActivity: 'book', socialResponse: 'strength-2' },
+  dataset: { socialWeek: '9', socialActivity: 'book-20', socialResponse: 'strength' },
   value: 'Kuruluş konumu gelişme için fırsatlar sunabilir.',
   type: 'textarea',
   closest(selector) { return selector === '[data-social-response]' ? this : null; },
 };
 root.listeners.input({ target: responseInput });
-assert.equal(social.exportProgress().weeks['9'].responses.book['strength-2'], responseInput.value);
+assert.equal(social.exportProgress().weeks['9'].responses['book-20'].strength, responseInput.value);
 const taskInput = { dataset: { socialWeek: '9', socialTask: '0' }, checked: true };
 root.listeners.change({ target: taskInput });
 const providerInput = { dataset: { socialWeek: '9', socialProvider: 'eba' }, checked: true };
@@ -743,6 +745,10 @@ for (const unit of qr.units) {
     assert.ok(question.options.length >= 3 && Number.isInteger(question.answer) && question.answer >= 0 && question.answer < question.options.length, `Karekod sorusunda geçerli yanıt yok: ${unit.id}/${question.id}`);
   }
   assert.ok(unit.write && unit.write.minChars > 0 && unit.write.criteria.length >= 2, `Karekod yazma görevi eksik: ${unit.id}`);
+}
+// Aynı video/harita etkinliği iki haftada birden görünmemeli; her kart tek haftaya bağlanır.
+for (const unit of qr.units) {
+  assert.equal(unit.weekIds.length, 1, `Karekod kartı tek haftaya bağlanmalı: ${unit.id}`);
 }
 const qrWeeks = [...new Set(qr.units.flatMap((unit) => unit.weekIds))].sort((a, b) => a - b);
 assert.ok(qrWeeks.length >= 10, 'Karekod kartları en az on haftaya yayılmalı.');

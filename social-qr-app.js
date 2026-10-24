@@ -294,7 +294,9 @@
           entry.writeFeedback = result.text;
         }
         saveStore(store);
-        render(weekId, host);
+        // Tek kart olarak çizildiyse yalnız o kartı yenile.
+        if (host.dataset.sqrSingle) renderUnit(host.dataset.sqrSingle, host);
+        else render(weekId, host);
         const box = host.querySelector(`[data-sqr-feedback="${kind}"][data-sqr-unit="${unit.id}"]`);
         if (box) {
           box.textContent = result.text;
@@ -302,6 +304,17 @@
         }
       });
     });
+  }
+
+  // Etkinlik akışının içinde tek bir karekod kartı çizmek için kullanılır.
+  function renderUnit(unitId, hostElement) {
+    const host = hostElement || document.getElementById("socialQrBody");
+    const unit = unitById(unitId);
+    if (!host || !unit) return;
+    host.dataset.sqrSingle = unit.id;
+    host.innerHTML = cardMarkup(unit, entryFor(unit.id));
+    bind(host, unit.weekIds?.[0] ?? null);
+    return host;
   }
 
   function render(weekId, hostElement) {
@@ -320,6 +333,7 @@
 
   window.renderSocialQrFlow = render;
   window.SOCIAL_QR_API = {
+    renderUnit,
     exportAnswers: () => JSON.parse(JSON.stringify(store)),
     storageKey: STORAGE_KEY,
   };

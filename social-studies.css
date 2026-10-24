@@ -413,3 +413,9 @@
 .qr-map-note{min-width:0}
 @media(max-width:620px){.qr-map-caption{grid-template-columns:minmax(0,1fr)}.qr-map-name{font-size:12.5px}.qr-map-tab{font-size:11.5px;padding:6px 10px}}
 @media print{.qr-map-tabs{display:none}.qr-map-slide[hidden]{display:grid!important}.qr-map-gallery{break-inside:avoid}}
+
+/* Karekod etkinliği: ayrı bölüm yerine etkinlik akışının son adımı olarak kart içinde açılır. */
+.social-qr-inline{margin:4px 0 10px}
+.social-qr-inline .qr-card{border:0;background:transparent;padding:0}
+.social-practice-step--media .social-practice-step-no{background:#eef5fb;color:#2d5578}
+.social-practice-step--media .social-practice-step-status{color:#2d5578;font-size:11px;font-weight:900}
