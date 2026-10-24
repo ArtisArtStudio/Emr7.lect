@@ -1,7 +1,7 @@
 # “15 Temmuz Darbe Girişimi” — video analizi (Gemini)
 
 > **Kaynak ve kullanım sınırı:** Bu dosya, kullanıcının Google Drive'ındaki Gemini analizinden (`15 Temmuz Darbe Girişimi Analizi`) aktarılmıştır. Uygulama videoyu açmaz, izlemez; kart içeriği yalnızca bu rapora dayanır.
-> **Video:** 15 Temmuz Darbe Girişimi · 1. tema · 1. öğrenme alanı (s. 45) · süre ≈ 1:28 (Necati Yalçın kanalı: https://youtu.be/DN330Cd39VE, yalnızca kayıt)
+> **Video:** 15 Temmuz Darbe Girişimi · 1. tema · 1. öğrenme alanı (s. 45) · süre ≈ 1:28 (Erkan İsanmaz / EBA kayıtları kanalı: https://youtu.be/vyQOjbeDGXw · kanal: https://www.youtube.com/@erkanisanmaz, yalnızca kayıt)
 > **Bağlantı:** EBA · `resourceId=b14529259e0b211f8d6ae3a4bb6ab951` (oturum açılınca açılır)
 
 ## Konu ve özet

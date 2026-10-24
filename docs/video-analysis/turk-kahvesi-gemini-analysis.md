@@ -1,7 +1,7 @@
 # “Türk Kahvesi” — video analizi (Gemini)
 
 > **Kaynak ve kullanım sınırı:** Bu dosya, kullanıcının yüklediği Gemini analizinden (`EBA Türk Kahvesi (Sayfa 63)`) aktarılmıştır. Uygulama videoyu açmaz, izlemez; kart içeriği yalnızca bu rapora dayanır.
-> **Video:** Türk Kahvesi · 2. öğrenme alanı (s. 63) · süre ≈ 2:41 (Necati Yalçın kanalı: https://youtu.be/pSoAZkgKTP4, yalnızca kayıt)
+> **Video:** Türk Kahvesi · 2. öğrenme alanı (s. 63) · süre ≈ 2:41 (Erkan İsanmaz / EBA kayıtları kanalı: https://youtu.be/pSoAZkgKTP4 · kanal: https://www.youtube.com/@erkanisanmaz, yalnızca kayıt)
 > **Bağlantı:** EBA · `resourceId=0a91216d32df2405b32be9c6a740c34a` (oturum açılınca açılır)
 
 ## Konu ve özet

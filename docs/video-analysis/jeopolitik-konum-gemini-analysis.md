@@ -2,7 +2,7 @@
 
 > **Kaynak ve kullanım sınırı:** Bu dosya, kullanıcının yüklediği Gemini analizinden (`Türkiye'nin Jeopolitik Gücü ve İnsani Dış Politikamız`) aktarılmıştır. Uygulama videoyu açmaz, izlemez; kart içeriği yalnızca bu rapora dayanır.
 > **Not:** Kitaptaki karekod etkileşimli bir etkinliğe gitse de bu başlıkta kart, diğer kartlarla aynı biçimde **EBA videosuyla** açılır.
-> **Video:** Jeopolitik konum ve dış politika · 2. öğrenme alanı (s. 72) · süre ≈ 9:00 (Necati Yalçın kanalı: https://youtu.be/093b1nTbSmo, yalnızca kayıt)
+> **Video:** Jeopolitik konum ve dış politika · 2. öğrenme alanı (s. 72) · süre ≈ 9:00 (Erkan İsanmaz / EBA kayıtları kanalı: https://youtu.be/093b1nTbSmo · kanal: https://www.youtube.com/@erkanisanmaz, yalnızca kayıt)
 > **Bağlantı:** EBA · `resourceId=d8e6ad2d9687967f09a69ce26cff8a2e` (oturum açılınca açılır)
 
 ## Konu ve özet

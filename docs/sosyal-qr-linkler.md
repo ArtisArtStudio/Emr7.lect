@@ -14,20 +14,20 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 
 | Sayfa | İçerik | Hafta | YouTube (yalnızca kayıt) | EBA `resourceId` |
 |---|---|---|---|---|
-| 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
+| 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A (4:42) | `2d41a7a29aa74f64bbc61e22fca5a389` |
 | 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
 | 27 | “Uzlaşmanın Gücü” hikâyesinin devamı (ses kaydı) · **analiz eklendi** | 2 | — (yayımlanmamış) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
 | 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | — (yayımlanmamış) | `63c076451e7fbbd14870627408def2c4` |
-| 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
+| 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys (4:41) | `2edd5069ff032e00a221a9a0545791bf` |
 | 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
 | 34 | “Engelleri Aşıyorum” — **video değil, sürükle-bırak etkinliği** (karta bağlanmadı) | 3 | — | `b3ec73b3a189e78a00451537774edb5f` |
-| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
-| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) · **analiz eklendi** | 4–5 | https://youtu.be/DN330Cd39VE | `b14529259e0b211f8d6ae3a4bb6ab951` |
-| 60 | Küreselleşme · **analiz eklendi** | 6 | https://youtu.be/iv_sjOLGbCI | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
-| 63 | **Türk kahvesi** (kültürel miras) · **analiz eklendi** | 6 | https://youtu.be/pSoAZkgKTP4 | `0a91216d32df2405b32be9c6a740c34a` |
-| 72 | **Jeopolitik konum ve insani dış politika** (kitapta etkileşimli etkinlik; kartta EBA videosu) · **analiz eklendi** | 7 | https://youtu.be/093b1nTbSmo | `d8e6ad2d9687967f09a69ce26cff8a2e` |
-| 75–76 | İnsani yardım ve girişimci dış politika | 8 | — (yayımlanmamış) | `a1da14c0d38310a7068eefd025ec8f8f` |
-| 96 | Dönemler ve hükümdarlar | 9–11 | https://youtu.be/Gab9bD-3kug | `3bb79a4a924568a745198daba651f7c8` |
+| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI (2:44) | `6e1f6955aeff331cc85451f6a8231cc5` |
+| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) · **analiz eklendi** | 4–5 | https://youtu.be/vyQOjbeDGXw (1:28) | `b14529259e0b211f8d6ae3a4bb6ab951` |
+| 60 | Küreselleşme · **analiz eklendi** | 6 | https://youtu.be/SWW7mIEBY38 (1:10) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
+| 63 | **Türk kahvesi** (kültürel miras) · **analiz eklendi** | 6 | https://youtu.be/pSoAZkgKTP4 (2:41) | `0a91216d32df2405b32be9c6a740c34a` |
+| 72 | **Jeopolitik konum ve insani dış politika** (kitapta etkileşimli etkinlik; kartta EBA videosu) · **analiz eklendi** | 7 | https://youtu.be/093b1nTbSmo (9:00) | `d8e6ad2d9687967f09a69ce26cff8a2e` |
+| 75–76 | İnsani yardım ve girişimci dış politika | 8 | s. 75: https://youtu.be/_ANGiyPhWYs (3:15) · s. 76: https://youtu.be/nM0aLYOWaIA (1:52) | `a1da14c0d38310a7068eefd025ec8f8f` |
+| 96 | Dönemler ve hükümdarlar | 9–11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
 | 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
 | 105 | Barbaros Hayreddin Paşa | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
 | 106 | XVI. yüzyıl etkileşimli haritası | 12 | — (etkileşimli içerik) | `1761fd63303ecc07765ffc8e7d22ac92` |
@@ -45,7 +45,7 @@ Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on bi
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
-s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” videosu (analizli) ve “15 Temmuz Darbe Girişimi” videosu (henüz analiz yok; kart kitap metnine ve izleme planlamasına dayanır).
+s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz Darbe Girişimi”; ikisinin de analizi kartlara işlendi.
 
 | Sayfa | Kart | Video | Analiz dosyası |
 |---|---|---|---|
@@ -75,23 +75,40 @@ Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/vid
 
 Bu içerik uygulamada **kart olarak listelenmez**; envanterde yalnızca kayıt amacıyla durur. Video/etkinlik eklendiğinde `social-studies-qr.js` içine yeni bir kart olarak girer.
 
+## 2d. YouTube taraması (yalnızca kayıt)
+
+EBA videoları **Erkan İsanmaz** kanalında yayımlanıyor: <https://www.youtube.com/@erkanisanmaz> (kanalda ayrıca “7. Sınıf” adlı 27 videoluk oynatma listesi var: `PLQQD-F9_lUiqfCmXp7UZAx4DpR0OKxNbl`).
+
+Tarama yöntemi: kanal içi arama (`/@erkanisanmaz/search?query=…`) + oynatma listesi; YouTube aramanın kendisi oturumsuz sayfada `401` döndüğü için kanal sayfası bir okuma servisi üzerinden alındı. Eşleşme kuralı: video başlığındaki **sayfa numarası** ve **süre** analiz raporundaki süreyle tutmalı.
+
+**Bulunan ve tabloya işlenen kayıtlar**
+
+| Sayfa | Video | Süre |
+|---|---|---|
+| 15 | https://youtu.be/9sazRBBv21A | 4:42 |
+| 32 | https://youtu.be/E3lz6LefMys | 4:41 |
+| 45 | https://youtu.be/CP8diE-CstI | 2:44 |
+| 45 | https://youtu.be/vyQOjbeDGXw | 1:28 |
+| 60 | https://youtu.be/SWW7mIEBY38 | 1:10 |
+| 63 | https://youtu.be/pSoAZkgKTP4 | 2:41 |
+| 72 | https://youtu.be/093b1nTbSmo | 9:00 |
+| 75 | https://youtu.be/_ANGiyPhWYs | 3:15 |
+| 76 | https://youtu.be/nM0aLYOWaIA | 1:52 |
+| 96 | https://youtu.be/Gab9bD-3kug | 5:49 |
+
+**Kanalda bulunamayanlar** (kanal aramasında “içerik yok” yanıtı): s. 23 etkili iletişim, s. 27 “Uzlaşmanın Gücü” devamı, s. 32 paralimpik kahramanlar ve altı isim, s. 101 gemilerin karadan yürütülmesi, s. 105 Barbaros Hayreddin Paşa (`Barbaros`, `Hayreddin`, `Preveze`), s. 106 XVI. yüzyıl haritası, s. 130 sanayileşme (`Sanayi`), s. 146 Fetih Marşı (`Marş`, `Fetih`), s. 147 3D, s. 150 Ahi teşkilatı (`Ahi`), s. 151 kültür-medeniyet etkileşimli video.
+
+Bunların üçü zaten **video değil**: s. 106 etkileşimli harita, s. 147 3D sahne, s. 151 VCollab etkileşimli içerik. Kanalın yeni müfredat (Maarif Modeli) videoları kademeli yüklendiği için kalan sayfaların kayıtları henüz yayımlanmamış görünüyor; kanala yeni video eklendiğinde tablo ve `analysis` alanları aynı yolla güncellenir.
+
 ## 3. Google Drive durumu
 
-Kullanıcının Drive'ında **Sosyal Bilgiler videosu yok**. Bulunan 7 video Türkçe dersine aittir ve `turkce-qr.js` içinde kullanılır. Drive'daki Sosyal Bilgiler dosyaları yalnızca ders kitabının dört PDF'idir.
+Kullanıcının Drive'ında **video dosyası yok**; Drive'da yalnızca ders kitabının dört PDF'i ve Gemini analiz dokümanları bulunur. Analiz dokümanları `docs/video-analysis/` altına aktarılır; uygulama Drive'a bağlanmaz.
 
-Bir video Drive'a yüklenirse karta `driveUrl` alanı eklenir; kartta “Drive'dan aç” düğmesi otomatik görünür (Türkçe'deki düzenin aynısı). Örnek:
-
-```js
-{
-  id: "qr-barbaros",
-  driveUrl: "https://drive.google.com/file/d/<FILE_ID>/view",
-  // …
-}
-```
+Uygulamada kart başına **tek** bağlantı vardır ve o da EBA'dır. YouTube ve Drive adresleri yalnızca bu belgede kayıt amacıyla tutulur; koda eklenmez.
 
 ## 4. Yeni bağlantı eklerken
 
 1. EBA kimliği kitabın PDF'inden `page.get_links()` ile alınır (gömülü bağlantı katmanı).
-2. Girişsiz kopya varsa `publicUrl`, yoksa uygulama otomatik olarak YouTube araması gösterir.
-3. Drive kopyası varsa `driveUrl` eklenir; girişsiz kopyadan sonra, EBA'dan önce gösterilir.
-4. `node scripts/check-social-studies.js` çalıştırılır; kart alanları ve EBA adres biçimi doğrulanır.
+2. Karta `sourceUrl: eba("<id>")`, `sourceLinkLabel` ve `sourceLinkType` (`video` / `audio` / `harita` / `pdf`) yazılır.
+3. Öğrenci yüzeyinde tek bağlantı görünür: simge + içerik adı + “Videoyu aç / Dinlemeyi aç / Haritayı aç”.
+4. `node scripts/check-social-studies.js` çalıştırılır; kart başına tek bağlantı ve `https://ders.eba.gov.tr/` öneki doğrulanır.

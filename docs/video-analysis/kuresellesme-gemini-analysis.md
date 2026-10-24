@@ -1,7 +1,7 @@
 # “Küreselleşme” — video analizi (Gemini)
 
 > **Kaynak ve kullanım sınırı:** Bu dosya, kullanıcının Google Drive'ındaki Gemini analizinden (`Küreselleşme Analizi`) aktarılmıştır. Uygulama videoyu açmaz, izlemez; kart içeriği yalnızca bu rapora dayanır.
-> **Video:** Küreselleşme · 2. öğrenme alanı (s. 60) · süre ≈ 1:10 (Necati Yalçın kanalı: https://youtu.be/iv_sjOLGbCI, yalnızca kayıt)
+> **Video:** Küreselleşme · 2. öğrenme alanı (s. 60) · süre ≈ 1:10 (Erkan İsanmaz / EBA kayıtları kanalı: https://youtu.be/SWW7mIEBY38 · kanal: https://www.youtube.com/@erkanisanmaz, yalnızca kayıt)
 > **Bağlantı:** EBA · `resourceId=a9e7ce50bc4c0fa37a38be23b4a8af35` (oturum açılınca açılır)
 
 ## Konu ve özet
