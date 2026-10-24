@@ -1,18 +1,18 @@
-# Sosyal Bilgiler 7 — karekod bağlantıları (EBA + girişsiz kopya)
+# Sosyal Bilgiler 7 — karekod bağlantıları
 
-> **Amaç:** Ders kitabındaki karekodların hedefini ve bu içeriklere **giriş yapmadan** ulaşmanın yolunu tek yerde toplamak.
+> **Amaç:** Ders kitabındaki karekodların EBA hedeflerini tek yerde toplamak. Uygulama kartlarından **yalnızca EBA adresine** gidilir; öğrenci EBA oturumuyla izler.
 
 ## 1. Neden EBA bağlantıları “ulaşılamıyor” diyor?
 
 Kitaptaki karekodlar `ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=…` adresine gider. Bu adres, tarayıcıda EBA oturumu yoksa **EBA giriş sayfasına** yönlendirir. Doğrulama: geçersiz bir kimlikle (`resourceId=000…dead`) denendiğinde de aynı giriş sayfası açılır — yani bağlantı kırık değil, sunucu önce oturum istiyor. EBA hesabıyla giriş yapıldığında aynı adres doğrudan içeriği açar.
 
-Uygulamada bu yüzden her karekod kartında iki bağlantı bulunur: **girişsiz kopya** (varsa) ve **EBA bağlantısı** (“EBA hesabı gerekir” notuyla).
+**Uygulama davranışı (Türkçe kartlarıyla aynı):** Her karta tek bağlantı konur — türüne göre simge (🎥 video, 🎧 ses, 📄 harita/metin), içeriğin adı ve “Videoyu aç / Dinlemeyi aç / Haritayı aç” düğmesi. Bağlantı doğrudan EBA adresine gider. İkinci bir YouTube/Drive bağlantısı, arama düğmesi veya bağlantı notu gösterilmez.
 
 ## 2. Karekod kartları ve bağlantılar
 
-Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **sosyalbilgiler.biz** forumundaki konulardan alındı; videolar aynı sitede YouTube'a yüklenmiş hâlde duruyor. Kalan içerikler için o sitede yayımlanmış video yok, bu nedenle uygulama kartında arama bağlantısı gösterilir.
+Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**; video analizi yapılırken hangi videonun izlendiğini belgelemek için tutulur. Karta bağlanan tek adres EBA kolonundaki `resourceId`'dir.
 
-| Sayfa | İçerik | Hafta | Girişsiz kopya | EBA `resourceId` |
+| Sayfa | İçerik | Hafta | YouTube (yalnızca kayıt) | EBA `resourceId` |
 |---|---|---|---|---|
 | 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
 | 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |

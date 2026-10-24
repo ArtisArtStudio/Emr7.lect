@@ -752,36 +752,17 @@ const allFormats = social.weeks.flatMap((week) => week.activities.map((activity)
 for (const technique of ['Balık kılçığı', 'GZFT', 'Dallanmış ağaç', 'Zaman şeridi', 'Kelime bulutu', 'Bulmaca', 'Kavram haritası', 'Tanılayıcı test']) {
   assert.ok(allFormats.includes(technique.toLocaleLowerCase('tr-TR')), `Dönem boyunca ${technique} tekniği en az bir kez kullanılmalı.`);
 }
-// EBA derin bağlantıları oturum ister; her kartta girişsiz arama bağlantısı da bulunmalı.
+// Bağlantı düzeni Türkçe karekod kartlarıyla aynı: kart başına tek bağlantı, EBA adresi.
 const appSource = require('fs').readFileSync(require('path').join(__dirname, '..', 'social-qr-app.js'), 'utf8');
-assert.ok(appSource.includes('youtube.com/results?search_query'), 'Karekod kartları girişsiz arama bağlantısı sunmalı.');
-assert.ok(appSource.includes('driveUrl'), 'Karekod kartları Drive kopyası bağlantısını desteklemeli.');
-assert.ok(appSource.includes('publicUrl'), 'Karekod kartları girişsiz (yayımlanmış) kopya bağlantısını desteklemeli.');
-const publicCards = qr.units.filter((unit) => unit.publicUrl);
-assert.ok(publicCards.length >= 5, 'En az beş karekod kartında girişsiz video kopyası bulunmalı.');
-for (const unit of publicCards) {
-  assert.ok(/^https:\/\/youtu\.be\/[A-Za-z0-9_-]{11}$/.test(unit.publicUrl), `Girişsiz kopya YouTube adresi olmalı: ${unit.id}`);
-  assert.ok(unit.publicLabel, `Girişsiz kopyanın etiketi olmalı: ${unit.id}`);
+assert.ok(!/youtube\.com\/results\?search_query/.test(appSource), 'Karekod kartları YouTube aramasına yönlendirmemeli.');
+assert.ok(!/publicUrl|driveUrl/.test(appSource), 'Karekod kartlarında ikinci (YouTube/Drive) bağlantı gösterilmemeli.');
+assert.ok(!/qr-link-note/.test(appSource), 'Karekod kartlarında bağlantı notu gösterilmemeli.');
+assert.ok(/unit\.sourceUrl/.test(appSource), 'Karekod kartı EBA adresini kullanmalı.');
+assert.ok((appSource.match(/source-link qr-source-link/g) || []).length <= 1, 'Kart başına tek bağlantı üretilmeli.');
+for (const unit of qr.units) {
+  assert.ok(!unit.publicUrl && !unit.driveUrl, `Kartta ikinci bağlantı alanı olmamalı: ${unit.id}`);
+  assert.ok(/^https:\/\/ders\.eba\.gov\.tr\//.test(unit.sourceUrl), `Kart yalnızca EBA adresine gitmeli: ${unit.id}`);
 }
-assert.ok(appSource.includes('EBA hesabı gerekir'), 'EBA bağlantısının oturum istediği kartta belirtilmeli.');
-// İki iletişim kartı kullanıcının sağladığı video analizine dayanır; rapor dosyaları depoda bulunmalı.
-const fs = require('fs');
-const path = require('path');
-const analysedCards = qr.units.filter((unit) => unit.analysis);
-assert.ok(analysedCards.length >= 2, 'İletişim kartlarında video analizi bulunmalı.');
-for (const unit of analysedCards) {
-  assert.ok(unit.analysis.doc && unit.analysis.summary && unit.analysis.keyPoints.length <= 4, `Video analizi alanları eksik: ${unit.id}`);
-  assert.ok(fs.existsSync(path.join(__dirname, '..', unit.analysis.doc)), `Video analizi dosyası yok: ${unit.analysis.doc}`);
-}
-// s. 34 "Engelleri Aşıyorum" video değil, sürükle-bırak etkinliğidir; kullanıcı
-// talimatıyla şimdilik karta bağlanmaz. Envanterde kayıt olarak durur, uygulamada görünmez.
-assert.ok(!qr.units.some((unit) => unit.sourceUrl.includes('b3ec73b3a189e78a00451537774edb5f')), 's. 34 etkinliği video kartı olarak bağlanmamalı.');
-assert.ok(!/Engelleri Aşıyorum/.test(qr.units.map((unit) => unit.title).join(' | ')), 's. 34 etkinliği karekod kartı listesinde görünmemeli.');
-const uzlasma = qr.units.find((unit) => unit.id === 'qr-uzlasma-hikayesi');
-assert.ok(uzlasma && /uzlasmanin-gucu-devami/.test(uzlasma.analysis.doc), 'Uzlaşmanın Gücü kartı analiz dosyasına bağlanmalı.');
-assert.equal(uzlasma.sourceLinkType, 'audio', 's. 27 içeriği ses kaydıdır; kart dinleme olarak işaretlenmeli.');
-assert.ok(uzlasma.kind === 'Dinleme', 'Ses kaydı kartının türü Dinleme olmalı.');
-assert.ok(/dinle/i.test(uzlasma.intro), 'Dinleme kartının girişi dinlemeye yönlendirmeli.');
 // s. 45 sayfasında iki karekod vardır; ikisi de karta bağlanmalı.
 const sayfa45 = qr.units.filter((unit) => String(unit.where || '').startsWith('s. 45'));
 assert.equal(sayfa45.length, 2, 's. 45 sayfasındaki iki karekodun ikisi de karta bağlanmalı.');
