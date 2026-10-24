@@ -64,6 +64,30 @@
     return `<span class="qr-pill" data-state="${escape(state)}"${hidden ? " hidden" : ""}>${escape(text)}</span>`;
   }
 
+  // Etkileşimli harita galerisi: yatay sultan şeridi + seçilen dönemin haritası.
+  // Tüm görseller önceden yüklenir, yalnızca seçili olan görünür; geçiş beklemesiz olur.
+  function galleryMarkup(unit, entry) {
+    const gallery = unit.gallery;
+    if (!gallery || !Array.isArray(gallery.items) || !gallery.items.length) return "";
+    const activeId = String(entry.values.g || gallery.items[0].id);
+    const active = gallery.items.find((item) => item.id === activeId) || gallery.items[0];
+    const stageId = `sqr-map-${unit.id}`;
+    const tabs = gallery.items.map((item, index) => {
+      const selected = item.id === active.id;
+      return `<button class="qr-map-tab${selected ? " is-active" : ""}" type="button" role="tab" aria-selected="${selected}" aria-controls="${stageId}" tabindex="${selected ? "0" : "-1"}" data-sqr-map-tab="${escape(item.id)}" data-sqr-unit="${escape(unit.id)}"><span class="qr-map-tab-order" aria-hidden="true">${index + 1}</span><span class="qr-map-tab-name">${escape(item.label)}</span></button>`;
+    }).join("");
+    const slides = gallery.items.map((item) => {
+      const selected = item.id === active.id;
+      return `<figure class="qr-map-slide" data-sqr-map-slide="${escape(item.id)}"${selected ? "" : " hidden"}><img class="qr-map-image" src="${escape(item.image)}" alt="${escape(item.alt)}" width="1200" height="675" loading="${selected ? "eager" : "lazy"}" decoding="async"><figcaption class="qr-map-caption"><strong class="qr-map-name">${escape(item.label)}</strong><span class="qr-map-seat">Başkent: ${escape(item.seat)}</span><span class="qr-map-note">${escape(item.note)}</span></figcaption></figure>`;
+    }).join("");
+    return `<article class="question-card qr-map-gallery">
+    <div class="qr-block-head"><h5>${escape(gallery.title)}</h5><span class="qr-map-count">${gallery.items.length} dönem</span></div>
+    <p class="qr-instruction">${escape(gallery.instruction)}</p>
+    <div class="qr-map-tabs" role="tablist" aria-label="${escape(gallery.title)}">${tabs}</div>
+    <div class="qr-map-stage" id="${stageId}" role="tabpanel" aria-live="polite">${slides}</div>
+  </article>`;
+  }
+
   function cardMarkup(unit, entry) {
     const notes = unit.notes.map((note, index) => {
       const value = entry.values[`n:${note.id}`] || "";
@@ -84,10 +108,12 @@
     const criteria = unit.write.criteria.map((item) => `<li>${escape(item)}</li>`).join("");
     const writeValue = entry.values.w || "";
     // İçerik ses kaydıysa başlıklar "dinleme" diline geçer; kitap da s. 27'de "dinleyiniz" diyor.
-    const isAudio = String(unit.sourceLinkType || "").toLowerCase() === "audio";
-    const beforeTitle = isAudio ? "Dinlemeden önce" : "İzlemeden önce";
-    const notesTitle = isAudio ? "Dinlerken not al" : "İzlerken not al";
-    const afterTitle = isAudio ? "Dinledikten sonra" : "İzledikten sonra";
+    const sourceType = String(unit.sourceLinkType || "").toLowerCase();
+    const isAudio = sourceType === "audio";
+    const isMap = sourceType === "harita" || sourceType === "pdf";
+    const beforeTitle = isAudio ? "Dinlemeden önce" : isMap ? "İncelemeden önce" : "İzlemeden önce";
+    const notesTitle = isAudio ? "Dinlerken not al" : isMap ? "İncelerken not al" : "İzlerken not al";
+    const afterTitle = isAudio ? "Dinledikten sonra" : isMap ? "İnceledikten sonra" : "İzledikten sonra";
 
     return `
 <article class="qr-card activity-card social-qr-card" data-sqr-card="${escape(unit.id)}" data-kind="media">
@@ -100,6 +126,7 @@
   </header>
   <div class="activity-meta"><span>${escape(unit.kind)}</span><span>yaklaşık ${Number(unit.minutes)} dk</span><span>${escape(unit.focus)}</span></div>
   ${sourceChip(unit)}
+  ${galleryMarkup(unit, entry)}
   <div class="question-list">
   <article class="question-card">
     <h5>${beforeTitle}</h5>
@@ -215,6 +242,37 @@
         const counter = host.querySelector(`[data-sqr-count="${area.dataset.sqrUnit}"]`);
         if (counter && unit) counter.textContent = `${area.value.trim().length}/${unit.write.minChars} karakter`;
         saveStore(store);
+      });
+    });
+    host.querySelectorAll("[data-sqr-map-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const unit = unitById(tab.dataset.sqrUnit);
+        if (!unit?.gallery) return;
+        const entry = entryFor(unit.id);
+        entry.values.g = tab.dataset.sqrMapTab;
+        saveStore(store);
+        const strip = tab.closest(".qr-map-tabs");
+        strip?.querySelectorAll("[data-sqr-map-tab]").forEach((other) => {
+          const on = other === tab;
+          other.classList.toggle("is-active", on);
+          other.setAttribute("aria-selected", String(on));
+          other.tabIndex = on ? 0 : -1;
+        });
+        const stage = tab.closest(".qr-map-gallery")?.querySelector(".qr-map-stage");
+        stage?.querySelectorAll("[data-sqr-map-slide]").forEach((slide) => {
+          slide.hidden = slide.dataset.sqrMapSlide !== tab.dataset.sqrMapTab;
+        });
+      });
+      // Şerit yatay: klavye oklarıyla komşu döneme geçilebilir.
+      tab.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+        const strip = tab.closest(".qr-map-tabs");
+        const tabs = Array.from(strip?.querySelectorAll("[data-sqr-map-tab]") || []);
+        const next = tabs[tabs.indexOf(tab) + (event.key === "ArrowRight" ? 1 : -1)];
+        if (!next) return;
+        event.preventDefault();
+        next.focus();
+        next.click();
       });
     });
     host.querySelectorAll("[data-sqr-check]").forEach((button) => {

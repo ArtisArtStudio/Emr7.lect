@@ -31,18 +31,18 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 96 | **Cihan devletinin mimarları** (dönemler, padişahlar, kurumlar) · **analiz eklendi** | 9–11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
 | 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
 | 105 | **Preveze Deniz Zaferi** (Barbaros Hayreddin Paşa) · **analiz eklendi** | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
-| 106 | XVI. yüzyıl etkileşimli haritası | 12 | — (etkileşimli içerik) | `1761fd63303ecc07765ffc8e7d22ac92` |
+| 106 | **Haritalarla Osmanlı Devleti: sultan sultan büyüme** (dokuz dönem görseli, yatay buton şeridi) | 12 | — (etkileşimli harita) | `1761fd63303ecc07765ffc8e7d22ac92` |
 | 130 | **Osmanlı’da sanayileşme ve ekonomik dönüşüm** (fabrikalar, demiryolu, Islah-ı Sanayi) · **analiz eklendi** | 14 | — (yayımlanmamış) | `ea26c7d6df42f305e0ec140ccf58402d` |
 | 146 | Fetih Marşı | 15 | — (yayımlanmamış) | `8bb724f386e46afc6d07b4cf1094ab70` |
 | 147 | 3D günlük yaşam | 15 | — (yayımlanmamış) | `a1ed545e12246ab79b8cf219aeb4b619` |
-| 150 | Ahi teşkilatı | 15 | — (yayımlanmamış) | `218994cef89cb74b5ae00d91da2c821d` |
+| 150 | **Ahilik: esnafın ahlak ve dayanışma düzeni** · **analiz eklendi** | 15 | — (yayımlanmamış) | `218994cef89cb74b5ae00d91da2c821d` |
 | 151 | Kültür-medeniyet etkileşimli video | 15 | — (yayımlanmamış) | `c2768a5382050f9c7ec0b81934dcd743` |
 
 Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resourceType=1&resourceLocation=2`
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on altı kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on yedi kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -66,12 +66,34 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz
 | 96 | `qr-cihan-devleti-hukumdarlar` | Cihan devletinin mimarları (padişahlar, kurumlar, 1402–1453 kırılmaları) | `docs/video-analysis/cihan-devletinin-mimarlari-gemini-analysis.md` |
 | 105 | `qr-barbaros` | Preveze Deniz Zaferi (1533 atama, hilal taktiği, 1538 zaferi) | `docs/video-analysis/preveze-deniz-zaferi-gemini-analysis.md` |
 | 130 | `qr-osmanli-yenilikler` | Osmanlı’da sanayileşme ve ekonomik dönüşüm (fabrikalar, 1/6 bütçe, demiryolu, Islah-ı Sanayi) | `docs/video-analysis/osmanli-sanayilesme-gemini-analysis.md` |
+| 150 | `qr-ahi-teskilati` | Ahilik (Ahi Evran, yamak–çırak–kalfa–usta, narh, pabucu dama atmak, esnaf sandığı) | `docs/video-analysis/ahilik-teskilati-gemini-analysis.md` |
 
 Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
 Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
 
 Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/video-analysis/` altına konur, karta `analysis` alanı eklenir, sorular rapordaki doğrulanabilir bilgilere dayandırılır.
+
+## 2b-2. s. 106 etkileşimli harita galerisi
+
+s. 106’daki EBA karekodu haritanın kendisini açar. Karta ek olarak kullanıcının verdiği **dokuz dönem haritası** işlendi; öğrenci sayfayı açtığında Osman Bey dönemi seçili gelir, yatay buton şeridinden sultan seçince o dönemin haritası görünür.
+
+| Sıra | Buton | Başkent | Dosya |
+|---|---|---|---|
+| 1 | Osman Bey | Söğüt | `assets/sosyal-harita/1-osman-bey.webp` |
+| 2 | Orhan Bey | Bursa | `assets/sosyal-harita/2-orhan-bey.webp` |
+| 3 | I. Murat | Edirne | `assets/sosyal-harita/3-i-murat.webp` |
+| 4 | Yıldırım Bayezid | Edirne | `assets/sosyal-harita/4-yildirim-bayezid.webp` |
+| 5 | I. Mehmet (Çelebi) | Edirne | `assets/sosyal-harita/5-i-mehmet.webp` |
+| 6 | II. Murat | Edirne | `assets/sosyal-harita/6-ii-murat.webp` |
+| 7 | II. Mehmet (Fatih) | İstanbul | `assets/sosyal-harita/7-ii-mehmet.webp` |
+| 8 | Yavuz Sultan Selim | İstanbul | `assets/sosyal-harita/8-yavuz-sultan-selim.webp` |
+| 9 | Kanuni Sultan Süleyman | İstanbul | `assets/sosyal-harita/9-kanuni-sultan-suleyman.webp` |
+
+- Kaynak dosyalar kullanıcıdan PNG olarak geldi (`1_osmanbey`, `2_orhanbey`, `3_1.Murat`, `4_Yıldırım`, `5_1.Mehmet`, `6_2.Murat`, `7_2.Mehmet`, `8_YavuzSultanSelim`, `9_KanuniSultanSuleyman`); depoda 1200 px genişlikte WebP olarak tutulur (toplam ≈ 860 KB).
+- Galeri verisi `social-studies-qr.js` içindeki `qr-etkilesimli-harita` kartının `gallery` alanındadır; görünüm ve buton davranışı `social-qr-app.js` içindeki `galleryMarkup` + `bind` ile yönetilir.
+- Seçim `emr7lect.socialQr.v1` deposunda saklanır; ilk açılışta her zaman 1. sıra (Osman Bey) gösterilir.
+- **Not:** 9. haritanın lejantında “II. Süleyman” yazımı vardır; harita başlığı “I. Süleyman Dönemi”dir. Kart metni doğru adı (Kanuni Sultan Süleyman) kullanır.
 
 ## 2c. Karta bağlanmayan karekodlar
 
