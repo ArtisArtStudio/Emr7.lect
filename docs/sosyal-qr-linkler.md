@@ -17,13 +17,13 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 | 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A | `2d41a7a29aa74f64bbc61e22fca5a389` |
 | 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
 | 27 | “Uzlaşmanın Gücü” hikâyesinin devamı (ses kaydı) · **analiz eklendi** | 2 | — (yayımlanmamış) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
-| 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | — (yayımlanmamış) | `63c076451e7fbbd14870627408def2c4` |
-| 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
-| 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
+| 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | https://youtu.be/FFmWYDNm1eo | `63c076451e7fbbd14870627408def2c4` |
+| 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/Xpe2WmRNmHc | `2edd5069ff032e00a221a9a0545791bf` |
+| 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | https://youtu.be/YIpjABCZpIU | `c5c2fbcab508be24681e00d60dabd6ac` |
 | 34 | “Engelleri Aşıyorum” — **video değil, sürükle-bırak etkinliği** (karta bağlanmadı) | 3 | — | `b3ec73b3a189e78a00451537774edb5f` |
-| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
-| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) | 4–5 | — (yayımlanmamış) | `b14529259e0b211f8d6ae3a4bb6ab951` |
-| 60 | Küreselleşme | 6 | — (yayımlanmamış) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
+| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/JhI6dW-zJoI | `6e1f6955aeff331cc85451f6a8231cc5` |
+| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) | 4–5 | https://youtu.be/DN330Cd39VE | `b14529259e0b211f8d6ae3a4bb6ab951` |
+| 60 | Küreselleşme | 6 | https://youtu.be/iv_sjOLGbCI | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
 | 63 | Kahvenin yolculuğu | 6 | https://youtu.be/pSoAZkgKTP4 | `0a91216d32df2405b32be9c6a740c34a` |
 | 72 | Jeopolitik konum ve dış politika | 7 | https://youtu.be/093b1nTbSmo | `d8e6ad2d9687967f09a69ce26cff8a2e` |
 | 75–76 | İnsani yardım ve girişimci dış politika | 8 | — (yayımlanmamış) | `a1da14c0d38310a7068eefd025ec8f8f` |
@@ -62,6 +62,25 @@ Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken 
 Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
 
 Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/video-analysis/` altına konur, karta `analysis` alanı eklenir, sorular rapordaki doğrulanabilir bilgilere dayandırılır.
+
+## 2d. Necati Yalçın YouTube kanalı (`@necatiyalcin`)
+
+7. sınıf Sosyal Bilgiler karekod videolarının çoğu bu kanalda, “<konu> Sayfa <no> (7-<kitap>-<sıra>) 7.Sınıf Sosyal Bilgiler” biçiminde adlandırılmış olarak duruyor. Tarama sonucu kanalın **1. ve 2. öğrenme alanını (s. 15–72)** kapsadığı, **s. 75 ve sonrası için video yüklemediği** görüldü.
+
+### Kanaldan karta bağlananlar
+
+- s. 32 · Paralimpik Kahramanlar — https://youtu.be/FFmWYDNm1eo (6:47)
+- s. 32 · Engelleri Aşan Üç Genç — https://youtu.be/Xpe2WmRNmHc (4:41)
+- s. 32 · Engellerine Rağmen Büyük Başarılara İmza Atmış Altı İsim — https://youtu.be/YIpjABCZpIU (6:28)
+- s. 45 · Millî Meselelerde Biz — https://youtu.be/JhI6dW-zJoI (2:44)
+- s. 45 · 15 Temmuz Darbe Girişimi — https://youtu.be/DN330Cd39VE (1:28)
+- s. 60 · Küreselleşme — https://youtu.be/iv_sjOLGbCI (1:10)
+
+Süreler, kullanıcı tarafından sağlanan video analizlerindeki sürelerle örtüşüyor; bu yüzden s. 32 “Engelleri aşan üç genç” ve s. 45 “Millî Meselelerde Biz” kartlarında daha önce forumdan alınan kopyalar (E3lz6LefMys, CP8diE-CstI) kanal sürümleriyle değiştirildi.
+
+### Kanaldan bulunamayanlar
+
+s. 23, s. 27, s. 75–76, s. 105, s. 106, s. 130, s. 146, s. 147, s. 150, s. 151. Bu kartlarda girişsiz YouTube **arama** bağlantısı gösterilmeye devam eder. s. 106 (etkileşimli harita), s. 147 (3D) ve s. 151 (etkileşimli video) yapıları gereği videoya çevrilemez; s. 27 ise ses kaydıdır.
 
 ## 2c. Karta bağlanmayan karekodlar
 
