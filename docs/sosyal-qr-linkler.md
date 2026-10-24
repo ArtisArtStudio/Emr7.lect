@@ -32,7 +32,7 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
 | 105 | **Preveze Deniz Zaferi** (Barbaros Hayreddin Paşa) · **analiz eklendi** | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
 | 106 | XVI. yüzyıl etkileşimli haritası | 12 | — (etkileşimli içerik) | `1761fd63303ecc07765ffc8e7d22ac92` |
-| 130 | Sanayileşme / yenilikler | 14 | — (yayımlanmamış) | `ea26c7d6df42f305e0ec140ccf58402d` |
+| 130 | **Osmanlı’da sanayileşme ve ekonomik dönüşüm** (fabrikalar, demiryolu, Islah-ı Sanayi) · **analiz eklendi** | 14 | — (yayımlanmamış) | `ea26c7d6df42f305e0ec140ccf58402d` |
 | 146 | Fetih Marşı | 15 | — (yayımlanmamış) | `8bb724f386e46afc6d07b4cf1094ab70` |
 | 147 | 3D günlük yaşam | 15 | — (yayımlanmamış) | `a1ed545e12246ab79b8cf219aeb4b619` |
 | 150 | Ahi teşkilatı | 15 | — (yayımlanmamış) | `218994cef89cb74b5ae00d91da2c821d` |
@@ -42,7 +42,7 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on beş kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on altı kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -65,6 +65,7 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz
 | 76 | `qr-iyilik-gemileri` | Türkiye Gazze’ye yardımda ilk sırada (sevkiyat, AFAD, sahra hastanesi) | `docs/video-analysis/gazze-insani-yardim-gemini-analysis.md` |
 | 96 | `qr-cihan-devleti-hukumdarlar` | Cihan devletinin mimarları (padişahlar, kurumlar, 1402–1453 kırılmaları) | `docs/video-analysis/cihan-devletinin-mimarlari-gemini-analysis.md` |
 | 105 | `qr-barbaros` | Preveze Deniz Zaferi (1533 atama, hilal taktiği, 1538 zaferi) | `docs/video-analysis/preveze-deniz-zaferi-gemini-analysis.md` |
+| 130 | `qr-osmanli-yenilikler` | Osmanlı’da sanayileşme ve ekonomik dönüşüm (fabrikalar, 1/6 bütçe, demiryolu, Islah-ı Sanayi) | `docs/video-analysis/osmanli-sanayilesme-gemini-analysis.md` |
 
 Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
