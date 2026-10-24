@@ -129,12 +129,13 @@ Kurallar:
 **Sınav kartları ve ortak kart biçimi**
 
 **Sınav kartları (haftalık görünüm).** Her dersin sol panelinde sıra şöyledir:
-1. kırmızı **1. sınav** kartı (`.term-exam-plan--first`),
-2. **2. sınav · tahmini 4–8 Ocak 2027** kartı (`.term-exam-plan`),
-3. tema/hafta listesi,
-4. listenin sonunda 2. sınav kartının tekrarı (`.term-exam-plan--end`).
+1. kırmızı **1. Sınav: <tarih>** kartı (`.term-exam-plan--first`),
+2. **2. Sınav: tahmini 4–8 Ocak 2027** kartı (`.term-exam-plan`),
+3. tema/hafta listesi; listenin **son maddesinin altında** kırmızı küçük satır:
+   `2. sınav: 4–8 Ocak 2027 (tahmini)`.
 
-1. sınav tarihleri ders bazında yukarıdaki tablodadır; metin biçimi `1. sınav` + tarih + “<ders> yazılısı · <hafta>. hafta”.
+Kartlar tek satırdır; açıklama paragrafı taşımaz. 1. sınav tarihleri ders bazında yukarıdaki
+tablodadır. Liste sonundaki satır ayrı bir kart değildir, son haftanın rozetiyle aynı biçimdedir.
 
 **Etkinlik kartı biçimi (tek ölçü).** Tema 1'in 1. haftası ölçüdür. Tema 2, Tema 3 ve karekod
 çalışmaları aynı yapıyı kullanır:
@@ -147,6 +148,14 @@ Kurallar:
 
 Ortak biçim `activity-cards.css` içinde tanımlıdır ve sayfada **en son** yüklenir; yeni bir
 etkinlik alanı eklenirse bu dosyaya seçici eklenir, ayrı bir görünüm yazılmaz.
+
+**Video işareti.** Video/dinleme kaynağı olan her yerde 🎥 (dinlemede 🎧, metinde 📄) görünür:
+- hafta listesinde hafta numarası rozetinin solunda (`🎥 9`),
+- etkinlik akışındaki numara dairesinde küçük rozet olarak (`.step-media`),
+- etkinlik kartının başlığında ve üstteki kaynak bağlantısında,
+- haftalık çalışma çizelgesindeki Tonguç video araması bağlantısında.
+
+İçeriği olmayan derse video işareti eklenmez; bağlantı uydurulmaz.
 
 **Ek okuma ve etkinlikler.** Ana metinden sonra gelen ek metinler ayrı bölüm açmaz. Ek metin,
 aynı akışta bir **okuma adımı** (`reading-card`) olarak gösterilir; ek etkinlikler ana metnin

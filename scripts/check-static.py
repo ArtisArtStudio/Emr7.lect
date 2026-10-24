@@ -1180,22 +1180,26 @@ def main() -> int:
         errors.append("The shared MEBİ mock-exam link or gear-based AI settings panel is missing")
     if "const EXAM_DATES_BY_WEEK=Object.freeze({9:'10 Kasım 2026'});" not in html or "[9,'9–13 Kas'" not in html or '1. sınav (${examDate})' not in html or 'id="weekExamNotice"' not in html:
         errors.append("Turkish first-term exam notices must map to the user-provided date inside week nine only")
-    if html.count('class="term-exam-plan"') != 3 or "4–8 Ocak 2027" not in html or "22 Ocak 2027’de bitiyor" not in html or ".term-exam-plan{" not in html:
+    # Sınav kartları kısa tek satırdır: "1. Sınav: tarih" ve "2. Sınav: tahmini tarih".
+    if html.count('class="term-exam-plan"') != 3 or "4–8 Ocak 2027" not in html or ".term-exam-plan{" not in html:
         errors.append("All three courses must show the tentative second-exam window (two weeks before 22 January)")
-    # Sınav kartları: her dersin haftalık görünümünde en üstte 1. sınav, altında 2. sınav;
-    # konu listesinin sonunda 2. sınav yeniden yer alır.
     if html.count('class="term-exam-plan term-exam-plan--first"') != 3:
-        errors.append("Each course sidebar needs a red first-exam card above the second-exam estimate")
-    if html.count('class="term-exam-plan term-exam-plan--end"') != 3:
-        errors.append("The tentative second exam must also appear after the last topic in every course sidebar")
-    for date_text, course in (("6 Kasım 2026", "Sosyal Bilgiler"), ("3 Kasım 2026", "Fen Bilimleri"), ("10 Kasım 2026", "Türkçe")):
-        if f"<strong>{date_text}</strong><small>{course} yazılısı" not in html:
-            errors.append(f"The first-exam card must name {course} and {date_text}")
-    for sidebar in ('id="weeklist"', 'id="socialWeekList"', 'id="scienceWeekList"'):
-        list_index = html.index(sidebar)
-        end_index = html.index('term-exam-plan--end', list_index)
-        if end_index - list_index > 400:
-            errors.append(f"The second-exam card must sit right after the week list ({sidebar})")
+        errors.append("Each course sidebar needs a short first-exam card above the second-exam estimate")
+    if 'term-exam-plan--end' in html:
+        errors.append("The bottom second-exam card must be removed; the date belongs under the last week item")
+    for label, date_text in (("1. Sınav:", "6 Kasım 2026"), ("1. Sınav:", "3 Kasım 2026"), ("1. Sınav:", "10 Kasım 2026")):
+        if f"<b>{label}</b> <strong>{date_text}</strong>" not in html:
+            errors.append(f"The first-exam card must read “{label} {date_text}”")
+    if html.count("<b>2. Sınav:</b> <strong>tahmini 4–8 Ocak 2027</strong>") != 3:
+        errors.append("The second-exam card must read “2. Sınav: tahmini 4–8 Ocak 2027” in all three courses")
+    # Listenin son maddesinin altında kırmızı 2. sınav satırı.
+    if "2. sınav: 4–8 Ocak 2027 (tahmini)" not in html:
+        errors.append("The tentative second exam must appear in red under the last week item")
+    # Türkçe listesi index.html içinde, Sosyal ve Fen listeleri kendi betiklerinde çizilir.
+    for markup_file, label in ((None, "Türkçe"), ("social-studies.js", "Sosyal Bilgiler"), ("science.js", "Fen Bilimleri")):
+        markup = html if markup_file is None else (ROOT / markup_file).read_text(encoding="utf-8")
+        if "2. sınav: 4–8 Ocak 2027 (tahmini)" not in markup:
+            errors.append(f"The {label} week list must mark the second exam under its last item")
     if "activity-cards.css?v=" not in html:
         errors.append("The shared activity-card stylesheet must be loaded last with a cache-busting version")
     if 'id="theme1Extras"' in html:

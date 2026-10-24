@@ -1,0 +1,147 @@
+# Sosyal Bilgiler 7 — karekod bağlantıları
+
+> **Amaç:** Ders kitabındaki karekodların EBA hedeflerini tek yerde toplamak. Uygulama kartlarından **yalnızca EBA adresine** gidilir; öğrenci EBA oturumuyla izler.
+
+## 1. Neden EBA bağlantıları “ulaşılamıyor” diyor?
+
+Kitaptaki karekodlar `ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=…` adresine gider. Bu adres, tarayıcıda EBA oturumu yoksa **EBA giriş sayfasına** yönlendirir. Doğrulama: geçersiz bir kimlikle (`resourceId=000…dead`) denendiğinde de aynı giriş sayfası açılır — yani bağlantı kırık değil, sunucu önce oturum istiyor. EBA hesabıyla giriş yapıldığında aynı adres doğrudan içeriği açar.
+
+**Uygulama davranışı (Türkçe kartlarıyla aynı):** Her karta tek bağlantı konur — türüne göre simge (🎥 video, 🎧 ses, 📄 harita/metin), içeriğin adı ve “Videoyu aç / Dinlemeyi aç / Haritayı aç” düğmesi. Bağlantı doğrudan EBA adresine gider. İkinci bir YouTube/Drive bağlantısı, arama düğmesi veya bağlantı notu gösterilmez.
+
+## 2. Karekod kartları ve bağlantılar
+
+Karekod etkinlikleri artık ayrı bir bölümde değil, haftanın **etkinlik setinin son adımları** olarak görünür: önce konu anlatımı, sonra konu etkinlikleri, en sonda o haftanın video/harita (karekod) etkinlikleri. Böylece video, konu bütünüyle işlendikten sonra açılır ve tek bir etkinlik akışı kalır.
+
+Her karekod kartı **tek haftaya** bağlıdır; aynı video iki haftada tekrarlanmaz. Sayfa → hafta eşlemesi bu tablodaki “Hafta” kolonundadır (s. 45 kartları → 4. hafta, s. 96 kartı → 11. hafta).
+
+Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**; video analizi yapılırken hangi videonun izlendiğini belgelemek için tutulur. Karta bağlanan tek adres EBA kolonundaki `resourceId`'dir.
+
+| Sayfa | İçerik | Hafta | YouTube (yalnızca kayıt) | EBA `resourceId` |
+|---|---|---|---|---|
+| 15 | İletişim videosu (okul-veli iletişimi) · **analiz eklendi** | 1 | https://youtu.be/9sazRBBv21A (4:42) | `2d41a7a29aa74f64bbc61e22fca5a389` |
+| 23 | Olumlu ve olumsuz iletişim yolları (etkili iletişim ve unsurları) · **analiz eklendi** | 2 | — (yayımlanmamış) | `da18b420babd56dfbcf9da975fd86b01` |
+| 27 | “Uzlaşmanın Gücü” hikâyesinin devamı (ses kaydı) · **analiz eklendi** | 2 | — (yayımlanmamış) | `026223ec3b49bfa0b7fa72a539a4a1d9` |
+| 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | — (yayımlanmamış) | `63c076451e7fbbd14870627408def2c4` |
+| 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys (4:41) | `2edd5069ff032e00a221a9a0545791bf` |
+| 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
+| 34 | “Engelleri Aşıyorum” — **video değil, sürükle-bırak etkinliği** (karta bağlanmadı) | 3 | — | `b3ec73b3a189e78a00451537774edb5f` |
+| 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4 | https://youtu.be/CP8diE-CstI (2:44) | `6e1f6955aeff331cc85451f6a8231cc5` |
+| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) · **analiz eklendi** | 4 | https://youtu.be/vyQOjbeDGXw (1:28) | `b14529259e0b211f8d6ae3a4bb6ab951` |
+| 60 | Küreselleşme · **analiz eklendi** | 6 | https://youtu.be/SWW7mIEBY38 (1:10) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
+| 63 | **Türk kahvesi** (kültürel miras) · **analiz eklendi** | 6 | https://youtu.be/pSoAZkgKTP4 (2:41) | `0a91216d32df2405b32be9c6a740c34a` |
+| 72 | **Jeopolitik konum ve insani dış politika** (kitapta etkileşimli etkinlik; kartta EBA videosu) · **analiz eklendi** | 7 | https://youtu.be/093b1nTbSmo (9:00) | `d8e6ad2d9687967f09a69ce26cff8a2e` |
+| 75 | **Ülkemizin girişimci politikası** (Somali örneği) · **analiz eklendi** | 8 | https://youtu.be/_ANGiyPhWYs (3:15) | `a1da14c0d38310a7068eefd025ec8f8f` |
+| 76 | **Türkiye Gazze’ye yardımda ilk sırada** (“iyilik gemileri”) · **analiz eklendi** | 8 | https://youtu.be/nM0aLYOWaIA (1:52) | `0ce320747764d0c8c4c7b744dc4da505` |
+| 96 | **Cihan devletinin mimarları** (dönemler, padişahlar, kurumlar) · **analiz eklendi** | 11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
+| 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
+| 105 | **Preveze Deniz Zaferi** (Barbaros Hayreddin Paşa) · **analiz eklendi** | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
+| 106 | **Haritalarla Osmanlı Devleti: sultan sultan büyüme** (dokuz dönem görseli, yatay buton şeridi) | 12 | — (etkileşimli harita) | `1761fd63303ecc07765ffc8e7d22ac92` |
+| 130 | **Osmanlı’da sanayileşme ve ekonomik dönüşüm** (fabrikalar, demiryolu, Islah-ı Sanayi) · **analiz eklendi** | 14 | — (yayımlanmamış) | `ea26c7d6df42f305e0ec140ccf58402d` |
+| 146 | **Mehteran icrası ve Fetih Marşı** · **analiz eklendi** | 15 | — (yayımlanmamış) | `8bb724f386e46afc6d07b4cf1094ab70` |
+| 147 | 3D günlük yaşam | 15 | — (yayımlanmamış) | `a1ed545e12246ab79b8cf219aeb4b619` |
+| 150 | **Ahilik: esnafın ahlak ve dayanışma düzeni** · **analiz eklendi** | 15 | — (yayımlanmamış) | `218994cef89cb74b5ae00d91da2c821d` |
+| 151 | Kültür-medeniyet etkileşimli video | 15 | — (yayımlanmamış) | `c2768a5382050f9c7ec0b81934dcd743` |
+
+Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resourceType=1&resourceLocation=2`
+
+## 2b. Analizi eklenen videolar
+
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on sekiz kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+
+s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
+
+s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz Darbe Girişimi”; ikisinin de analizi kartlara işlendi.
+
+| Sayfa | Kart | Video | Analiz dosyası |
+|---|---|---|---|
+| 15 | `qr-iletisim-video` | Okul-veli iletişimi (Özlem Hanım, Şebnem Hanım, okul müdürü, Can) | `docs/video-analysis/okul-veli-iletisimi-gemini-analysis.md` |
+| 23 | `qr-iletisim-yollari` | Etkili iletişim ve unsurları (ben dili–sen dili, empati, beden dili, etkin dinleme, farklılıklara saygı) | `docs/video-analysis/etkili-iletisim-ve-unsurlari-gemini-analysis.md` |
+| 32 | `qr-paralimpik-kahramanlar` | Türkiye’nin gururu paralimpik kahramanlarımız | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
+| 32 | `qr-engelleri-asanlar` | Engelleri aşan üç genç | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
+| 32 | `qr-engellerine-ragmen-alti-isim` | Engellerine rağmen büyük başarılara imza atmış altı isim | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
+| 45 | `qr-milli-meseleler` | Millî Meselelerde Biz (Yakup Kadri, İstiklal Yolu) | `docs/video-analysis/milli-meselelerde-biz-gemini-analysis.md` |
+| 27 | `qr-uzlasma-hikayesi` | Uzlaşmanın Gücü hikâyesinin devamı (Ahmet ve Merve, proje anlaşmazlığı) — **ses kaydı** | `docs/video-analysis/uzlasmanin-gucu-devami-gemini-analysis.md` |
+| 45 | `qr-15-temmuz` | 15 Temmuz Darbe Girişimi (Gazi Meclis, halkın direnişi) | `docs/video-analysis/15-temmuz-darbe-girisimi-gemini-analysis.md` |
+| 60 | `qr-kuresellesme` | Küreselleşme (küresel köy, fırsat–risk dengesi) | `docs/video-analysis/kuresellesme-gemini-analysis.md` |
+| 63 | `qr-kahvenin-yolculugu` | Türk kahvesi (16. yy kökeni, Kahvecibaşı, UNESCO 2013, 5 Aralık) | `docs/video-analysis/turk-kahvesi-gemini-analysis.md` |
+| 72 | `qr-jeopolitik-konum` | Türkiye’nin jeopolitik gücü ve insani dış politikası (boğazlar, TİKA/Kızılay, arabuluculuk, Paris) | `docs/video-analysis/jeopolitik-konum-gemini-analysis.md` |
+| 75 | `qr-insani-yardim` | Ülkemizin girişimci politikası (Somali, çok paydaşlı kalkınma desteği) | `docs/video-analysis/girisimci-dis-politika-gemini-analysis.md` |
+| 76 | `qr-iyilik-gemileri` | Türkiye Gazze’ye yardımda ilk sırada (sevkiyat, AFAD, sahra hastanesi) | `docs/video-analysis/gazze-insani-yardim-gemini-analysis.md` |
+| 96 | `qr-cihan-devleti-hukumdarlar` | Cihan devletinin mimarları (padişahlar, kurumlar, 1402–1453 kırılmaları) | `docs/video-analysis/cihan-devletinin-mimarlari-gemini-analysis.md` |
+| 105 | `qr-barbaros` | Preveze Deniz Zaferi (1533 atama, hilal taktiği, 1538 zaferi) | `docs/video-analysis/preveze-deniz-zaferi-gemini-analysis.md` |
+| 130 | `qr-osmanli-yenilikler` | Osmanlı’da sanayileşme ve ekonomik dönüşüm (fabrikalar, 1/6 bütçe, demiryolu, Islah-ı Sanayi) | `docs/video-analysis/osmanli-sanayilesme-gemini-analysis.md` |
+| 150 | `qr-ahi-teskilati` | Ahilik (Ahi Evran, yamak–çırak–kalfa–usta, narh, pabucu dama atmak, esnaf sandığı) | `docs/video-analysis/ahilik-teskilati-gemini-analysis.md` |
+| 146 | `qr-fetih-marsi` | Mehteran icrası ve Fetih Marşı (Has dur komutu, köş–davul–zurna–borazan, Fatih ve Ulubatlı Hasan, Etnospor) | `docs/video-analysis/mehteran-fetih-marsi-gemini-analysis.md` |
+
+Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
+
+Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
+
+Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/video-analysis/` altına konur, karta `analysis` alanı eklenir, sorular rapordaki doğrulanabilir bilgilere dayandırılır.
+
+## 2b-2. s. 106 etkileşimli harita galerisi
+
+s. 106’daki EBA karekodu haritanın kendisini açar. Karta ek olarak kullanıcının verdiği **dokuz dönem haritası** işlendi; öğrenci sayfayı açtığında Osman Bey dönemi seçili gelir, yatay buton şeridinden sultan seçince o dönemin haritası görünür. Kart, **12. haftanın etkinlik setinin son adımıdır** (9/9: “Haritalarla Osmanlı Devleti: sultan sultan büyüme”); ayrı bir karekod bölümü yoktur.
+
+| Sıra | Buton | Başkent | Dosya |
+|---|---|---|---|
+| 1 | Osman Bey | Söğüt | `assets/sosyal-harita/1-osman-bey.webp` |
+| 2 | Orhan Bey | Bursa | `assets/sosyal-harita/2-orhan-bey.webp` |
+| 3 | I. Murat | Edirne | `assets/sosyal-harita/3-i-murat.webp` |
+| 4 | Yıldırım Bayezid | Edirne | `assets/sosyal-harita/4-yildirim-bayezid.webp` |
+| 5 | I. Mehmet (Çelebi) | Edirne | `assets/sosyal-harita/5-i-mehmet.webp` |
+| 6 | II. Murat | Edirne | `assets/sosyal-harita/6-ii-murat.webp` |
+| 7 | II. Mehmet (Fatih) | İstanbul | `assets/sosyal-harita/7-ii-mehmet.webp` |
+| 8 | Yavuz Sultan Selim | İstanbul | `assets/sosyal-harita/8-yavuz-sultan-selim.webp` |
+| 9 | Kanuni Sultan Süleyman | İstanbul | `assets/sosyal-harita/9-kanuni-sultan-suleyman.webp` |
+
+- Kaynak dosyalar kullanıcıdan PNG olarak geldi (`1_osmanbey`, `2_orhanbey`, `3_1.Murat`, `4_Yıldırım`, `5_1.Mehmet`, `6_2.Murat`, `7_2.Mehmet`, `8_YavuzSultanSelim`, `9_KanuniSultanSuleyman`); depoda 1200 px genişlikte WebP olarak tutulur (toplam ≈ 860 KB).
+- Galeri verisi `social-studies-qr.js` içindeki `qr-etkilesimli-harita` kartının `gallery` alanındadır; görünüm ve buton davranışı `social-qr-app.js` içindeki `galleryMarkup` + `bind` ile yönetilir.
+- Seçim `emr7lect.socialQr.v1` deposunda saklanır; ilk açılışta her zaman 1. sıra (Osman Bey) gösterilir.
+- **Not:** 9. haritanın lejantında “II. Süleyman” yazımı vardır; harita başlığı “I. Süleyman Dönemi”dir. Kart metni doğru adı (Kanuni Sultan Süleyman) kullanır.
+
+## 2c. Karta bağlanmayan karekodlar
+
+| Sayfa | İçerik | Neden karta bağlanmadı? | Plan |
+|---|---|---|---|
+| 34 | “Engelleri Aşıyorum” (`b3ec73b3a189e78a00451537774edb5f`) | Video değil; engelli bireylerin işini **kolaylaştıran / zorlaştıran** durumların resimlerini sürükleyip bırakarak sınıflandırılan etkileşimli bir etkinlik. | Kullanıcı talimatıyla şimdilik atlandı. İleride aynı kazanımla bir `sort` (sürükle-bırak sınıflandırma) etkinliği olarak yazılacak: iki kategori “kolaylaştıran” / “zorlaştıran”, öğrenci metninde kitap–sayfa referansı olmadan. |
+
+Bu içerik uygulamada **kart olarak listelenmez**; envanterde yalnızca kayıt amacıyla durur. Video/etkinlik eklendiğinde `social-studies-qr.js` içine yeni bir kart olarak girer.
+
+## 2d. YouTube taraması (yalnızca kayıt)
+
+EBA videoları **Erkan İsanmaz** kanalında yayımlanıyor: <https://www.youtube.com/@erkanisanmaz> (kanalda ayrıca “7. Sınıf” adlı 27 videoluk oynatma listesi var: `PLQQD-F9_lUiqfCmXp7UZAx4DpR0OKxNbl`).
+
+Tarama yöntemi: kanal içi arama (`/@erkanisanmaz/search?query=…`) + oynatma listesi; YouTube aramanın kendisi oturumsuz sayfada `401` döndüğü için kanal sayfası bir okuma servisi üzerinden alındı. Eşleşme kuralı: video başlığındaki **sayfa numarası** ve **süre** analiz raporundaki süreyle tutmalı.
+
+**Bulunan ve tabloya işlenen kayıtlar**
+
+| Sayfa | Video | Süre |
+|---|---|---|
+| 15 | https://youtu.be/9sazRBBv21A | 4:42 |
+| 32 | https://youtu.be/E3lz6LefMys | 4:41 |
+| 45 | https://youtu.be/CP8diE-CstI | 2:44 |
+| 45 | https://youtu.be/vyQOjbeDGXw | 1:28 |
+| 60 | https://youtu.be/SWW7mIEBY38 | 1:10 |
+| 63 | https://youtu.be/pSoAZkgKTP4 | 2:41 |
+| 72 | https://youtu.be/093b1nTbSmo | 9:00 |
+| 75 | https://youtu.be/_ANGiyPhWYs | 3:15 (analiz eklendi) |
+| 76 | https://youtu.be/nM0aLYOWaIA | 1:52 (analiz eklendi) |
+| 96 | https://youtu.be/Gab9bD-3kug | 5:49 (analiz eklendi) |
+
+**Kanalda bulunamayanlar** (kanal aramasında “içerik yok” yanıtı): s. 23 etkili iletişim, s. 27 “Uzlaşmanın Gücü” devamı, s. 32 paralimpik kahramanlar ve altı isim, s. 101 gemilerin karadan yürütülmesi, s. 105 Barbaros Hayreddin Paşa (`Barbaros`, `Hayreddin`, `Preveze`), s. 106 XVI. yüzyıl haritası, s. 130 sanayileşme (`Sanayi`), s. 146 Fetih Marşı (`Marş`, `Fetih`), s. 147 3D, s. 150 Ahi teşkilatı (`Ahi`), s. 151 kültür-medeniyet etkileşimli video.
+
+Bunların üçü zaten **video değil**: s. 106 etkileşimli harita, s. 147 3D sahne, s. 151 VCollab etkileşimli içerik. Kanalın yeni müfredat (Maarif Modeli) videoları kademeli yüklendiği için kalan sayfaların kayıtları henüz yayımlanmamış görünüyor; kanala yeni video eklendiğinde tablo ve `analysis` alanları aynı yolla güncellenir.
+
+## 3. Google Drive durumu
+
+Kullanıcının Drive'ında **video dosyası yok**; Drive'da yalnızca ders kitabının dört PDF'i ve Gemini analiz dokümanları bulunur. Analiz dokümanları `docs/video-analysis/` altına aktarılır; uygulama Drive'a bağlanmaz.
+
+Uygulamada kart başına **tek** bağlantı vardır ve o da EBA'dır. YouTube ve Drive adresleri yalnızca bu belgede kayıt amacıyla tutulur; koda eklenmez.
+
+## 4. Yeni bağlantı eklerken
+
+1. EBA kimliği kitabın PDF'inden `page.get_links()` ile alınır (gömülü bağlantı katmanı).
+2. Karta `sourceUrl: eba("<id>")`, `sourceLinkLabel` ve `sourceLinkType` (`video` / `audio` / `harita` / `pdf`) yazılır.
+3. Öğrenci yüzeyinde tek bağlantı görünür: simge + içerik adı + “Videoyu aç / Dinlemeyi aç / Haritayı aç”.
+4. `node scripts/check-social-studies.js` çalıştırılır; kart başına tek bağlantı ve `https://ders.eba.gov.tr/` öneki doğrulanır.

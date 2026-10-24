@@ -65,7 +65,7 @@
     return `
 <article class="qr-card activity-card" data-qr-card="${escape(unit.id)}" data-kind="media">
   <header class="activity-top">
-    <div class="activity-heading-row"><span class="activity-icon" aria-hidden="true">${unit.sourceLinkType === "audio" ? "🎧" : unit.sourceLinkType === "pdf" ? "📄" : "🎬"}</span><div class="activity-title-copy">
+    <div class="activity-heading-row"><span class="activity-icon" aria-hidden="true">${unit.sourceLinkType === "audio" ? "🎧" : unit.sourceLinkType === "pdf" ? "📄" : "🎥"}</span><div class="activity-title-copy">
       <p class="activity-kicker">${escape(unit.kind)} · ${escape(unit.where)}</p>
       <h2 class="activity-title">${escape(unit.title)}</h2>
     </div></div>

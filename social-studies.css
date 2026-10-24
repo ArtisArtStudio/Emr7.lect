@@ -376,3 +376,46 @@
 .social-quest-number{color:#1f6b46;font-size:11px;font-weight:900;text-align:center}
 @media(max-width:620px){.social-quest-path ol{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{.social-quest-path{break-inside:avoid}}
+
+/* Karekod çalışmaları: Türkçe'deki kart düzeninin Sosyal Bilgiler karşılığı.
+   Ortak .qr-* ve .activity-card kuralları index.html ile activity-cards.css içinde;
+   burada yalnız Sosyal Bilgiler kapsayıcısı ve bölüm gizleme kuralı tanımlanır. */
+#socialQr[hidden]{display:none!important}
+.social-qr-entry .qr-lead{font-size:13px;color:var(--social-muted,#5b6b7c);margin:0 0 14px}
+#socialQrBody{display:grid;gap:16px}
+
+/* Karekod çalışmaları: Türkçe alanındaki karekod kartlarıyla aynı düzen (qr-* kuralları ortak). */
+#socialQr[hidden]{display:none!important}
+#socialQrBody{display:grid;gap:16px}
+.social-qr-entry .qr-lead{font-size:13px;color:var(--social-muted);margin:0 0 14px}
+@media print{#socialQr{break-before:page}}
+
+/* Karekod kaynak satırı: EBA girişi istemeyen arama bağlantısı ve not */
+
+/* Etkileşimli harita galerisi (s. 106): yatay sultan şeridi + seçili dönemin haritası. */
+.qr-map-gallery{display:grid;gap:9px}
+.qr-map-count{flex:none;padding:2px 8px;border:1px solid #d7e3ef;border-radius:999px;background:#eef5fb;color:#365778;font-size:10.5px;font-weight:900;letter-spacing:.04em}
+.qr-map-tabs{display:flex;gap:7px;overflow-x:auto;padding:3px 2px 7px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.qr-map-tab{flex:0 0 auto;display:grid;grid-template-columns:auto auto;align-items:center;gap:6px;padding:7px 12px;border:1px solid #cfddec;border-radius:999px;background:#fff;color:#2b4256;font-size:12px;font-weight:800;line-height:1.2;cursor:pointer;scroll-snap-align:start;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.qr-map-tab:hover{border-color:#8fb4d3;background:#f2f8fd}
+.qr-map-tab.is-active{border-color:#1f6b46;background:#1f6b46;color:#fff;box-shadow:0 2px 6px rgba(31,107,70,.22)}
+.qr-map-tab:focus-visible{outline:2px solid #1f6b46;outline-offset:2px}
+.qr-map-tab-order{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#eaf2f9;color:#365778;font-size:10.5px;font-weight:900}
+.qr-map-tab.is-active .qr-map-tab-order{background:rgba(255,255,255,.24);color:#fff}
+.qr-map-tab-name{white-space:nowrap}
+.qr-map-stage{display:grid;gap:0}
+.qr-map-slide{margin:0;display:grid;gap:0;border:1px solid #dbe6f0;border-radius:13px;overflow:hidden;background:#f7fafc}
+.qr-map-slide[hidden]{display:none!important}
+.qr-map-image{display:block;width:100%;height:auto;background:#eef3f7}
+.qr-map-caption{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:baseline;gap:4px 10px;padding:9px 11px;background:#fff;border-top:1px solid #e4edf5;font-size:12px;color:#3c5266;line-height:1.45}
+.qr-map-name{color:#1f3d57;font-size:13px;font-weight:900}
+.qr-map-seat{padding:1px 8px;border:1px solid #d7e3ef;border-radius:999px;background:#eef5fb;color:#365778;font-size:10.5px;font-weight:800;white-space:nowrap}
+.qr-map-note{min-width:0}
+@media(max-width:620px){.qr-map-caption{grid-template-columns:minmax(0,1fr)}.qr-map-name{font-size:12.5px}.qr-map-tab{font-size:11.5px;padding:6px 10px}}
+@media print{.qr-map-tabs{display:none}.qr-map-slide[hidden]{display:grid!important}.qr-map-gallery{break-inside:avoid}}
+
+/* Karekod etkinliği: ayrı bölüm yerine etkinlik akışının son adımı olarak kart içinde açılır. */
+.social-qr-inline{margin:4px 0 10px}
+.social-qr-inline .qr-card{border:0;background:transparent;padding:0}
+.social-practice-step--media .social-practice-step-no{background:#eef5fb;color:#2d5578}
+.social-practice-step--media .social-practice-step-status{color:#2d5578;font-size:11px;font-weight:900}

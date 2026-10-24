@@ -619,11 +619,25 @@
       const hasAnswer = questions.some((question, questionIndex) => answered(question, currentAnswer(step.activity, question, questionIndex)));
       const label = `${step.activity.number}. ${step.activity.title}`;
       const marker = hasAnswer ? "✓" : String(index + 1);
-      return `<button type="button" class="step-dot${hasAnswer ? " is-answered" : ""}" data-step-index="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(label)}${hasAnswer ? ", yanıt girildi" : ""}" title="${escapeHTML(label)}" ${index === stepIndex ? 'aria-current="step"' : ""}>${marker}</button>`;
+      // Video/dinleme kaynağı olan etkinlik, numara dairesinde küçük bir kamera işareti taşır.
+      const media = stepMediaType(step.activity);
+      const videoBadge = media ? `<span class="step-media" aria-hidden="true">${media}</span>` : "";
+      return `<button type="button" class="step-dot${hasAnswer ? " is-answered" : ""}${media ? " is-media" : ""}" data-step-index="${index}" aria-label="Etkinlik ${index + 1}: ${escapeHTML(label)}${media ? ", video kaynaklı" : ""}${hasAnswer ? ", yanıt girildi" : ""}" title="${escapeHTML(label)}" ${index === stepIndex ? 'aria-current="step"' : ""}>${marker}${videoBadge}</button>`;
     }).join("");
     stepTrack.querySelectorAll("[data-step-index]").forEach(button => {
       button.addEventListener("click", () => goToStep(Number(button.dataset.stepIndex)));
     });
+  }
+
+  function stepMediaType(activity) {
+    const questions = questionList(activity);
+    const isAudio = String(activity.sourceLinkType || "").toLowerCase() === "audio"
+      || questions.some(question => String(question.sourceLinkType || "").toLowerCase() === "audio");
+    const isPdf = String(activity.sourceLinkType || "").toLowerCase() === "pdf";
+    const hasMedia = Boolean(activity.sourceUrl) || Boolean(activity.videoSource)
+      || questions.some(question => question.sourceUrl || question.videoSource || question.sourceMode === "qr");
+    if (!hasMedia) return "";
+    return isAudio ? "🎧" : isPdf ? "📄" : "🎥";
   }
 
   function activityKind(activity, questions) {
