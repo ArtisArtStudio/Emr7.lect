@@ -26,8 +26,9 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 60 | Küreselleşme · **analiz eklendi** | 6 | https://youtu.be/SWW7mIEBY38 (1:10) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
 | 63 | **Türk kahvesi** (kültürel miras) · **analiz eklendi** | 6 | https://youtu.be/pSoAZkgKTP4 (2:41) | `0a91216d32df2405b32be9c6a740c34a` |
 | 72 | **Jeopolitik konum ve insani dış politika** (kitapta etkileşimli etkinlik; kartta EBA videosu) · **analiz eklendi** | 7 | https://youtu.be/093b1nTbSmo (9:00) | `d8e6ad2d9687967f09a69ce26cff8a2e` |
-| 75–76 | İnsani yardım ve girişimci dış politika | 8 | s. 75: https://youtu.be/_ANGiyPhWYs (3:15) · s. 76: https://youtu.be/nM0aLYOWaIA (1:52) | `a1da14c0d38310a7068eefd025ec8f8f` |
-| 96 | Dönemler ve hükümdarlar | 9–11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
+| 75 | **Ülkemizin girişimci politikası** (Somali örneği) · **analiz eklendi** | 8 | https://youtu.be/_ANGiyPhWYs (3:15) | `a1da14c0d38310a7068eefd025ec8f8f` |
+| 76 | **Türkiye Gazze’ye yardımda ilk sırada** (“iyilik gemileri”) · **analiz eklendi** | 8 | https://youtu.be/nM0aLYOWaIA (1:52) | `0ce320747764d0c8c4c7b744dc4da505` |
+| 96 | **Cihan devletinin mimarları** (dönemler, padişahlar, kurumlar) · **analiz eklendi** | 9–11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
 | 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
 | 105 | Barbaros Hayreddin Paşa | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
 | 106 | XVI. yüzyıl etkileşimli haritası | 12 | — (etkileşimli içerik) | `1761fd63303ecc07765ffc8e7d22ac92` |
@@ -41,7 +42,7 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on bir kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on dört kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -60,6 +61,9 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz
 | 60 | `qr-kuresellesme` | Küreselleşme (küresel köy, fırsat–risk dengesi) | `docs/video-analysis/kuresellesme-gemini-analysis.md` |
 | 63 | `qr-kahvenin-yolculugu` | Türk kahvesi (16. yy kökeni, Kahvecibaşı, UNESCO 2013, 5 Aralık) | `docs/video-analysis/turk-kahvesi-gemini-analysis.md` |
 | 72 | `qr-jeopolitik-konum` | Türkiye’nin jeopolitik gücü ve insani dış politikası (boğazlar, TİKA/Kızılay, arabuluculuk, Paris) | `docs/video-analysis/jeopolitik-konum-gemini-analysis.md` |
+| 75 | `qr-insani-yardim` | Ülkemizin girişimci politikası (Somali, çok paydaşlı kalkınma desteği) | `docs/video-analysis/girisimci-dis-politika-gemini-analysis.md` |
+| 76 | `qr-iyilik-gemileri` | Türkiye Gazze’ye yardımda ilk sırada (sevkiyat, AFAD, sahra hastanesi) | `docs/video-analysis/gazze-insani-yardim-gemini-analysis.md` |
+| 96 | `qr-cihan-devleti-hukumdarlar` | Cihan devletinin mimarları (padişahlar, kurumlar, 1402–1453 kırılmaları) | `docs/video-analysis/cihan-devletinin-mimarlari-gemini-analysis.md` |
 
 Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
@@ -92,9 +96,9 @@ Tarama yöntemi: kanal içi arama (`/@erkanisanmaz/search?query=…`) + oynatma 
 | 60 | https://youtu.be/SWW7mIEBY38 | 1:10 |
 | 63 | https://youtu.be/pSoAZkgKTP4 | 2:41 |
 | 72 | https://youtu.be/093b1nTbSmo | 9:00 |
-| 75 | https://youtu.be/_ANGiyPhWYs | 3:15 |
-| 76 | https://youtu.be/nM0aLYOWaIA | 1:52 |
-| 96 | https://youtu.be/Gab9bD-3kug | 5:49 |
+| 75 | https://youtu.be/_ANGiyPhWYs | 3:15 (analiz eklendi) |
+| 76 | https://youtu.be/nM0aLYOWaIA | 1:52 (analiz eklendi) |
+| 96 | https://youtu.be/Gab9bD-3kug | 5:49 (analiz eklendi) |
 
 **Kanalda bulunamayanlar** (kanal aramasında “içerik yok” yanıtı): s. 23 etkili iletişim, s. 27 “Uzlaşmanın Gücü” devamı, s. 32 paralimpik kahramanlar ve altı isim, s. 101 gemilerin karadan yürütülmesi, s. 105 Barbaros Hayreddin Paşa (`Barbaros`, `Hayreddin`, `Preveze`), s. 106 XVI. yüzyıl haritası, s. 130 sanayileşme (`Sanayi`), s. 146 Fetih Marşı (`Marş`, `Fetih`), s. 147 3D, s. 150 Ahi teşkilatı (`Ahi`), s. 151 kültür-medeniyet etkileşimli video.
 
