@@ -713,50 +713,82 @@
         sourceUrl: eba("b14529259e0b211f8d6ae3a4bb6ab951"),
         sourceLinkLabel: "EBA · 15 Temmuz Darbe Girişimi",
         sourceLinkType: "video",
-        minutes: 5,
-        focus: "Demokrasiye sahip çıkma, millî irade ve birlikte hareket etme",
+        minutes: 3,
+        focus: "Demokrasiye sahip çıkma, millî irade ve birlikte direnme",
+        analysis: {
+          doc: "docs/video-analysis/15-temmuz-darbe-girisimi-gemini-analysis.md",
+          speaker: "Anlatıcı (dış ses)",
+          summary:
+            "15 Temmuz 2016 gecesi devletin içine sızmış terör örgütü darbe girişimi yapar; millete silah doğrulur ve Gazi Meclis bombalanır. Cumhurbaşkanının çağrısıyla meydanlara inen halk tankların önüne yatarak canı pahasına direnir; girişim bozguna uğrar. Video, “Vatan bizim, irade bizimdir” vurgusuyla milletin kazandığı demokrasi zaferini anlatır.",
+          segments: [
+            { at: "00:00", note: "“15 Temmuz Destanı” başlığı ve 15 Temmuz 2016 gecesine dair görüntüler." },
+            { at: "00:23", note: "Silahın millete çevrilmesi ve Gazi Meclis’in bombalanması." },
+            { at: "00:38", note: "Halkın çağrıyla sokaklara inmesi, tankların önüne yürümesi, şehit ve gaziler." },
+            { at: "01:06", note: "Girişimin bozguna uğraması; “Vatan bizim, irade bizimdir” ile kapanış." },
+          ],
+          keyPoints: [
+            "15 Temmuz 2016’da demokratik düzene ve iradeye yönelik bir darbe girişimi yaşanmıştır.",
+            "Girişimi durduran güç, halkın meydanlarda gösterdiği birlik ve direnç olmuştur.",
+            "TBMM’nin bombalanması, girişimin demokrasiyi doğrudan hedef aldığını gösterir.",
+            "“Vatan bizim, irade bizimdir” sözü egemenliğin millete ait olduğunu anlatır.",
+          ],
+        },
         intro:
-          "Aynı sayfadaki ikinci karekod 15 Temmuz 2016’yı anlatıyor. Sayfadaki metni okuduktan sonra izle: hangi davranış demokrasiye sahip çıkmak olarak tanımlanıyor, kimler harekete geçiyor?",
+          "Karekodda 15 Temmuz 2016 gecesi ve milletin direnişi anlatılıyor. İzlerken iki şeyi ayır: girişim neyi hedef aldı, girişimi durduran ne oldu?",
         before: [
           "“Millî irade” ifadesi sence ne anlama gelir? Kısaca yaz.",
           "Bir toplumun olağanüstü bir gecede birlikte hareket etmesini sağlayan şey ne olabilir? Tahminini not et.",
         ],
         notes: [
-          { id: "n1", label: "Girişimin hedefi", hint: "Metinde demokrasi ve bağımsızlık vurgusu var." },
-          { id: "n2", label: "Harekete geçen kesimler", hint: "Kimler sokağa çıktı, kimler açıklama yaptı?" },
-          { id: "n3", label: "Girişimin kısa sürede sonuçlanma nedeni", hint: "Metinde tek bir gerekçe öne çıkıyor." },
+          { id: "n1", label: "Girişimin hedef aldığı iki yer ya da değer", hint: "Biri Meclis, diğeri egemenlik." },
+          { id: "n2", label: "Halkın harekete geçme biçimi", hint: "Kim çağırdı, halk ne yaptı?" },
+          { id: "n3", label: "Kapanıştaki söz", hint: "“Vatan bizim, … bizimdir.”" },
         ],
         questions: [
           {
             id: "q1",
-            prompt: "15 Temmuz 2016’da Türkiye’de ne yaşanmıştır?",
+            prompt: "Videoda darbe girişiminin demokrasiyi hedef aldığını gösteren somut olay hangisidir?",
             options: [
-              "Ekonomik bir kriz ilan edilmiştir",
-              "Anayasa değişikliği için referandum yapılmıştır",
-              "Demokratik düzene ve bağımsızlığa yönelik bir darbe girişimi olmuştur",
-              "Sınır komşusuyla bir antlaşma imzalanmıştır",
+              "Gazi Meclis’in bombalanması",
+              "Halkın meydanlara inmesi",
+              "Şehit ve gazilerin anılması",
+              "Köprünün trafiğe kapatılması",
             ],
-            answer: 2,
+            answer: 0,
             explanation:
-              "Sayfadaki metne göre 15 Temmuz 2016’da demokratik düzeni ve bağımsızlığı hedef alan bir darbe girişimi yaşanmıştır.",
-            hint: "Metindeki başlığı ve ilk cümleyi hatırla.",
+              "Meclis, millî iradenin kurumsal karşılığıdır; meclisin bombalanması doğrudan demokrasiyi hedef alır.",
+            hint: "Egemenliğin temsil edildiği kurum hangisi?",
           },
           {
             id: "q2",
             prompt: "Girişimin kısa sürede başarısız olmasında en belirleyici etken hangisidir?",
             options: [
               "Uluslararası kuruluşların açıklamaları",
-              "Halkın demokrasiye ve millî iradeye sahip çıkması",
               "Girişimin gece saatlerinde başlaması",
+              "Halkın çağrıya uyup meydanlarda birlikte direnmesi",
               "Basının olayı bir süre duyurmaması",
             ],
-            answer: 1,
+            answer: 2,
             explanation:
-              "Sayfadaki metin, başarısızlığı halkın demokrasiye ve millî iradeye sahip çıkma kararlılığına bağlar.",
-            hint: "Metin, devletin yanında yer alan “millet” vurgusu yapıyor.",
+              "Video, girişimin halkın tek vücut olup sokaklara inmesiyle bozguna uğradığını anlatır.",
+            hint: "Tankların önüne kim yürüdü?",
           },
           {
             id: "q3",
+            prompt: "“Vatan bizim, irade bizimdir” sözü neyi anlatır?",
+            options: [
+              "Kararların yalnızca yöneticilere bırakıldığını",
+              "Savunmanın yalnızca güvenlik güçlerine ait olduğunu",
+              "Olağanüstü hâllerde yönetimin değiştiğini",
+              "Egemenliğin millete ait olduğunu",
+            ],
+            answer: 3,
+            explanation:
+              "İfade, vatanın ve iradenin millete ait olduğunu; demokrasinin kaynağının halk olduğunu söyler.",
+            hint: "Cümlenin öznesi “biz”.",
+          },
+          {
+            id: "q4",
             prompt: "Olağanüstü bir gecede bilgi kirliliğine karşı en doğru davranış hangisidir?",
             options: [
               "Doğrulanmamış iletileri hızla paylaşmak",
@@ -766,14 +798,14 @@
             ],
             answer: 2,
             explanation:
-              "Kriz anlarında hız kadar doğruluk önemlidir: kaynağı belli olmayan bilgi panik ve yanlış yönlendirme üretir.",
+              "Kriz anlarında hız kadar doğruluk önemlidir: kaynağı belirsiz bilgi panik ve yanlış yönlendirme üretir.",
             hint: "Hangi seçenek kaynağı denetlemeyi içeriyor?",
           },
         ],
         write: {
           title: "Kısa yazma: demokrasiye sahip çıkmak ne demek?",
           instruction:
-            "“Demokrasiye sahip çıkmak” ifadesini bir öğrenci gözüyle açıkla. Günlük hayatta bu tutumun hangi küçük davranışlara dönüşebileceğine iki örnek ver.",
+            "“Demokrasiye sahip çıkmak” ifadesini bir öğrenci gözüyle açıkla. Video ve sayfadaki metinden yararlanarak günlük hayatta bu tutumun hangi iki küçük davranışa dönüşebileceğini yaz.",
           criteria: [
             "Tanım kendi cümlelerinle kurulsun.",
             "İki örnek günlük yaşamdan seçilsin.",
@@ -793,35 +825,82 @@
         sourceUrl: eba("a9e7ce50bc4c0fa37a38be23b4a8af35"),
         sourceLinkLabel: "EBA · Küreselleşme içeriği",
         sourceLinkType: "video",
-        minutes: 6,
-        focus: "Küreselleşmenin alanları ve günlük hayata etkisi",
+        minutes: 3,
+        focus: "Küresel köy, küreselleşmenin fırsatları ve yerel kültürü koruma dengesi",
+        analysis: {
+          doc: "docs/video-analysis/kuresellesme-gemini-analysis.md",
+          speaker: "Anlatıcı (öğretici dış ses)",
+          summary:
+            "Ulaşım ve iletişim teknolojileri geliştikçe dünya “küresel bir köy” hâline gelir: internet, bilgiye hızlı erişim ve küresel ticaret ağları sayesinde ürünler kapıya kadar gelir. Ancak iklim değişikliği ve çevre kirliliği gibi ortak sorunlar büyür, yerel kültürler kaybolma riskiyle karşılaşır. Video, kendi kültürümüzü korurken dünyayla bağları koparmama dengesini önerir.",
+          segments: [
+            { at: "00:00", note: "Ulaşım ve iletişimle dünyanın küçülmesi; “küresel köy” kavramı." },
+            { at: "00:21", note: "İnternet, bilgiye hızlı erişim, küresel ticaret; ürünlerin kapıya gelmesi." },
+            { at: "00:42", note: "Ortak sorunlar (iklim, çevre), yerel kültür riski ve kültürel denge çağrısı." },
+          ],
+          keyPoints: [
+            "Küreselleşme, ulaşım ve iletişim teknolojilerinin mesafeleri kısaltmasıyla hızlanmıştır.",
+            "Bilgiye, ürünlere ve farklı kültürlere erişim kolaylaşır; bu bir fırsattır.",
+            "İklim değişikliği ve çevre kirliliği gibi sorunlar küresel olduğu için ortak çözüm ister.",
+            "Yerel kültürü korumak ile dünyaya açık olmak birbirinin alternatifi değildir; denge gerekir.",
+          ],
+        },
         intro:
-          "Karekod, küreselleşmenin hangi alanlarda görüldüğünü örneklerle anlatıyor. İzlerken sayılan alanları işaretle, sonra kendi günlük hayatından bir karşılık yaz.",
+          "Karekod, küreselleşmenin dünyayı nasıl küçülttüğünü ve beraberinde getirdiği sorunları anlatıyor. İzlerken fırsatları ve riskleri iki ayrı sütun gibi biriktir.",
         before: [
           "Bugün kullandığın üç ürünün nerede üretildiğini tahmin et.",
-          "Küreselleşme senin için olumlu mu, olumsuz mu? Neden?",
+          "Sence dünya “küresel bir köy”e benziyor mu? Bir gerekçeyle yaz.",
         ],
         notes: [
-          { id: "n1", label: "İçerikte sayılan etki alanları", hint: "Ekonomi, ulaşım, iletişim, kültür, sağlık, çevre…" },
-          { id: "n2", label: "Bir olumlu, bir olumsuz etki", hint: "İki sütun gibi düşün." },
-          { id: "n3", label: "Benim hayatımdan bir küresel bağlantı", hint: "Bir ürün, bir dizi, bir oyun, bir haber." },
+          { id: "n1", label: "Videoda kullanılan benzetme", hint: "Dünya artık neye benzetiliyor?" },
+          { id: "n2", label: "Küreselleşmenin getirdiği bir fırsat", hint: "Bilgi, ürün ya da kültür erişimi." },
+          { id: "n3", label: "İki ortak küresel sorun", hint: "İkisi de doğayla ilgili." },
+          { id: "n4", label: "Kültürümüzü korurken kurulması gereken denge", hint: "Kapanmak mı, denge mi?" },
         ],
         questions: [
           {
             id: "q1",
-            prompt: "Aşağıdakilerden hangisi küreselleşmenin bir sonucu değildir?",
+            prompt: "Videoda küreselleşmeyi anlatmak için kullanılan benzetme hangisidir?",
             options: [
-              "Ülkeler arası ticaretin artması",
-              "Bilginin saniyeler içinde yayılması",
-              "Yerel kültürlerin tamamen yok olması",
-              "Ulaşım sürelerinin kısalması",
+              "Küresel köy",
+              "Dijital duvar",
+              "Açık pazar",
+              "Hızlı tren",
             ],
-            answer: 2,
-            explanation: "Yerel kültürler etkilenir ama “tamamen yok olma” genellenemez; kültürler değişir, dönüşür ve yaşar.",
-            hint: "Hangi seçenek kesin bir yargı içeriyor?",
+            answer: 0,
+            explanation:
+              "Ulaşım ve iletişimle mesafelerin kısalması, dünyanın küçük bir köy gibi birbirine bağlanmasına benzetilir.",
+            hint: "Benzetmede hem “küresel” hem bir yerleşim adı var.",
           },
           {
             id: "q2",
+            prompt: "Videoya göre küreselleşmenin getirdiği sorunlardan biri hangisidir?",
+            options: [
+              "Bilgiye erişimin yavaşlaması",
+              "İklim değişikliği ve çevre kirliliği",
+              "Ürünlere ulaşımın zorlaşması",
+              "Ülkeler arası ticaretin azalması",
+            ],
+            answer: 1,
+            explanation:
+              "Video, küresel ekonominin büyümesiyle iklim değişikliği ve çevre kirliliği gibi ortak sorunların da büyüdüğünü söyler.",
+            hint: "Sorunlardan ikisi de doğayla ilgiliydi.",
+          },
+          {
+            id: "q3",
+            prompt: "Video, yerel kültürler konusunda hangi tutumu önerir?",
+            options: [
+              "Kültürel bağları tamamen koparıp yalnızca küresel olanı izlemeyi",
+              "Dünyaya kapanıp hiçbir dış içeriği kullanmamayı",
+              "Yerel kültürü korurken dünyayla bağları sürdüren bir denge kurmayı",
+              "Yerel kültürlerin kendiliğinden korunacağını varsaymayı",
+            ],
+            answer: 2,
+            explanation:
+              "Video, kültürümüzü korurken dünyayla bağları koparmama dengesini önerir; kapanmak da kopmak da çözüm değildir.",
+            hint: "Kapanmak ile kopmak arasındaki üçüncü yol.",
+          },
+          {
+            id: "q4",
             prompt: "Küresel bir ürünü değerlendirirken en sağlıklı soru hangisidir?",
             options: [
               "Bu ürün popüler mi?",
@@ -830,21 +909,22 @@
               "Bu ürünün üretim, taşıma ve tüketim yolculuğu nasıl?",
             ],
             answer: 3,
-            explanation: "Üretim ve taşıma yolculuğunu sormak, ekonomik ve çevresel etkiyi görmeyi sağlar.",
+            explanation:
+              "Üretim ve taşıma yolculuğunu sormak, ürünün ekonomik ve çevresel etkisini görünür kılar.",
             hint: "Hangi soru süreci görünür kılar?",
           },
         ],
         write: {
-          title: "Kısa yazma: bir ürünün yolculuğu",
+          title: "Kısa yazma: fırsat mı, risk mi?",
           instruction:
-            "Günlük hayatında kullandığın bir ürünü seç. Üretim, taşıma ve tüketim aşamalarını yaz; bu yolculuğun olumlu ve olumsuz iki sonucunu belirt.",
+            "Küreselleşmenin günlük hayatındaki bir fırsatını ve bir riskini yaz. Sonunda yerel kültürümüzü koruyarak dünyaya açık kalmanın nasıl mümkün olacağını kendi cümlelerinle açıkla.",
           criteria: [
-            "Üç aşamayı ayrı ayrı yaz.",
-            "En az bir ülke ya da bölge adı kullan.",
-            "Olumlu ve olumsuz sonucu karşılaştır.",
+            "Fırsat ve risk ayrı ayrı örneklensin.",
+            "En az bir somut ürün, alışkanlık ya da olay kullanılsın.",
+            "Denge önerisi gerekçesiyle yazılsın.",
           ],
-          guide: "Ürün → üretim → taşıma → tüketim → sonuç sırasını izle.",
-          starter: "Seçtiğim ürün …; üretimi …",
+          guide: "Fırsat → risk → denge önerisi sırasını izle.",
+          starter: "Küreselleşmenin bana sağladığı fırsat …; buna karşılık …",
           minChars: 170,
         },
       },

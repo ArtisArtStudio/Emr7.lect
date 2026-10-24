@@ -22,8 +22,8 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
 | 34 | “Engelleri Aşıyorum” — **video değil, sürükle-bırak etkinliği** (karta bağlanmadı) | 3 | — | `b3ec73b3a189e78a00451537774edb5f` |
 | 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
-| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) | 4–5 | — (yayımlanmamış) | `b14529259e0b211f8d6ae3a4bb6ab951` |
-| 60 | Küreselleşme | 6 | — (yayımlanmamış) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
+| 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) · **analiz eklendi** | 4–5 | https://youtu.be/DN330Cd39VE | `b14529259e0b211f8d6ae3a4bb6ab951` |
+| 60 | Küreselleşme · **analiz eklendi** | 6 | https://youtu.be/iv_sjOLGbCI | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
 | 63 | Kahvenin yolculuğu | 6 | https://youtu.be/pSoAZkgKTP4 | `0a91216d32df2405b32be9c6a740c34a` |
 | 72 | Jeopolitik konum ve dış politika | 7 | https://youtu.be/093b1nTbSmo | `d8e6ad2d9687967f09a69ce26cff8a2e` |
 | 75–76 | İnsani yardım ve girişimci dış politika | 8 | — (yayımlanmamış) | `a1da14c0d38310a7068eefd025ec8f8f` |
@@ -41,7 +41,7 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; yedi kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; dokuz kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -56,6 +56,8 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” videosu (analiz
 | 32 | `qr-engellerine-ragmen-alti-isim` | Engellerine rağmen büyük başarılara imza atmış altı isim | `docs/video-analysis/sayfa32-uc-video-gemini-analysis.md` |
 | 45 | `qr-milli-meseleler` | Millî Meselelerde Biz (Yakup Kadri, İstiklal Yolu) | `docs/video-analysis/milli-meselelerde-biz-gemini-analysis.md` |
 | 27 | `qr-uzlasma-hikayesi` | Uzlaşmanın Gücü hikâyesinin devamı (Ahmet ve Merve, proje anlaşmazlığı) — **ses kaydı** | `docs/video-analysis/uzlasmanin-gucu-devami-gemini-analysis.md` |
+| 45 | `qr-15-temmuz` | 15 Temmuz Darbe Girişimi (Gazi Meclis, halkın direnişi) | `docs/video-analysis/15-temmuz-darbe-girisimi-gemini-analysis.md` |
+| 60 | `qr-kuresellesme` | Küreselleşme (küresel köy, fırsat–risk dengesi) | `docs/video-analysis/kuresellesme-gemini-analysis.md` |
 
 Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
