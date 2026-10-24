@@ -30,7 +30,7 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 76 | **Türkiye Gazze’ye yardımda ilk sırada** (“iyilik gemileri”) · **analiz eklendi** | 8 | https://youtu.be/nM0aLYOWaIA (1:52) | `0ce320747764d0c8c4c7b744dc4da505` |
 | 96 | **Cihan devletinin mimarları** (dönemler, padişahlar, kurumlar) · **analiz eklendi** | 9–11 | https://youtu.be/Gab9bD-3kug (5:49) | `3bb79a4a924568a745198daba651f7c8` |
 | 101 | Gemilerin karadan yürütülmesi | 11 | — (yayımlanmamış) | `ae0929a323ecdf570f064b5d0c1900cb` |
-| 105 | Barbaros Hayreddin Paşa | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
+| 105 | **Preveze Deniz Zaferi** (Barbaros Hayreddin Paşa) · **analiz eklendi** | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
 | 106 | XVI. yüzyıl etkileşimli haritası | 12 | — (etkileşimli içerik) | `1761fd63303ecc07765ffc8e7d22ac92` |
 | 130 | Sanayileşme / yenilikler | 14 | — (yayımlanmamış) | `ea26c7d6df42f305e0ec140ccf58402d` |
 | 146 | Fetih Marşı | 15 | — (yayımlanmamış) | `8bb724f386e46afc6d07b4cf1094ab70` |
@@ -42,7 +42,7 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on dört kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on beş kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -64,6 +64,7 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz
 | 75 | `qr-insani-yardim` | Ülkemizin girişimci politikası (Somali, çok paydaşlı kalkınma desteği) | `docs/video-analysis/girisimci-dis-politika-gemini-analysis.md` |
 | 76 | `qr-iyilik-gemileri` | Türkiye Gazze’ye yardımda ilk sırada (sevkiyat, AFAD, sahra hastanesi) | `docs/video-analysis/gazze-insani-yardim-gemini-analysis.md` |
 | 96 | `qr-cihan-devleti-hukumdarlar` | Cihan devletinin mimarları (padişahlar, kurumlar, 1402–1453 kırılmaları) | `docs/video-analysis/cihan-devletinin-mimarlari-gemini-analysis.md` |
+| 105 | `qr-barbaros` | Preveze Deniz Zaferi (1533 atama, hilal taktiği, 1538 zaferi) | `docs/video-analysis/preveze-deniz-zaferi-gemini-analysis.md` |
 
 Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
