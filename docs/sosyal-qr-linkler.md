@@ -37,7 +37,7 @@ Aşağıdaki “YouTube (yalnızca kayıt)” kolonu uygulamada **kullanılmaz**
 | 105 | **Preveze Deniz Zaferi** (Barbaros Hayreddin Paşa) · **analiz eklendi** | 12 | — (yayımlanmamış) | `64347117dac0957fbdbc54a5c18d6e50` |
 | 106 | **Haritalarla Osmanlı Devleti: sultan sultan büyüme** (dokuz dönem görseli, yatay buton şeridi) | 12 | — (etkileşimli harita) | `1761fd63303ecc07765ffc8e7d22ac92` |
 | 130 | **Osmanlı’da sanayileşme ve ekonomik dönüşüm** (fabrikalar, demiryolu, Islah-ı Sanayi) · **analiz eklendi** | 14 | — (yayımlanmamış) | `ea26c7d6df42f305e0ec140ccf58402d` |
-| 146 | Fetih Marşı | 15 | — (yayımlanmamış) | `8bb724f386e46afc6d07b4cf1094ab70` |
+| 146 | **Mehteran icrası ve Fetih Marşı** · **analiz eklendi** | 15 | — (yayımlanmamış) | `8bb724f386e46afc6d07b4cf1094ab70` |
 | 147 | 3D günlük yaşam | 15 | — (yayımlanmamış) | `a1ed545e12246ab79b8cf219aeb4b619` |
 | 150 | **Ahilik: esnafın ahlak ve dayanışma düzeni** · **analiz eklendi** | 15 | — (yayımlanmamış) | `218994cef89cb74b5ae00d91da2c821d` |
 | 151 | Kültür-medeniyet etkileşimli video | 15 | — (yayımlanmamış) | `c2768a5382050f9c7ec0b81934dcd743` |
@@ -46,7 +46,7 @@ Kalıp: `https://ders.eba.gov.tr/ders//redirectContent.jsp?resourceId=<id>&resou
 
 ## 2b. Analizi eklenen videolar
 
-Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on yedi kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
+Kullanıcı tarafından sağlanan Gemini video analizleri depoya işlendi; on sekiz kartın izleme öncesi soruları, not alanları, çoktan seçmeli soruları ve yazma görevi artık videonun gerçek içeriğine dayanıyor.
 
 s. 32’deki üç video tek raporda geldiği için tek dosyada toplandı; üç kart bu dosyayı paylaşıyor.
 
@@ -71,6 +71,7 @@ s. 45’te **iki** karekod vardır: “Millî Meselelerde Biz” ve “15 Temmuz
 | 105 | `qr-barbaros` | Preveze Deniz Zaferi (1533 atama, hilal taktiği, 1538 zaferi) | `docs/video-analysis/preveze-deniz-zaferi-gemini-analysis.md` |
 | 130 | `qr-osmanli-yenilikler` | Osmanlı’da sanayileşme ve ekonomik dönüşüm (fabrikalar, 1/6 bütçe, demiryolu, Islah-ı Sanayi) | `docs/video-analysis/osmanli-sanayilesme-gemini-analysis.md` |
 | 150 | `qr-ahi-teskilati` | Ahilik (Ahi Evran, yamak–çırak–kalfa–usta, narh, pabucu dama atmak, esnaf sandığı) | `docs/video-analysis/ahilik-teskilati-gemini-analysis.md` |
+| 146 | `qr-fetih-marsi` | Mehteran icrası ve Fetih Marşı (Has dur komutu, köş–davul–zurna–borazan, Fatih ve Ulubatlı Hasan, Etnospor) | `docs/video-analysis/mehteran-fetih-marsi-gemini-analysis.md` |
 
 Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken not al / Dinledikten sonra” biçimine geçer.
 
