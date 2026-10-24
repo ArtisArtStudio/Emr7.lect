@@ -773,6 +773,10 @@ for (const unit of analysedCards) {
   assert.ok(unit.analysis.doc && unit.analysis.summary && unit.analysis.keyPoints.length <= 4, `Video analizi alanları eksik: ${unit.id}`);
   assert.ok(fs.existsSync(path.join(__dirname, '..', unit.analysis.doc)), `Video analizi dosyası yok: ${unit.analysis.doc}`);
 }
+// s. 34 "Engelleri Aşıyorum" video değil, sürükle-bırak etkinliğidir; kullanıcı
+// talimatıyla şimdilik karta bağlanmaz. Envanterde kayıt olarak durur, uygulamada görünmez.
+assert.ok(!qr.units.some((unit) => unit.sourceUrl.includes('b3ec73b3a189e78a00451537774edb5f')), 's. 34 etkinliği video kartı olarak bağlanmamalı.');
+assert.ok(!/Engelleri Aşıyorum/.test(qr.units.map((unit) => unit.title).join(' | ')), 's. 34 etkinliği karekod kartı listesinde görünmemeli.');
 const uzlasma = qr.units.find((unit) => unit.id === 'qr-uzlasma-hikayesi');
 assert.ok(uzlasma && /uzlasmanin-gucu-devami/.test(uzlasma.analysis.doc), 'Uzlaşmanın Gücü kartı analiz dosyasına bağlanmalı.');
 assert.equal(uzlasma.sourceLinkType, 'audio', 's. 27 içeriği ses kaydıdır; kart dinleme olarak işaretlenmeli.');

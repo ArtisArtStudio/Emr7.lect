@@ -20,7 +20,7 @@ Girişsiz kopyalar, ders kitabının karekodlarını sayfa sayfa yayımlayan **s
 | 32 | **Paralimpik kahramanlar** · **analiz eklendi** | 3 | — (yayımlanmamış) | `63c076451e7fbbd14870627408def2c4` |
 | 32 | **Engelleri aşan üç genç** · **analiz eklendi** | 3 | https://youtu.be/E3lz6LefMys | `2edd5069ff032e00a221a9a0545791bf` |
 | 32 | **Engellerine rağmen büyük başarılara imza atmış altı isim** · **analiz eklendi** | 3 | — (yayımlanmamış) | `c5c2fbcab508be24681e00d60dabd6ac` |
-| 34 | “Engelleri Aşıyorum” | 3 | — (yayımlanmamış) | `b3ec73b3a189e78a00451537774edb5f` |
+| 34 | “Engelleri Aşıyorum” — **video değil, sürükle-bırak etkinliği** (karta bağlanmadı) | 3 | — | `b3ec73b3a189e78a00451537774edb5f` |
 | 45 | **Millî Meselelerde Biz** · **analiz eklendi** | 4–5 | https://youtu.be/CP8diE-CstI | `6e1f6955aeff331cc85451f6a8231cc5` |
 | 45 | **15 Temmuz Darbe Girişimi** (sayfadaki ikinci karekod) | 4–5 | — (yayımlanmamış) | `b14529259e0b211f8d6ae3a4bb6ab951` |
 | 60 | Küreselleşme | 6 | — (yayımlanmamış) | `a9e7ce50bc4c0fa37a38be23b4a8af35` |
@@ -62,6 +62,14 @@ Ses kaydı olan kartlarda bölüm başlıkları “Dinlemeden önce / Dinlerken 
 Kural: analiz metni öğrenciye gösterilmez. `analysis.summary` ve `analysis.keyPoints` yalnızca içerik kaynağı ve ileride yapay zekâ değerlendirmesi için tutulur; öğrenci yüzeyinde yalnızca izleme adımları, sorular ve yönlendirici ipuçları görünür. Cevap anahtarı gösterilmez.
 
 Diğer karekod kartları için analiz gelirse aynı yol izlenir: rapor `docs/video-analysis/` altına konur, karta `analysis` alanı eklenir, sorular rapordaki doğrulanabilir bilgilere dayandırılır.
+
+## 2c. Karta bağlanmayan karekodlar
+
+| Sayfa | İçerik | Neden karta bağlanmadı? | Plan |
+|---|---|---|---|
+| 34 | “Engelleri Aşıyorum” (`b3ec73b3a189e78a00451537774edb5f`) | Video değil; engelli bireylerin işini **kolaylaştıran / zorlaştıran** durumların resimlerini sürükleyip bırakarak sınıflandırılan etkileşimli bir etkinlik. | Kullanıcı talimatıyla şimdilik atlandı. İleride aynı kazanımla bir `sort` (sürükle-bırak sınıflandırma) etkinliği olarak yazılacak: iki kategori “kolaylaştıran” / “zorlaştıran”, öğrenci metninde kitap–sayfa referansı olmadan. |
+
+Bu içerik uygulamada **kart olarak listelenmez**; envanterde yalnızca kayıt amacıyla durur. Video/etkinlik eklendiğinde `social-studies-qr.js` içine yeni bir kart olarak girer.
 
 ## 3. Google Drive durumu
 

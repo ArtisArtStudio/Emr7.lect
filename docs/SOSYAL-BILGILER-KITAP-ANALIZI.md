@@ -105,7 +105,7 @@ Kitaplardaki 52 karekodun tamamı çözüldü. Hepsi EBA’ya (`ders.eba.gov.tr`
 İçerik adları (uygulamaya alınacak başlıklar):
 
 - **s. 15** İletişim ile ilgili video · **s. 23** Olumlu ve olumsuz iletişim yolları · **s. 27** “Uzlaşmanın Gücü” hikâyesinin devamı
-- **s. 32** Engelleri aşan üç genç · Paralimpik kahramanlar · Altı isim (3 video) · **s. 34** “Engelleri Aşıyorum”
+- **s. 32** Engelleri aşan üç genç · Paralimpik kahramanlar · Altı isim (3 video) · **s. 34** “Engelleri Aşıyorum” *(video değil, sürükle-bırak etkinliği; karta bağlanmadı)*
 - **s. 45** “Millî Meselelerde Biz” videosu + 15 Temmuz içeriği
 - **s. 60** Küreselleşme içeriği · **s. 63** “Kahvenin Yolculuğu”
 - **s. 72** Türkiye’nin jeopolitik konumu ve dış politikası · **s. 75** İnsani yardım ve girişimci dış politika · **s. 76** “İyilik Gemileri”

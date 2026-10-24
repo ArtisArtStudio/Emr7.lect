@@ -9,6 +9,11 @@
  * dayandırıldı; kalan kartlarda sorular videoda geçtiği iddia edilen ayrıntılara değil,
  * öğrencinin izleme sürecini planlamasına ve konuyla bağ kurmasına dayanır.
  * Cevap anahtarı gösterilmez.
+ *
+ * Kapsam dışı bırakılan karekod: s. 34 "Engelleri Aşıyorum". Bu bir video değil,
+ * sürükle-bırak etkinliğidir (engelli bireylerin işini kolaylaştıran/zorlaştıran
+ * durumların resimlerini sınıflandırma). Kullanıcı talimatıyla şimdilik atlandı;
+ * ileride `sort` (sürükle-bırak sınıflandırma) etkinliği olarak eklenecek.
  */
 (function () {
   "use strict";
@@ -602,70 +607,6 @@
           guide: "Kişi → engel → üretim → yöntem → bugüne mesaj sırasını izle.",
           starter: "Seçtiğim isim …; engeli …",
           minChars: 160,
-        },
-      },
-      {
-        id: "qr-engelleri-asiyorum",
-        weekIds: [3],
-        kind: "İzleme",
-        where: "s. 34 · 1. öğrenme alanı",
-        title: "“Engelleri Aşıyorum” içeriği",
-        sourceUrl: eba("b3ec73b3a189e78a00451537774edb5f"),
-        sourceLinkLabel: "EBA · Engelleri Aşıyorum",
-        sourceLinkType: "video",
-        minutes: 5,
-        focus: "Erişilebilirlik, bağımsız yaşam ve saygı",
-        intro:
-          "Karekod, erişilebilirliğin günlük yaşamdaki karşılığını gösteriyor. İzlerken “rampa dışında ne var?” sorusuna yanıt arayan üç ayrıntı seç.",
-        before: [
-          "Erişilebilirlik denince yalnızca rampa mı geliyor? Başka neler olabilir?",
-          "Bir mekânın herkes için uygun olup olmadığını nasıl anlarsın?",
-        ],
-        notes: [
-          { id: "n1", label: "Fiziksel erişimi kolaylaştıran düzenleme", hint: "Kapı, eşik, asansör, tutamak…" },
-          { id: "n2", label: "Bilgiye erişimi kolaylaştıran düzenleme", hint: "Sesli anons, büyük yazı, işaret dili, betimleme…" },
-          { id: "n3", label: "Katılımı kolaylaştıran sosyal davranış", hint: "Sıra vermek, yavaş konuşmak, varsayımda bulunmamak…" },
-        ],
-        questions: [
-          {
-            id: "q1",
-            prompt: "Aşağıdakilerden hangisi erişilebilirlik düzenlemesi değildir?",
-            options: [
-              "Etkinlik saatini katılımcıya sormadan değiştirmek",
-              "Asansörde kabartma tuş",
-              "Ders materyalinin sesli sürümü",
-              "Yaya geçidinde sesli uyarı",
-            ],
-            answer: 0,
-            explanation: "Katılımcıya sorulmadan yapılan değişiklik katılımı azaltır; erişilebilirlik düzenlemesi değildir.",
-            hint: "Hangisi katılımı artırmıyor?",
-          },
-          {
-            id: "q2",
-            prompt: "Özel gereksinimli bir arkadaşınla konuşurken en doğru yaklaşım hangisidir?",
-            options: [
-              "Yerine karar vermek",
-              "Ne istediğini sormak ve yanıtına göre davranmak",
-              "Konuyu tamamen değiştirmek",
-              "Yardımı zorla sunmak",
-            ],
-            answer: 1,
-            explanation: "Saygı, varsayım yerine sormayı gerektirir; bireyin kendi kararı esastır.",
-            hint: "Varsayım mı, soru mu?",
-          },
-        ],
-        write: {
-          title: "Kısa yazma: erişilebilirlik denetimi",
-          instruction:
-            "Okulundan bir alanı seç ve üç ölçütle denetle: fiziksel erişim, bilgiye erişim, sosyal katılım. Her ölçüt için bir bulgu yaz.",
-          criteria: [
-            "Üç ölçütü ayrı ayrı ele al.",
-            "Bulgunu gözleme dayandır.",
-            "Bir iyileştirme önerisi ekle.",
-          ],
-          guide: "Alan → ölçüt → bulgu → öneri düzenini kullan.",
-          starter: "Denetlediğim alan …; ilk ölçütte …",
-          minChars: 170,
         },
       },
       {
