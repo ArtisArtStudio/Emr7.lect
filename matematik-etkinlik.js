@@ -1,25 +1,26 @@
-/* Matematik etkinlikleri — soru + zorunlu açıklama + yapay zekâ değerlendirmesi.
-   Diğer çalışma alanlarındaki (Türkçe/Fen/Sosyal) etkinlik kartı diliyle aynı görünümü kullanır.
-   Kural: doğru seçenek hiçbir koşulda gösterilmez; geri bildirim yalnızca yol gösterir. */
+/* Matematik etkinlik motoru — açıklamalı soru kartları (kitabın etkinlik akışı).
+   Her kartta soru, ipucu ve ZORUNLU açıklama alanı vardır. Değerlendirme iki aşamalıdır:
+   yerel ölçüt kontrolü ve Groq ile yapay zekâ değerlendirmesi. Model cevap hiçbir koşulda
+   gösterilmez; geri bildirim yalnızca yol gösterir. Görünüm Türkçe/Fen/Sosyal etkinlik
+   kartlarıyla aynıdır (.activity-card). */
 (() => {
   'use strict';
 
   const SOURCE = window.MATEMATIK_ETKINLIKLER;
   if (!SOURCE) return;
 
-  const STORAGE_KEY = 'emr7lect.matematik.etkinlik.v1';
+  const STORAGE_KEY = 'emr7lect.matematik.acik.v2';
   const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
   const DEFAULT_MODEL = 'openai/gpt-oss-20b';
-  const LETTERS = ['A', 'B', 'C'];
 
   const SYSTEM_PROMPT = [
-    'Sen 7. sınıf matematik öğretmenisin. Öğrenci çoktan seçmeli bir soruyu yanıtladı ve seçiminin gerekçesini yazdı.',
-    'Görevin yalnızca YAZILI AÇIKLAMAYI ölçütlerle karşılaştırmak.',
-    'Doğru seçeneği, doğru sayısal sonucu, cevap anahtarını veya bunların eş anlamlısını ASLA yazma; hangi şıkkın doğru olduğunu söyleme.',
-    'Yanlış seçim varsa bunu yalnızca "seçimini yeniden düşün" düzeyinde belirt, doğrusunu söyleme.',
+    'Sen 7. sınıf matematik öğretmenisin. Öğrenci, ders kitabındaki bir etkinlik sorusuna yazılı cevap verdi.',
+    'Görevin yalnızca öğrencinin açıklamasını ve sonucunu ölçütlerle karşılaştırmak.',
+    'Doğru cevabı, doğru sayısal sonucu, çözümü veya cevap anahtarını ASLA yazma; sonucun ne olduğunu söyleme.',
+    'Yanlış cevapta yalnızca “sonucu yeniden düşün” düzeyinde yol göster; doğrusunu söyleme.',
     'Yanıtın Türkçe, kısa (en çok 320 karakter) ve tek paragraf olsun.',
     'Yalnızca şu JSON biçimini döndür: {"state":"correct|partial|wrong","feedback":"...","missing":["eksik ölçüt"]}',
-    'state: açıklama ölçütlerin tamamını karşılıyorsa correct, bir kısmını karşılıyorsa partial, hiçbirini karşılamıyorsa wrong.',
+    'state: açıklama ve sonuç birlikte doğruysa correct, kısmen doğruysa partial, yanlışsa wrong.',
     'missing alanına en çok iki eksik ölçüt yaz.',
   ].join('\n');
 
@@ -45,14 +46,15 @@
   const MATH = window.MATEMATIK_MATH || null;
   const FIGURE = window.MATEMATIK_FIGURE || null;
 
+  const typeset = (segment) => {
+    if (MATH && typeof MATH.render === 'function') {
+      try { return MATH.render(segment); } catch (error) { /* düz metin */ }
+    }
+    return escapeHTML(segment);
+  };
+
   function rich(value) {
     const text = value == null ? '' : String(value);
-    const typeset = (segment) => {
-      if (MATH && typeof MATH.render === 'function') {
-        try { return MATH.render(segment); } catch (error) { /* düz metin */ }
-      }
-      return escapeHTML(segment);
-    };
     return text.split(/(\*\*[^*]+\*\*)/g).map((segment) => (
       segment.length > 4 && segment.startsWith('**') && segment.endsWith('**')
         ? `<strong>${typeset(segment.slice(2, -2))}</strong>`
@@ -62,128 +64,21 @@
 
   function entryFor(id) {
     if (!store.data[id] || typeof store.data[id] !== 'object') {
-      store.data[id] = { choice: null, text: '', state: '', feedback: '', checkedAt: '' };
+      store.data[id] = { text: '', state: '', feedback: '', checkedAt: '' };
     }
     return store.data[id];
   }
 
-  function figureMarkup(activity) {
-    if (!FIGURE || !activity.figure) return '';
-    const svg = FIGURE.render(activity.figure.type, activity.figure.options || {});
-    if (!svg) return '';
-    return `<figure class="math-etkinlik-figure">${svg}</figure>`;
-  }
-
-  function inlineSceneMarkup(activity) {
-    if (!activity.scene) return '';
-    const id = escapeHTML(activity.id);
-    return `<div class="math-etkinlik-scene">
-        <p class="math-etkinlik-scene-title">${escapeHTML(activity.scene.title || 'İnteraktif inceleme')}</p>
-        <div class="math-scene-frame is-compact">
-          <div class="math-scene-stage" id="mathEtkinlikStage-${id}"></div>
-          <div class="math-scene-controls" id="mathEtkinlikControls-${id}"></div>
-        </div>
-      </div>`;
-  }
-
-  function activityMarkup(activity, index, total) {
-    const entry = entryFor(activity.id);
-    const options = activity.options.map((option, optionIndex) => `
-      <label class="math-etkinlik-option${String(entry.choice) === String(optionIndex) ? ' is-chosen' : ''}">
-        <input type="radio" name="math-${escapeHTML(activity.id)}" value="${optionIndex}"
-          data-math-etkinlik-choice="${escapeHTML(activity.id)}"${String(entry.choice) === String(optionIndex) ? ' checked' : ''}>
-        <span><b>${LETTERS[optionIndex]})</b> ${rich(option)}</span>
-      </label>`).join('');
-    const rubric = activity.rubric.map((item) => `<li>${rich(item)}</li>`).join('');
-    const text = entry.text || '';
-    const count = text.trim().length;
-    const state = entry.state || '';
-    const pill = state ? `<span class="math-etkinlik-pill" data-state="${escapeHTML(state)}">${state === 'correct' ? 'Açıklama yeterli' : state === 'partial' ? 'Geliştirilebilir' : 'Yeniden düşün'}</span>` : '';
-    const feedback = entry.feedback
-      ? `<div class="math-etkinlik-feedback" data-state="${escapeHTML(state)}" aria-live="polite">${rich(entry.feedback)}</div>`
-      : `<div class="math-etkinlik-feedback" data-state="" aria-live="polite" hidden></div>`;
-
-    return `<article class="activity-card math-etkinlik-card" data-math-act="${escapeHTML(activity.id)}" data-state="${escapeHTML(state)}">
-      <header class="activity-top">
-        <div class="activity-heading-row">
-          <span class="activity-icon" aria-hidden="true">✎</span>
-          <div class="activity-title-copy">
-            <p class="activity-kicker">Etkinlik ${index + 1} / ${total} · ${escapeHTML(activity.skill)}</p>
-            <h4 class="activity-title">${escapeHTML(activity.title)}</h4>
-          </div>
-        </div>
-        <p class="activity-instruction">${rich(activity.instruction)}</p>
-      </header>
-      <div class="activity-meta">
-        <span>Çoktan seçmeli + açıklama</span>
-        <span>${escapeHTML(activity.skill)}</span>
-        <span>Yapay zekâ değerlendirmesi</span>
-        ${pill}
-      </div>
-      <div class="question-list">
-        <article class="question-card">
-          <fieldset class="math-etkinlik-question">
-            <legend><span class="math-etkinlik-no">${index + 1}</span>${rich(activity.prompt)}</legend>
-            ${figureMarkup(activity)}
-            <div class="math-etkinlik-options">${options}</div>
-          </fieldset>
-          ${inlineSceneMarkup(activity)}
-          <div class="math-etkinlik-write">
-            <label for="mathEtkinlikText-${escapeHTML(activity.id)}">Açıklaman (zorunlu): neden bu seçeneği seçtin?</label>
-            <ul class="math-etkinlik-rubric">${rubric}</ul>
-            <textarea id="mathEtkinlikText-${escapeHTML(activity.id)}" rows="4" maxlength="1200"
-              data-math-etkinlik-text="${escapeHTML(activity.id)}"
-              placeholder="Seçimini kendi cümlelerinle gerekçelendir…">${escapeHTML(text)}</textarea>
-            <div class="math-etkinlik-actions">
-              <button type="button" class="btn check-button" data-math-etkinlik-check="${escapeHTML(activity.id)}">✦ Kontrol et</button>
-              <button type="button" class="btn ai-button" data-math-etkinlik-ai="${escapeHTML(activity.id)}">Yapay zekâ ile değerlendir</button>
-              <span class="math-etkinlik-count" data-math-etkinlik-count="${escapeHTML(activity.id)}">${count}/${activity.minChars} karakter</span>
-            </div>
-            <p class="math-etkinlik-hint" data-math-etkinlik-hint="${escapeHTML(activity.id)}" hidden>İpucu: ${rich(activity.hint)}</p>
-            ${feedback}
-          </div>
-        </article>
-      </div>
-    </article>`;
-  }
-
   /* ---------------- Değerlendirme ---------------- */
 
-  function localVerdict(activity, entry) {
-    const text = String(entry.text || '').trim();
-    if (entry.choice === null || entry.choice === undefined) {
-      return { state: '', feedback: 'Önce bir seçenek işaretle, sonra seçimini gerekçelendir.' };
-    }
-    if (text.length < activity.minChars) {
-      return {
-        state: 'partial',
-        feedback: `Açıklaman ${text.length} karakter; en az ${activity.minChars} karakterlik bir gerekçe gerekiyor. “Çünkü…” diye başlayıp hangi kuralı kullandığını yaz.`,
-      };
-    }
-    const hit = activity.rubric.filter((item) => keywordOverlap(item, text) > 0);
-    const choiceRight = Number(entry.choice) === Number(activity.correct);
-    if (!choiceRight) {
-      return {
-        state: 'wrong',
-        feedback: 'Açıklamanı yazdın ama seçimini bir kez daha düşün: seçenekleri elerken kullandığın kuralı tek tek kontrol et. İpucunu açabilirsin.',
-      };
-    }
-    if (hit.length >= Math.max(1, activity.rubric.length - 1)) {
-      return {
-        state: 'correct',
-        feedback: 'Gerekçen ölçütleri karşılıyor: kullandığın kuralı ve sonucu birlikte açıkladın. Şimdi aynı soruyu farklı sayılarla kendin kurup çöz.',
-      };
-    }
-    return {
-      state: 'partial',
-      feedback: `Gerekçen kısmen yeterli. Şunları ekle: ${activity.rubric.filter((item) => keywordOverlap(item, text) === 0).slice(0, 2).join('; ')}.`,
-    };
+  const STOP = new Set(['bir', 've', 'ile', 'için', 'olan', 'olarak', 'daha', 'gibi', 'bu', 'da', 'de', 'ki', 'mi', 'çok', 'az', 'her', 'sonra', 'göre', 'kadar', 'ise', 'ama', 'yani', 'elde', 'olur', 'bulunur']);
+
+  function numbersIn(text) {
+    return (String(text).match(/-?\d+(?:[.,]\d+)?/g) || []).map((value) => value.replace(',', '.'));
   }
 
-  const STOP = new Set(['bir', 've', 'ile', 'için', 'olan', 'olarak', 'daha', 'gibi', 'bu', 'da', 'de', 'ki', 'mi', 'çok', 'az', 'her', 'sonra', 'göre', 'kadar']);
-
   function keywordOverlap(criterion, text) {
-    const lower = text.toLocaleLowerCase('tr');
+    const lower = String(text).toLocaleLowerCase('tr');
     const words = String(criterion).toLocaleLowerCase('tr')
       .replace(/[^\p{L}\s]/gu, ' ')
       .split(/\s+/)
@@ -191,23 +86,37 @@
     return words.filter((word) => lower.includes(word.slice(0, Math.max(4, word.length - 2)))).length;
   }
 
-  function paint(host, activity, entry) {
-    const card = host.querySelector(`[data-math-act="${activity.id}"]`);
-    const box = host.querySelector(`[data-math-etkinlik-hint="${activity.id}"]`)?.parentElement
-      ?.querySelector('.math-etkinlik-feedback');
-    if (card) card.dataset.state = entry.state || '';
-    const pill = card?.querySelector('.math-etkinlik-pill');
-    const label = entry.state === 'correct' ? 'Açıklama yeterli' : entry.state === 'partial' ? 'Geliştirilebilir' : entry.state === 'wrong' ? 'Yeniden düşün' : '';
-    if (pill) {
-      pill.textContent = label;
-      pill.dataset.state = entry.state || '';
-      pill.hidden = !label;
+  /* Yerel kontrol: uzunluk + model cevaptaki sayıların ve kavramların varlığı. */
+  function localVerdict(activity, entry) {
+    const text = String(entry.text || '').trim();
+    if (text.length < activity.minChars) {
+      return {
+        state: 'partial',
+        feedback: `Açıklaman ${text.length} karakter; en az ${activity.minChars} karakter gerekiyor. Sonucu ve kullandığın kuralı aynı paragrafta yaz.`,
+      };
     }
-    if (box) {
-      box.hidden = !entry.feedback;
-      box.dataset.state = entry.state || '';
-      box.innerHTML = entry.feedback ? rich(entry.feedback) : '';
+    const expected = numbersIn(activity.thinking);
+    const given = numbersIn(text);
+    const numberHit = expected.length === 0
+      ? true
+      : expected.some((value) => given.includes(value));
+    const keywordHit = keywordOverlap(activity.thinking, text);
+    if (numberHit && (keywordHit >= 1 || expected.length === 0)) {
+      return {
+        state: 'correct',
+        feedback: 'Açıklaman sonucu ve gerekçeyi birlikte içeriyor. Aynı soruyu farklı sayılarla kendin kurup bir kez daha çöz.',
+      };
     }
+    if (!numberHit) {
+      return {
+        state: 'partial',
+        feedback: 'Gerekçen var ama sonuç eksik ya da farklı. İşlemi bir kez daha yapıp sonucu sayıyla yaz.',
+      };
+    }
+    return {
+      state: 'partial',
+      feedback: 'Sonucu yazdın. Şimdi hangi kuralı kullandığını ve neden o kuralın geçerli olduğunu bir cümleyle ekle.',
+    };
   }
 
   async function askAI(activity, entry) {
@@ -215,12 +124,12 @@
     if (!apiKey) throw Object.assign(new Error('missing-key'), { code: 'missing-key' });
     const model = document.getElementById('model')?.value || DEFAULT_MODEL;
     const userPrompt = [
+      `Bölüm: ${activity.section}`,
       `Soru: ${activity.prompt}`,
-      `Seçenekler: ${activity.options.map((option, index) => `${LETTERS[index]}) ${option}`).join(' | ')}`,
-      `Öğrencinin seçimi: ${LETTERS[entry.choice]} (doğru olup olmadığını söyleme)`,
-      `Açıklaması: ${entry.text}`,
+      `Öğretmenin model cevabı (öğrenciye gösterme): ${activity.thinking}`,
+      `Öğrencinin cevabı: ${entry.text}`,
       `Ölçütler: ${activity.rubric.join('; ')}`,
-      'Açıklamayı ölçütlerle karşılaştır; yalnızca istenen JSON biçimini döndür.',
+      'Öğrencinin cevabını model cevapla karşılaştır; yalnızca istenen JSON biçimini döndür.',
     ].join('\n');
     const response = await fetch(GROQ_ENDPOINT, {
       method: 'POST',
@@ -244,37 +153,110 @@
     const parsed = JSON.parse(content);
     const state = ['correct', 'partial', 'wrong'].includes(parsed.state) ? parsed.state : 'partial';
     let feedback = String(parsed.feedback || '').replace(/[<>]/g, '').slice(0, 360);
-    // Cevabı sızdıran ifadeler temizlenir.
-    if (/doğru (cevap|seçenek|şık)|cevap anahtar|doğrusu [A-C]\b/i.test(feedback)) {
-      feedback = 'Açıklamanı ölçütlerle karşılaştırdım. Hangi kuralı kullandığını ve sonucu nasıl bulduğunu birer cümleyle yeniden yaz.';
+    if (/(doğru (cevap|sonuç|seçenek)|cevap anahtar|sonuç \d)/i.test(feedback)) {
+      feedback = 'Açıklamanı ölçütlerle karşılaştırdım. Sonucu ve kullandığın kuralı birer cümleyle yeniden yaz.';
     }
     if (Array.isArray(parsed.missing) && parsed.missing.length) {
       feedback += ` Eksik kalan: ${parsed.missing.slice(0, 2).map((item) => String(item).replace(/[<>]/g, '').slice(0, 90)).join('; ')}.`;
     }
-    if (Number(entry.choice) !== Number(activity.correct)) {
-      feedback += ' Seçimini bir kez daha düşün: her seçeneği sırayla ele ve kurala uyup uymadığını kontrol et.';
-    }
     return { state, feedback };
   }
 
-  function bind(host, weekId) {
-    const activities = SOURCE.forWeek(weekId);
-    if (!activities.length) return;
+  /* ---------------- Görünüm ---------------- */
 
-    host.querySelectorAll('[data-math-etkinlik-choice]').forEach((input) => {
-      input.addEventListener('change', () => {
-        const entry = entryFor(input.dataset.mathEtkinlikChoice);
-        entry.choice = Number(input.value);
-        entry.state = '';
-        entry.feedback = '';
-        store.save();
-        host.querySelectorAll(`input[name="math-${input.dataset.mathEtkinlikChoice}"]`).forEach((radio) => {
-          radio.closest('.math-etkinlik-option')?.classList.toggle('is-chosen', radio.checked);
-        });
-        paint(host, activities.find((item) => item.id === input.dataset.mathEtkinlikChoice), entry);
-      });
-    });
+  function figureMarkup(activity) {
+    if (!FIGURE || !activity.figure) return '';
+    const svg = FIGURE.render(activity.figure.type, activity.figure.options || {});
+    if (!svg) return '';
+    return `<figure class="math-etkinlik-figure">${svg}</figure>`;
+  }
 
+  function sceneMarkup(activity) {
+    if (!activity.scene) return '';
+    const id = escapeHTML(activity.id);
+    return `<div class="math-etkinlik-scene">
+        <p class="math-etkinlik-scene-title">${escapeHTML(activity.scene.title || 'İnteraktif inceleme')}</p>
+        <div class="math-scene-frame is-compact">
+          <div class="math-scene-stage" id="mathEtkinlikStage-${id}"></div>
+          <div class="math-scene-controls" id="mathEtkinlikControls-${id}"></div>
+        </div>
+      </div>`;
+  }
+
+  function cardMarkup(activity, index, total) {
+    const entry = entryFor(activity.id);
+    const text = entry.text || '';
+    const count = text.trim().length;
+    const state = entry.state || '';
+    const pill = `<span class="math-etkinlik-pill" data-state="${escapeHTML(state)}"${state ? '' : ' hidden'}>${
+      state === 'correct' ? 'Açıklama yeterli' : state === 'partial' ? 'Geliştirilebilir' : state === 'wrong' ? 'Yeniden düşün' : ''
+    }</span>`;
+    const rubric = activity.rubric.map((item) => `<li>${rich(item)}</li>`).join('');
+    return `<article class="activity-card math-etkinlik-card" data-math-act="${escapeHTML(activity.id)}" data-state="${escapeHTML(state)}">
+      <header class="activity-top">
+        <div class="activity-heading-row">
+          <span class="activity-icon" aria-hidden="true">✎</span>
+          <div class="activity-title-copy">
+            <p class="activity-kicker">Etkinlik ${index + 1} / ${total} · ${escapeHTML(activity.section)}</p>
+            <h4 class="activity-title">${escapeHTML(activity.title)}</h4>
+          </div>
+        </div>
+        <p class="activity-instruction">Cevabını yaz; açıklama zorunlu. Doğru cevap gösterilmez, geri bildirim yapay zekâ ile ölçütlere göre verilir.</p>
+      </header>
+      <div class="activity-meta">
+        <span>Yazılı cevap + açıklama</span>
+        <span>${escapeHTML(activity.section)}</span>
+        <span>Yapay zekâ değerlendirmesi</span>
+        ${pill}
+      </div>
+      <div class="question-list">
+        <article class="question-card">
+          <fieldset class="math-etkinlik-question">
+            <legend><span class="math-etkinlik-no">${index + 1}</span>${rich(activity.prompt)}</legend>
+            ${figureMarkup(activity)}
+          </fieldset>
+          ${sceneMarkup(activity)}
+          <div class="math-etkinlik-write">
+            <label for="mathEtkinlikText-${escapeHTML(activity.id)}">Cevabın ve açıklaman (zorunlu): sonucu ve kullandığın kuralı birlikte yaz.</label>
+            <ul class="math-etkinlik-rubric">${rubric}</ul>
+            <textarea id="mathEtkinlikText-${escapeHTML(activity.id)}" rows="4" maxlength="1200"
+              data-math-etkinlik-text="${escapeHTML(activity.id)}"
+              placeholder="Sonucu ve gerekçeni kendi cümlelerinle yaz…">${escapeHTML(text)}</textarea>
+            <div class="math-etkinlik-actions">
+              <button type="button" class="btn check-button" data-math-etkinlik-check="${escapeHTML(activity.id)}">✦ Kontrol et</button>
+              <button type="button" class="btn ai-button" data-math-etkinlik-ai="${escapeHTML(activity.id)}">Yapay zekâ ile değerlendir</button>
+              <span class="math-etkinlik-count" data-math-etkinlik-count="${escapeHTML(activity.id)}">${count}/${activity.minChars} karakter</span>
+            </div>
+            <p class="math-etkinlik-hint" data-math-etkinlik-hint="${escapeHTML(activity.id)}" hidden>İpucu: ${rich(activity.hint)}</p>
+            <div class="math-etkinlik-feedback" data-state="${escapeHTML(state)}" aria-live="polite"${entry.feedback ? '' : ' hidden'}>${entry.feedback ? rich(entry.feedback) : ''}</div>
+          </div>
+        </article>
+      </div>
+    </article>`;
+  }
+
+  function paint(host, activity, entry) {
+    const card = host.querySelector(`[data-math-act="${activity.id}"]`);
+    if (!card) return;
+    card.dataset.state = entry.state || '';
+    const pill = card.querySelector('.math-etkinlik-pill');
+    if (pill) {
+      const label = entry.state === 'correct' ? 'Açıklama yeterli'
+        : entry.state === 'partial' ? 'Geliştirilebilir'
+          : entry.state === 'wrong' ? 'Yeniden düşün' : '';
+      pill.textContent = label;
+      pill.dataset.state = entry.state || '';
+      pill.hidden = !label;
+    }
+    const box = card.querySelector('.math-etkinlik-feedback');
+    if (box) {
+      box.hidden = !entry.feedback;
+      box.dataset.state = entry.state || '';
+      box.innerHTML = entry.feedback ? rich(entry.feedback) : '';
+    }
+  }
+
+  function bind(host, activities) {
     host.querySelectorAll('[data-math-etkinlik-text]').forEach((area) => {
       area.addEventListener('input', () => {
         const id = area.dataset.mathEtkinlikText;
@@ -295,15 +277,9 @@
         const entry = entryFor(id);
         const hint = host.querySelector(`[data-math-etkinlik-hint="${id}"]`);
         const wantAI = Boolean(button.dataset.mathEtkinlikAi);
-        if (entry.choice === null || entry.choice === undefined) {
-          entry.state = '';
-          entry.feedback = 'Önce bir seçenek işaretle; ardından neden onu seçtiğini yaz.';
-          paint(host, activity, entry);
-          return;
-        }
         if (String(entry.text || '').trim().length < activity.minChars) {
           entry.state = '';
-          entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakterlik bir gerekçe yazmadan değerlendirme başlamaz.`;
+          entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakterlik bir cevap yazmadan değerlendirme başlamaz.`;
           paint(host, activity, entry);
           return;
         }
@@ -313,15 +289,9 @@
           button.textContent = 'Değerlendiriliyor…';
         }
         try {
-          if (wantAI) {
-            const result = await askAI(activity, entry);
-            entry.state = result.state;
-            entry.feedback = result.feedback;
-          } else {
-            const result = localVerdict(activity, entry);
-            entry.state = result.state;
-            entry.feedback = result.feedback;
-          }
+          const result = wantAI ? await askAI(activity, entry) : localVerdict(activity, entry);
+          entry.state = result.state;
+          entry.feedback = result.feedback;
           entry.checkedAt = new Date().toISOString();
           if (entry.state && entry.state !== 'correct' && hint) hint.hidden = false;
           store.save();
@@ -331,7 +301,7 @@
           const friendly = error?.code === 'missing-key'
             ? 'Yapay zekâ değerlendirmesi için sayfa başındaki “Ortak yapay zekâ ayarları” bölümüne Groq API anahtarını gir. Anahtar yokken yerel kontrol çalışır.'
             : /failed to fetch|networkerror|load failed|cors/i.test(message)
-              ? 'Groq’a ulaşılamadı; internet bağlantısını kontrol edip yeniden dene. Yanıtın kayıtlı.'
+              ? 'Groq’a ulaşılamadı; internet bağlantısını kontrol edip yeniden dene. Cevabın kayıtlı.'
               : `Değerlendirme tamamlanamadı: ${message}`;
           entry.state = '';
           entry.feedback = friendly;
@@ -356,23 +326,33 @@
     }
   }
 
-  function mount(host, weekId) {
+  /* host: kartların basılacağı yer; activities: etkinlik listesi */
+  function mountQuestions(host, activities, options = {}) {
     if (!host) return;
-    const activities = SOURCE.forWeek(weekId);
-    if (!activities.length) {
-      host.innerHTML = '<p class="math-etkinlik-empty">Bu haftanın etkinlikleri hazırlanıyor.</p>';
+    const list = Array.isArray(activities) ? activities : [];
+    if (!list.length) {
+      host.innerHTML = `<p class="math-etkinlik-empty">${escapeHTML(options.empty || 'Bu bölümde yazılı cevap isteyen soru yok.')}</p>`;
       return;
     }
-    host.innerHTML = activities.map((activity, index) => activityMarkup(activity, index, activities.length)).join('');
-    bind(host, weekId);
+    host.innerHTML = list.map((activity, index) => cardMarkup(activity, index, list.length)).join('');
+    bind(host, list);
   }
 
-  function doneCount(weekId) {
-    return SOURCE.forWeek(weekId).filter((activity) => {
+  function mount(host, weekId) {
+    if (!host) return;
+    mountQuestions(host, SOURCE.forWeek(weekId), { empty: 'Bu haftanın etkinlikleri hazırlanıyor.' });
+  }
+
+  function answeredCount(activities) {
+    return (Array.isArray(activities) ? activities : []).filter((activity) => {
       const entry = store.data[activity.id];
       return entry && entry.state === 'correct';
     }).length;
   }
 
-  window.MATEMATIK_ETKINLIK = Object.freeze({ mount, doneCount });
+  function doneCount(weekId) {
+    return answeredCount(SOURCE.forWeek(weekId));
+  }
+
+  window.MATEMATIK_ETKINLIK = Object.freeze({ mount, mountQuestions, doneCount, answeredCount });
 })();

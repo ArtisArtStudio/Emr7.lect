@@ -678,3 +678,80 @@ ve GeoGebra bağımsızlığını denetliyor. Doğrulama: 16 sahne türü jsdom'
 etiket 640×380 dışına taşmıyor; 24 farklı şekil 340×190 içinde temiz; 15 hafta jsdom'da
 render edilip her haftada sahne + sürgü + şekil + 2 etkinlik bulundu, sürgü kaydırma
 çıktıyı güncelledi. Tüm zorunlu denetimler ve `node --check` temiz.
+
+## 19. Tur: kitabın anlatımına birebir paralel yeniden kurulum (25 Ekim 2026)
+
+**Şikâyet.** Yayınlanan sürüm (PR #23) reddedildi: *“Hâlâ güzel değil. Kitaptaki anlatıma ve
+etkinliklere paralel ve aynı akışı izleyen bir çalışma yap. Kitap analizi sırasında çıkarmıştın.”*
+Önceki sürümde içerik doğruydu ama akış bizim kurgumuzdu: konu anlatımı → keşif → örnek →
+ana noktalar → terimler → kısa kontrol → etkinlikler. Kitabın bölüm zinciri (Neler Biliyoruz,
+Başlayalım, Öğrenelim, Düşün-Tartış-Açıkla, Katıl-Uygula-Keşfet, Problem, Neler Öğrendik, Tema
+Ölçme) kullanılmıyordu; etkinlik bağlamları da kitaptan değil, kendi yazdığımız günlük hayat
+durumlarından seçilmişti.
+
+**Karar.** Hafta sayfası artık **kitabın kendi bölüm sırasını** birebir izliyor ve her bölümün
+soruları **kitaptaki aynı bağlam ve aynı soru tipiyle** kuruluyor. Kitap metni kopyalanmadı;
+telif standardı §8.6 korunuyor; öğrenci metinlerinde sayfa/kitap atfı yok.
+
+### 19.1 Yeni kaynak: `matematik-kitap.js`
+
+`window.MATEMATIK_KITAP` 15 haftayı tutuyor; her hafta
+`{ pages, bookTopic, stages[], performance?, exam? }` biçiminde. Aşamalar sabit sırada:
+
+| # | Bölüm | İçerik |
+|---|-------|--------|
+| 1 | `warmup` — NELER BİLİYORUZ? | önceki bilgiyi yoklayan bağlam + 2–3 soru |
+| 2 | `start` — BAŞLAYALIM | kitabın açılış etkinliği |
+| 3 | `learn` — ÖĞRENELİM | 3 bloklu anlatım + BİLGİ KUTUSU + sahne/şekil + kontrol soruları |
+| 4 | `discuss` — DÜŞÜN-TARTIŞ-AÇIKLA | tartışma soruları (açıklama zorunlu) |
+| 5 | `explore` — KATIL-UYGULA-KEŞFET | malzeme + ölçme/çizme adımları + sahne |
+| 6 | `practice` — UYGULAYALIM | 3 pekiştirme alıştırması (kitabın uygulayalım soru tipi) |
+| 7 | `problem` — PROBLEM | anla → planla → çöz → kontrol + sonuç |
+
+Hafta sonunda sırasıyla **PERFORMANS GÖREVİ** (5 haftada), **NELER ÖĞRENDİK?** ve
+**TEMA ÖLÇME** (2 temada) kartları geliyor. Soru modeli `q(soru, ipucu, modelCevap)`:
+`prompt` öğrenciye görünür, `hint` yalnız istendiğinde açılır, `thinking` **hiç gösterilmez**,
+yalnızca değerlendirmede kullanılır. Böylece cevap anahtarı sızmıyor.
+
+Kitap bağlamları haftalara şöyle dağıtıldı (kitabın kendi etkinlik adları):
+Seyahat Ederken Tasarruf Et, Deringöz, Yasemin'in adımı, 0,999… tartışması, sayma pulları,
+Zehra Teyze'nin sirke şişeleri, halı ve robot süpürge, bakteri/top zıplama, Anıtkabir
+görünümleri, eş küpler, parfüm–çikolata–ilaç açınımı, kutu kapasitesi, 18 eş küp, kargo
+kamyonu, 1 dm³ = 1 L, olimpik havuz, TÜİK nüfusu, Alperen Şengün istatistikleri, uzun atlama,
+Selma–Yasemin karşılaştırması, “Su içmek zararlı!” haberi, harf/logo simetrisi, halı-kilim
+motifleri, bayraklarda yansıma, pergel–ölçüsüz cetvel inşası, daire dilimi.
+
+### 19.2 Etkinlik motoru yeniden yazıldı
+
+- `matematik-etkinlikler.js` artık **veri yazmıyor**, kitap akışından türetiyor:
+  `forWeek(id)`, `forStage(id, index)`, `examActivities(id)`, `stageInfo(id, index)`.
+  Böylece 30 elle yazılmış serbest etkinlik yerine **202 soru** kitabın kendi bağlamından geliyor
+  (haftada 11–17 soru; her hafta 3 tanesi UYGULAYALIM alıştırması).
+- `matematik-etkinlik.js` çoktan seçmeli karttan **yazılı cevap** kartına geçti: soru, ipucu,
+  zorunlu açıklama alanı, bölüme göre ölçüt listesi (`rubric`), “Kontrol et” ve
+  “Yapay zekâ ile değerlendir”. Yerel kontrol uzunluk + model cevaptaki sayı/kavram örtüşmesine
+  bakar; Groq değerlendirmesi model cevapla karşılaştırır ve **doğru sonucu asla yazmaz**
+  (istemde açık yasak + sızdırma filtresi). Depo anahtarı `emr7lect.matematik.acik.v2`.
+- Kart görünümü Türkçe/Fen/Sosyal ile aynı: `activity-card`, `activity-top`, `activity-meta`,
+  `question-card` sınıfları kullanılıyor.
+
+### 19.3 Hafta sayfası
+
+`matematik.js` her bölümü kendi kartında basıyor: bölüm rozeti (NELER BİLİYORUZ? … PROBLEM),
+başlık, bağlam paragrafları, BİLGİ KUTUSU ızgarası, sahne çerçevesi (çizim üstte, sürgü bandı
+altta), şekil, problem basamakları ve o bölümün açıklamalı soruları. Ardından performans görevi,
+NELER ÖĞRENDİK? (bölüm listesi + bilgi kutusu başlıkları + “x / y etkinliği tamamladın”),
+TEMA ÖLÇME, terim kartları ve hafta tamamlama düğmesi geliyor. 12 ve 13. hafta konu başlıkları
+ile terimleri kitabın veri akışına göre güncellendi (ortanca, aritmetik ortalama, açıklık,
+ortalama mutlak sapma, daire grafiği).
+
+### 19.4 Doğrulama
+
+- `node --check` (5 dosya), `git diff --check`, 11 denetim betiği: temiz.
+- `scripts/check-matematik-content.js` yeni bölümleri denetliyor: 15 hafta × 7 bölüm sabit sırada,
+  ÖĞRENELİM'de ≥2 blok + ≥2 bilgi kutusu + kontrol sorusu, PROBLEM'de 4 basamak,
+  5 performans görevi, 2 tema ölçme, 202 sorunun her birinde ipucu + model cevap + ≥2 ölçüt,
+  seçenek/doğru şık **yok**, öğrenci metinlerinde sayfa atfı ve düz metin kesir yok.
+- jsdom: 15 hafta render edildi; her haftada 7 bölüm doğru sırada, 1–3 sahne, sürgü bandı ve
+  11–17 açıklamalı soru var; hiçbir sahnede `NaN`/`undefined` yok; sürgü kaydırıldığında çıktı ve
+  çizim değişiyor; 40 karakterden kısa açıklama “açıklama zorunlu” uyarısıyla reddediliyor.

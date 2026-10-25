@@ -200,3 +200,30 @@
   .math-layout{grid-template-columns:1fr}
   .math-nav{position:static}
 }
+
+/* --- Kitabın bölüm akışı: bölüm kartları, bilgi kutuları, etkinlik listesi --- */
+.math-week-book{margin:6px 0 0;font-size:12.5px;font-weight:700;color:#4b3f7a;background:var(--math-tint);border-radius:9px;padding:6px 10px;display:inline-block}
+.math-stage-card{display:grid;gap:10px}
+.math-stage-card > h3{flex-wrap:wrap;row-gap:4px}
+.math-stage-card .math-scene-name{font-weight:750}
+.math-stage-context{margin:0;font-size:15px;line-height:1.68;color:#22303f}
+.math-materials{margin:0;font-size:13px;color:#4b3f7a;background:#f6f4fe;border:1px solid #ece9f8;border-radius:10px;padding:8px 11px}
+.math-block{border-left:3px solid var(--math-tint);padding:2px 0 2px 13px;display:grid;gap:8px}
+.math-block h4{margin:0;font-size:14.5px;color:#33265f;letter-spacing:-.01em}
+.math-block p{margin:0;font-size:14.5px;line-height:1.68;color:#22303f}
+.math-knowledge{border:1px solid #e2dcf6;background:#faf9ff;border-radius:14px;padding:12px 14px}
+.math-knowledge-title{margin:0 0 8px;font-size:11.5px;font-weight:850;letter-spacing:.1em;text-transform:uppercase;color:var(--math-accent)}
+.math-knowledge-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.math-knowledge-box{background:#fff;border:1px solid #ece9f8;border-radius:11px;padding:10px 12px}
+.math-knowledge-box p{margin:0;font-size:13.5px;line-height:1.6;color:#33415a}
+.math-knowledge-head{font-weight:850;color:#33265f;margin-bottom:3px!important}
+.math-performance .math-points{margin-bottom:10px}
+.math-performance .math-knowledge-title{margin:10px 0 6px}
+.math-learned-list{gap:5px;font-size:14px}
+.math-etkinlik-list{display:grid;gap:12px;margin-top:4px}
+.math-etkinlik-list .activity-card{margin:0}
+.math-stage-card .math-etkinlik-list{border-top:1px dashed #e2dcf6;padding-top:14px}
+@media(max-width:700px){
+  .math-knowledge-grid{grid-template-columns:1fr}
+  .math-knowledge-grid{grid-template-columns:1fr}
+}

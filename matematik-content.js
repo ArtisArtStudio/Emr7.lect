@@ -793,7 +793,7 @@
       id: 12,
       date: '7–11 Ara',
       theme: 'veri',
-      topic: '2. tema ölçme, kategorik ve nicel veri',
+      topic: 'Ortanca, aritmetik ortalama, açıklık ve veri türleri',
       pages: '157–175',
       summary: [
         'Bir soruya cevap vermek için toplanan her bilgi **veridir**; ancak veriler aynı türden değildir. “En sevdiğin mevsim” sorusuna verilen cevaplar **kategorik (nitel)** veridir; bu veriler sayıyla değil gruplarla ifade edilir. “Bir haftada kaç saat ders çalışıyorsun” sorusuna verilen cevaplar **nicel** veridir; sayılabilir ya da ölçülebilir. Nicel veriler ikiye ayrılır: kişi sayısı gibi sayılarak bulunanlar **kesikli**, boy uzunluğu gibi ölçümle bulunanlar **süreklidir**.',
@@ -824,9 +824,10 @@
         'Yönlendirici sorular veriyi bozar; tarafsız soru kökleri kullanılır.',
       ],
       terms: [
-        term('Kategorik veri', 'Gruplara veya sınıflara ayrılarak ifade edilen, sayılmayan veri.', 'sutun-grafik', '“En sevdiğin mevsim” gibi sorularda'),
-        term('Nicel veri', 'Sayılarak veya ölçülerek elde edilen veri; kesikli ya da sürekli olabilir.', 'sutun-grafik', 'Boy, ağırlık, kardeş sayısı'),
-        term('Sürekli veri', 'Aralıksız değerler alabilen, ölçümle elde edilen nicel veri.', null, 'Boy ve sıcaklık ölçümlerinde'),
+        term('Aritmetik ortalama', 'Verilerin toplamının veri sayısına bölümü; toplamı eşit paylaştırma anlamı taşır.', 'sutun-grafik', '“Tipik değer” sorulduğunda, uç değer yoksa'),
+        term('Ortanca (medyan)', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.', 'sutun-grafik', 'Uç değer varken tipik değeri anlatırken'),
+        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark: $x_{\\max} - x_{\\min}$.', 'sutun-grafik', 'Verinin yayılımını anlatırken'),
+        term('Kategorik veri', 'Gruplara veya sınıflara ayrılarak ifade edilen, sayılmayan veri.', null, '“En sevdiğin mevsim” gibi sorularda'),
       ],
       scenes: [
         {
@@ -862,7 +863,7 @@
       id: 13,
       date: '14–18 Ara',
       theme: 'veri',
-      topic: 'İstatistiksel araştırma süreci adımları',
+      topic: 'Veri grafikleri, ortalama mutlak sapma ve veri yorumlama',
       pages: '176–200',
       summary: [
         'İstatistiksel araştırma dört adımda yürür: **araştırma sorusunu belirleme, veri toplama, veriyi analiz edip görselleştirme, sonucu yorumlayıp karar verme**. Adımlar sıralıdır ve her biri bir öncekine dayanır. Soru net değilse toplanan veri işe yaramaz; veri uygun toplanmamışsa grafik yanıltıcı olur; grafik doğru okunmazsa karar hatalı çıkar.',
@@ -893,9 +894,9 @@
         'Dikey ekseni sıfırdan başlamayan grafikler yanıltıcıdır.',
       ],
       terms: [
-        term('Ortanca', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.', 'sutun-grafik', 'Uç değer varken tipik değeri anlatırken'),
+        term('Ortalama mutlak sapma', 'Her verinin ortalamadan mutlak uzaklığının ortalaması; verinin tutarlılığını gösterir.', 'sutun-grafik', 'İki grubu karşılaştırırken'),
         term('Tepe değer', 'Veri kümesinde en çok tekrar eden değer.', null, 'Kategorik veride'),
-        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark: $x_{\\max} - x_{\\min}$.', 'sutun-grafik', 'Verinin yayılımını anlatırken'),
+        term('Daire grafiği', 'Bir bütünün parçalarını merkez açılarla gösteren grafik; merkez açı $360^\\circ \\times$ (parça ÷ toplam).', 'sutun-grafik', 'Yüzdelerle verilen bütün–parça ilişkilerinde'),
       ],
       scenes: [
         {
