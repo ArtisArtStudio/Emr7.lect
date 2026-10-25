@@ -69,6 +69,14 @@ assert.ok(/Fransız İhtilali/i.test(heritageText(14)) && /Lale Devri/i.test(her
 assert.ok(/vakıf/i.test(heritageText(15)) && /ahi/i.test(heritageText(15)), 'Week 15 should cover waqf culture and the Akhi order.');
 assert.ok(social.weeks.filter((week) => week.id >= 9).every((week) => week.summary.length > 900), 'Weeks 9–15 need a full topic summary, not a stub.');
 
+// 2. öğrenme alanı (küreselleşme, bölgesel/küresel sorunlar) kitabın en yoğun bölümü:
+// 6–8. haftalar kısa özet değil, alan alan işlenmiş konu anlatımı olmalı.
+assert.ok(social.weeks.filter((week) => week.id >= 6 && week.id <= 8).every((week) => week.summary.length > 2500), 'Weeks 6–8 (globalisation and global issues) need full topic summaries, not stubs.');
+assert.ok(social.weeks.filter((week) => week.id >= 6 && week.id <= 8).every((week) => week.summary.split(/\n\s*\n/).length >= 8), 'Weeks 6–8 summaries must be built from multiple subject paragraphs.');
+assert.ok(/Orta Koridor/.test(heritageText(6)) && /TİKA/.test(heritageText(6)), 'Week 6 should use the textbook transport and health cooperation examples.');
+assert.ok(/gıda|tahıl/i.test(heritageText(7)), 'Week 7 should show a regional problem growing global (food crisis).');
+assert.ok(/arabulucu|TİKA/.test(heritageText(8)), 'Week 8 should cover Türkiye’s mediation and humanitarian aid roles.');
+
 
 const renewedWeekFlows = {
   3: ['perspective-reading', 'language-sort', 'rewrite-and-reflect'],

@@ -36,7 +36,7 @@ Toplam 164 sayfa. Dört dosya tek kitabın ardışık bölümleridir; ayrı kita
 | | 3. Öğrenme Alanı – Kendimi Değerlendiriyorum | 155–159 | — |
 | Ekler | Origami görev oyunu (EK-1), sözlük, kaynakça, cevap anahtarları | 159–164 | — |
 
-Dikkat: uygulamadaki birim sayfa aralıkları kitaba göre kaymış durumda — `UNITS` içinde `together` “12–58”, `world` “68–83” yazıyor. Kitapta 1. alan 10–55, 2. alan 56–83, 3. alan 84–159. Kaynak künyesinde düzeltilmeli.
+Sayfa aralıkları `UNITS` içinde kitaba göre düzeltilmiştir: 1. alan 10–55, 2. alan 56–83, 3. alan 84–159. `scripts/check-social-studies.js` bu üç değeri doğrular; kaynak künyesi (hafta kartındaki atıf) bu aralıkları kullanır.
 
 ## 3. Ders işleme şablonu
 
@@ -225,3 +225,30 @@ Her hafta temel akışın ardına dört ek çalışma eklenir: bir ek okuma (öz
 - 13. hafta (Rönesans, Reform, Aydınlanma) için kitapta karekod yok; kart eklenmedi.
 - İçerik dosyasındaki 35–37 numaralı dersler dönem planında kullanılmıyor; ileride temizlenebilir veya plana bağlanabilir.
 - Haftalık görselli soru (1–2) henüz Sosyal Bilgiler alanında yok; Fen’deki illüstrasyon standardı Sosyal için ayrıca üretilmeli.
+
+## 9. Konu anlatımı yeterlilik denetimi (2026-10-25)
+
+Kitap metni (164 sayfa) ile uygulamadaki "konu anlatımı" bölümü karşılaştırıldı. Ölçü: `WEEKS[].summary` ve `LESSONS` kayıtlarındaki kelime sayısı.
+
+| Ölçü | Kitap | Uygulama (önce) |
+|---|---|---|
+| Hafta 1–4 (s. 12–50) | ~6.250 kelime | ~1.100 |
+| Hafta 6–8 (s. 58–79) | ~4.760 kelime | **218** |
+| Hafta 9–12 (s. 86–135) | ~5.925 kelime | ~715 |
+| 15 hafta toplamı | ~17.000 kelime | 2.835 (ort. 189/hafta) |
+
+Sonuç: konu kısmı **yetersizdi**. En büyük boşluk 2. öğrenme alanındaydı; `LESSONS` 13–37 kayıtları 28–42 kelimelik yer tutuculardı ve `summaryTitle` alanları boştu.
+
+### 9.1 1. tur — uygulandı (6–8. hafta)
+
+- `LESSONS` 13–18 baştan yazıldı: her kayıt 5–6 paragraf, ~250 kelime, 4 hatırlama maddesi, 4 anahtar kavram ve dolu `summaryTitle`.
+- Hafta toplamları: **6. hafta 711**, **7. hafta 586**, **8. hafta 582** kelime (hedef 450–600/hafta; 6. hafta iki konuyu birden taşıdığı için üst sınırın biraz üzerinde).
+- Kitaptaki somut örnekler metne girdi: Orta Koridor, e-ticaret ve görüntülü görüşme, kahvenin yolculuğu, COVID-19, TİKA–Senegal sağlık merkezi, 2022 tahıl koridoru anlaşması, mülteci sayıları, TÜRKSOY/Yunus Emre tarzı kültürel iş birlikleri.
+- Öğrenci metninde kitap/sayfa atfı yok; metinler özgün yazıldı.
+- `scripts/check-social-studies.js`'e üç yeni ölçü eklendi: 6–8. hafta özeti > 2500 karakter, en az 8 paragraf, konu örneklerinin (Orta Koridor, TİKA, tahıl/gıda, arabuluculuk) metinde bulunması.
+- `UNITS` sayfa aralıkları zaten doğruydu (10–55 / 56–83 / 84–159); kaymış değerler yalnızca dokümanlarda kalmıştı, düzeltildi.
+
+### 9.2 Sıradaki turlar
+
+2. tur — `LESSONS` 13–37'nin kalanı: 28–42 kelimelik kayıtlar 100–140 kelimeye çıkarılacak, `summaryTitle` doldurulacak, 3 madde + 3 kavram standardı korunacak.
+3. tur — her haftaya bir "görsel okuma" adımı (harita/grafik/gazete haberi + 2 soru), üç öğrenme alanı için "Kendimi Değerlendiriyorum" kapanış adımı ve her hafta sonuna "gelecek haftaya hazırlık" cümlesi.
