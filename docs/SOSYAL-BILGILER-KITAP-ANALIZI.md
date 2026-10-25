@@ -257,6 +257,18 @@ Sonuç: konu kısmı **yetersizdi**. En büyük boşluk 2. öğrenme alanındayd
 - `summaryTitle` alanı ders kaydının kendisine (5. argüman) taşındı; 1. turda yanlışlıkla `transfer` nesnesine yazılmıştı.
 - `scripts/check-social-studies.js`: 9–15. hafta için 420+ kelime ve 8+ paragraf; 13–37 arası dersler için 100+ kelime, dolu başlık, 3 madde + 3 kavram ve hafta 13/14/15 konu assert'leri eklendi.
 
-### 9.3 Sıradaki tur
+### 9.3 3. tur — uygulandı (görsel okuma, öz değerlendirme, hafta geçişi)
 
-3. tur — her haftaya bir "görsel okuma" adımı (harita/grafik/gazete haberi + 2 soru), üç öğrenme alanı için "Kendimi Değerlendiriyorum" kapanış adımı ve her hafta sonuna "gelecek haftaya hazırlık" cümlesi.
+- **`social-studies-visual.js`** (yeni katman): 15 hafta için birer görsel okuma adımı, 3 öğrenme alanı sonu öz değerlendirmesi ve 15 "gelecek haftaya hazırlık" cümlesi.
+- Görsel türleri koda gömülü çizimlerdir (ayrı görsel dosyası yok): **grafik** (7 hafta), **gazete haberi** (4 hafta), **kronoloji şeridi** (4 hafta). Her görselde başlık, kaynak satırı, birim veya not bulunur.
+- Her görsel adımında **1 veri okuma sorusu + 1 yazılı çıkarım** vardır; görsel yanıtı metin olarak vermez. Doğru şıklar üç farklı konuma dağıtıldı (0, 1, 2).
+- Adım akıştaki yeri: kısa sınamanın **hemen ardından** (2. adım). Böylece öğrenci konuyu okur, veriyi görür, sonra alıştırmalara geçer.
+- **Kendimi Değerlendiriyorum**: 5. hafta "Birlikte Yaşamak" (5 ölçüt), 8. hafta "Evimiz Dünya" (5 ölçüt), 15. hafta "Ortak Mirasımız" (6 ölçüt) + yazılı öz değerlendirme. Bu adım karekod etkinliklerinden sonra, akışın en sonunda yer alır.
+- **Gelecek haftaya hazırlık**: mini planın altında tek cümlelik not; 15 haftanın tamamında dolu.
+- Yeni etkinlik türü: **🖼️ Görsel okuma** (`SOCIAL_STEP_KINDS.visual`), kendi görev yoluyla (görseli incele → veriyi oku → yanıtla → yorumunu yaz). Rozet, lejant ve başlık simgesi üç alandaki ortak ölçüye eklendi.
+- `scripts/check-social-studies.js`: 15 görsel adım, tür/kaynak/alan sayısı, doğru şık dağılımı, 5–8–15 kapanışları ve tüm haftalarda `nextPrep` assert'leri eklendi.
+
+### 9.4 Açık kalanlar
+
+- Görseller şu an veri odaklı çizimlerdir; kitaptaki harita okuma çalışmaları için mevcut `assets/sosyal-harita` kartları kullanılıyor. İleride her üniteye özgün harita/grafik görselleri (fotogerçekçi değil, şematik) eklenebilir.
+- 35–37 numaralı ders kayıtları dönem planında kullanılmıyor; plana bağlanmadı.

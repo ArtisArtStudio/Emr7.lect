@@ -39,6 +39,7 @@ require('../ai-grader.js');
 require('../ai-grader.js');
 require('../social-studies-content.js');
 require('../social-studies-extras.js');
+require('../social-studies-visual.js');
 require('../social-studies.js');
 require('../social-studies-qr.js');
 const social = global.window.SOCIAL_STUDIES;
@@ -132,6 +133,31 @@ const mergedFlows = {
   8: ['self-check', ...secondLearningAreaFlows[17], ...secondLearningAreaFlows[18]],
 };
 
+const visualLayer = global.window.SOCIAL_STUDIES_VISUAL;
+assert.ok(visualLayer && visualLayer.weeks, 'The visual layer (social-studies-visual.js) should expose weekly steps.');
+
+// --- Görsel okuma, öz değerlendirme ve gelecek hafta hazırlığı ---
+const visualWeeks = Object.keys(visualLayer.weeks).map(Number).sort((a, b) => a - b);
+assert.deepEqual(visualWeeks, Array.from({ length: 15 }, (_, index) => index + 1), 'Every week needs a visual reading step.');
+assert.ok(social.weeks.every((week) => typeof week.nextPrep === 'string' && week.nextPrep.length > 20), 'Every week needs a "Gelecek haftaya hazırlık" sentence.');
+const visualTypes = new Set(['chart', 'news', 'timeline']);
+const visualSteps = social.weeks.flatMap((week) => week.activities.filter((activity) => activity.visual));
+assert.equal(visualSteps.length, 15, 'Each week should carry exactly one visual reading step.');
+assert.ok(visualSteps.every((activity) => visualTypes.has(activity.visual.type)), 'Visual steps must be a chart, news item or timeline.');
+assert.ok(visualSteps.every((activity) => (activity.visual.title || activity.visual.headline) && activity.visual.source), 'Every visual needs a title and a source line.');
+assert.ok(visualSteps.every((activity) => Array.isArray(activity.visual.items) || activity.visual.lead), 'Every visual needs data or news text to read.');
+assert.ok(visualSteps.every((activity) => activity.fields.length === 2 && activity.fields.some((field) => field.kind === 'choice') && activity.fields.some((field) => field.kind === 'textarea')), 'A visual step needs one data-reading choice and one written inference.');
+const visualAnswerPositions = new Set(visualSteps.map((activity) => activity.fields.find((field) => field.kind === 'choice').answer));
+assert.ok(visualAnswerPositions.size >= 2, 'Correct visual answers must not all sit in the same position.');
+assert.ok(visualSteps.every((activity) => /Görsel okuma/.test(activity.sourceStyle)), 'Visual steps must be labelled as visual reading.');
+const reviewWeeks = visualWeeks.filter((id) => visualLayer.weeks[id].review);
+assert.deepEqual(reviewWeeks, [5, 8, 15], 'Each learning area must end with a self-assessment step.');
+assert.ok(reviewWeeks.every((id) => {
+  const review = visualLayer.weeks[id].review;
+  const checklist = review.fields.find((field) => field.kind === 'checklist');
+  return checklist && checklist.options.length >= 5 && review.fields.some((field) => field.kind === 'textarea');
+}), 'Self-assessment steps need a five-item checklist and a written reflection.');
+
 const everyActivity = social.weeks.flatMap((week) => week.activities);
 const findActivity = (id) => {
   const found = everyActivity.find((activity) => activity.id === id);
@@ -175,10 +201,14 @@ for (const week of social.weeks) {
   // 9–15. haftalarda kitap çalışması kaynak hafta başına ayrı adımdır (book-<kaynak hafta>).
   const transferStep = [9, 10, 12, 13, 14, 15].includes(week.id) ? [] : ['apply'];
   const baseFlow = mergedFlows[week.id] || ['self-check', ...(week.sourceIds || []).map((sourceId) => `book-${sourceId}`), ...transferStep];
+  // Görsel katman: görsel okuma adımı kısa sınamanın hemen ardından, öz değerlendirme en sonda.
+  const layer = visualLayer.weeks[week.id];
+  const visualIds = layer?.visual ? [layer.visual.id] : [];
+  const reviewIds = layer?.review ? [layer.review.id] : [];
   assert.deepEqual(
     week.activities.map((activity) => activity.id),
-    [...baseFlow, ...extraIds],
-    `Week ${week.id} should keep its merged flow and append the extras in order.`,
+    [baseFlow[0], ...visualIds, ...baseFlow.slice(1), ...extraIds, ...reviewIds],
+    `Week ${week.id} should keep its merged flow, add the visual step and append the extras in order.`,
   );
   assert.ok(week.activities.length >= 5, `Week ${week.id} should have a complete activity flow of at least five steps.`);
   assert.ok(extraIds.length >= 4, `Week ${week.id} should add at least four extras activities.`);
@@ -350,13 +380,17 @@ assert.ok(findActivity('neighbor-map-source').sourceProviders.includes('eba') &&
 const extrasIdsFor = (id) => ((global.window.SOCIAL_EXTRAS?.weeks?.[id]?.activities) || []).map((activity) => activity.id);
 assert.deepEqual(
   worldWeeks.map((week) => week.activities.map((activity) => activity.id)),
-  [[13, 14], [15, 16], [17, 18]].map(([first, second], index) => ['self-check', ...secondLearningAreaFlows[first], ...secondLearningAreaFlows[second], ...extrasIdsFor(6 + index)]),
+  [[13, 14], [15, 16], [17, 18]].map(([first, second], index) => {
+    const weekId = 6 + index;
+    const layer = visualLayer.weeks[weekId];
+    return ['self-check', layer.visual.id, ...secondLearningAreaFlows[first], ...secondLearningAreaFlows[second], ...extrasIdsFor(weekId), ...(layer.review ? [layer.review.id] : [])];
+  }),
   'The Evimiz Dünya weeks should merge their source-week flows in order and append their extras.',
 );
 // Ortak Mirasımız haftaları kitaptaki sırayla etkinlik akışı kazanır: temel üç adım + ek çalışmalar.
 assert.deepEqual(
   social.weeks.filter((week) => week.unitId === 'heritage').map((week) => week.activities.map((activity) => activity.id)),
-  social.weeks.filter((week) => week.unitId === 'heritage').map((week) => ['self-check', ...(week.sourceIds || []).map((sourceId) => `book-${sourceId}`), ...([9, 10, 12, 13, 14, 15].includes(week.id) ? [] : ['apply']), ...extrasIdsFor(week.id)]),
+  social.weeks.filter((week) => week.unitId === 'heritage').map((week) => ['self-check', visualLayer.weeks[week.id].visual.id, ...(week.sourceIds || []).map((sourceId) => `book-${sourceId}`), ...([9, 10, 12, 13, 14, 15].includes(week.id) ? [] : ['apply']), ...extrasIdsFor(week.id), ...(visualLayer.weeks[week.id].review ? [visualLayer.weeks[week.id].review.id] : [])]),
   'The third learning area should build its activity flow from one textbook step per source week plus the extras.',
 );
 assert.ok(findActivity('same-message-three-ways').scenario.includes('Proje grubunun'), 'The communication-types week should use an original transfer situation.');
@@ -396,7 +430,7 @@ assert.equal(mockElements.socialWeekPrompt.hidden, true);
 assert.equal(mockElements.socialWeekContent.hidden, false);
 assert.equal(mockElements.socialProgressCount.textContent, '0 / 15 hafta tamamlandı');
 
-const phoneStepButton = { dataset: { socialActivitySelect: '1' } };
+const phoneStepButton = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? phoneStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Cep telefonu sohbetindeki mesajları incele'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Zeynep') && mockElements.socialWeekContent.innerHTML.includes('Kerem'));
@@ -410,20 +444,20 @@ const phoneInput = {
 root.listeners.input({ target: phoneInput });
 assert.equal(social.exportProgress().weeks['1'].responses['phone-conversation']['ambiguous-message'], phoneInput.value);
 
-const casesStepButton = { dataset: { socialActivitySelect: '3' } };
+const casesStepButton = { dataset: { socialActivitySelect: '4' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? casesStepButton : null } });
 assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-case-study"/g) || []).length, 4, 'The four original cases should render as separate stimuli.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Gözlemlerim') && mockElements.socialWeekContent.innerHTML.includes('Merak ettiklerim'));
-const researchStepButton = { dataset: { socialActivitySelect: '5' } };
+const researchStepButton = { dataset: { socialActivitySelect: '6' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? researchStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Ben dili') && mockElements.socialWeekContent.innerHTML.includes('Beden dili'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler ↗') && mockElements.socialWeekContent.innerHTML.includes('MEBİ öğrenci bölümü ↗'));
 
-const typesStepButton = { dataset: { socialActivitySelect: '6' } };
+const typesStepButton = { dataset: { socialActivitySelect: '7' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? typesStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Sözlü iletişim') && mockElements.socialWeekContent.innerHTML.includes('Sözsüz iletişim'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-activity-select="8"'));
-const classifyStepButton = { dataset: { socialActivitySelect: '7' } };
+const classifyStepButton = { dataset: { socialActivitySelect: '8' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? classifyStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Seçimimi kontrol et'));
 const customRadio = {
@@ -442,7 +476,7 @@ root.listeners.click({ target: { closest: (selector) => selector === '[data-soci
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Empati, ben dili ve anlaşmazlığı yapıcı çözme'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Ben dili, suçlayıcı söz ve saygılı soruyu sınıflandır'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Grup çalışmasında söz hakkı'));
-const languageSortStep = { dataset: { socialActivitySelect: '1' } };
+const languageSortStep = { dataset: { socialActivitySelect: '2' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? languageSortStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('data-social-sort-widget="true"'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('draggable="true"') && mockElements.socialWeekContent.innerHTML.includes('aria-keyshortcuts="Enter Space"'));
@@ -522,7 +556,7 @@ const keyboardTarget = {
 root.listeners.keydown({ target: keyboardTarget, key: 'Enter', preventDefault() {} });
 assert.equal(social.exportProgress().weeks['2'].responses['language-sort']['language-groups']['ask-one'], 'respectful', 'Keyboard target activation should persist the selected card.');
 
-const multiStep = { dataset: { socialActivitySelect: '2' } };
+const multiStep = { dataset: { socialActivitySelect: '3' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? multiStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Seçimlerimi kontrol et'));
 const multiInput = {
@@ -592,20 +626,20 @@ assert.equal(social.exportProgress().weeks['9'].responses['self-check']['self-ch
 const checkChoiceButton = { dataset: { socialWeek: '9', socialActivity: 'self-check', socialCheckChoice: 'self-check-1' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-check-choice]' ? checkChoiceButton : null } });
 assert.equal(social.exportProgress().weeks['9'].choiceChecks['self-check']['self-check-1'], true, 'Checking a self-assessment should persist its feedback state.');
-const activityStepButton = { dataset: { socialActivitySelect: '2' } };
+const activityStepButton = { dataset: { socialActivitySelect: '3' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? activityStepButton : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('GZFT'), 'The student should be able to navigate to the transfer/reflection step.');
 
 const week13Button = { dataset: { socialSelect: '6' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week13Button : null } });
-const week13DefinitionStep = { dataset: { socialActivitySelect: '2' } };
+const week13DefinitionStep = { dataset: { socialActivitySelect: '3' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week13DefinitionStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Kendi tanımını örnek ve sözlük açıklamasıyla karşılaştır'));
 assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-ai-check"/g) || []).length, 3, 'Each Week 13 open question should have one grouped Groq check button.');
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('question-dictionary-comparison'));
 const week18Button = { dataset: { socialSelect: '8' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week18Button : null } });
-const week18MapStep = { dataset: { socialActivitySelect: '4' } };
+const week18MapStep = { dataset: { socialActivitySelect: '5' } };
 root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week18MapStep : null } });
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('Harita ve güvenilir kaynaktan komşularla iş birliğini araştır'));
 assert.ok(mockElements.socialWeekContent.innerHTML.includes('EBA Sosyal Bilgiler ↗') && mockElements.socialWeekContent.innerHTML.includes('MEBİ öğrenci bölümü ↗'));
@@ -614,7 +648,7 @@ assert.equal((mockElements.socialWeekContent.innerHTML.match(/class="social-ai-c
 async function runSocialAIRegressionChecks() {
   const week13AgainButton = { dataset: { socialSelect: '6' } };
   await root.listeners.click({ target: { closest: (selector) => selector === '[data-social-select]' ? week13AgainButton : null } });
-  const week13DefinitionAgain = { dataset: { socialActivitySelect: '2' } };
+  const week13DefinitionAgain = { dataset: { socialActivitySelect: '3' } };
   await root.listeners.click({ target: { closest: (selector) => selector === '[data-social-activity-select]' ? week13DefinitionAgain : null } });
 
   const reviewKey = 'question-dictionary-comparison';
@@ -772,7 +806,7 @@ for (const unit of qr.units) {
 // Etkinlik türü rozeti: her adımın türü (video, okuma, etkileşim, seçim, yazma) görünür olmalı.
 // Fen ve Türkçe alanlarındaki tür rozetleriyle aynı ölçü; lejant haftadaki türleri sayar.
 const socialSource = require('fs').readFileSync(require('path').join(__dirname, '..', 'social-studies.js'), 'utf8');
-for (const kind of ['video', 'audio', 'map', 'interactive', 'reading', 'practice', 'choice', 'writing']) {
+for (const kind of ['video', 'audio', 'map', 'interactive', 'reading', 'visual', 'practice', 'choice', 'writing']) {
   assert.ok(new RegExp(`${kind}: \\{ icon:`).test(socialSource), `Etkinlik türü rozeti eksik: ${kind}`);
 }
 assert.ok(/socialStepKind\(/.test(socialSource), 'Adım türü tek bir yerden belirlenmeli.');
