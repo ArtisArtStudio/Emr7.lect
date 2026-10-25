@@ -16,15 +16,21 @@
   .card p{margin:0 0 12px;color:var(--muted);font-size:14px}
   .tag{display:inline-block;background:var(--tint);color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 9px;border-radius:99px;text-transform:uppercase;margin-bottom:8px}
   .ggb-host{position:relative;min-height:340px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
-  .ggb-stage{width:100%}
+  .ggb-stage{width:100%;min-height:340px}
+  .ggb-stage svg{width:100%;height:auto;display:block}
+  .ggb-host.is-loading .ggb-stage{position:relative;background:#fbfbfe}
+  .ggb-host.is-loading .ggb-stage::before{content:"";position:absolute;left:50%;top:40%;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid #ded8f5;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+  .ggb-host.is-loading .ggb-stage::after{content:"Sahne hazırlanıyor…";position:absolute;left:0;right:0;top:calc(40% + 22px);text-align:center;font-size:13px;color:var(--muted)}
+  @keyframes spin{to{transform:rotate(360deg)}}
   .ggb-fallback{border-top:1px solid var(--line);background:#fff8e8;color:#6b4b12;font-size:13px;padding:10px 12px}
   .ggb-fallback[hidden]{display:none}
   .row{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
-  button{font:inherit;font-weight:700;font-size:13px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 14px;cursor:pointer}
+  button{font:inherit;font-weight:700;font-size:13px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 15px;cursor:pointer}
   button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  button:disabled{opacity:.5;cursor:not-allowed}
-  .status{font-size:12px;color:var(--muted);margin-top:9px;min-height:18px}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .status{font-size:12.5px;color:var(--muted);margin-top:10px;min-height:18px}
   .status[data-state="ready"]{color:#256a52}
+  .status[data-state="local"]{color:#8a5a00}
   .status[data-state="failed"]{color:#b42318}
   .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   @media(max-width:760px){.split{grid-template-columns:1fr}}
@@ -42,18 +48,18 @@
 <div class="wrap">
   <div class="tag">Geogebra yerleşim denemesi · 3 sahne</div>
   <h1>Matematikte GeoGebra nerede kullanılmalı?</h1>
-  <p class="lead">Aşağıdaki üç sahne aynı politikayı gösteriyor: konu anlatımında <b>etkileşimli keşif</b>, ölçülen soruda <b>statik görsel</b>, yanıttan sonra <b>doğrulama appleti</b>. Bu sayfa yalnızca teknik deneme içindir; uygulamaya eklenen gerçek ekran değildir.</p>
+  <p class="lead">Üç sahne aynı politikayı gösteriyor: konu anlatımında <b>etkileşimli keşif</b>, ölçülen soruda <b>statik görsel</b>, yanıttan sonra <b>doğrulama</b>. GeoGebra açılamazsa sahne boş kalmıyor; aynı kazanım yerel çizimle sürüyor.</p>
 
   <section class="card">
     <div class="tag">1 · Konu anlatımı</div>
-    <h2>Orta dikme: noktayı sürükle, uzaklıkları izle</h2>
-    <p>A ve B noktaları sürüklenebilir. "Orta dikmeyi göster" düğmesi inşayı açar; öğrenci her noktanın A ve B'ye eşit uzaklıkta kaldığını kendisi görür.</p>
+    <h2>Orta dikme: noktayı sürükle, inşayı aç</h2>
+    <p>A ve B noktaları sürüklenebilir. "Orta dikmeyi göster" düğmesi inşayı açar.</p>
     <div class="ggb-host" id="bisectorHost" data-scene="bisector"></div>
     <div class="row">
       <button type="button" class="primary" id="showBisector" disabled>Orta dikmeyi göster</button>
       <button type="button" id="resetBisector" disabled>Sıfırla</button>
     </div>
-    <div class="status" id="bisectorStatus" data-state="idle">GeoGebra yükleniyor…</div>
+    <div class="status" id="bisectorStatus" data-state="idle">Sahne hazırlanıyor…</div>
     <div class="credit">Geogebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</div>
   </section>
 
@@ -62,27 +68,25 @@
     <h2>Aynı kazanım, ölçülen soru: statik görsel</h2>
     <div class="split">
       <figure>
-        <svg viewBox="0 0 320 220" role="img" aria-label="A ve B noktaları arasında orta dikme; P noktası orta dikme üzerinde, Q noktası değil.">
-          <g stroke="#c9d3e2" stroke-width="1">
+        <svg viewBox="0 0 320 220" role="img" aria-label="A ve B noktaları ile P ve Q noktaları; orta dikme çizilmemiştir, uzaklıklar işaretlenmemiştir.">
+          <g stroke="#e3e9f1" stroke-width="1">
             <path d="M20 20H300M20 60H300M20 100H300M20 140H300M20 180H300"/>
             <path d="M60 20V200M100 20V200M140 20V200M180 20V200M220 20V200M260 20V200"/>
           </g>
           <line x1="80" y1="150" x2="220" y2="70" stroke="#102238" stroke-width="2.5"/>
-          <line x1="150" y1="20" x2="150" y2="200" stroke="#7056c9" stroke-width="2" stroke-dasharray="7 5"/>
-          <circle cx="80" cy="150" r="4.5" fill="#102238"/><text x="64" y="168" font-size="14" font-weight="700" fill="#102238">A</text>
+          <circle cx="80" cy="150" r="4.5" fill="#102238"/><text x="62" y="168" font-size="14" font-weight="700" fill="#102238">A</text>
           <circle cx="220" cy="70" r="4.5" fill="#102238"/><text x="228" y="66" font-size="14" font-weight="700" fill="#102238">B</text>
-          <circle cx="150" cy="110" r="4.5" fill="#7056c9"/><text x="157" y="106" font-size="14" font-weight="700" fill="#7056c9">P</text>
-          <circle cx="200" cy="150" r="4.5" fill="#b42318"/><text x="207" y="168" font-size="14" font-weight="700" fill="#b42318">Q</text>
-          <text x="20" y="214" font-size="12" fill="#46576b">[AB] ve orta dikmesi</text>
+          <circle cx="170" cy="145" r="4.5" fill="#7056c9"/><text x="178" y="160" font-size="14" font-weight="700" fill="#7056c9">P</text>
+          <circle cx="200" cy="150" r="4.5" fill="#b42318"/><text x="208" y="168" font-size="14" font-weight="700" fill="#b42318">Q</text>
         </svg>
-        <figcaption>Görsel cevabı vermez: eşit uzaklık işaretlenmemiştir, öğrenci kendisi bulur.</figcaption>
+        <figcaption>Orta dikme <b>çizilmemiştir</b>; uzaklıklar da işaretlenmemiştir. Cevap görselde yok.</figcaption>
       </figure>
       <div>
-        <p class="q">[AB]'nin orta dikmesi üzerinde hangi nokta bulunur?</p>
+        <p class="q">A ve B noktalarına eşit uzaklıkta olan nokta hangisidir?</p>
         <ul class="notes">
-          <li>A) Yalnız P &nbsp; B) Yalnız Q &nbsp; C) P ve Q &nbsp; D) Hiçbiri</li>
-          <li>Ölçülen soruda applet yok: sürükleme, açıölçer ve cebir penceresi cevabı sızdırır.</li>
-          <li>Görsel statiktir; yazdırılır, çevrimdışı açılır, ekran okuyucuya alt metin verir.</li>
+          <li>A) Yalnız P<br>B) Yalnız Q<br>C) P ve Q<br>D) Hiçbiri</li>
+          <li>Ölçülen soruda applet yok: sürükleme, açıölçer ve cebir penceresi cevabı sızdırıyor.</li>
+          <li>Görsel statik: yazdırılır, çevrimdışı açılır, ekran okuyucuya alt metin verir.</li>
         </ul>
       </div>
     </div>
@@ -91,113 +95,207 @@
   <section class="card">
     <div class="tag">3 · Yanıt sonrası</div>
     <h2>Yansıma: cevabı yazdıktan sonra kendi gözüyle doğrula</h2>
-    <p>Öğrenci önce kağıt üzerinde yansımayı çizer, sonra appletle karşılaştırır. Burada applet cevabı ölçmez, geri bildirimi somutlaştırır.</p>
+    <p>Öğrenci önce kağıtta yansımayı çizer, sonra burada karşılaştırır. Ayna doğrusunu sağa sola çekerek etkisini görür.</p>
     <div class="ggb-host" id="reflectHost" data-scene="reflect"></div>
     <div class="row">
       <button type="button" class="primary" id="showReflect" disabled>Yansımayı göster</button>
       <button type="button" id="resetReflect" disabled>Sıfırla</button>
     </div>
-    <div class="status" id="reflectStatus" data-state="idle">GeoGebra yükleniyor…</div>
+    <div class="status" id="reflectStatus" data-state="idle">Sahne hazırlanıyor…</div>
   </section>
 
   <section class="card">
-    <h2>Bu denemeden çıkan teknik notlar</h2>
+    <h2>Teknik durum</h2>
     <ul class="notes">
-      <li>deployggb.js yalnız sahne görünür olunca yüklenir; sayfa açılışı ağırlaşmaz.</li>
-      <li>Applet açılamazsa sahne boş kalmaz: statik görsel + açıklama gösterilir.</li>
-      <li>Komutlar İngilizce yazılır; hata olursa sahne yine açılır, hata konsola düşmez.</li>
-      <li>Araç çubuğu ve cebir girişi kapalı: öğrenci hazır cevabı okumaz, inşayı izler.</li>
+      <li>Komutlar kurulumdan sonra <b>doğrulanır</b>: nesne sayısı sıfırsa birkaç kez yeniden denenir.</li>
+      <li>Sahnenin altındaki satır <b>kaç nesne çizildiğini</b> yazar; boş tuval artık sessiz kalmaz.</li>
+      <li>Eksen ve ızgara açık: sahne boş kalsa bile düzlem görünür.</li>
+      <li>GeoGebra açılamazsa aynı kazanım <b>yerel SVG sahnesi</b> ile sürer (sürükleme ve ok tuşları çalışır).</li>
+      <li>Applet yalnız sahne görünüme girince yüklenir; sayfa açılışı ağırlaşmaz.</li>
     </ul>
   </section>
 </div>
 
 <script src="matematik-geogebra.js"></script>
+<script src="matematik-yerel-sahne.js"></script>
 <script>
 (() => {
   'use strict';
   const GGB = window.MATEMATIK_GEOGEBRA;
+  const SAHNE = window.MATEMATIK_SAHNE;
+
   const scenes = [
     {
+      id: 'bisector',
       host: 'bisectorHost',
       status: 'bisectorStatus',
       show: 'showBisector',
       reset: 'resetBisector',
+      label: 'Orta dikmeyi göster',
       hidden: 'd',
-      button: 'Orta dikmeyi göster',
+      localType: 'ortadikme',
       spec: {
         appName: 'geometry',
         height: 340,
-        commands: ['A = (1, 1)', 'B = (5, 3)', 's = Segment(A, B)', 'M = Midpoint(A, B)', 'd = PerpendicularBisector(A, B)'],
+        bounds: [-2, 8, -1, 7],
+        commands: ['A = (1, 1)', 'B = (5, 3)', 's = Segment(A, B)', 'M = Midpoint(A, B)'],
         hidden: ['d'],
       },
     },
     {
+      id: 'reflect',
       host: 'reflectHost',
       status: 'reflectStatus',
       show: 'showReflect',
       reset: 'resetReflect',
+      label: 'Yansımayı göster',
       hidden: 'p2',
-      button: 'Yansımayı göster',
+      localType: 'yansima',
       spec: {
         appName: 'geometry',
         height: 340,
-        commands: ['A = (1, 1)', 'B = (4, 1)', 'C = (1, 3)', 'p = Polygon(A, B, C)', 'p2 = Reflect(p, yAxis)'],
+        bounds: [-2, 8, -1, 7],
+        commands: ['A = (1, 1)', 'B = (4, 1)', 'C = (1, 3)', 'p = Polygon(A, B, C)'],
         hidden: ['p2'],
       },
     },
   ];
 
-  function setStatus(el, state, text) {
-    const node = document.getElementById(el);
+  function setStatus(id, state, text) {
+    const node = document.getElementById(id);
     if (!node) return;
     node.dataset.state = state;
     node.textContent = text;
   }
 
-  function mount(scene) {
+  function mountLocal(scene, reason) {
+    const host = document.getElementById(scene.host);
+    const local = SAHNE.mount(host, scene.localType);
+    setStatus(scene.status, 'local', `GeoGebra açılamadı (${reason}). Yerel sahne açık: noktaları parmakla sürükle, ok tuşları da çalışır.`);
+    return local;
+  }
+
+  function buildAdapter(scene, ggbResult, notify) {
+    const { api, count } = ggbResult;
+    const commands = scene.id === 'bisector'
+      ? ['PerpendicularBisector(A, B)', 'PerpendicularLine(M, s)']
+      : ['Reflect(p, yAxis)'];
+    const exists = (label) => {
+      try { return typeof api.exists === 'function' ? api.exists(label) : true; } catch (error) { return true; }
+    };
+    return {
+      show() {
+        for (let i = 0; i < commands.length; i += 1) {
+          if (exists(scene.hidden)) break;
+          try { api.evalCommand(`${scene.hidden} = ${commands[i]}`); } catch (error) { /* sıradaki denenir */ }
+        }
+        try { api.setVisible(scene.hidden, true); } catch (error) { /* yoksay */ }
+        if (!exists(scene.hidden)) {
+          notify('failed', 'İnşa çizilemedi: GeoGebra komutu bu sürümde çalışmadı. Sayfayı yenileyip tekrar dene.');
+          return false;
+        }
+        notify('ready', `Hazır: ${count} nesne + inşa · noktaları sürükleyebilirsin.`);
+        return true;
+      },
+      reset() {
+        try {
+          api.setVisible(scene.hidden, false);
+          api.evalCommand('SetActiveView(1)');
+        } catch (error) { /* yoksay */ }
+      },
+      describe() { return `${count} nesne çizildi · eksen ve ızgara açık`; },
+    };
+  }
+
+  function buildLocalAdapter(local, scene) {
+    return {
+      show() {
+        if (typeof local.setBisector === 'function') local.setBisector(true);
+        if (typeof local.setImage === 'function') local.setImage(true);
+        setStatus(scene.status, 'local', 'Yerel sahne: inşa açıldı. Noktaları parmakla sürükleyebilirsin.');
+        return true;
+      },
+      reset() {
+        local.reset();
+        setStatus(scene.status, 'local', 'Yerel sahne başa alındı.');
+      },
+      describe() { return 'yerel sahne · ağ gerekmez'; },
+    };
+  }
+
+  function wire(scene) {
     const host = document.getElementById(scene.host);
     const showBtn = document.getElementById(scene.show);
     const resetBtn = document.getElementById(scene.reset);
-    GGB.createApplet(host, scene.spec).then((api) => {
-      setStatus(scene.status, 'ready', 'Hazır: noktaları sürükleyebilirsin.');
-      if (showBtn) {
-        showBtn.disabled = false;
-        showBtn.addEventListener('click', () => {
-          api.setVisible(scene.hidden, true);
-          if (typeof api.setAnimating === 'function') api.setAnimating(scene.hidden, false);
-          showBtn.disabled = true;
-          showBtn.textContent = 'Gösterildi';
-          setStatus(scene.status, 'ready', 'İnşa açıldı; noktaları sürükleyip eşit uzaklığı izle.');
-        });
-      }
-      if (resetBtn) {
-        resetBtn.disabled = false;
-        resetBtn.addEventListener('click', () => {
-          api.setVisible(scene.hidden, false);
-          if (showBtn) { showBtn.disabled = false; showBtn.textContent = scene.button; }
-          api.evalCommand('SetActiveView(1)');
-          setStatus(scene.status, 'ready', 'Sahne başa alındı.');
-        });
-      }
-    }).catch((error) => {
-      setStatus(scene.status, 'failed', 'Etkileşimli sürüm açılamadı (' + error.message + '). Statik görselle devam edilebilir.');
-    });
-  }
+    const notify = (state, text) => setStatus(scene.status, state, text);
+    let adapter = null;
 
-  function deferred(scene) {
-    const host = document.getElementById(scene.host);
-    if (!('IntersectionObserver' in window)) { mount(scene); return; }
-    const io = new IntersectionObserver((entries) => {
+    const bindButtons = () => {
+      if (!adapter) return;
+      showBtn.disabled = false;
+      resetBtn.disabled = false;
+      showBtn.textContent = scene.label;
+      showBtn.onclick = () => {
+        if (adapter.show() !== false) {
+          showBtn.textContent = 'Gösterildi';
+          showBtn.disabled = true;
+        }
+      };
+      resetBtn.onclick = () => {
+        adapter.reset();
+        showBtn.textContent = scene.label;
+        showBtn.disabled = false;
+      };
+    };
+
+    const fallbackToLocal = (reason) => {
+      if (adapter) return;
+      const local = SAHNE.mount(host, scene.localType);
+      adapter = buildLocalAdapter(local, scene);
+      setStatus(scene.status, 'local', `GeoGebra açılamadı (${reason}). Yerel sahne açık: noktaları parmakla sürükle, ok tuşları da çalışır.`);
+      bindButtons();
+    };
+
+    function start() {
+      const spec = Object.assign({}, scene.spec, {
+        onStatus(state, payload) {
+          if (state === 'loading') setStatus(scene.status, 'idle', 'GeoGebra yükleniyor…');
+          if (state === 'booting') setStatus(scene.status, 'idle', 'Sahne kuruluyor…');
+          if (state === 'ready') setStatus(scene.status, 'ready', `Hazır: ${payload.count} nesne çizildi · eksen ve ızgara açık.`);
+          if (state === 'failed') {
+            const list = (payload.failures || []).slice(0, 2).join(' · ');
+            setStatus(scene.status, 'failed', `GeoGebra açılamadı (${payload.reason})${list ? ` · ${list}` : ''}.`);
+          }
+        },
+        onFallback(reason) { fallbackToLocal(reason); },
+      });
+
+      GGB.createApplet(host, spec)
+        .then((result) => {
+          adapter = buildAdapter(scene, result, notify);
+          bindButtons();
+          setStatus(scene.status, 'ready', `Hazır: ${adapter.describe()}.`);
+        })
+        .catch(() => {
+          if (!adapter) fallbackToLocal('bağlantı');
+        });
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      start();
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        io.disconnect();
-        mount(scene);
+        observer.disconnect();
+        start();
       });
-    }, { rootMargin: '120px' });
-    io.observe(host);
+    }, { rootMargin: '140px' });
+    observer.observe(host);
   }
 
-  scenes.forEach(deferred);
+  scenes.forEach(wire);
 })();
 </script>
 </body>
