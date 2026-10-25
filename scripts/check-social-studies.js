@@ -746,6 +746,17 @@ for (const unit of qr.units) {
   }
   assert.ok(unit.write && unit.write.minChars > 0 && unit.write.criteria.length >= 2, `Karekod yazma görevi eksik: ${unit.id}`);
 }
+// Etkinlik türü rozeti: her adımın türü (video, okuma, etkileşim, seçim, yazma) görünür olmalı.
+// Fen ve Türkçe alanlarındaki tür rozetleriyle aynı ölçü; lejant haftadaki türleri sayar.
+const socialSource = require('fs').readFileSync(require('path').join(__dirname, '..', 'social-studies.js'), 'utf8');
+for (const kind of ['video', 'audio', 'map', 'interactive', 'reading', 'practice', 'choice', 'writing']) {
+  assert.ok(new RegExp(`${kind}: \\{ icon:`).test(socialSource), `Etkinlik türü rozeti eksik: ${kind}`);
+}
+assert.ok(/socialStepKind\(/.test(socialSource), 'Adım türü tek bir yerden belirlenmeli.');
+assert.ok(/social-kind-legend/.test(socialSource), 'Haftanın etkinlik türleri lejantla gösterilmeli.');
+assert.ok(/social-activity-chips/.test(socialSource), 'Kart başlığında tür rozetleri bulunmalı.');
+assert.ok(/social-quest-icon/.test(socialSource), 'Görev yolu adımları türe göre simge taşımalı.');
+
 // Aynı video/harita etkinliği iki haftada birden görünmemeli; her kart tek haftaya bağlanır.
 for (const unit of qr.units) {
   assert.equal(unit.weekIds.length, 1, `Karekod kartı tek haftaya bağlanmalı: ${unit.id}`);
