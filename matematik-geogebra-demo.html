@@ -15,14 +15,16 @@
   .card h2{font-size:17px;margin:0 0 4px}
   .card p{margin:0 0 12px;color:var(--muted);font-size:14px}
   .tag{display:inline-block;background:var(--tint);color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 9px;border-radius:99px;text-transform:uppercase;margin-bottom:8px}
-  .ggb-host{position:relative;min-height:400px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
-  .ggb-stage{width:100%;min-height:400px}
-  .local-scene svg{width:100%;height:auto;display:block}
+  .ggb-host{position:relative;height:clamp(420px,68vh,720px);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+  .ggb-host:fullscreen{height:100vh;border:0;border-radius:0}
+  .ggb-stage{width:100%;height:100%}
+  .local-scene{display:grid;place-items:center;height:100%;padding:6px}
+  .local-scene svg{width:100%;height:auto;max-height:100%;display:block}
   .ggb-host.is-loading .ggb-stage{position:relative;background:#fbfbfe}
   .ggb-host.is-loading .ggb-stage::before{content:"";position:absolute;left:50%;top:calc(50% - 30px);width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid #ded8f5;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
   .ggb-host.is-loading .ggb-stage::after{content:"Sahne hazırlanıyor…";position:absolute;left:0;right:0;top:calc(50% - 8px);text-align:center;font-size:13px;color:var(--muted)}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .ggb-fallback{border-top:1px solid var(--line);background:#fff8e8;color:#6b4b12;font-size:13px;padding:10px 12px}
+  .ggb-fallback{position:absolute;left:0;right:0;bottom:0;background:#fff8e8;color:#6b4b12;font-size:13px;padding:10px 12px;border-top:1px solid var(--line)}
   .ggb-fallback[hidden]{display:none}
   .row{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
   button{font:inherit;font-weight:700;font-size:13px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 15px;cursor:pointer}
@@ -58,6 +60,7 @@
     <div class="row">
       <button type="button" class="primary" id="showBisector" disabled>Orta dikmeyi göster</button>
       <button type="button" id="resetBisector" disabled>Sıfırla</button>
+      <button type="button" id="fullBisector" data-fullscreen="bisectorHost">Tam ekran</button>
     </div>
     <div class="status" id="bisectorStatus" data-state="idle">Sahne hazırlanıyor…</div>
     <div class="credit">Geogebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</div>
@@ -100,8 +103,10 @@
     <div class="row">
       <button type="button" class="primary" id="showReflect" disabled>Aynadaki görüntüyü göster</button>
       <button type="button" id="resetReflect" disabled>Sıfırla</button>
+      <button type="button" id="fullReflect" data-fullscreen="reflectHost">Tam ekran</button>
     </div>
     <div class="status" id="reflectStatus" data-state="idle">Sahne hazırlanıyor…</div>
+    <div class="credit">Geogebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</div>
   </section>
 
   <section class="card">
@@ -137,7 +142,7 @@
       localType: 'ortadikme',
       spec: {
         appName: 'geometry',
-        height: 400,
+        height: 520,
         bounds: [-2, 8, -1, 7],
         commands: [
           'A = (1, 1)',
@@ -160,7 +165,7 @@
       localType: 'yansima',
       spec: {
         appName: 'geometry',
-        height: 400,
+        height: 520,
         bounds: [-5, 8, -2, 7],
         commands: [
           'm = Line((0, -6), (0, 6))',
@@ -174,6 +179,34 @@
       },
     },
   ];
+
+  // Sahne kutusu tam ekrana alınır; çıkışta applet yeniden ölçülür.
+  function setupFullscreen() {
+    document.querySelectorAll('[data-fullscreen]').forEach((button) => {
+      const host = document.getElementById(button.dataset.fullscreen);
+      if (!host) return;
+      button.addEventListener('click', () => {
+        if (document.fullscreenElement === host) {
+          document.exitFullscreen?.();
+          return;
+        }
+        if (host.requestFullscreen) {
+          host.requestFullscreen().catch(() => {
+            const status = host.parentElement.querySelector('.status');
+            if (status) status.textContent = 'Tam ekran açılamadı; sahne yine tüm genişliği kullanıyor.';
+          });
+        }
+      });
+    });
+    document.addEventListener('fullscreenchange', () => {
+      window.dispatchEvent(new Event('resize'));
+      const active = document.fullscreenElement;
+      document.querySelectorAll('[data-fullscreen]').forEach((button) => {
+        const host = document.getElementById(button.dataset.fullscreen);
+        button.textContent = active && active === host ? 'Tam ekrandan çık' : 'Tam ekran';
+      });
+    });
+  }
 
   function setStatus(id, state, text) {
     const node = document.getElementById(id);
@@ -210,6 +243,7 @@
           api.setVisible(scene.hidden, false);
         } catch (error) { /* yoksay */ }
       },
+      fit() { try { return ggbResult.fit ? ggbResult.fit() : null; } catch (error) { return null; } },
       describe() { return `${count} nesne çizildi · eksen ve ızgara açık · inşa gizli`; },
     };
   }
@@ -303,6 +337,7 @@
   }
 
   scenes.forEach(wire);
+  setupFullscreen();
 })();
 </script>
 </body>

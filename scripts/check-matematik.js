@@ -70,8 +70,21 @@ assert.ok(Math.hypot(P.x - (A.x + B.x) / 2, P.y - (A.y + B.y) / 2) > 10, 'P orta
 // 5. Yerleşim ve düğme davranışı
 assert.ok(!/\.ggb-stage\s+svg/.test(demo), 'GeoGebra SVG içeriğine boyut kuralı uygulanmamalı; çizim alanını eziyor.');
 assert.ok(/\.local-scene\s+svg/.test(demo), 'Boyut kuralı yerel sahneye kapsanmalı.');
-assert.ok(/min-height:400px/.test(demo), 'Sahne kutusu en az 400 px olmalı.');
-assert.ok(/height:\s*400/.test(demo), 'Applet yüksekliği 400 px olmalı.');
+assert.ok(/height:clamp\(420px,68vh,720px\)/.test(demo), 'Sahne kutusu ekran yüksekliğine göre ölçeklenmeli.');
+assert.ok(/\.ggb-stage\{width:100%;height:100%\}/.test(demo), 'Applet kapsayıcısı kutuyu tam doldurmalı.');
+assert.ok(/height:\s*520/.test(demo), 'Applet yedek yüksekliği 520 px olmalı.');
+assert.ok(/ggb-host:fullscreen/.test(demo), 'Tam ekran durumu için stil tanımlı olmalı.');
+assert.ok(/data-fullscreen="bisectorHost"/.test(demo) && /data-fullscreen="reflectHost"/.test(demo), 'Her sahnede tam ekran düğmesi olmalı.');
+assert.ok(/requestFullscreen/.test(demo), 'Tam ekran düğmesi tarayıcı API\'sini kullanmalı.');
+assert.ok(/fitToStage/.test(ggb) && /api\.setSize/.test(ggb), 'Applet kutu ölçüsüne oturtulmalı (setSize).');
+assert.ok(/watchSize/.test(ggb) && /ResizeObserver/.test(ggb), 'Ekran döndürme/yeniden boyutlandırma izlenmeli.');
+assert.ok(/BRANDING_SELECTOR/.test(ggb) && /hideBranding/.test(ggb), 'Appletin alt şeridi kaldırılmalı.');
+assert.ok(/data-branding-hidden/.test(ggb), 'Kaldırılan şerit işaretlenmeli.');
+assert.ok(/canvas/.test(ggb) && /graphicsView/.test(ggb), 'Şerit temizliği çizim alanına dokunmamalı.');
+assert.ok(/showFullscreenButton:\s*true/.test(ggb), 'GeoGebra tam ekran düğmesi açık olmalı.');
+assert.ok(/allowStyleBar:\s*false/.test(ggb), 'Stil çubuğu kapalı olmalı.');
+const credits = (demo.match(/Geogebra® — geogebra\.org/g) || []).length;
+assert.ok(credits >= 2, 'Alt şerit kaldırıldığı için her sahnede atıf satırı bulunmalı.');
 assert.ok(/d = PerpendicularBisector\(A, B\)/.test(demo), 'Orta dikme sahne kurulurken oluşturulmalı.');
 assert.ok(/m = Line\(\(0, -6\), \(0, 6\)\)/.test(demo), 'Yansıma sahnesinde ayna doğrusu açıkça çizilmeli.');
 assert.ok(/p2 = Reflect\(p, m\)/.test(demo), 'Yansıma açık ayna doğrusuna göre kurulmalı.');

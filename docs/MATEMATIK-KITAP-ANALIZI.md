@@ -415,3 +415,31 @@ geçiyor.
 görünürlüğü açıyor; nesne üretilemeyen yolda iki sahne de yerel sahneye düşüyor, yansıma ve üç
 bağlantı çizgisi görünür oluyor. Yerel sahnede görüntü x = 62…194 (viewBox 608) aralığında, yani
 pencerenin içinde. `scripts/check-matematik.js` bu kuralları kalıcı olarak denetliyor.
+
+## 13. Üçüncü düzeltme turu — sahne ölçüsü (25 Ekim 2026)
+
+Kullanıcı geri bildirimi: "interaction window küçük, altta GeoGebra Geometri yazan kısma gerek yok, tam ekran olsun."
+
+**1. Kutu ekranı kullanacak biçimde büyütüldü.**
+- Yükseklik `clamp(420px, 68vh, 720px)`; `.ggb-stage` kutuyu **%100** dolduruyor.
+- Applet artık sabit 400 px'e değil, **ölçülen kutuya** kuruluyor: `measure()` + `api.setSize()`
+  (`fitToStage`). Ekran döndürme, klavye açılması ve pencere değişiminde `resize`,
+  `orientationchange` ve `ResizeObserver` ile yeniden ölçülüyor (220 ms debounce).
+- GeoGebra'nın kendi tam ekran düğmesi açıldı (`showFullscreenButton:true`); ayrıca her sahnenin
+  altına **"Tam ekran"** düğmesi eklendi (`requestFullscreen`, `:fullscreen` stilinde kutu `100vh`).
+  Tam ekrandan çıkışta `resize` tetiklenip applet yeniden ölçülüyor.
+- `allowStyleBar:false` ile sağ üstteki stil çubuğu da kapatıldı; alan tamamen çizime kalıyor.
+
+**2. Alttaki "GeoGebra Geometri" şeridi kaldırıldı.**
+- Applet kendi alt bilgi şeridini sonradan ekleyebildiği için yükleme sonrası `MutationObserver`
+  8 saniye boyunca izliyor ve `hideBranding(stage)` çalışıyor.
+- Seçici: `[class*="footer" i], [class*="Footer"], [class*="branding" i], [id*="footer" i], [id*="Footer"]`.
+  İçinde `canvas` veya `.graphicsView` bulunan öğelere **dokunulmuyor** (çizim alanı korunuyor).
+  Kaldırılan öğe `data-branding-hidden="true"` ile işaretleniyor (denetim ve hata ayıklama için).
+- **Lisans:** GeoGebra ticari olmayan kullanımda atıf istiyor. Şerit kaldırıldığı için atıf
+  sayfadaki kendi satırımızla sürüyor: her sahnenin altında "Geogebra® — geogebra.org · ticari
+  olmayan kullanım, atıf ile." + `THIRD-PARTY-NOTICES.md` kaydı.
+
+**Doğrulama (jsdom, sahte applet):** `setSize` çağrıldı · alt şerit `display:none`, `canvas` korundu ·
+"Tam ekran" düğmesi her sahnede var · `resize` sonrası yeniden ölçüm yapıldı · inşa düğmesi hâlâ
+komut çalıştırmıyor, yalnız `d:true` açıyor. `scripts/check-matematik.js` bu kuralları denetliyor.
