@@ -387,3 +387,31 @@ eksen/ızgara, Türkçe arayüz, statik görselde orta dikmenin olmaması, P–Q
 P'nin orta noktadan uzaklığı, lisans atfı. Ayrıca jsdom ile üç yol denendi: gecikmeli komutlar
 (yeniden deneme başarılı), hiç çalışmayan komutlar (yerel sahne devreye giriyor), çevrimdışı
 (anında yedek).
+
+## 12. İkinci düzeltme turu (25 Ekim 2026)
+
+Android Chrome'da yayınlanan sayfada üç yeni kusur görüldü.
+
+**1. Sahne kutusunun %15'i kullanılıyordu.** Sebep CSS'ti: `.ggb-stage svg { width:100%; height:auto }`
+kuralı yalnız yerel sahneler için yazılmıştı ama GeoGebra'nın kendi SVG'sini de yakalıyor, çizim
+alanını ince bir şeride sıkıştırıyordu. Kural `.local-scene svg` olarak kapsandı; GeoGebra'nın
+ölçülerine hiç dokunulmuyor. Sahne yüksekliği 340 → **400 px**.
+
+**2. Yansıma sahnesinde mantık hatası.** Üçgen x = 1…4'te, ayna y ekseni (x = 0); görüntü
+x = −1…−4'e düşüyordu ama pencere `[-2, 8]` olduğu için görüntünün yarısı ekran dışındaydı. Ayrıca
+ayna doğrusu ayrıca çizilmediği için "neyin yansıması" belirsizdi. Düzeltildi:
+- Ayna açıkça kurulur: `m = Line((0, -6), (0, 6))`; yerel sahnede "ayna" etiketiyle çizilir.
+- Pencere `[-5, 8, -2, 7]`; görüntü tamamen içeride.
+- Köşelerden görüntülerine kesikli bağlantı çizgileri (GeoGebra'da `setVisible` ile birlikte açılır).
+- Yerel sahnede ayna doğrusu sürüklenebilir; GeoGebra sürümünde sabittir.
+
+**3. Düğmeler hiçbir şey göstermiyordu.** Düğme, nesneyi tıklama anında `evalCommand` ile kurmaya
+çalışıyordu; komut sessizce başarısız olunca görünecek nesne kalmıyordu. Artık **bütün nesneler sahne
+kurulurken oluşturuluyor**, inşa nesnesi (`d`, `p2`) baştan gizli; düğme yalnız
+`setVisible(true/false)` çağırıyor. Nesne kurulamamışsa sahne otomatik olarak yerel SVG sahnesine
+geçiyor.
+
+**Doğrulama (jsdom):** normal yolda düğme yeni komut çalıştırmıyor, yalnız `d:true` / `p2:true`
+görünürlüğü açıyor; nesne üretilemeyen yolda iki sahne de yerel sahneye düşüyor, yansıma ve üç
+bağlantı çizgisi görünür oluyor. Yerel sahnede görüntü x = 62…194 (viewBox 608) aralığında, yani
+pencerenin içinde. `scripts/check-matematik.js` bu kuralları kalıcı olarak denetliyor.

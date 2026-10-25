@@ -44,6 +44,9 @@ assert.ok(/window\.MATEMATIK_SAHNE\s*=\s*Object\.freeze/.test(local), 'Yerel sah
 assert.ok(/ortadikme\(/.test(local) && /yansima\(/.test(local), 'Orta dikme ve yansıma sahneleri bulunmalı.');
 assert.ok(/role:\s*'slider'/.test(local), 'Sürüklenebilir noktalar erişilebilir olmalı.');
 assert.ok(/keydown/.test(local), 'Klavye ile taşıma desteklenmeli.');
+assert.ok(/yansima\(host/.test(local) && /xmin: -5/.test(local), 'Yerel yansıma sahnesi de görüntüyü pencere içinde tutmalı.');
+assert.ok(/stroke-dasharray': '4 4'/.test(local), 'Yerel sahnede köşe–görüntü bağlantı çizgileri olmalı.');
+assert.ok(/local-scene/.test(local), 'Yerel sahne kendi sınıfıyla işaretlenmeli.');
 
 // 4. Statik soru görseli: orta dikme çizilmemeli, P eşit uzaklıkta, Q değil
 const figure = demo.slice(demo.indexOf('<figure>'), demo.indexOf('</figure>'));
@@ -64,11 +67,23 @@ assert.ok(Math.abs(distance(P, A) - distance(P, B)) < 0.5, 'P, A ve B noktaları
 assert.ok(Math.abs(distance(Q, A) - distance(Q, B)) > 5, 'Q eşit uzaklıkta olmamalı; yoksa soru ayırt etmez.');
 assert.ok(Math.hypot(P.x - (A.x + B.x) / 2, P.y - (A.y + B.y) / 2) > 10, 'P orta noktaya denk gelmemeli; cevabı ele verir.');
 
-// 5. Sahne tekrarı ve soru metni tutarlılığı
+// 5. Yerleşim ve düğme davranışı
+assert.ok(!/\.ggb-stage\s+svg/.test(demo), 'GeoGebra SVG içeriğine boyut kuralı uygulanmamalı; çizim alanını eziyor.');
+assert.ok(/\.local-scene\s+svg/.test(demo), 'Boyut kuralı yerel sahneye kapsanmalı.');
+assert.ok(/min-height:400px/.test(demo), 'Sahne kutusu en az 400 px olmalı.');
+assert.ok(/height:\s*400/.test(demo), 'Applet yüksekliği 400 px olmalı.');
+assert.ok(/d = PerpendicularBisector\(A, B\)/.test(demo), 'Orta dikme sahne kurulurken oluşturulmalı.');
+assert.ok(/m = Line\(\(0, -6\), \(0, 6\)\)/.test(demo), 'Yansıma sahnesinde ayna doğrusu açıkça çizilmeli.');
+assert.ok(/p2 = Reflect\(p, m\)/.test(demo), 'Yansıma açık ayna doğrusuna göre kurulmalı.');
+assert.ok(!/api\.evalCommand\(`\$\{scene\.hidden\}/.test(demo), 'Düğme yeni nesne üretmemeli; yalnız görünürlük değiştirmeli.');
+assert.ok(/setVisible\(scene\.hidden, true\)/.test(demo), 'Düğme görünürlüğü açmalı.');
+assert.ok(/bounds:\s*\[-5, 8, -2, 7\]/.test(demo), 'Yansıma penceresi görüntüyü içine alacak kadar geniş olmalı.');
+
+// 6. Sahne tekrarı ve soru metni tutarlılığı
 assert.ok(/A ve B noktalarına eşit uzaklıkta olan nokta/.test(demo), 'Soru metni kazanımla uyumlu olmalı.');
 assert.ok(/Yerel sahne/.test(demo) || /yerel sahne/.test(demo), 'Yedek sahne kullanıcıya duyurulmalı.');
 
-// 6. Lisans ve atıf
+// 7. Lisans ve atıf
 assert.ok(/GeoGebra/i.test(notices), 'THIRD-PARTY-NOTICES.md GeoGebra atfını içermeli.');
 assert.ok(/geogebra\.org/.test(notices), 'Atıf geogebra.org bağlantısı vermeli.');
 assert.ok(/GeoGebra/.test(analysis), 'Analiz dokümanı GeoGebra sözleşmesini anlatmalı.');
