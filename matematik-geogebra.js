@@ -13,12 +13,15 @@
     language: 'tr',
     showMenuBar: false,
     showToolBar: false,
+    showToolBarHelp: false,
     showAlgebraInput: false,
-    showResetIcon: true,
+    showResetIcon: false,
     showZoomButtons: false,
-    showFullscreenButton: true,
+    showFullscreenButton: false,
+    showStartTooltip: false,
     allowStyleBar: false,
     autoHeight: false,
+    perspective: 'G',
     showAxes: true,
     showGrid: true,
     enableRightClick: false,
@@ -106,6 +109,18 @@
     };
   }
 
+  // Tanılama: kutu ile gerçek çizim alanının ölçüsü (çizim kutuyu dolduruyor mu?).
+  function measureCanvas(stage) {
+    if (!stage) return null;
+    const box = stage.getBoundingClientRect ? stage.getBoundingClientRect() : null;
+    const graphics = stage.querySelector('.graphicsView, canvas.ggBkCanvas, canvas');
+    const inner = graphics && graphics.getBoundingClientRect ? graphics.getBoundingClientRect() : null;
+    return {
+      box: box ? { width: Math.round(box.width), height: Math.round(box.height) } : null,
+      canvas: inner ? { width: Math.round(inner.width), height: Math.round(inner.height) } : null,
+    };
+  }
+
   // Appletin alt şeridi (GeoGebra logosu + bağlantı) sahne alanını daraltıyor.
   // Atıf yükümlülüğü sayfadaki kendi atıf satırımızla karşılanır.
   const BRANDING_SELECTOR = '[class*="footer" i],[class*="Footer"],[class*="branding" i],[id*="footer" i],[id*="Footer"]';
@@ -156,6 +171,14 @@
     return -1;
   }
 
+  // Geometri uygulaması kendi araç çubuğunu ve alt bilgi şeridini getiriyor; bunlar sabit
+  // yükseklik kapladığı için çizim alanı kutuya sığmıyordu. SetPerspective("G") yalnız
+  // Graphics View'i bırakır (GeoGebra kılavuzu, SetPerspective komutu).
+  function applyPerspective(api, stage) {
+    try { api.evalCommand('SetPerspective("G")'); } catch (error) { /* eski sürümlerde yok */ }
+    fitToStage(api, stage);
+  }
+
   function applyView(api, spec) {
     ['ShowAxes(true)', 'ShowGrid(true)'].forEach((command) => {
       try { api.evalCommand(command); } catch (error) { /* görünüm komutu kritik değil */ }
@@ -167,7 +190,8 @@
 
   // Android Chrome'da appletOnLoad, grafik görünümü hazır olmadan tetiklenebiliyor:
   // komutlar sessizce başarısız olup tuval boş kalıyor. Birkaç kez yeniden dene ve doğrula.
-  async function prepare(api, spec) {
+  async function prepare(api, spec, stage) {
+    applyPerspective(api, stage);
     applyView(api, spec);
     let failures = [];
     let count = objectCount(api);
@@ -178,6 +202,7 @@
       count = objectCount(api);
       if (count > 0) break;
     }
+    applyPerspective(api, stage);
     applyView(api, spec);
     (spec.hidden || []).forEach((label) => {
       try { api.setVisible(label, false); } catch (error) { /* yoksay */ }
@@ -247,7 +272,7 @@
           loaded = true;
           host.classList.remove('is-loading');
           finish('booting');
-          prepare(api, spec).then((result) => {
+          prepare(api, spec, stage).then((result) => {
             if (!result.count) {
               reject(Object.assign(new Error('empty-construction'), { failures: result.failures }));
               return;
@@ -261,9 +286,18 @@
               setTimeout(() => watcher.disconnect(), 8000);
             }
             const stopWatching = watchSize(api, stage);
-            if (typeof api.setAnimating === 'function') { /* yoksay: bazı sürümlerde yok */ }
+            const measureNow = () => measureCanvas(stage);
+            // Perspektif değişikliği bazen tuvali yeniden ölçekliyor: kısa süre sonra bir kez daha oturt.
+            setTimeout(() => { fitToStage(api, stage); hideBranding(stage); }, 500);
             finish('ready', result);
-            resolve({ api, count: result.count, failures: result.failures, stopWatching, fit: () => fitToStage(api, stage) });
+            resolve({
+              api,
+              count: result.count,
+              failures: result.failures,
+              stopWatching,
+              measure: measureNow,
+              fit: () => { applyPerspective(api, stage); return measureNow(); },
+            });
           }).catch(reject);
         };
 
@@ -291,6 +325,8 @@
     loadDeploy,
     buildParams,
     measure,
+    measureCanvas,
+    applyPerspective,
     fitToStage,
     watchSize,
     hideBranding,
