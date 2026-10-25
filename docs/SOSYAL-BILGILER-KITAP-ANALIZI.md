@@ -36,7 +36,7 @@ Toplam 164 sayfa. Dört dosya tek kitabın ardışık bölümleridir; ayrı kita
 | | 3. Öğrenme Alanı – Kendimi Değerlendiriyorum | 155–159 | — |
 | Ekler | Origami görev oyunu (EK-1), sözlük, kaynakça, cevap anahtarları | 159–164 | — |
 
-Dikkat: uygulamadaki birim sayfa aralıkları kitaba göre kaymış durumda — `UNITS` içinde `together` “12–58”, `world` “68–83” yazıyor. Kitapta 1. alan 10–55, 2. alan 56–83, 3. alan 84–159. Kaynak künyesinde düzeltilmeli.
+Sayfa aralıkları `UNITS` içinde kitaba göre düzeltilmiştir: 1. alan 10–55, 2. alan 56–83, 3. alan 84–159. `scripts/check-social-studies.js` bu üç değeri doğrular; kaynak künyesi (hafta kartındaki atıf) bu aralıkları kullanır.
 
 ## 3. Ders işleme şablonu
 
@@ -225,3 +225,50 @@ Her hafta temel akışın ardına dört ek çalışma eklenir: bir ek okuma (öz
 - 13. hafta (Rönesans, Reform, Aydınlanma) için kitapta karekod yok; kart eklenmedi.
 - İçerik dosyasındaki 35–37 numaralı dersler dönem planında kullanılmıyor; ileride temizlenebilir veya plana bağlanabilir.
 - Haftalık görselli soru (1–2) henüz Sosyal Bilgiler alanında yok; Fen’deki illüstrasyon standardı Sosyal için ayrıca üretilmeli.
+
+## 9. Konu anlatımı yeterlilik denetimi (2026-10-25)
+
+Kitap metni (164 sayfa) ile uygulamadaki "konu anlatımı" bölümü karşılaştırıldı. Ölçü: `WEEKS[].summary` ve `LESSONS` kayıtlarındaki kelime sayısı.
+
+| Ölçü | Kitap | Uygulama (önce) |
+|---|---|---|
+| Hafta 1–4 (s. 12–50) | ~6.250 kelime | ~1.100 |
+| Hafta 6–8 (s. 58–79) | ~4.760 kelime | **218** |
+| Hafta 9–12 (s. 86–135) | ~5.925 kelime | ~715 |
+| 15 hafta toplamı | ~17.000 kelime | 2.835 (ort. 189/hafta) |
+
+Sonuç: konu kısmı **yetersizdi**. En büyük boşluk 2. öğrenme alanındaydı; `LESSONS` 13–37 kayıtları 28–42 kelimelik yer tutuculardı ve `summaryTitle` alanları boştu.
+
+### 9.1 1. tur — uygulandı (6–8. hafta)
+
+- `LESSONS` 13–18 baştan yazıldı: her kayıt 5–6 paragraf, ~250 kelime, 4 hatırlama maddesi, 4 anahtar kavram ve dolu `summaryTitle`.
+- Hafta toplamları: **6. hafta 711**, **7. hafta 586**, **8. hafta 582** kelime (hedef 450–600/hafta; 6. hafta iki konuyu birden taşıdığı için üst sınırın biraz üzerinde).
+- Kitaptaki somut örnekler metne girdi: Orta Koridor, e-ticaret ve görüntülü görüşme, kahvenin yolculuğu, COVID-19, TİKA–Senegal sağlık merkezi, 2022 tahıl koridoru anlaşması, mülteci sayıları, TÜRKSOY/Yunus Emre tarzı kültürel iş birlikleri.
+- Öğrenci metninde kitap/sayfa atfı yok; metinler özgün yazıldı.
+- `scripts/check-social-studies.js`'e üç yeni ölçü eklendi: 6–8. hafta özeti > 2500 karakter, en az 8 paragraf, konu örneklerinin (Orta Koridor, TİKA, tahıl/gıda, arabuluculuk) metinde bulunması.
+- `UNITS` sayfa aralıkları zaten doğruydu (10–55 / 56–83 / 84–159); kaymış değerler yalnızca dokümanlarda kalmıştı, düzeltildi.
+
+### 9.2 2. tur — uygulandı (9–15. hafta, ders 19–37)
+
+- `LESSONS` 19–34 (dönem planında kullanılan tüm kayıtlar) yeniden yazıldı: her biri 160–220 kelime, 3–4 paragraf, 3 hatırlama maddesi, 3–4 anahtar kavram ve dolu `summaryTitle`.
+- `LESSONS` 35–37 (dönem planında kullanılmıyor) da yer tutucu olmaktan çıkarıldı: 124–134 kelime, 3 paragraf, dolu başlık. İleride plana bağlanabilir.
+- Hafta toplamları: 9 → 522, 10 → 453, 11 → 476, 12 → 495, 13 → 636, 14 → 646, 15 → 474 kelime. Dönem toplamı **2.835 → 6.956 kelime**.
+- Kitaptaki somut bilgiler metne girdi: Çaka Beyliği ve beyliklerin yerleri, iskân–istimâlet, Bursa/İznik/Çimpe, Fetret Devri, Rumeli Hisarı ve 29 Mayıs 1453, Mısır Seferi ve Preveze, Dias–Kolomb–Vasco da Gama, Luther ve Westphalia, Nizam-ı Cedid ve Tanzimat, Watt ve 1838 ticaret anlaşması, Divan-ı Hümâyun ve Mimar Sinan.
+- `summaryTitle` alanı ders kaydının kendisine (5. argüman) taşındı; 1. turda yanlışlıkla `transfer` nesnesine yazılmıştı.
+- `scripts/check-social-studies.js`: 9–15. hafta için 420+ kelime ve 8+ paragraf; 13–37 arası dersler için 100+ kelime, dolu başlık, 3 madde + 3 kavram ve hafta 13/14/15 konu assert'leri eklendi.
+
+### 9.3 3. tur — uygulandı (görsel okuma, öz değerlendirme, hafta geçişi)
+
+- **`social-studies-visual.js`** (yeni katman): 15 hafta için birer görsel okuma adımı, 3 öğrenme alanı sonu öz değerlendirmesi ve 15 "gelecek haftaya hazırlık" cümlesi.
+- Görsel türleri koda gömülü çizimlerdir (ayrı görsel dosyası yok): **grafik** (7 hafta), **gazete haberi** (4 hafta), **kronoloji şeridi** (4 hafta). Her görselde başlık, kaynak satırı, birim veya not bulunur.
+- Her görsel adımında **1 veri okuma sorusu + 1 yazılı çıkarım** vardır; görsel yanıtı metin olarak vermez. Doğru şıklar üç farklı konuma dağıtıldı (0, 1, 2).
+- Adım akıştaki yeri: kısa sınamanın **hemen ardından** (2. adım). Böylece öğrenci konuyu okur, veriyi görür, sonra alıştırmalara geçer.
+- **Kendimi Değerlendiriyorum**: 5. hafta "Birlikte Yaşamak" (5 ölçüt), 8. hafta "Evimiz Dünya" (5 ölçüt), 15. hafta "Ortak Mirasımız" (6 ölçüt) + yazılı öz değerlendirme. Bu adım karekod etkinliklerinden sonra, akışın en sonunda yer alır.
+- **Gelecek haftaya hazırlık**: mini planın altında tek cümlelik not; 15 haftanın tamamında dolu.
+- Yeni etkinlik türü: **🖼️ Görsel okuma** (`SOCIAL_STEP_KINDS.visual`), kendi görev yoluyla (görseli incele → veriyi oku → yanıtla → yorumunu yaz). Rozet, lejant ve başlık simgesi üç alandaki ortak ölçüye eklendi.
+- `scripts/check-social-studies.js`: 15 görsel adım, tür/kaynak/alan sayısı, doğru şık dağılımı, 5–8–15 kapanışları ve tüm haftalarda `nextPrep` assert'leri eklendi.
+
+### 9.4 Açık kalanlar
+
+- Görseller şu an veri odaklı çizimlerdir; kitaptaki harita okuma çalışmaları için mevcut `assets/sosyal-harita` kartları kullanılıyor. İleride her üniteye özgün harita/grafik görselleri (fotogerçekçi değil, şematik) eklenebilir.
+- 35–37 numaralı ders kayıtları dönem planında kullanılmıyor; plana bağlanmadı.

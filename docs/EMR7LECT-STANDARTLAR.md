@@ -224,6 +224,33 @@ Kurallar:
 
 - Konu başına **10–15 etkinlik**; tür dağılımı: eşleştirme, boşluk doldurma, doğru–yanlış,
   sıralama, sınıflandırma (sürükle-bırak), çoktan seçmeli, kısa metin yazma.
+
+**Etkinlik türü rozeti (üç alanda ortak ölçü).** Her adımın türü tek bakışta görünür olmalı:
+öğrenci hangi adımda video izleyeceğini, metin okuyacağını, kart eşleştireceğini veya yazacağını
+rozetten anlar. Fen'de `science-activity-icon` + üç rozet (tür, kapsam, beceri), Türkçe'de
+`activityKind()` + görev yolu, Sosyal'de `social-activity-icon` + `social-kind-chip` aynı işi yapar.
+
+| Tür | Sosyal simge | Nerede görünür |
+|---|---|---|
+| Video | 🎥 | şerit adımı, kart başlığı, hafta lejantı |
+| Ses kaydı | 🎧 | aynı |
+| Harita | 🗺️ | aynı |
+| Etkileşimli içerik (AR, etkileşimli video) | 🧭 | aynı |
+| Okuma (kaynak metin, ek okuma, sohbet, örnek durum) | 📖 | aynı |
+| Görsel okuma (grafik, gazete haberi, kronoloji şeridi) | 🖼️ | aynı |
+| Etkileşim (sınıflandırma, balık kılçığı, kavram haritası, bulmaca) | 🧩 | aynı |
+| Seçim (çoktan seçmeli) | 🎯 | aynı |
+| Yazma (açık uçlu) | ✍️ | aynı |
+
+- Hafta başlığındaki **lejant** o haftada hangi türlerden kaçar adım olduğunu yazar; seçili tür vurgulanır.
+- Görev yolu türe göre değişir (video: izle → not al → yanıtla; okuma: oku → kanıtı bul → yanıtla → yaz; görsel okuma: görseli incele → veriyi oku → yanıtla → yorumunu yaz).
+- Video/harita adımları konu etkinliklerinden **sonra** gelir ve tek akışın parçasıdır; ayrı bölüm açılmaz.
+- **Görsel okuma adımı** her haftada birdir ve kısa sınamanın hemen ardından gelir: grafik, gazete haberi
+  veya kronoloji şeridi (koda gömülü çizim, ayrı görsel dosyası yok) + 1 veri okuma sorusu + 1 yazılı çıkarım.
+  Görsel, sorunun yanıtını metin olarak vermez; kaynak satırı ve birim/not alanı zorunludur.
+- **Öğrenme alanı sonu:** 5, 8 ve 15. haftaların akışı "Kendimi Değerlendiriyorum" adımıyla kapanır
+  (≥5 ölçütlü kontrol listesi + yazılı öz değerlendirme). Bu adım karekod etkinliklerinden sonra gelir.
+- **Gelecek haftaya hazırlık:** her haftanın mini planının altında tek cümlelik hazırlık notu bulunur.
 - İlk iki hafta tamam: **14 + 14**. Kalan haftalar sırada.
 - **Boşluk doldurmada `placeholder` yoktur.** İpucu metni yazılmaz.
 - Her etkinlik: `id`, `type`, `prompt`, `task` (görev yolu), `items`/`pairs`/`options`, `hint`.

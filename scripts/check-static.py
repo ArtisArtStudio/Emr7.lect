@@ -1165,7 +1165,7 @@ def main() -> int:
         'id="activity-stage"', 'id="previous-step"', 'id="next-step"',
         'id="weeklyStudySchedule"', 'id="studyScheduleRows"',
         'id="socialWorkspace"', 'id="socialWeekList"', 'id="socialWeekContent"',
-        'id="socialProgressBar"', 'social-studies-content.js', 'social-studies.js', 'social-studies.css',
+        'id="socialProgressBar"', 'social-studies-content.js', 'social-studies-visual.js', 'social-studies.js', 'social-studies.css',
         'theme1-practice-forms.js', 'theme1-practice-app.js', 'theme1-practice.css',
     ):
         if marker not in html:
@@ -1208,7 +1208,7 @@ def main() -> int:
         errors.append("Groq/ElevenLabs settings must live in the shared course-tools area, not the Turkish hero")
     if "practice.scrollIntoView" not in html or 'id="theme1PracticeTitle" tabindex="-1"' not in html:
         errors.append("Selecting a Theme 1 week does not focus and reveal its first practice package")
-    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v=", "ai-grader.js?v="):
+    for asset in ("theme1-practice.css?v=", "theme1-practice.js?v=", "theme1-practice-forms.js?v=", "theme1-practice-app.js?v=", "social-studies.css?v=", "social-studies-content.js?v=", "social-studies-visual.js?v=", "social-studies.js?v=", "science.css?v=", "science-content.js?v=", "science-term-notes.js?v=", "science.js?v=", "ai-grader.js?v="):
         if asset not in html:
             errors.append(f"Client assets need a cache-busting version: {asset}")
     grader_path = ROOT / "ai-grader.js"
@@ -1402,7 +1402,7 @@ def main() -> int:
         errors.append("Node.js is required to check JavaScript syntax and week grouping")
     else:
         js_files = []
-        for relative in ("book-texts.js", "social-studies-content.js", "social-studies.js", "science-content.js", "science.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
+        for relative in ("book-texts.js", "social-studies-content.js", "social-studies-visual.js", "social-studies.js", "science-content.js", "science.js", "theme1-practice.js", "theme1-practice-forms.js", "theme1-practice-app.js"):
             asset = ROOT / relative
             if not asset.is_file():
                 errors.append(f"Missing JavaScript asset: {relative}")

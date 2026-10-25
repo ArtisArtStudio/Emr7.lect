@@ -600,6 +600,60 @@
     item.flowDescription = `${item.flowDescription} Ek okuma, sınıflandırma ve yazma çalışmaları aynı akışın sonunda yer alır.`;
   }
 
+  // Görsel katman: her hafta bir görsel okuma adımı (kısa sınamanın hemen ardından),
+  // öğrenme alanı sonlarında "Kendimi Değerlendiriyorum" adımı ve sonraki hafta hazırlığı.
+  const VISUAL_LAYER = window.SOCIAL_STUDIES_VISUAL && window.SOCIAL_STUDIES_VISUAL.weeks
+    ? window.SOCIAL_STUDIES_VISUAL.weeks
+    : {};
+  for (const item of WEEKS) {
+    const layer = VISUAL_LAYER[item.id];
+    if (!layer) continue;
+    if (layer.nextPrep) item.nextPrep = layer.nextPrep;
+    const visualSteps = layer.visual ? [{ ...layer.visual }] : [];
+    const reviewSteps = layer.review ? [{ ...layer.review, review: true }] : [];
+    if (!visualSteps.length && !reviewSteps.length) continue;
+    const [first, ...rest] = item.activities;
+    item.activities = first
+      ? [first, ...visualSteps, ...rest, ...reviewSteps]
+      : [...visualSteps, ...reviewSteps];
+    if (visualSteps.length) item.flowDescription = `Konu anlatımını oku; kısa sınamanın ardından görsel okuma adımını tamamla. ${item.flowDescription}`;
+  }
+
+  // Görsel okuma adımı; veri koda gömülü çizimle gösterilir (grafik, gazete haberi, kronoloji).
+  function visualFigureHTML(visual) {
+    if (!visual || !visual.type) return '';
+    const caption = `<figcaption><b>${escapeHTML(visual.title || 'Görsel')}</b>${visual.source ? `<small>${escapeHTML(visual.source)}</small>` : ''}</figcaption>`;
+    if (visual.type === 'chart') {
+      const items = Array.isArray(visual.items) ? visual.items : [];
+      const max = Math.max(...items.map((entry) => Number(entry.value) || 0), 1);
+      const bars = items.map((entry) => {
+        const value = Number(entry.value) || 0;
+        const width = Math.max(4, Math.round((value / max) * 100));
+        return `<li><span class="social-visual-label">${escapeHTML(entry.label)}</span><span class="social-visual-bar-track"><span class="social-visual-bar" style="width:${width}%"></span></span><b class="social-visual-value">${escapeHTML(String(entry.value))}</b></li>`;
+      }).join('');
+      return `<figure class="social-visual social-visual--chart" aria-label="${escapeHTML(visual.title || 'Grafik')}">
+        <div class="social-visual-head"><span>GRAFİK</span><h5>${escapeHTML(visual.title || 'Grafik')}</h5>${visual.unit ? `<small class="social-visual-unit">Birim: ${escapeHTML(visual.unit)}</small>` : ''}</div>
+        <ul class="social-visual-bars">${bars}</ul>
+        ${visual.note ? `<p class="social-visual-note">${escapeHTML(visual.note)}</p>` : ''}
+        ${caption}
+      </figure>`;
+    }
+    if (visual.type === 'timeline') {
+      const items = Array.isArray(visual.items) ? visual.items : [];
+      return `<figure class="social-visual social-visual--timeline" aria-label="${escapeHTML(visual.title || 'Kronoloji şeridi')}">
+        <div class="social-visual-head"><span>KRONOLOJİ</span><h5>${escapeHTML(visual.title || 'Kronoloji şeridi')}</h5></div>
+        <ol class="social-visual-timeline">${items.map((entry) => `<li><b>${escapeHTML(entry.year)}</b><span>${escapeHTML(entry.text)}</span></li>`).join('')}</ol>
+        ${caption}
+      </figure>`;
+    }
+    return `<figure class="social-visual social-visual--news" aria-label="${escapeHTML(visual.headline || 'Gazete haberi')}">
+      <div class="social-visual-masthead"><span>${escapeHTML(visual.masthead || 'GAZETE')}</span>${visual.source ? `<small>${escapeHTML(visual.source)}</small>` : ''}</div>
+      <h5 class="social-visual-headline">${escapeHTML(visual.headline || '')}</h5>
+      <p class="social-visual-lead">${escapeHTML(visual.lead || '')}</p>
+      ${caption}
+    </figure>`;
+  }
+
   const WEEK_BY_ID = new Map(WEEKS.map((item) => [item.id, item]));
 
   function escapeHTML(value) {
@@ -1210,6 +1264,79 @@
   let activeActivityWeekId = null;
   let activeActivityIndex = 0;
 
+  // Etkinliğin türü (video, okuma, etkileşim, seçim, yazma) şeritte ve kart başlığında
+  // simge + etiketle gösterilir. Fen ve Türkçe alanlarındaki tür rozetleriyle aynı düzen:
+  // önce tür, sonra teknik, sonra kapsam.
+  const SOCIAL_STEP_KINDS = Object.freeze({
+    video: { icon: '🎥', label: 'Video' },
+    audio: { icon: '🎧', label: 'Ses kaydı' },
+    map: { icon: '🗺️', label: 'Harita' },
+    interactive: { icon: '🧭', label: 'Etkileşimli içerik' },
+    reading: { icon: '📖', label: 'Okuma' },
+    visual: { icon: '🖼️', label: 'Görsel okuma' },
+    practice: { icon: '🧩', label: 'Etkileşim' },
+    choice: { icon: '🎯', label: 'Seçim' },
+    writing: { icon: '✍️', label: 'Yazma' },
+  });
+
+  const PRACTICE_FORMAT_HINTS = [
+    /balık kılçığı/i,
+    /sınıflandırma/i,
+    /zaman şeridi/i,
+    /kavram haritası/i,
+    /bulmaca/i,
+    /kelime bulutu/i,
+    /gzft/i,
+    /tanılayıcı/i,
+    /eşleştirme/i,
+  ];
+
+  function socialStepKind(step) {
+    if (step.type === 'qr') {
+      const unit = step.data;
+      const sourceType = String(unit.sourceLinkType || '').toLocaleLowerCase('tr-TR');
+      const kind = String(unit.kind || '').toLocaleLowerCase('tr-TR');
+      if (sourceType === 'harita' || kind.includes('harita')) return 'map';
+      if (kind.includes('artırılmış') || kind.includes('etkileşim')) return 'interactive';
+      if (sourceType === 'audio') return 'audio';
+      return 'video';
+    }
+    const activity = step.data;
+    if (activity.visual) return 'visual';
+    const style = `${activity.format || ''} ${activity.sourceStyle || ''}`;
+    if (activity.sourceText || (Array.isArray(activity.dialogue) && activity.dialogue.length)
+      || (Array.isArray(activity.caseStudies) && activity.caseStudies.length)
+      || /ek okuma|okuma metni/i.test(style)) return 'reading';
+    const fields = Array.isArray(activity.fields) ? activity.fields : [];
+    const kinds = new Set(fields.map((field) => field.kind || 'textarea'));
+    if (kinds.has('sort') || kinds.has('checklist') || kinds.has('multi')) return 'practice';
+    if (PRACTICE_FORMAT_HINTS.some((pattern) => pattern.test(style))) return 'practice';
+    if (kinds.has('choice')) return 'choice';
+    return 'writing';
+  }
+
+  function socialKindChip(kind) {
+    const meta = SOCIAL_STEP_KINDS[kind] || SOCIAL_STEP_KINDS.writing;
+    return `<b class="social-kind-chip" data-kind="${escapeHTML(kind)}"><span aria-hidden="true">${meta.icon}</span> ${escapeHTML(meta.label)}</b>`;
+  }
+
+  // Görev yolu türe göre değişir: video izleyen, metin okuyan ve kart eşleştiren öğrenci
+  // aynı adımları görmez; başlıklar yapılan işi söyler.
+  function socialQuestSteps(kind) {
+    if (kind === 'video' || kind === 'audio') return [['🎬', kind === 'audio' ? 'Kaydı dinle' : 'Videoyu izle'], ['📝', 'Not al'], ['🎯', 'Soruları yanıtla'], ['✍️', 'Kısa yazıyı tamamla']];
+    if (kind === 'map') return [['🗺️', 'Haritayı incele'], ['🎛️', 'Dönemleri karşılaştır'], ['📝', 'Not al'], ['🎯', 'Soruları yanıtla']];
+    if (kind === 'interactive') return [['🧭', 'İçeriği keşfet'], ['📝', 'Not al'], ['🎯', 'Soruları yanıtla'], ['✍️', 'Yorumunu yaz']];
+    if (kind === 'reading') return [['📖', 'Metni oku'], ['🔎', 'Kanıtı bul'], ['🎯', 'Soruları yanıtla'], ['✍️', 'Kendi cümlelerinle yaz']];
+    if (kind === 'visual') return [['🖼️', 'Görseli incele'], ['🔎', 'Veriyi oku'], ['🎯', 'Soruları yanıtla'], ['✍️', 'Yorumunu yaz']];
+    if (kind === 'practice') return [['📋', 'Ölçütü oku'], ['🧩', 'Kartları yerleştir'], ['✓', 'Kontrol et'], ['✍️', 'Gerekçeni yaz']];
+    if (kind === 'choice') return [['👀', 'Soruyu oku'], ['🎯', 'Seçimini yap'], ['✓', 'Kontrol et']];
+    return [['💭', 'Düşün'], ['📝', 'Planla'], ['✍️', 'Kendi sözlerinle yaz'], ['✓', 'Kontrol et']];
+  }
+
+  function socialQuestPath(kind) {
+    return `<nav class="social-quest-path" aria-label="Etkinlik adımları"><span class="social-quest-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol>${socialQuestSteps(kind).map(([icon, label], index) => `<li><span class="social-quest-icon" aria-hidden="true">${icon}</span><span class="social-quest-number">${index + 1}</span><span>${label}</span></li>`).join('')}</ol></nav>`;
+  }
+
   function qrUnitsFor(item) {
     return (window.SOCIAL_QR?.units || []).filter((unit) => Array.isArray(unit.weekIds) && unit.weekIds.includes(item.id));
   }
@@ -1231,10 +1358,24 @@
     const flowDescription = qrUnits.length
       ? `${item.flowDescription} Haftanın video ve harita etkinlikleri bu adımların ardından gelir.`
       : item.flowDescription;
-    const steps = activities.map((activityItem) => ({ type: 'activity', data: activityItem }))
-      .concat(qrUnits.map((unit) => ({ type: 'qr', data: unit })));
+    const activitySteps = activities.map((activityItem) => ({ type: 'activity', data: activityItem }));
+    // Öğrenme alanı sonu öz değerlendirmesi akışın en sonunda yer alır; karekod
+    // etkinliklerinden sonra gelir ki öğrenci haftayı kapatmadan önce kendini değerlendirsin.
+    const closingSteps = activitySteps.filter((step) => step.data.review);
+    const steps = activitySteps.filter((step) => !step.data.review)
+      .concat(qrUnits.map((unit) => ({ type: 'qr', data: unit })))
+      .concat(closingSteps);
     activeActivityIndex = Math.max(0, Math.min(activeActivityIndex, steps.length - 1));
     const activeStep = steps[activeActivityIndex];
+    const activeKind = socialStepKind(activeStep);
+    const activeKindMeta = SOCIAL_STEP_KINDS[activeKind];
+    // Haftada hangi tür etkinlikler var: başlıkta tek satırlık lejant.
+    const kindCounts = steps.reduce((acc, step) => {
+      const key = socialStepKind(step);
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const kindLegendHTML = `<ul class="social-kind-legend" aria-label="Bu haftanın etkinlik türleri">${Object.entries(kindCounts).map(([kind, count]) => `<li data-kind="${escapeHTML(kind)}"${kind === activeKind ? ' aria-current="true"' : ''}><span aria-hidden="true">${SOCIAL_STEP_KINDS[kind]?.icon || '✨'}</span>${escapeHTML(SOCIAL_STEP_KINDS[kind]?.label || 'Etkinlik')} <b>${count}</b></li>`).join('')}</ul>`;
     const activeActivity = activeStep.type === 'activity' ? activeStep.data : null;
     const activeQr = activeStep.type === 'qr' ? activeStep.data : null;
     const completeCount = activities.filter((activityItem) => isActivityComplete(item, saved, activityItem)).length;
@@ -1258,8 +1399,9 @@
         ? `${step.data.kind} · ${Number(step.data.minutes)} dk`
         : (step.data.count || (Array.isArray(step.data.questions) ? `${step.data.questions.length} soru` : `${step.data.fields.length} yanıt alanı`));
       const stepMark = isMedia ? '▶' : (complete ? '✓' : '');
-      const stepLabel = isMedia ? 'Karekod etkinliği' : 'Etkinlik';
-      return `<button type="button" class="social-practice-step${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}${isMedia ? ' social-practice-step--media' : ''}" data-social-activity-select="${index}" aria-label="${stepLabel} ${index + 1}: ${escapeHTML(stepTitle)}${complete ? ', tamamlandı' : ''}" ${active ? 'aria-current="step"' : ''}><span class="social-practice-step-no">${index + 1}</span><span class="social-practice-step-copy"><b>${escapeHTML(stepTitle)}</b><small>${escapeHTML(stepDetail)}</small></span><span class="social-practice-step-status" id="social-activity-step-status-${item.id}-${escapeHTML(stepKey)}" aria-label="${complete ? 'Tamamlandı' : (isMedia ? 'Karekod etkinliği' : 'Devam ediyor')}">${stepMark}</span></button>`;
+      const stepKind = socialStepKind(step);
+      const stepLabel = SOCIAL_STEP_KINDS[stepKind]?.label || 'Etkinlik';
+      return `<button type="button" class="social-practice-step${active ? ' is-current' : ''}${complete ? ' is-complete' : ''}${isMedia ? ' social-practice-step--media' : ''}" data-kind="${escapeHTML(stepKind)}" data-social-activity-select="${index}" aria-label="${escapeHTML(stepLabel)} · ${index + 1}. adım: ${escapeHTML(stepTitle)}${complete ? ', tamamlandı' : ''}" ${active ? 'aria-current="step"' : ''}><span class="social-practice-step-no">${index + 1}</span><span class="social-practice-step-copy"><span class="social-practice-step-kind" data-kind="${escapeHTML(stepKind)}"><span aria-hidden="true">${SOCIAL_STEP_KINDS[stepKind]?.icon || '✨'}</span> ${escapeHTML(stepLabel)}</span><b>${escapeHTML(stepTitle)}</b><small>${escapeHTML(stepDetail)}</small></span><span class="social-practice-step-status" id="social-activity-step-status-${item.id}-${escapeHTML(stepKey)}" aria-label="${complete ? 'Tamamlandı' : (isMedia ? 'Karekod etkinliği' : 'Devam ediyor')}">${stepMark}</span></button>`;
     }).join('');
 
     const stepBody = activeQr
@@ -1267,11 +1409,17 @@
         <p class="social-answer-note">Kart; etkinliği açmadan önce düşünme, içeriği incelerken not alma ve sonrasında yanıtlama adımlarına ayrılır. Bağlantı EBA hesabı ister; yanıtlar bu tarayıcıda, ders ilerlemesinden ayrı saklanır.</p>`
       : `<div class="social-activity-badges"><span class="social-result-pill" id="socialResultPill-${item.id}" data-state="${verdictState || 'none'}" role="status" aria-live="polite"${verdictLabel ? '' : ' hidden'}>${escapeHTML(verdictLabel)}</span><span class="social-activity-state${currentComplete ? ' is-done' : ''}" id="socialActivityState-${item.id}" role="status" aria-live="polite">${currentStatus}</span></div>`;
 
+    // Teknik rozetinde yalnız tekniğin adı görünür ("Ek okuma · özgün metin" → "Ek okuma").
+    const techniqueLabel = String(activeActivity?.format || activeActivity?.sourceStyle || '').split(' · ')[0];
+    const stepChipsHTML = activeQr
+      ? `<div class="social-activity-chips">${socialKindChip(activeKind)}<b>${escapeHTML(activeQr.kind)}</b><b>yaklaşık ${Number(activeQr.minutes)} dk</b><b>${escapeHTML(activeQr.where.split(' · ')[0])}</b></div>`
+      : `<div class="social-activity-chips">${socialKindChip(activeKind)}<b>${escapeHTML(techniqueLabel)}</b>${activeActivity.count ? `<b>${escapeHTML(activeActivity.count)}</b>` : ''}<b>${steps.length} adım</b></div>`;
+    const stepIconHTML = `<span class="social-activity-icon" data-kind="${escapeHTML(activeKind)}" aria-hidden="true">${activeKindMeta.icon}</span>`;
     const stepHeading = activeQr
-      ? `<header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${steps.length} · Karekod etkinliği</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeQr.title)}</h4><p>${escapeHTML(activeQr.where)} · ${escapeHTML(activeQr.focus)}</p></div>${stepBody}</header>`
-      : `<header class="social-activity-heading"><div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${steps.length}${activeActivity.context ? ` · ${escapeHTML(activeActivity.context)}` : ''}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p></div>${stepBody}</header>`;
+      ? `<header class="social-activity-heading"><div class="social-activity-title-row">${stepIconHTML}<div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${steps.length} · ${escapeHTML(activeKindMeta.label)}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeQr.title)}</h4><p>${escapeHTML(activeQr.where)} · ${escapeHTML(activeQr.focus)}</p>${stepChipsHTML}</div></div>${stepBody}</header>`
+      : `<header class="social-activity-heading"><div class="social-activity-title-row">${stepIconHTML}<div><div class="social-activity-kicker">ETKİNLİK ${activeActivityIndex + 1} / ${steps.length} · ${escapeHTML(activeKindMeta.label)}${activeActivity.context ? ` · ${escapeHTML(activeActivity.context)}` : ''}</div><h4 id="socialActivityTitle-${item.id}" tabindex="-1">${escapeHTML(activeActivity.title)}</h4><p>${escapeHTML(activeActivity.prompt)}</p>${stepChipsHTML}</div></div>${stepBody}</header>`;
 
-    const questPathHTML = activeActivity ? `<nav class="social-quest-path" aria-label="Etkinlik adımları"><span class="social-quest-title"><span aria-hidden="true">✨</span> Görev yolu</span><ol><li><span class="social-quest-number">1</span><span>Yönergeyi oku</span></li><li><span class="social-quest-number">2</span><span>Kaynağı incele</span></li><li><span class="social-quest-number">3</span><span>Yanıtını yaz</span></li><li><span class="social-quest-number">4</span><span>Kontrol et, geri bildirimi uygula</span></li></ol></nav>` : '';
+    const questPathHTML = socialQuestPath(activeKind);
     const sourceTextHTML = activeActivity && activeActivity.sourceText
       ? `<section class="social-reading-source" aria-label="${escapeHTML(activeActivity.sourceTitle || 'Özgün kaynak metin')}"><div class="social-reading-heading"><span>ÖZGÜN METİN</span><h5>${escapeHTML(activeActivity.sourceTitle || 'Kaynak metin')}</h5>${activeActivity.sourceLabel ? `<small>${escapeHTML(activeActivity.sourceLabel)}</small>` : ''}</div><div class="social-reading-text">${renderSourceText(activeActivity.sourceText)}</div></section>`
       : '';
@@ -1286,19 +1434,15 @@
     const sourceProvidersHTML = activeActivity && Array.isArray(activeActivity.sourceProviders)
       ? activeActivity.sourceProviders.filter((provider) => PROVIDERS.includes(provider) && providerLinks[provider]).map((provider) => `<a class="social-source-provider-link" href="${escapeHTML(providerLinks[provider])}" target="_blank" rel="noopener noreferrer">${escapeHTML(providerLabels[provider] || provider)} ↗</a>`).join('')
       : '';
-    const activityMetaHTML = activeActivity && (activeActivity.format || activeActivity.count || activeActivity.sourceLabel)
-      ? `<div class="social-activity-meta">${activeActivity.format || activeActivity.sourceStyle ? `<span>${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}</span>` : ''}${activeActivity.count ? `<span>${escapeHTML(activeActivity.count)}</span>` : ''}<span>${steps.length} adım</span></div>`
-      : '';
     const activityExtraHTML = activeActivity
       ? `${activeActivity.scenario ? `<blockquote class="social-case-stem"><b>Örnek durum</b><span>${escapeHTML(activeActivity.scenario)}</span></blockquote>` : ''}
-        <p class="social-style-note"><b>Etkinlik biçimi:</b> ${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}${activeActivity.hint ? `<span>${escapeHTML(activeActivity.hint)}</span>` : ''}</p>
-        ${activityMetaHTML}
-        ${sourceTextHTML}${dialogueHTML}${caseStudiesHTML}${sourceProvidersHTML ? `<div class="social-research-links" aria-label="Araştırma için bağlantılar">${sourceProvidersHTML}</div>` : ''}${questionHTML}
+        <p class="social-style-note"><b>Etkinlik tekniği:</b> ${escapeHTML(activeActivity.format || activeActivity.sourceStyle)}${activeActivity.hint ? `<span>${escapeHTML(activeActivity.hint)}</span>` : ''}</p>
+        ${activeActivity.visual ? visualFigureHTML(activeActivity.visual) : ''}${sourceTextHTML}${dialogueHTML}${caseStudiesHTML}${sourceProvidersHTML ? `<div class="social-research-links" aria-label="Araştırma için bağlantılar">${sourceProvidersHTML}</div>` : ''}${questionHTML}
         <p class="social-answer-note">✦ Kontrol et düğmesi ortak Groq ayarlarını kullanır; yanıtın Groq’a doğrudan gönderilir, güvenli geri bildirim kodlarla oluşturulur ve doğru cevap gösterilmez. Anahtarı yalnızca kişisel cihazında kullan.</p>`
       : '';
 
     return `<section class="card social-practice-flow" aria-labelledby="socialPracticeTitle">
-      <div class="social-practice-heading"><div><div class="tag">ETKİNLİK SETİ</div><h3 id="socialPracticeTitle">Etkinlikler: ${escapeHTML(item.topic)}</h3><p>${escapeHTML(flowDescription)}</p></div><strong class="social-practice-count" id="socialActivityCompleteCount">${completeCount}/${activities.length} konu etkinliği tamamlandı</strong></div>
+      <div class="social-practice-heading"><div><div class="tag">ETKİNLİK SETİ</div><h3 id="socialPracticeTitle">Etkinlikler: ${escapeHTML(item.topic)}</h3><p>${escapeHTML(flowDescription)}</p>${kindLegendHTML}</div><strong class="social-practice-count" id="socialActivityCompleteCount">${completeCount}/${activities.length} konu etkinliği tamamlandı</strong></div>
       <div class="social-practice-progress" id="socialActivityProgress" role="progressbar" aria-label="Haftalık etkinliklerin tamamlanma durumu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round((completeCount / activities.length) * 100)}"><span id="socialActivityProgressBar" style="width:${Math.round((completeCount / activities.length) * 100)}%"></span></div>
       <nav class="social-practice-track" aria-label="Bu haftanın etkinlik adımları">${trackHTML}</nav>
       <article class="social-activity-step" id="socialActivityStep" aria-labelledby="socialActivityTitle-${item.id}">
@@ -1341,7 +1485,7 @@
       ${renderActivityFlow(item, saved)}
       <div class="social-grid-two">
         <section class="card social-focus-card"><div class="tag">BU HAFTANIN ODAĞI</div><p>${escapeHTML(item.focus)}</p><small>${escapeHTML(item.source)}</small></section>
-        <section class="card social-mini-plan"><h3>Öğrenci için mini plan</h3><p>Görevleri tamamladıkça işaretle. Yanıtlar bu tarayıcıda saklanır.</p><div class="social-task-list">${item.tasks.map((task, index) => `<label class="social-task"><input type="checkbox" data-social-task="${index}" data-social-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div></section>
+        <section class="card social-mini-plan"><h3>Öğrenci için mini plan</h3><p>Görevleri tamamladıkça işaretle. Yanıtlar bu tarayıcıda saklanır.</p><div class="social-task-list">${item.tasks.map((task, index) => `<label class="social-task"><input type="checkbox" data-social-task="${index}" data-social-week="${item.id}" ${saved.tasks[index] ? 'checked' : ''}><span>${escapeHTML(task)}</span></label>`).join('')}</div>${item.nextPrep ? `<p class="social-next-prep"><span aria-hidden="true">➡️</span><b>Gelecek haftaya hazırlık:</b> ${escapeHTML(item.nextPrep)}</p>` : ''}</section>
       </div>
       <section class="card social-schedule" aria-labelledby="socialScheduleTitle"><div class="social-card-heading"><div><h3 id="socialScheduleTitle">Haftalık çalışma çizelgesi</h3><p>Haftalar tarih, konu ve ilerleme takibinde ayrı kalır. Uygulamadaki mini plan ve tüm etkinlikler tamamlanınca ilk kutu otomatik işaretlenir; EBA, Tonguç ve MEBİ çalışmalarını bitirince ilgili kutuyu sen işaretle.</p></div></div><div class="social-table-wrap"><table class="social-study-table"><caption class="visually-hidden">${item.id}. hafta için Sosyal Bilgiler çalışma çizelgesi</caption><thead><tr><th scope="col">Uygulamadaki çalışmalar</th><th scope="col">EBA</th><th scope="col">Tonguç</th><th scope="col">MEBİ</th></tr></thead><tbody><tr>
         <td><label class="social-provider-check"><input type="checkbox" data-social-our="true" data-social-week="${item.id}" disabled ${done ? 'checked' : ''}><span>Mini plan ve tüm etkinlikler</span></label><span class="social-auto-status${done ? ' is-done' : ''}" id="social-our-status-${item.id}" role="status" aria-live="polite">${done ? 'Tamamlandı · otomatik' : 'Mini planı ve tüm etkinlikleri tamamla.'}</span></td>
