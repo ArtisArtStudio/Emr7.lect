@@ -35,6 +35,25 @@
   const escapeHTML = (value) => String(value)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+  // Öğrenci metinleri dizgi motorundan geçer: $\frac{2}{3}$ gibi ifadeler gerçek kesre dönüşür.
+  const MATH = window.MATEMATIK_MATH || null;
+  const typeset = (segment) => {
+    if (MATH && typeof MATH.render === 'function') {
+      try { return MATH.render(segment); } catch (error) { /* dizgi hatasında düz metne dön */ }
+    }
+    return escapeHTML(segment);
+  };
+
+  function rich(value) {
+    const text = value == null ? '' : String(value);
+    // **kalın** vurgusu desteklenir; matematik parçaları dizgi motorundan geçer.
+    return text.split(/(\*\*[^*]+\*\*)/g).map((segment) => (
+      segment.length > 4 && segment.startsWith('**') && segment.endsWith('**')
+        ? `<strong>${typeset(segment.slice(2, -2))}</strong>`
+        : typeset(segment)
+    )).join('');
+  }
+
   const weekById = (id) => CONTENT.weeks.find((week) => week.id === Number(id)) || null;
 
   function renderWeekList() {
@@ -77,19 +96,42 @@
     if (track) track.setAttribute('aria-valuenow', String(done));
   }
 
+  function paramsMarkup(scene) {
+    const params = Array.isArray(scene.params) ? scene.params : [];
+    if (!params.length) return '';
+    const rows = params.map((param) => `<div class="math-slider" data-param="${escapeHTML(param.name)}">
+        <label for="mathParam-${escapeHTML(param.name)}">${escapeHTML(param.label || param.name)}
+          <output id="mathParamOut-${escapeHTML(param.name)}">${escapeHTML(param.value)}</output>
+        </label>
+        <input type="range" id="mathParam-${escapeHTML(param.name)}"
+          min="${param.min}" max="${param.max}" step="${param.step}"
+          value="${param.value}" data-math-param="${escapeHTML(param.name)}" disabled>
+      </div>`).join('');
+    return `<div class="math-scene-controls" id="mathSceneControls">
+        <p class="math-controls-title">Sürgüler</p>
+        ${rows}
+      </div>`;
+  }
+
   function sceneMarkup(week) {
     if (!week.scene) return '';
     const scene = week.scene;
+    const params = paramsMarkup(scene);
+    const viewLabel = scene.app === '3d' ? '3B görünüm' : 'yalnız grafik görünümü';
     return `<section class="math-card" aria-labelledby="mathSceneTitle">
       <h3 id="mathSceneTitle"><span class="math-step">Keşif</span>${escapeHTML(scene.title)}</h3>
-      <p class="math-note">${escapeHTML(scene.hint || '')}</p>
-      <div class="math-scene-host" id="mathSceneHost" data-scene-type="${escapeHTML(scene.type)}"></div>
+      <p class="math-note">${rich(scene.hint || '')}</p>
+      <div class="math-scene-split${params ? ' has-controls' : ''}">
+        <div class="math-scene-host" id="mathSceneHost" data-scene-type="${escapeHTML(scene.type)}" data-app="${escapeHTML(scene.app || 'graphing')}"></div>
+        ${params}
+      </div>
       <div class="math-scene-actions">
         <button type="button" class="primary" id="mathSceneStart" data-scene="${escapeHTML(scene.type)}">Etkileşimli sahneyi aç</button>
+        ${(scene.hidden && scene.hidden.length) ? `<button type="button" id="mathSceneReveal">İnşayı göster</button>` : ''}
         <button type="button" id="mathSceneReset" disabled>Sıfırla</button>
       </div>
       <p class="math-status" id="mathSceneStatus" data-state="idle">Sahne henüz açılmadı; açtığında noktaları sürükleyebilirsin.</p>
-      <p class="math-credit">Geogebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</p>
+      <p class="math-credit">Geogebra® — geogebra.org · ticari olmayan kullanım, atıf ile. ${viewLabel}.</p>
     </section>`;
   }
 
@@ -102,16 +144,16 @@
         if (saved && saved.solved && optionIndex === item.correct) classes.push('is-correct');
         if (saved && saved.wrong === optionIndex) classes.push('is-wrong');
         return `<button type="button" class="${classes.join(' ')}" data-check="${key}" data-option="${optionIndex}"${saved && saved.solved ? ' disabled' : ''}>
-          <span class="key">${'ABCD'[optionIndex]}</span><span>${escapeHTML(option)}</span>
+          <span class="key">${'ABCD'[optionIndex]}</span><span>${rich(option)}</span>
         </button>`;
       }).join('');
       const feedback = saved && saved.solved
-        ? `<p class="math-feedback" data-state="correct" data-feedback="${key}">${escapeHTML(item.explain)}</p>`
+        ? `<p class="math-feedback" data-state="correct" data-feedback="${key}">${rich(item.explain)}</p>`
         : saved && Number.isFinite(saved.wrong)
-          ? `<p class="math-feedback" data-state="hint" data-feedback="${key}">İpucu: ${escapeHTML(item.hint)}</p>`
+          ? `<p class="math-feedback" data-state="hint" data-feedback="${key}">İpucu: ${rich(item.hint)}</p>`
           : `<p class="math-feedback" data-feedback="${key}" hidden></p>`;
       return `<div class="math-check-q" data-question="${key}">
-        <p class="prompt">${index + 1}. ${escapeHTML(item.prompt)}</p>
+        <p class="prompt">${index + 1}. ${rich(item.prompt)}</p>
         <div class="math-options">${options}</div>
         ${feedback}
       </div>`;
@@ -124,9 +166,23 @@
       const checked = Boolean(state.tasks[key]);
       return `<li class="math-task">
         <input type="checkbox" id="mathTask-${key}" data-task="${key}"${checked ? ' checked' : ''}>
-        <label for="mathTask-${key}">${escapeHTML(task)}</label>
+        <label for="mathTask-${key}">${rich(task)}</label>
       </li>`;
     }).join('');
+  }
+
+  function examplesMarkup(week) {
+    const examples = Array.isArray(week.examples) ? week.examples : [];
+    if (!examples.length) return '';
+    const cards = examples.map((item, index) => `<article class="math-example">
+        <h4><span class="math-example-no">Örnek ${index + 1}</span>${rich(item.title)}</h4>
+        <ol class="math-example-steps">${item.steps.map((step) => `<li>${rich(step)}</li>`).join('')}</ol>
+        <p class="math-example-answer"><span>Sonuç</span>${rich(item.answer)}</p>
+      </article>`).join('');
+    return `<section class="math-card" aria-labelledby="mathExamplesTitle">
+        <h3 id="mathExamplesTitle"><span class="math-step">2</span>Çözümlü örnekler</h3>
+        ${cards}
+      </section>`;
   }
 
   function weekMarkup(week) {
@@ -143,28 +199,30 @@
 
       <section class="math-card math-summary" aria-labelledby="mathSummaryTitle">
         <h3 id="mathSummaryTitle"><span class="math-step">1</span>Konu anlatımı</h3>
-        ${week.summary.map((paragraph) => `<p>${paragraph}</p>`).join('')}
+        ${week.summary.map((paragraph) => `<p>${rich(paragraph)}</p>`).join('')}
       </section>
 
+      ${examplesMarkup(week)}
+
       <section class="math-card" aria-labelledby="mathPointsTitle">
-        <h3 id="mathPointsTitle"><span class="math-step">2</span>Ana noktalar</h3>
-        <ul class="math-points">${week.points.map((point) => `<li>${escapeHTML(point)}</li>`).join('')}</ul>
+        <h3 id="mathPointsTitle"><span class="math-step">3</span>Ana noktalar</h3>
+        <ul class="math-points">${week.points.map((point) => `<li>${rich(point)}</li>`).join('')}</ul>
       </section>
 
       <section class="math-card" aria-labelledby="mathTermsTitle">
-        <h3 id="mathTermsTitle"><span class="math-step">3</span>Kavramlar</h3>
-        <dl class="math-terms">${week.terms.map((item) => `<div><dt>${escapeHTML(item.word)}</dt><dd>${escapeHTML(item.definition)}</dd></div>`).join('')}</dl>
+        <h3 id="mathTermsTitle"><span class="math-step">4</span>Kavramlar</h3>
+        <dl class="math-terms">${week.terms.map((item) => `<div><dt>${rich(item.word)}</dt><dd>${rich(item.definition)}</dd></div>`).join('')}</dl>
       </section>
 
       ${sceneMarkup(week)}
 
       <section class="math-card" aria-labelledby="mathCheckTitle">
-        <h3 id="mathCheckTitle"><span class="math-step">4</span>Kısa kontrol</h3>
+        <h3 id="mathCheckTitle"><span class="math-step">5</span>Kısa kontrol</h3>
         <div class="math-check">${checksMarkup(week)}</div>
       </section>
 
       <section class="math-card" aria-labelledby="mathTasksTitle">
-        <h3 id="mathTasksTitle"><span class="math-step">5</span>Bu haftanın görevleri</h3>
+        <h3 id="mathTasksTitle"><span class="math-step">6</span>Bu haftanın görevleri</h3>
         <ul class="math-tasks">${tasksMarkup(week)}</ul>
       </section>
 
@@ -195,7 +253,7 @@
           if (feedback) {
             feedback.hidden = false;
             feedback.dataset.state = 'correct';
-            feedback.textContent = item.explain;
+            feedback.innerHTML = rich(item.explain);
           }
         } else {
           state.checks[key] = { wrong: chosen };
@@ -205,7 +263,7 @@
           if (feedback) {
             feedback.hidden = false;
             feedback.dataset.state = 'hint';
-            feedback.textContent = `İpucu: ${item.hint}`;
+            feedback.innerHTML = `İpucu: ${rich(item.hint)}`;
           }
         }
       });
@@ -245,22 +303,47 @@
   function bindScene(week) {
     const start = document.getElementById('mathSceneStart');
     const reset = document.getElementById('mathSceneReset');
+    const reveal = document.getElementById('mathSceneReveal');
     const host = document.getElementById('mathSceneHost');
     const status = document.getElementById('mathSceneStatus');
     if (!start || !host || !status) return;
+
+    const scene = week.scene;
+    const params = Array.isArray(scene.params) ? scene.params : [];
+    const sliders = Array.from(document.querySelectorAll('[data-math-param]'));
+    const viewLabel = scene.app === '3d' ? '3B görünüm' : 'grafik görünümü';
 
     const setStatus = (stateName, text) => {
       status.dataset.state = stateName;
       status.textContent = text;
     };
 
+    const setSlidersEnabled = (enabled, api) => {
+      sliders.forEach((input) => {
+        input.disabled = !enabled;
+        if (!enabled || input.dataset.bound === '1') return;
+        input.dataset.bound = '1';
+        input.addEventListener('input', () => {
+          const name = input.dataset.mathParam;
+          const value = Number(input.value);
+          const out = document.getElementById(`mathParamOut-${name}`);
+          if (out) out.textContent = String(value);
+          if (api && window.MATEMATIK_GEOGEBRA) window.MATEMATIK_GEOGEBRA.setParam(api, name, value);
+        });
+      });
+    };
+
     let adapter = null;
     let mounted = false;
 
     const mountLocal = (reason) => {
-      const key = localSceneKey(week);
+      const key = LOCAL_SCENES.has(scene.type) ? scene.type : null;
+      host.classList.remove('is-loading');
       if (!key || !window.MATEMATIK_SAHNE) {
-        setStatus('failed', `Etkileşimli sahne açılamadı (${reason}). Konu anlatımı ve kısa kontrol ile devam edebilirsin.`);
+        setStatus('failed', `Etkileşimli sahne açılamadı (${reason}). Konu anlatımı, çözümlü örnekler ve kısa kontrol ile devam edebilirsin.`);
+        start.disabled = false;
+        start.textContent = 'Yeniden dene';
+        mounted = false;
         return;
       }
       const local = window.MATEMATIK_SAHNE.mount(host, key);
@@ -271,11 +354,18 @@
           setStatus('local', 'Yerel yedek sahne açık: noktaları parmakla sürükle, ok tuşları da çalışır.');
           return true;
         },
-        reset() { local.reset(); setStatus('local', 'Yerel sahne başa alındı.'); },
+        reset() {
+          local.reset();
+          if (typeof local.setBisector === 'function') local.setBisector(false);
+          if (typeof local.setImage === 'function') local.setImage(false);
+          setStatus('local', 'Yerel sahne başa alındı.');
+        },
       };
-      setStatus('local', `GeoGebra açılamadı (${reason}). Yerel sahne hazır.`);
-      start.disabled = false;
+      start.disabled = true;
+      start.textContent = 'Sahne hazır';
+      if (reveal) reveal.disabled = false;
       reset.disabled = false;
+      setStatus('local', `GeoGebra açılamadı (${reason}). Yerel sahne hazır.`);
     };
 
     start.addEventListener('click', () => {
@@ -283,18 +373,18 @@
       mounted = true;
       start.disabled = true;
       const GGB = window.MATEMATIK_GEOGEBRA;
-      if (!GGB || !week.scene) { mountLocal('yükleyici yok'); return; }
+      if (!GGB) { mountLocal('yükleyici yok'); return; }
       host.classList.add('is-loading');
       setStatus('idle', 'GeoGebra yükleniyor…');
       GGB.createApplet(host, {
-        appName: week.scene.app || 'graphing',
-        commands: week.scene.commands || [],
-        hidden: week.scene.hidden || [],
-        bounds: week.scene.bounds,
+        appName: scene.app || 'graphing',
+        commands: scene.commands || [],
+        hidden: scene.hidden || [],
+        bounds: scene.bounds,
         onStatus: (stateName, payload) => {
           if (stateName === 'ready') {
             host.classList.remove('is-loading');
-            setStatus('ready', `Hazır: ${payload.count} nesne çizildi · yalnız grafik görünümü.`);
+            setStatus('ready', `Hazır: ${payload.count} nesne çizildi · ${viewLabel}.`);
           }
           if (stateName === 'failed') {
             host.classList.remove('is-loading');
@@ -304,30 +394,39 @@
       }).then((result) => {
         host.classList.remove('is-loading');
         const api = result.api;
-        const hidden = (week.scene.hidden || [])[0];
+        const hidden = (Array.isArray(scene.hidden) && scene.hidden[0]) || null;
+        setSlidersEnabled(true, api);
         adapter = {
           show() {
             if (!hidden) return true;
             try { api.setVisible(hidden, true); } catch (error) { return false; }
-            setStatus('ready', 'İnşa açıldı; noktaları sürükleyebilirsin.');
+            setStatus('ready', `İnşa açıldı · ${viewLabel}.`);
             return true;
           },
           reset() {
-            if (!hidden) return;
-            try { api.setVisible(hidden, false); } catch (error) { /* yoksay */ }
+            if (hidden) { try { api.setVisible(hidden, false); } catch (error) { /* yoksay */ } }
+            params.forEach((param) => {
+              const input = document.getElementById(`mathParam-${param.name}`);
+              const out = document.getElementById(`mathParamOut-${param.name}`);
+              if (input) input.value = String(param.value);
+              if (out) out.textContent = String(param.value);
+            });
+            if (params.length && window.MATEMATIK_GEOGEBRA) window.MATEMATIK_GEOGEBRA.setParams(api, params);
+            setStatus('ready', `Sahne başa alındı · ${viewLabel}.`);
           },
         };
-        start.disabled = false;
+        start.disabled = true;
+        start.textContent = 'Sahne hazır';
+        if (reveal) reveal.disabled = false;
         reset.disabled = false;
-        start.textContent = hidden ? 'İnşayı göster' : 'Sahne hazır';
-        setStatus('ready', `Hazır: ${result.count} nesne çizildi · yalnız grafik görünümü.`);
+        setStatus('ready', `Hazır: ${result.count} nesne çizildi · ${viewLabel}.`);
       }).catch((error) => {
-        host.classList.remove('is-loading');
         mounted = false;
         mountLocal(error.message || 'bağlantı');
       });
     });
 
+    if (reveal) reveal.addEventListener('click', () => { if (adapter) adapter.show(); });
     reset.addEventListener('click', () => { if (adapter) adapter.reset(); });
   }
 

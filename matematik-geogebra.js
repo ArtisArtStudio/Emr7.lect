@@ -174,8 +174,11 @@
   // Geometri uygulaması kendi araç çubuğunu ve alt bilgi şeridini getiriyor; bunlar sabit
   // yükseklik kapladığı için çizim alanı kutuya sığmıyordu. SetPerspective("G") yalnız
   // Graphics View'i bırakır (GeoGebra kılavuzu, SetPerspective komutu).
-  function applyPerspective(api, stage) {
-    try { api.evalCommand('SetPerspective("G")'); } catch (error) { /* eski sürümlerde yok */ }
+  function applyPerspective(api, stage, appName) {
+    // 3B uygulamasında grafik görünümü yalnız başına açılırsa tuval boş kalıyor:
+    // üç boyutlu görünüm "T" harfiyle istenir.
+    const perspective = appName === '3d' ? 'T' : 'G';
+    try { api.evalCommand(`SetPerspective("${perspective}")`); } catch (error) { /* eski sürümlerde yok */ }
     fitToStage(api, stage);
   }
 
@@ -183,7 +186,7 @@
     ['ShowAxes(true)', 'ShowGrid(true)'].forEach((command) => {
       try { api.evalCommand(command); } catch (error) { /* görünüm komutu kritik değil */ }
     });
-    if (spec.bounds && typeof api.setCoordSystem === 'function') {
+    if (spec.appName !== '3d' && spec.bounds && typeof api.setCoordSystem === 'function') {
       try { api.setCoordSystem(spec.bounds[0], spec.bounds[1], spec.bounds[2], spec.bounds[3]); } catch (error) { /* yoksay */ }
     }
   }
@@ -191,7 +194,7 @@
   // Android Chrome'da appletOnLoad, grafik görünümü hazır olmadan tetiklenebiliyor:
   // komutlar sessizce başarısız olup tuval boş kalıyor. Birkaç kez yeniden dene ve doğrula.
   async function prepare(api, spec, stage) {
-    applyPerspective(api, stage);
+    applyPerspective(api, stage, spec.appName);
     applyView(api, spec);
     let failures = [];
     let count = objectCount(api);
@@ -202,7 +205,7 @@
       count = objectCount(api);
       if (count > 0) break;
     }
-    applyPerspective(api, stage);
+    applyPerspective(api, stage, spec.appName);
     applyView(api, spec);
     (spec.hidden || []).forEach((label) => {
       try { api.setVisible(label, false); } catch (error) { /* yoksay */ }
@@ -288,7 +291,7 @@
             const stopWatching = watchSize(api, stage);
             const measureNow = () => measureCanvas(stage);
             // Perspektif değişikliği bazen tuvali yeniden ölçekliyor: kısa süre sonra bir kez daha oturt.
-            setTimeout(() => { fitToStage(api, stage); hideBranding(stage); }, 500);
+            setTimeout(() => { applyPerspective(api, stage, spec.appName); hideBranding(stage); }, 500);
             finish('ready', result);
             resolve({
               api,
@@ -296,7 +299,7 @@
               failures: result.failures,
               stopWatching,
               measure: measureNow,
-              fit: () => { applyPerspective(api, stage); return measureNow(); },
+              fit: () => { applyPerspective(api, stage, spec.appName); return measureNow(); },
             });
           }).catch(reject);
         };
@@ -318,7 +321,23 @@
       });
   }
 
+  // Sahne parametreleri: HTML sürgüleri GeoGebra'daki serbest sayıları sürer.
+  function setParam(api, name, value) {
+    try {
+      api.setValue(name, value);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function setParams(api, params) {
+    (params || []).forEach((param) => setParam(api, param.name, param.value));
+  }
+
   window.MATEMATIK_GEOGEBRA = Object.freeze({
+    setParam,
+    setParams,
     DEPLOY_URL,
     BASE_PARAMS,
     BRANDING_SELECTOR,
