@@ -14,7 +14,9 @@
     showMenuBar: false,
     showToolBar: false,
     showToolBarHelp: false,
-    showAlgebraInput: false,
+    // GeoGebra'nın kendi giriş çubuğu: çizim alanının altında, ayrı bir bant olarak.
+    showAlgebraInput: true,
+    algebraInputPosition: 'bottom',
     showResetIcon: false,
     showZoomButtons: false,
     showFullscreenButton: false,
@@ -29,6 +31,7 @@
     errorDialogsActive: false,
     useBrowserForJS: true,
     preventFocus: true,
+    showKeyboardOnFocus: 'auto',
     borderColor: '#e3e9f1',
   });
 
@@ -291,7 +294,11 @@
             const stopWatching = watchSize(api, stage);
             const measureNow = () => measureCanvas(stage);
             // Perspektif değişikliği bazen tuvali yeniden ölçekliyor: kısa süre sonra bir kez daha oturt.
-            setTimeout(() => { applyPerspective(api, stage, spec.appName); hideBranding(stage); }, 500);
+            setTimeout(() => {
+              applyPerspective(api, stage, spec.appName);
+              hideBranding(stage);
+              styleInputBand(stage);
+            }, 500);
             finish('ready', result);
             resolve({
               api,
@@ -321,6 +328,46 @@
       });
   }
 
+  // GeoGebra'nın kendi giriş çubuğunu bir "bant" gibi işaretler: çizim alanı üstte,
+  // giriş alanı altta kalır. DOM yapısı sürüme göre değişebildiği için ölçüyle aranır.
+  function hasNativeInput(stage) {
+    if (!stage) return false;
+    try {
+      return Boolean(stage.querySelector('input:not([type="hidden"]), textarea, [contenteditable="true"]'));
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function styleInputBand(stage) {
+    if (!stage) return false;
+    let input = null;
+    try {
+      input = stage.querySelector('input:not([type="hidden"]), textarea, [contenteditable="true"]');
+    } catch (error) {
+      return false;
+    }
+    if (!input) return false;
+    const stageHeight = stage.clientHeight || stage.getBoundingClientRect().height || 0;
+    let node = input;
+    let band = null;
+    for (let depth = 0; depth < 6 && node && node !== stage; depth += 1) {
+      const rect = node.getBoundingClientRect();
+      if (rect.height > 0 && stageHeight > 0 && rect.height <= stageHeight * 0.6) band = node;
+      node = node.parentElement;
+    }
+    if (!band) return false;
+    try {
+      band.classList.add('ggb-input-band');
+      if (stageHeight > 0) band.style.minHeight = `${Math.round(stageHeight / 3)}px`;
+      band.style.display = 'flex';
+      band.style.alignItems = 'center';
+    } catch (error) {
+      return false;
+    }
+    return true;
+  }
+
   // Sahne parametreleri: HTML sürgüleri GeoGebra'daki serbest sayıları sürer.
   function setParam(api, name, value) {
     try {
@@ -338,6 +385,8 @@
   window.MATEMATIK_GEOGEBRA = Object.freeze({
     setParam,
     setParams,
+    hasNativeInput,
+    styleInputBand,
     DEPLOY_URL,
     BASE_PARAMS,
     BRANDING_SELECTOR,

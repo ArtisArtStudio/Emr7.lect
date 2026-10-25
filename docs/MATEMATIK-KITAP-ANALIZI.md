@@ -565,3 +565,66 @@ ilerleme kaydı.
 
 **Açık risk.** Gerçek GeoGebra davranışı (3B `SetPerspective("T")`, `Prism`, `setValue`) sandbox'ta
 ağ olmadığı için yalnız kullanıcı cihazında doğrulanabilir.
+
+## 17. Tur: GeoGebra'nın kendi giriş alanı, terim kartları, etkinlik + yapay zekâ
+
+Kullanıcı dört noktayı düzeltti: (1) sürgü isteği yanlış anlaşılmıştı — GeoGebra'nın **kendi
+giriş alanı** çerçevenin altında split bantta olmalı; (2) sayfa daha etkileşimli olmalı;
+(3) bütün terimler tek tek, **pay/payda** adlarıyla anlatılmalı; (4) “bu haftanın görevleri”
+etkinlik sorusuna dönüşmeli, çoktan seçmeli bile olsa **açıklama zorunlu** ve **yapay zekâ ile
+değerlendirilmeli**, diğer derslerle aynı görünümde. Ayrıca 3B/geometri sorularında GeoGebra ya da
+en azından görsel isteniyor.
+
+**1. GeoGebra'nın kendi giriş alanı (HTML sürgü paneli kaldırıldı).**
+`matematik-geogebra.js` artık `showAlgebraInput: true` + `algebraInputPosition: 'bottom'` ile
+açılıyor: giriş alanı çizim alanının **altında ayrı bir bant** olarak geliyor. `styleInputBand()`
+yüklenen DOM'da giriş alanını ölçüyle bulup `ggb-input-band` sınıfıyla biçimlendiriyor (üst çizgi,
+açık zemin, yükseklik ≈ sahnenin 1/3'ü). `hasNativeInput()` alan yoksa (GeoGebra sürümü değişirse)
+sahne kartındaki **yedek sürgü paneli** açılıyor; sürgüler yine `setValue` ile GeoGebra'yı sürüyor.
+Araç çubuğu kapalı kalıyor; `showAlgebraInput` denetimi `false` → `true` olarak güncellendi.
+
+**2. Her haftada birden çok etkileşim.** Şema `scene` → `scenes[]` oldu. 1, 3 ve 5. haftalara
+ikinci sahneler eklendi (ters sayı, `Sequence` ile kesir şeridi — pay/payda sürgüleri, payda
+eşitleme şeridi). Toplam 18 sahne, 15 farklı tür; her sahnede en az bir parametre var.
+
+**3. Terim kartları (tek tek, şekilli).** `term(word, definition, visual, where)`:
+her terim kendi kartında — tanım, “nerede karşımıza çıkar” satırı ve çoğunda `matematik-figure.js`
+ile çizilen küçük şekil (37 terim şekli). 3, 5 ve 6. haftalarda **Pay**, **Payda**, **Kesir
+çizgisi** ayrı kartlar; şekilde “PAY — üstteki sayı”, “PAYDA — alttaki sayı”, “KESİR ÇİZGİSİ”
+etiketleri oka bağlı olarak yazılı. `matematik-figure.js` 10 şekil üretir: etiketli kesir, kesir
+şeridi (boyalı), sayı doğrusu, izometrik prizma (boyut etiketli), katmanlı birim küpler, yansıma,
+orta dikme, açıortay, sütun grafiği, kesir çarpım alan modeli.
+
+**4. Görevler → etkinlikler (`matematik-etkinlikler.js` + `matematik-etkinlik.js`).**
+Her haftada **2 etkinlik** (toplam 30): çoktan seçmeli soru + **zorunlu açıklama** (en az 60
+karakter) + ölçüt listesi + ipucu. Değerlendirme iki katmanlı:
+- **Yerel kontrol** her zaman çalışır (anahtar gerekmez): seçim + açıklama uzunluğu + ölçüt
+  sözcük örtüşmesi; **doğru şık gösterilmez**, yalnızca yol gösterilir.
+- **Yapay zekâ** düğmesi ortak Groq ayarlarını (`#apiKey`, `#model`) kullanır; istem “doğru
+  seçeneği/cevabı ASLA yazma” kuralıyla kurulur, gelen metin cevap sızdırıyorsa değiştirilir,
+  eksik ölçütler listelenir. Ağ/anahtar yoksa durum satırı yol gösterir, yanıt kayıtlı kalır.
+Görünüm diğer çalışma alanlarıyla aynı: `activity-cards.css` kapsamına `#mathActivities`
+eklendi, aynı `.activity-card` / `.activity-top` / `.activity-icon` / `.question-card` düzeni
+kullanılıyor. Kayıt: `emr7lect.matematik.etkinlik.v1`.
+
+**5. Geometri ve 3B sorularında görsel/GeoGebra.** Sekiz geometri haftasının kısa kontrol
+sorularına şekil eklendi (prizma, hacim küpleri, yansıma, orta dikme). Geometri etkinliklerinin
+**tamamında** şekil var; 8, 10 ve 14. haftalarda ayrıca etkinlik kartının içinde açılan gömülü
+GeoGebra sahnesi (`data-math-etkinlik-scene`) var — prizma 3B, katmanlar 3B, yansıma 2B.
+
+**6. Denetimler.** `check-matematik-content.js`: 15 haftada ≥1 sahne, ≥18 sahne, 14+ farklı sahne
+türü, 30 etkinlik (3 şık, ölçüt ≥2, açıklama alt sınırı ≥40, dizgi lint, şekil çizilebilirliği,
+GeoGebra komutları), geometri etkinliklerinde şekil/GeoGebra zorunluluğu, terimlerde tanım +
+“nerede” + şekil, `#mathActivities` kapsamı, etkinlik modülünde Groq/anahtar/cevap koruması,
+CSS kuralları. `check-matematik.js`: `showAlgebraInput: true`, `algebraInputPosition: 'bottom'`,
+`styleInputBand`/`hasNativeInput`, sürgü köprüsü.
+
+**7. Doğrulama.** Tüm zorunlu denetimler, `node --check`, `git diff --check` temiz. jsdom:
+30 etkinlik, açıklama zorunluluğu, yerel değerlendirme (cevap sızdırmıyor), Groq isteğinin doğru
+kurulması (sistem isteminde cevap koruması + ölçütler), terim kartları ve şekiller, çok sahne,
+`ggb-input-band` işaretlemesi, giriş alanı yokken yedek sürgünün açılıp `setValue` çağırması,
+61 SVG. Ayrı bir jsdom koşusu yedek sürgü yolunu tek başına doğruluyor.
+
+**Açık risk.** Gerçek GeoGebra DOM'u (giriş bandının yeri, `Sequence` komutları, `setValue`) ağ
+olmadığı için yalnız kullanıcı cihazında doğrulanabilir; giriş alanı bulunamazsa yedek sürgü paneli
+devreye girer.
