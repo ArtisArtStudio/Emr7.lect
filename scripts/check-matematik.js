@@ -20,6 +20,8 @@ const FIG = sandbox.window.MATEMATIK_FIGURE;
 const scene = read('matematik-sahne.js');
 const figure = read('matematik-figure.js');
 const app = read('matematik.js');
+const kitap = read('matematik-kitap.js');
+const etkinlikler = read('matematik-etkinlikler.js');
 const css = read('matematik.css');
 const html = read('index.html');
 
@@ -40,7 +42,7 @@ SAHNE.types().forEach((type) => {
 });
 
 // 2. Dış bağımlılık sınırı: sahne çevrimdışı çalışır
-[scene, figure, app].forEach((source, index) => {
+[scene, figure, app, kitap, etkinlikler].forEach((source, index) => {
   const hosts = [...source.matchAll(/https?:\/\/([^/"'\s]+)/g)].map((match) => match[1]);
   hosts.forEach((host) => {
     assert.equal(host, 'www.w3.org', `Matematik kaynağı dış adres çağırmamalı: ${host} (${index + 1}. dosya).`);
@@ -94,7 +96,25 @@ assert.ok(html.indexOf('matematik-figure.js') < html.indexOf('matematik-content.
 assert.ok(/MATEMATIK_SAHNE2\.mount/.test(app), 'Uygulama sahneleri yerel motorla çizmeli.');
 assert.ok(/Sürgüler çizimin altında/.test(app), 'Öğrenciye sürgü konumu açıklanmalı.');
 
-// 7. Belge
+// 7. Kitabın bölüm akışı uygulamada görünür
+['NELER BİLİYORUZ?', 'BAŞLAYALIM', 'ÖĞRENELİM', 'DÜŞÜN-TARTIŞ-AÇIKLA', 'KATIL-UYGULA-KEŞFET', 'PROBLEM'].forEach((label) => {
+  assert.ok(app.includes(label), `Bölüm adı uygulamada yok: ${label}`);
+});
+assert.ok(/NELER ÖĞRENDİK\?/.test(app), 'NELER ÖĞRENDİK? bölümü basılmalı.');
+assert.ok(/TEMA ÖLÇME/.test(app), 'Tema ölçme kartı basılmalı.');
+assert.ok(/PERFORMANS GÖREVİ/.test(app), 'Performans görevi kartı basılmalı.');
+assert.ok(/BİLGİ KUTUSU/.test(app), 'Bilgi kutuları basılmalı.');
+assert.ok(/forStage/.test(app) && /forStage/.test(etkinlikler), 'Soru listesi bölüm bazında bağlanmalı.');
+assert.ok(/mountQuestions/.test(app) && /mountQuestions/.test(read('matematik-etkinlik.js')),
+  'Açıklamalı soru motoru bölümlere bağlanmalı.');
+assert.ok(/mathWeekBook/.test(app) || /math-week-book/.test(css), 'Hafta başlığı kitap akışını göstermeli.');
+assert.ok(/<p class="math-week-book">/.test(app), 'Hafta başlığında kitap akışı satırı olmalı.');
+assert.ok(!/s\.\s?\d{2,3}/.test(app) && !/sayfa \d/.test(app), 'Öğrenci metninde sayfa numarası olmamalı.');
+assert.ok(/matematik-kitap\.js/.test(html), 'index.html kitap akışı dosyasını yüklemeli.');
+assert.ok(html.indexOf('matematik-kitap.js') < html.indexOf('matematik-etkinlikler.js'),
+  'Kitap akışı etkinlik türeticisinden önce yüklenmeli.');
+
+// 8. Belge
 const notices = read('THIRD-PARTY-NOTICES.md');
 const analysis = read('docs/MATEMATIK-KITAP-ANALIZI.md');
 assert.ok(/GeoGebra/i.test(notices), 'THIRD-PARTY-NOTICES.md GeoGebra notunu korumalı.');

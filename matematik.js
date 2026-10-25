@@ -1,13 +1,37 @@
-/* 7. sınıf matematik alanı — haftalık konu anlatımı, etkileşimli keşif sahneleri, kısa kontrol ve etkinlikler. */
+/* 7. sınıf matematik alanı — ders kitabının bölüm akışını izleyen çalışma alanı.
+   Her hafta kitaptaki sırayla ilerler:
+   NELER BİLİYORUZ? → BAŞLAYALIM → ÖĞRENELİM (BİLGİ KUTUSU) → DÜŞÜN-TARTIŞ-AÇIKLA →
+   KATIL-UYGULA-KEŞFET → PROBLEM → PERFORMANS GÖREVİ → NELER ÖĞRENDİK? → TEMA ÖLÇME.
+   Etkinlik = soru: her soruda yazılı açıklama zorunludur, değerlendirme yapay zekâ ile yapılır.
+   Sahne ve şekiller yerel SVG motorlarıyla çizilir; sürgüler çizimin altındadır. */
 (() => {
   'use strict';
 
   const CONTENT = window.MATEMATIK_CONTENT;
-  if (!CONTENT) return;
+  const KITAP = window.MATEMATIK_KITAP;
+  if (!CONTENT || !KITAP) return;
 
   const STORAGE_KEY = 'emr7lect.matematik.v1';
   const EXAM_BY_WEEK = Object.freeze({ 8: '5 Kasım 2026' });
   const THEME_BY_ID = new Map(CONTENT.themes.map((theme) => [theme.id, theme]));
+
+  const STAGE = Object.freeze({
+    warmup: 'NELER BİLİYORUZ?',
+    start: 'BAŞLAYALIM',
+    learn: 'ÖĞRENELİM',
+    discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA',
+    explore: 'KATIL-UYGULA-KEŞFET',
+    problem: 'PROBLEM',
+  });
+
+  const STAGE_NOTE = Object.freeze({
+    warmup: 'Önceki bilgilerini yokla; cevabı yazmadan geçme.',
+    start: 'Kitabın açılış etkinliği. Soruyu kendi cümlelerinle yeniden kur.',
+    learn: 'Konu anlatımı ve bilgi kutuları; her kutu bir kuralı tek başına anlatır.',
+    discuss: 'Tartışma sorusu: düşünceni gerekçesiyle açıkla.',
+    explore: 'Katıl, uygula, keşfet: ölç, çiz, kaydet.',
+    problem: 'Problem çözme basamakları: anla → planla → çöz → kontrol et.',
+  });
 
   let state = loadState();
   let currentWeek = null;
@@ -30,10 +54,9 @@
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (error) { /* kota dolu olabilir */ }
   }
 
-  const escapeHTML = (value) => String(value)
+  const escapeHTML = (value) => String(value == null ? '' : value)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-  // Öğrenci metinleri dizgi motorundan geçer: $\frac{2}{3}$ gibi ifadeler gerçek kesre dönüşür.
   const MATH = window.MATEMATIK_MATH || null;
   const typeset = (segment) => {
     if (MATH && typeof MATH.render === 'function') {
@@ -44,7 +67,6 @@
 
   function rich(value) {
     const text = value == null ? '' : String(value);
-    // **kalın** vurgusu desteklenir; matematik parçaları dizgi motorundan geçer.
     return text.split(/(\*\*[^*]+\*\*)/g).map((segment) => (
       segment.length > 4 && segment.startsWith('**') && segment.endsWith('**')
         ? `<strong>${typeset(segment.slice(2, -2))}</strong>`
@@ -53,6 +75,7 @@
   }
 
   const weekById = (id) => CONTENT.weeks.find((week) => week.id === Number(id)) || null;
+  const bookOf = (id) => KITAP.weeks[Number(id)] || null;
 
   function renderWeekList() {
     const list = document.getElementById('mathWeekList');
@@ -94,57 +117,121 @@
     if (track) track.setAttribute('aria-valuenow', String(done));
   }
 
-  function sceneCard(scene, index, total) {
-    return `<section class="math-card math-scene-card" aria-labelledby="mathSceneTitle-${index}">
-      <h3 id="mathSceneTitle-${index}"><span class="math-step">2</span><span class="math-scene-kind">Keşif</span><span class="math-scene-name">${escapeHTML(scene.title)}</span>${total > 1 ? `<span class="math-scene-order">${index + 1}/${total}</span>` : ''}</h3>
-      <p class="math-note">${rich(scene.hint || '')}</p>
-      <div class="math-scene-frame">
-        <div class="math-scene-stage" id="mathSceneStage-${index}"></div>
-        <div class="math-scene-controls" id="mathSceneControls-${index}"></div>
-      </div>
-      <div class="math-scene-actions">
-        <button type="button" id="mathSceneReset-${index}">Başa al</button>
-        <span class="math-scene-tip">Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.</span>
-      </div>
-    </section>`;
+  /* ---------------- Bölüm parçaları ---------------- */
+
+  function sceneFrame(scene, id) {
+    if (!scene || !window.MATEMATIK_SAHNE2) return '';
+    return `<div class="math-scene-frame">
+      <div class="math-scene-stage" id="${id}-stage"></div>
+      <div class="math-scene-controls" id="${id}-controls"></div>
+    </div>
+    <div class="math-scene-actions">
+      <button type="button" id="${id}-reset">Başa al</button>
+      <span class="math-scene-tip">Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.</span>
+    </div>`;
   }
 
-  function scenesMarkup(week) {
-    const scenes = Array.isArray(week.scenes) ? week.scenes : [];
-    if (!scenes.length) return '';
-    return scenes.map((scene, index) => sceneCard(scene, index, scenes.length)).join('');
+  function figureBlock(figure) {
+    if (!figure || !window.MATEMATIK_FIGURE) return '';
+    const svg = window.MATEMATIK_FIGURE.render(figure.type, figure.options || {});
+    return svg ? `<figure class="math-check-figure">${svg}</figure>` : '';
   }
 
-  function checksMarkup(week) {
-    return week.checks.map((item, index) => {
-      const key = `${week.id}-${index}`;
-      const saved = state.checks[key];
-      const options = item.options.map((option, optionIndex) => {
-        const classes = ['math-option'];
-        if (saved && saved.solved && optionIndex === item.correct) classes.push('is-correct');
-        if (saved && saved.wrong === optionIndex) classes.push('is-wrong');
-        return `<button type="button" class="${classes.join(' ')}" data-check="${key}" data-option="${optionIndex}"${saved && saved.solved ? ' disabled' : ''}>
-          <span class="key">${'ABCD'[optionIndex]}</span><span>${rich(option)}</span>
-        </button>`;
-      }).join('');
-      const feedback = saved && saved.solved
-        ? `<p class="math-feedback" data-state="correct" data-feedback="${key}">${rich(item.explain)}</p>`
-        : saved && Number.isFinite(saved.wrong)
-          ? `<p class="math-feedback" data-state="hint" data-feedback="${key}">İpucu: ${rich(item.hint)}</p>`
-          : `<p class="math-feedback" data-feedback="${key}" hidden></p>`;
-      const figure = item.figure && window.MATEMATIK_FIGURE
-        ? `<figure class="math-check-figure">${window.MATEMATIK_FIGURE.render(item.figure, {})}</figure>` : '';
-      return `<div class="math-check-q" data-question="${key}">
-        <p class="prompt">${index + 1}. ${rich(item.prompt)}</p>
-        ${figure}
-        <div class="math-options">${options}</div>
-        ${feedback}
+  function boxesMarkup(boxes) {
+    if (!Array.isArray(boxes) || !boxes.length) return '';
+    return `<div class="math-knowledge">
+      <p class="math-knowledge-title">BİLGİ KUTUSU</p>
+      <div class="math-knowledge-grid">
+        ${boxes.map((box) => `<div class="math-knowledge-box">
+          <p class="math-knowledge-head">${rich(box.title)}</p>
+          <p>${rich(box.body)}</p>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  function blocksMarkup(blocks, scenes) {
+    if (!Array.isArray(blocks) || !blocks.length) return '';
+    return blocks.map((block, index) => {
+      const sceneId = `mathSceneInline-${scenes.week}-${scenes.stage}-${index}`;
+      if (block.scene) scenes.list.push({ scene: block.scene, id: sceneId });
+      return `<div class="math-block">
+        <h4>${rich(block.heading)}</h4>
+        ${(block.paragraphs || []).map((paragraph) => `<p>${rich(paragraph)}</p>`).join('')}
+        ${block.scene ? sceneFrame(block.scene, sceneId) : ''}
+        ${block.figure ? figureBlock(block.figure) : ''}
       </div>`;
     }).join('');
   }
 
+  function stepsMarkup(steps, result) {
+    if (!Array.isArray(steps) || !steps.length) return '';
+    return `<ol class="math-example-steps">${steps.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>
+      ${result ? `<p class="math-example-answer"><span>Sonuç</span>${rich(result)}</p>` : ''}`;
+  }
+
+  function stageCard(week, stage, index, scenes) {
+    const label = STAGE[stage.kind] || 'ETKİNLİK';
+    const sceneId = `mathScene-${week.id}-${index}`;
+    if (stage.scene) scenes.list.push({ scene: stage.scene, id: sceneId });
+    const questions = (window.MATEMATIK_ETKINLIKLER
+      ? window.MATEMATIK_ETKINLIKLER.forStage(week.id, index) : []);
+    const questionHost = questions.length
+      ? `<div class="math-etkinlik-list" id="mathQuestions-${week.id}-${index}"></div>`
+      : '';
+    return `<section class="math-card math-stage-card" data-kind="${stage.kind}" aria-labelledby="mathStage-${week.id}-${index}">
+      <h3 id="mathStage-${week.id}-${index}"><span class="math-step">${index + 1}</span><span class="math-scene-kind">${label}</span><span class="math-scene-name">${rich(stage.title || '')}</span></h3>
+      <p class="math-note">${STAGE_NOTE[stage.kind] || ''}</p>
+      ${(stage.context || []).map((paragraph) => `<p class="math-stage-context">${rich(paragraph)}</p>`).join('')}
+      ${stage.materials ? `<p class="math-materials"><strong>Malzeme:</strong> ${rich(stage.materials)}</p>` : ''}
+      ${stage.intro ? stage.intro.map((paragraph) => `<p class="math-stage-context">${rich(paragraph)}</p>`).join('') : ''}
+      ${blocksMarkup(stage.blocks, scenes)}
+      ${boxesMarkup(stage.boxes)}
+      ${stage.scene ? sceneFrame(stage.scene, sceneId) : ''}
+      ${stage.figure ? figureBlock(stage.figure) : ''}
+      ${stepsMarkup(stage.steps, stage.result)}
+      ${questionHost}
+    </section>`;
+  }
+
+  function performanceMarkup(week, performance) {
+    if (!performance) return '';
+    return `<section class="math-card math-performance">
+      <h3><span class="math-step">★</span><span class="math-scene-kind">PERFORMANS GÖREVİ</span><span class="math-scene-name">${rich(performance.title)}</span></h3>
+      ${(performance.context || []).map((paragraph) => `<p class="math-stage-context">${rich(paragraph)}</p>`).join('')}
+      <p class="math-knowledge-title">YAPILACAKLAR</p>
+      <ul class="math-points">${(performance.tasks || []).map((task) => `<li>${rich(task)}</li>`).join('')}</ul>
+      <p class="math-knowledge-title">DEĞERLENDİRME ÖLÇÜTLERİ</p>
+      <ul class="math-points">${(performance.criteria || []).map((item) => `<li>${rich(item)}</li>`).join('')}</ul>
+    </section>`;
+  }
+
+  function learnedMarkup(week, book) {
+    const titles = (book.stages || []).map((stage, index) => `<li><strong>${index + 1}. ${STAGE[stage.kind] || 'ETKİNLİK'}:</strong> ${rich(stage.title || '')}</li>`).join('');
+    const boxes = (book.stages || []).flatMap((stage) => (stage.boxes || []).map((box) => box.title));
+    return `<section class="math-card math-learned">
+      <h3><span class="math-step">✓</span><span class="math-scene-kind">NELER ÖĞRENDİK?</span><span class="math-scene-name">Bu haftanın kazanımları</span></h3>
+      <ol class="math-points math-learned-list">${titles}</ol>
+      ${boxes.length ? `<p class="math-note">Bu haftanın bilgi kutuları: ${boxes.map((title) => rich(title)).join(' · ')}</p>` : ''}
+      <p class="math-note" data-math-week-score="${week.id}"></p>
+    </section>`;
+  }
+
+  function examMarkup(week, book) {
+    if (!book.exam) return '';
+    const hasQuestions = (window.MATEMATIK_ETKINLIKLER
+      ? window.MATEMATIK_ETKINLIKLER.examActivities(week.id).length : 0);
+    return `<section class="math-card math-exam">
+      <h3><span class="math-step">◆</span><span class="math-scene-kind">TEMA ÖLÇME</span><span class="math-scene-name">${rich(book.exam.title)}</span></h3>
+      <p class="math-note">${rich(book.exam.note || '')}</p>
+      ${hasQuestions ? `<div class="math-etkinlik-list" id="mathExam-${week.id}"></div>` : ''}
+    </section>`;
+  }
+
   function termsMarkup(week) {
-    return week.terms.map((item) => {
+    const terms = Array.isArray(week.terms) ? week.terms : [];
+    if (!terms.length) return '';
+    const cards = terms.map((item) => {
       const figure = item.visual && window.MATEMATIK_FIGURE
         ? `<div class="math-term-figure">${window.MATEMATIK_FIGURE.render(item.visual, item.visualOptions || {})}</div>` : '';
       return `<article class="math-term-card">
@@ -156,110 +243,81 @@
         ${figure}
       </article>`;
     }).join('');
+    return `<section class="math-card" aria-labelledby="mathTermsTitle">
+      <h3 id="mathTermsTitle"><span class="math-step">T</span>Terimler, tek tek</h3>
+      <p class="math-note">Her terim kendi kartında: adı, tanımı ve nerede karşımıza çıktığı.</p>
+      <div class="math-terms">${cards}</div>
+    </section>`;
   }
 
-  function activitiesMarkup(week) {
-    return `<section class="math-card math-activities" aria-labelledby="mathActivitiesTitle">
-        <h3 id="mathActivitiesTitle"><span class="math-step">7</span>Bu haftanın etkinlikleri</h3>
-        <p class="math-note">Her etkinlikte önce seçeneği işaretle, sonra seçiminin gerekçesini yaz. Açıklama zorunlu; değerlendirme yapay zekâ ile yapılır ve doğru şık gösterilmez.</p>
-        <div id="mathActivities" data-week="${week.id}"></div>
-      </section>`;
-  }
-
-  function examplesMarkup(week) {
-    const examples = Array.isArray(week.examples) ? week.examples : [];
-    if (!examples.length) return '';
-    const cards = examples.map((item, index) => `<article class="math-example">
-        <h4><span class="math-example-no">Örnek ${index + 1}</span>${rich(item.title)}</h4>
-        <ol class="math-example-steps">${item.steps.map((step) => `<li>${rich(step)}</li>`).join('')}</ol>
-        <p class="math-example-answer"><span>Sonuç</span>${rich(item.answer)}</p>
-      </article>`).join('');
-    return `<section class="math-card" aria-labelledby="mathExamplesTitle">
-        <h3 id="mathExamplesTitle"><span class="math-step">3</span>Çözümlü örnekler</h3>
-        ${cards}
-      </section>`;
-  }
-
-  function weekMarkup(week) {
+  function weekMarkup(week, book) {
     const theme = THEME_BY_ID.get(week.theme);
     const exam = EXAM_BY_WEEK[week.id];
     const done = state.done.includes(week.id);
-    return `
+    const scenes = { week: week.id, stage: 0, list: [] };
+    const stages = (book.stages || []).map((stage, index) => {
+      scenes.stage = index;
+      return stageCard(week, stage, index, scenes);
+    }).join('');
+    return {
+      html: `
       <article class="math-week-head">
         <div class="tag">${escapeHTML(theme ? `${theme.no}. TEMA · ${theme.short.toUpperCase()}` : 'MATEMATİK')}</div>
-        <h2 id="mathWeekTitle">${week.id}. hafta · ${escapeHTML(week.topic)}</h2>
-        <p class="math-week-sub">${escapeHTML(week.date)} · haftada 5 ders saati · konu anlatımı, keşif, kısa kontrol</p>
+        <h2 id="mathWeekTitle" tabindex="-1">${week.id}. hafta · ${escapeHTML(week.topic)}</h2>
+        <p class="math-week-sub">${escapeHTML(week.date)} · haftada 5 ders saati</p>
+        <p class="math-week-book">Kitaptaki akış: ${escapeHTML(book.bookTopic || '')}</p>
         ${exam ? `<p class="math-week-exam" style="margin:8px 0 0">1. Sınav: ${escapeHTML(exam)}</p>` : ''}
       </article>
-
-      <section class="math-card math-summary" aria-labelledby="mathSummaryTitle">
-        <h3 id="mathSummaryTitle"><span class="math-step">1</span>Konu anlatımı</h3>
-        ${week.summary.map((paragraph) => `<p>${rich(paragraph)}</p>`).join('')}
-      </section>
-
-      ${scenesMarkup(week)}
-
-      ${examplesMarkup(week)}
-
-      <section class="math-card" aria-labelledby="mathPointsTitle">
-        <h3 id="mathPointsTitle"><span class="math-step">4</span>Ana noktalar</h3>
-        <ul class="math-points">${week.points.map((point) => `<li>${rich(point)}</li>`).join('')}</ul>
-      </section>
-
-      <section class="math-card" aria-labelledby="mathTermsTitle">
-        <h3 id="mathTermsTitle"><span class="math-step">5</span>Terimler, tek tek</h3>
-        <div class="math-terms">${termsMarkup(week)}</div>
-      </section>
-
-      <section class="math-card" aria-labelledby="mathCheckTitle">
-        <h3 id="mathCheckTitle"><span class="math-step">6</span>Kısa kontrol</h3>
-        <div class="math-check">${checksMarkup(week)}</div>
-      </section>
-
-      ${activitiesMarkup(week)}
-
+      ${stages}
+      ${performanceMarkup(week, book.performance)}
+      ${learnedMarkup(week, book)}
+      ${examMarkup(week, book)}
+      ${termsMarkup(week)}
       <section class="math-card">
         <div class="math-done">
           <p>Haftayı bitirdiysen işaretle; ilerleme bu tarayıcıya kaydedilir.</p>
           <button type="button" id="mathDoneBtn" class="${done ? 'is-done' : ''}">${done ? 'Tamamlandı ✓' : 'Bu haftayı tamamladım'}</button>
         </div>
-      </section>`;
+      </section>`,
+      scenes: scenes.list,
+    };
   }
 
-  function bindChecks(week) {
-    document.querySelectorAll('[data-check]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const [weekId, index] = button.dataset.check.split('-').map(Number);
-        if (weekId !== week.id) return;
-        const item = week.checks[index];
-        const chosen = Number(button.dataset.option);
-        const key = button.dataset.check;
-        if (chosen === item.correct) {
-          state.checks[key] = { solved: true };
-          saveState();
-          document.querySelectorAll(`[data-check="${key}"]`).forEach((optionButton) => {
-            optionButton.disabled = true;
-            if (Number(optionButton.dataset.option) === item.correct) optionButton.classList.add('is-correct');
-          });
-          const feedback = document.querySelector(`[data-feedback="${key}"]`);
-          if (feedback) {
-            feedback.hidden = false;
-            feedback.dataset.state = 'correct';
-            feedback.innerHTML = rich(item.explain);
-          }
-        } else {
-          state.checks[key] = { wrong: chosen };
-          saveState();
-          button.classList.add('is-wrong');
-          const feedback = document.querySelector(`[data-feedback="${key}"]`);
-          if (feedback) {
-            feedback.hidden = false;
-            feedback.dataset.state = 'hint';
-            feedback.innerHTML = `İpucu: ${rich(item.hint)}`;
-          }
-        }
-      });
+  /* ---------------- Bağlama ---------------- */
+
+  function mountScene(entry) {
+    const stage = document.getElementById(`${entry.id}-stage`);
+    const controls = document.getElementById(`${entry.id}-controls`);
+    const reset = document.getElementById(`${entry.id}-reset`);
+    if (!stage || !window.MATEMATIK_SAHNE2) return;
+    const instance = window.MATEMATIK_SAHNE2.mount(stage, controls, entry.scene);
+    if (reset && instance) reset.addEventListener('click', () => instance.reset());
+  }
+
+  function weekScore(week) {
+    const activitySource = window.MATEMATIK_ETKINLIKLER;
+    const engine = window.MATEMATIK_ETKINLIK;
+    if (!activitySource || !engine) return '';
+    const activities = activitySource.forWeek(week.id);
+    const answered = engine.answeredCount(activities);
+    return `${answered} / ${activities.length} etkinliği açıklamasıyla tamamladın.`;
+  }
+
+  function bindQuestions(week) {
+    const source = window.MATEMATIK_ETKINLIKLER;
+    const engine = window.MATEMATIK_ETKINLIK;
+    if (!source || !engine) return;
+    (bookOf(week.id).stages || []).forEach((stage, index) => {
+      const host = document.getElementById(`mathQuestions-${week.id}-${index}`);
+      const items = source.forStage(week.id, index);
+      if (!host || !items.length) return;
+      engine.mountQuestions(host, items);
     });
+    const examHost = document.getElementById(`mathExam-${week.id}`);
+    const examItems = source.examActivities(week.id);
+    if (examHost && examItems.length) engine.mountQuestions(examHost, examItems);
+    const score = document.querySelector(`[data-math-week-score="${week.id}"]`);
+    if (score) score.textContent = weekScore(week);
   }
 
   function bindDone(week) {
@@ -278,20 +336,11 @@
     });
   }
 
-  function bindScene(week, index) {
-    const stage = document.getElementById(`mathSceneStage-${index}`);
-    const controls = document.getElementById(`mathSceneControls-${index}`);
-    const reset = document.getElementById(`mathSceneReset-${index}`);
-    if (!stage || !window.MATEMATIK_SAHNE2) return;
-    const scene = (week.scenes || [])[index];
-    if (!scene) return;
-    const instance = window.MATEMATIK_SAHNE2.mount(stage, controls, scene);
-    if (reset && instance) reset.addEventListener('click', () => instance.reset());
-  }
-
   function selectWeek(id) {
     const week = weekById(id);
     if (!week) return;
+    const book = bookOf(week.id);
+    if (!book) return;
     currentWeek = week.id;
     const list = document.getElementById('mathWeekList');
     if (list) {
@@ -307,11 +356,11 @@
     if (!content) return;
     if (prompt) prompt.hidden = true;
     content.hidden = false;
-    content.innerHTML = weekMarkup(week);
-    (week.scenes || []).forEach((scene, index) => bindScene(week, index));
-    bindChecks(week);
+    const markup = weekMarkup(week, book);
+    content.innerHTML = markup.html;
+    markup.scenes.forEach(mountScene);
+    bindQuestions(week);
     bindDone(week);
-    if (window.MATEMATIK_ETKINLIK) window.MATEMATIK_ETKINLIK.mount(document.getElementById('mathActivities'), week.id);
     const title = document.getElementById('mathWeekTitle');
     if (title) title.focus({ preventScroll: true });
   }

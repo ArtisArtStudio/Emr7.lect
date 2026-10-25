@@ -1,442 +1,129 @@
-/* Matematik etkinlikleri — haftalık görevler yerine soru biçiminde etkinlikler.
-   Her etkinlikte günlük hayattan bir durum, tek doğru cevaplı bir soru **ve zorunlu
-   yazılı açıklama** vardır. Açıklama, ortak yapay zekâ koçuyla (Groq) ölçütlere göre
-   değerlendirilir; anahtar yoksa yerel ölçüt kontrolü yapılır. Doğru seçenek hiçbir
-   zaman gösterilmez; çeldiriciler tipik öğrenci hatalarını temsil eder. */
+/* Matematik etkinlikleri — ders kitabının etkinliklerinden türetilir.
+   Her hafta, kitaptaki bölüm zincirindeki sorular (BAŞLAYALIM, DÜŞÜN-TARTIŞ-AÇIKLA,
+   KATIL-UYGULA-KEŞFET, PROBLEM, TEMA ÖLÇME) etkinlik kartına dönüşür. Etkinlik = soru:
+   öğrenci cevabını yazar, açıklaması zorunludur ve yapay zekâ ile ölçütlere göre değerlendirilir.
+   Model cevap (thinking) hiçbir koşulda öğrenciye gösterilmez; yalnızca değerlendirmede kullanılır. */
 (() => {
   'use strict';
 
-  const FIGURE_NOTE = 'Şekli aşağıdaki etkileşimli sahnede de inceleyebilirsin.';
+  const KITAP = window.MATEMATIK_KITAP;
+  if (!KITAP) return;
 
-  function activity(config) {
-    return Object.freeze({
-      minChars: 60,
-      kind: 'secim',
-      ...config,
-    });
-  }
-
-  const WEEKS = {
-    1: [
-      activity({
-        id: 'm1-a1',
-        title: 'Otopark ve depo',
-        skill: 'Tam sayıları karşılaştırma',
-        instruction: 'Seçimini yaptıktan sonra “çünkü…” diye başlayan bir cümleyle gerekçeni yaz.',
-        prompt: 'Bir otelin asansör düğmelerinde bodrum katları negatif sayılarla gösteriliyor: otopark $-3$, depo ise $-7$. Depo, otoparka göre hangi yöndedir?',
-        options: ['Depo daha yukarıdadır, çünkü $-7 > -3$', 'Depo daha aşağıdadır, çünkü $-7 < -3$', 'Aynı seviyededir, ikisi de bodrumdadır'],
-        correct: 1,
-        figure: { type: 'sayi-dogrusu', options: { from: -8, to: 2, mark: -7 } },
-        rubric: ['$-7$ sayısının $-3$’ten küçük olduğunu söyleme', 'Sayı doğrusunda daha solda olmanın daha aşağı (daha küçük) anlamına geldiğini belirtme'],
-        hint: 'Negatif sayıda rakam büyüdükçe değer küçülür; sayı doğrusunda ikisinin yerini düşün.',
-      }),
-      activity({
-        id: 'm1-a2',
-        title: 'Su yüzeyi',
-        skill: 'Sıfırın konumu',
-        instruction: 'Kısa bir gerekçe yaz: cevabını hangi bilgiye dayandırdın?',
-        prompt: 'Bir dalgıç, su yüzeyini $0$ kabul ederek derinlikleri kaydediyor. Dalgıç tam su yüzeyinde beklediğinde yükseklik için hangisi doğrudur?',
-        options: ['Pozitif tam sayıdır', 'Negatif tam sayıdır', 'Ne pozitif ne negatiftir'],
-        correct: 2,
-        rubric: ['Sıfırın bir yön belirtmediğini açıklama', 'Sıfırın başlangıç noktası olduğunu belirtme'],
-        hint: 'Yön belirtmeyen tek sayı hangisidir?',
-      }),
-    ],
-    2: [
-      activity({
-        id: 'm2-a1',
-        title: 'Hedefe uzaklık',
-        skill: 'Mutlak değer',
-        instruction: 'Seçimini yaptıktan sonra uzaklık ile konum arasındaki farkı yaz.',
-        prompt: 'Bir hedef vurma oyununda ekran, oyuncunun hedeften uzaklığını mutlak değerle gösteriyor. Oyuncunun konumu $-9$ ise hedeften uzaklığı kaç birimdir?',
-        options: ['$-9$ birim', '$0$ birim', '$9$ birim'],
-        correct: 2,
-        rubric: ['Mutlak değerin sıfıra uzaklık olduğunu söyleme', 'Uzaklığın negatif olamayacağını belirtme'],
-        hint: 'Uzaklık yön belirtmez; eksi işareti yalnızca konumun yönünü söyler.',
-      }),
-      activity({
-        id: 'm2-a2',
-        title: 'Listeden çıkar',
-        skill: 'Rasyonel sayı tanımı',
-        instruction: 'Neden o sayının listeden çıkarılması gerektiğini bir örnekle açıkla.',
-        prompt: 'Bir öğrenci rasyonel sayı listesine $\\frac{7}{3}$, $-2{,}5$ ve $\\sqrt{2}$ sayılarını yazdı. Listeden hangisi çıkarılmalıdır?',
-        options: ['$\\frac{7}{3}$', '$-2{,}5$', '$\\sqrt{2}$'],
-        correct: 2,
-        figure: { type: 'pay-payda', options: { num: 7, den: 3, mark: 'line' } },
-        rubric: ['Rasyonel sayının iki tam sayının oranı olarak yazılabildiğini belirtme', '$\\sqrt{2}$’nin ondalık gösteriminin devirsiz olduğunu söyleme'],
-        hint: 'Bir sayı, iki tam sayının bölümü biçiminde yazılabiliyorsa rasyoneldir.',
-      }),
-    ],
-    3: [
-      activity({
-        id: 'm3-a1',
-        title: 'Tarifteki kesir',
-        skill: 'Pay ve payda',
-        instruction: 'Kesrin altındaki ve üstündeki sayıların görevini ayrı ayrı yaz.',
-        prompt: 'Bir kek tarifi $\\frac{3}{4}$ su bardağı süt istiyor. Tarifteki $4$ sayısı neyi gösterir?',
-        options: ['Sütün kaç eşit parçaya ayrıldığını, yani paydayı', 'Kaç parça alındığını, yani payı', 'Toplam kaç bardak süt gerektiğini'],
-        correct: 0,
-        figure: { type: 'pay-payda', options: { num: 3, den: 4, mark: 'all' } },
-        rubric: ['Paydanın bütünün kaç eş parçaya ayrıldığını gösterdiğini söyleme', 'Payın alınan parça sayısı olduğunu belirtme'],
-        hint: 'Kesir çizgisinin altındaki sayı bütünün kaça bölündüğünü söyler.',
-      }),
-      activity({
-        id: 'm3-a2',
-        title: 'Pil göstergesi',
-        skill: 'Kesir – yüzde ilişkisi',
-        instruction: 'Kesri yüzdeye nasıl çevirdiğini işlemle göster.',
-        prompt: 'Bir telefonun pil göstergesi, bataryayı $4$ eşit parçaya ayırıyor. $3$ parça dolu olduğuna göre pil yüzde kaç doludur?',
-        options: ['$\\frac{3}{4}$ yani $\\%75$', '$\\%34$', '$\\%43$'],
-        correct: 0,
-        figure: { type: 'kesir-serit', options: { total: 4, shaded: 3 } },
-        rubric: ['$\\frac{3}{4}$ kesrini $100$ paydalı kesre çevirdiğini gösterme', 'Pay ve paydayı aynı sayıyla çarpmanın değeri değiştirmediğini belirtme'],
-        hint: 'Paydayı $100$ yapmak için $4$ sayısını kaçla çarptığını bul.',
-      }),
-    ],
-    4: [
-      activity({
-        id: 'm4-a1',
-        title: 'Dalgıç',
-        skill: 'Tam sayılarda çıkarma',
-        instruction: 'İşlemi ve sonucu birlikte yaz; işaretlerin nasıl değiştiğini açıkla.',
-        prompt: 'Bir dalgıç deniz yüzeyinin $9$ m altındadır, yani konumu $-9$ m’dir. $4$ m yukarı çıkıyor. Dalgıcın yeni konumu kaç metredir?',
-        options: ['$-5$ m', '$+5$ m', '$-13$ m'],
-        correct: 0,
-        rubric: ['Yukarı çıkmanın pozitif yönde değişim olduğunu belirtme', '$(-9) + (+4)$ işlemini doğru yapma'],
-        hint: 'Yukarı çıkmak sayı doğrusunda sağa gitmektir.',
-      }),
-      activity({
-        id: 'm4-a2',
-        title: 'Kafede hesap',
-        skill: 'İşlem öncesi',
-        instruction: 'Hangi işlemi önce yaptığını ve nedenini yaz.',
-        prompt: 'Bir kafede su $2$ TL, simit $4$ TL’dir. $1$ su ve $3$ simit alan biri kaç TL öder?',
-        options: ['$18$ TL', '$20$ TL', '$14$ TL'],
-        correct: 2,
-        rubric: ['Çarpmayı toplamadan önce yaptığını söyleme', '$3 \\cdot 4 = 12$ ve $12 + 2 = 14$ adımlarını gösterme'],
-        hint: 'Çarpma ve bölme, toplama ve çıkarmadan önce yapılır.',
-      }),
-    ],
-    5: [
-      activity({
-        id: 'm5-a1',
-        title: 'İki tepsi pizza',
-        skill: 'Rasyonel sayılarda toplama',
-        instruction: 'Paydaları nasıl eşitlediğini adım adım yaz.',
-        prompt: 'Bir tepside pizzanın $\\frac{1}{2}$’si, başka bir tepsidekinin $\\frac{1}{3}$’ü kaldı. İki kalan parça birleştirilirse toplam kaç pizza olur?',
-        options: ['$\\frac{2}{5}$', '$\\frac{5}{6}$', '$\\frac{1}{6}$'],
-        correct: 1,
-        figure: { type: 'kesir-serit', options: { total: 6, shaded: 5 } },
-        rubric: ['Paydaları $6$’da eşitlediğini gösterme', 'Yalnız payları toplamanın yanlış olduğunu belirtme'],
-        hint: '$\\frac{1}{2} = \\frac{3}{6}$ ve $\\frac{1}{3} = \\frac{2}{6}$; paydalar eşitlenmeden toplanmaz.',
-      }),
-      activity({
-        id: 'm5-a2',
-        title: 'Eksik bal',
-        skill: 'İşaretli kesirlerle çıkarma',
-        instruction: 'İşlemi yaz ve sonucun neden pozitif olduğunu açıkla.',
-        prompt: 'Bir kavanozda $\\frac{3}{4}$ kg bal var. Bir tarif $\\frac{5}{4}$ kg bal istiyor. Tarif için kaç kg bal eksiktir?',
-        options: ['$-\\frac{1}{2}$ kg', '$\\frac{1}{2}$ kg', '$2$ kg'],
-        correct: 1,
-        rubric: ['Eksik miktarı büyük olandan küçük olanı çıkararak bulduğunu söyleme', '$\\frac{5}{4} - \\frac{3}{4} = \\frac{2}{4} = \\frac{1}{2}$ işlemini gösterme'],
-        hint: 'Eksik miktar bir uzunluktur, negatif çıkmaz; $\\frac{5}{4} - \\frac{3}{4}$ işlemini yap.',
-      }),
-    ],
-    6: [
-      activity({
-        id: 'm6-a1',
-        title: 'Gezideki kız öğrenciler',
-        skill: 'Kesirlerde çarpma',
-        instruction: 'Çarpma işlemini ve sadeleştirmeyi birlikte göster.',
-        prompt: 'Bir sınıfın $\\frac{3}{4}$’ü geziye katıldı. Geziye katılanların $\\frac{2}{3}$’ü kız öğrencidir. Sınıfın kaçta kaçı kız öğrencidir?',
-        options: ['$\\frac{5}{7}$', '$\\frac{1}{2}$', '$\\frac{6}{7}$'],
-        correct: 1,
-        figure: { type: 'kesir-carpim', options: {} },
-        rubric: ['İki kesri çarptığını gösterme', '$\\frac{6}{12}$ kesrini $\\frac{1}{2}$ olarak sadeleştirme'],
-        hint: 'Bir bütünün kesir kadarının yine kesir kadarını bulmak çarpmadır.',
-      }),
-      activity({
-        id: 'm6-a2',
-        title: 'Boyacının hesabı',
-        skill: 'Kesirlerde bölme',
-        instruction: 'Bölmeyi çarpmaya nasıl çevirdiğini yaz.',
-        prompt: 'Bir boyacı $\\frac{3}{4}$ litre boya ile $\\frac{1}{2}$ m² duvar boyuyor. Aynı boyayla $1$ litre kullanıldığında kaç m² duvar boyanır?',
-        options: ['$\\frac{3}{8}$ m²', '$\\frac{5}{4}$ m²', '$\\frac{2}{3}$ m²'],
-        correct: 2,
-        rubric: ['Bölmeyi, ikinci kesrin tersiyle çarpmaya çevirdiğini gösterme', '$\\frac{1}{2} \\cdot \\frac{4}{3} = \\frac{2}{3}$ işlemini yazma'],
-        hint: 'Bir litrenin kaç m² boyadığını bulmak için m² miktarını litreye böl.',
-      }),
-    ],
-    7: [
-      activity({
-        id: 'm7-a1',
-        title: 'Yanlış cevabı bul',
-        skill: 'Hata analizi',
-        instruction: 'Hatanın hangi adımda olduğunu ve doğrusunu yaz.',
-        prompt: 'Bir öğrenci pizzanın $\\frac{1}{2}$’si ile $\\frac{1}{3}$’ünü toplarken $\\frac{2}{5}$ buldu. Hata nerede?',
-        options: ['Paydalar eşitlenmeden paylar toplanmış', 'Sonuç sadeleştirilmemiş', 'Kesirler ters yazılmış'],
-        correct: 0,
-        figure: { type: 'kesir-serit', options: { total: 6, shaded: 5 } },
-        rubric: ['Paydalar farklıyken payların doğrudan toplanamayacağını söyleme', 'Doğru sonucun $\\frac{5}{6}$ olduğunu gösterme'],
-        hint: 'Paydalar farklıysa önce eşitlenir; sonra paylar toplanır.',
-      }),
-      activity({
-        id: 'm7-a2',
-        title: 'İşlem sırası hatası',
-        skill: 'İşlem öncesi ve hata analizi',
-        instruction: 'Doğru sonucu ve hatalı adımı birlikte yaz.',
-        prompt: 'Bir öğrenci $18 \\div 3 \\cdot 2$ işlemini önce $3 \\cdot 2 = 6$, sonra $18 \\div 6 = 3$ yaparak çözdü. Doğru sonuç kaçtır?',
-        options: ['$12$', '$3$', '$27$'],
-        correct: 0,
-        rubric: ['Çarpma ve bölmenin aynı öncelikte olduğunu söyleme', 'Soldan sağa uygulandığında $18 \\div 3 = 6$, $6 \\cdot 2 = 12$ olduğunu gösterme'],
-        hint: 'Aynı öncelikteki işlemler soldan sağa yapılır.',
-      }),
-    ],
-    8: [
-      activity({
-        id: 'm8-a1',
-        title: 'Hediye kutusu',
-        skill: 'Cisim elemanları',
-        instruction: 'Ayrıt sayısını nasıl bulduğunu (yüz sayısından) yaz.',
-        prompt: 'Bir hediye kutusunun bütün ayrıtlarına şerit çekilecek. Dikdörtgenler prizması biçimindeki bu kutuda kaç ayrıt vardır?',
-        options: ['$6$', '$12$', '$8$'],
-        correct: 1,
-        scene: {
-          type: 'prizma3b',
-          title: 'Prizmayı boyutlarıyla incele',
-          params: [
-            { name: 'a', label: 'Genişlik', min: 1, max: 6, step: 1, value: 3 },
-            { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 2 },
-            { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 2 },
-          ],
-        },
-        rubric: ['$6$ yüzün her birinde $4$ ayrıt olduğunu söyleme', 'Her ayrıtın iki yüze ait olduğu için ikiye bölündüğünü belirtme'],
-        hint: '$6$ yüz $\\cdot 4$ ayrıt $= 24$; her ayrıt iki kez sayıldı.',
-      }),
-      activity({
-        id: 'm8-a2',
-        title: 'Küplerle yapı',
-        skill: 'Görünümler',
-        instruction: 'Hangi bilginin kesin, hangisinin tahmin olduğunu yaz.',
-        prompt: 'Beş eş küple kurulan bir yapı önden bakıldığında $3$ kare genişliğinde ve $2$ kare yüksekliğinde görünüyor. Bu görünümden kesinlikle çıkan sonuç hangisidir?',
-        options: ['En yüksek sütun $2$ küptür', 'Yapıda $3$ küp vardır', 'Yapıda $6$ küp vardır'],
-        correct: 0,
-        figure: { type: 'hacim', options: { cols: 3, rows: 2, layers: 2 } },
-        rubric: ['Önden görünen yüksekliğin en yüksek sütunu verdiğini söyleme', 'Toplam küp sayısının bu görünümden bulunamayacağını belirtme'],
-        hint: 'Önden bakış yükseklik ve genişlik verir; derinlik bilgisi yoktur.',
-      }),
-    ],
-    9: [
-      activity({
-        id: 'm9-a1',
-        title: 'Kutu kaplama',
-        skill: 'Yüzey alanı',
-        instruction: 'Altı yüzün alanını ayrı ayrı yazıp topla.',
-        prompt: 'Ayrıtları $2$ cm, $3$ cm ve $4$ cm olan dikdörtgenler prizması biçimindeki bir kutu tamamen kaplanacak. Kaç cm² kâğıt gerekir?',
-        options: ['$46$ cm²', '$52$ cm²', '$24$ cm²'],
-        correct: 2,
-        figure: { type: 'prizma', options: { a: 4, b: 3, c: 2 } },
-        rubric: ['Karşılıklı yüzlerin eş olduğunu söyleme', '$2 \\cdot (2 \\cdot 3 + 2 \\cdot 4 + 3 \\cdot 4) = 52$ işlemini gösterme'],
-        hint: 'Üç farklı yüzün alanını bul, topla, ikiyle çarp.',
-      }),
-      activity({
-        id: 'm9-a2',
-        title: 'Açınım',
-        skill: 'Açınım',
-        instruction: 'Açınımdaki parçaların hangi yüzlere karşılık geldiğini yaz.',
-        prompt: 'Bir kutu, karton üzerine açınımı çizilerek yapılacak. Dikdörtgenler prizmasının açınımında kaç dikdörtgen bulunur?',
-        options: ['$4$', '$6$', '$12$'],
-        correct: 1,
-        figure: { type: 'prizma', options: { a: 5, b: 3, c: 2 } },
-        rubric: ['Açınımdaki her parçanın bir yüze karşılık geldiğini söyleme', 'Prizmada $6$ yüz olduğunu belirtme'],
-        hint: 'Açınımı katladığında kaç yüz oluşuyorsa o kadar parça vardır.',
-      }),
-    ],
-    10: [
-      activity({
-        id: 'm10-a1',
-        title: 'Akvaryum',
-        skill: 'Hacim bağıntısı',
-        instruction: 'Hacmi nasıl hesapladığını ve litreye nasıl çevirdiğini yaz.',
-        prompt: 'Boyutları $5$ dm, $4$ dm ve $3$ dm olan dikdörtgenler prizması biçimindeki bir akvaryum ağzına kadar doldurulacak. Akvaryum kaç litre su alır?',
-        options: ['$12$ litre', '$60$ litre', '$94$ litre'],
-        correct: 1,
-        scene: {
-          type: 'hacim',
-          title: 'Katmanları say',
-          params: [
-            { name: 'a', label: 'Taban uzunluğu', min: 1, max: 4, step: 1, value: 3 },
-            { name: 'b', label: 'Taban genişliği', min: 1, max: 4, step: 1, value: 2 },
-            { name: 'h', label: 'Katman sayısı', min: 1, max: 4, step: 1, value: 2 },
-          ],
-        },
-        rubric: ['Hacmin taban alanı ile yüksekliğin çarpımı olduğunu söyleme', '$1$ dm³ $= 1$ litre eşitliğini kullanma'],
-        hint: '$5 \\cdot 4 \\cdot 3 = 60$ dm³; $1$ dm³ tam olarak $1$ litredir.',
-      }),
-      activity({
-        id: 'm10-a2',
-        title: 'Sürahi kaç litre?',
-        skill: 'Hacim ve kapasite ayrımı',
-        instruction: 'Neden o büyüklüğün hesaplandığını açıkla.',
-        prompt: 'Bir sürahinin içine kaç litre ayran alacağını bulmak isteyen biri hangi büyüklüğü hesaplamalıdır?',
-        options: ['Yüzey alanını', 'Hacmini', 'Yüksekliğini tek başına'],
-        correct: 1,
-        figure: { type: 'hacim', options: { cols: 3, rows: 2, layers: 2 } },
-        rubric: ['Hacmin içine alınan miktarı verdiğini söyleme', 'Yüzey alanının dış yüzü ölçtüğünü belirtme'],
-        hint: 'İçine dolan miktar ile dış yüzeyin alanı farklı büyüklüklerdir.',
-      }),
-    ],
-    11: [
-      activity({
-        id: 'm11-a1',
-        title: 'Süt kutusu',
-        skill: 'Hacim birimleri',
-        instruction: 'Birimler arasındaki geçişi çarpanlarla göster.',
-        prompt: 'Bir süt kutusunun üzerinde $3{,}5$ dm³ yazıyor. Bu kaç cm³’tür?',
-        options: ['$3500$ cm³', '$35\\,000$ cm³', '$350$ cm³'],
-        correct: 0,
-        scene: {
-          type: 'birim-donusum',
-          title: 'Desimetreküp–litre–santimetreküp',
-          params: [{ name: 's', label: 'Ayrıt (dm)', min: 1, max: 6, step: 1, value: 2 }],
-        },
-        rubric: ['$1$ dm $= 10$ cm olduğunu söyleme', 'Hacimde geçişin küpü alınarak $1000$ ile çarpma olduğunu belirtme'],
-        hint: '$1$ dm$^3$ $= 1000$ cm$^3$; $3{,}5 \\cdot 1000$ işlemini yap.',
-      }),
-      activity({
-        id: 'm11-a2',
-        title: 'Su şişesi',
-        skill: 'Litre – santimetreküp',
-        instruction: 'Eşitliği yaz ve nedenini açıkla.',
-        prompt: 'Bir markette $1$ litrelik su şişesinin hacmi kaç cm³’tür?',
-        options: ['$10\\,000$ cm³', '$100$ cm³', '$1000$ cm³'],
-        correct: 2,
-        figure: { type: 'hacim', options: { cols: 2, rows: 2, layers: 2 } },
-        rubric: ['$1$ litrenin $1$ dm$^3$ olduğunu söyleme', '$1$ dm$^3 = 1000$ cm$^3$ olduğunu belirtme'],
-        hint: 'Litre, desimetreküpün diğer adıdır.',
-      }),
-    ],
-    12: [
-      activity({
-        id: 'm12-a1',
-        title: 'Kütüphane anketi',
-        skill: 'Veri türleri',
-        instruction: 'Verinin sayıyla mı, sözle mi ifade edildiğini yaz.',
-        prompt: 'Bir okul kütüphanesi “En çok hangi tür kitap okursun?” sorusunu soruyor. Alınan cevaplar hangi veri türündedir?',
-        options: ['Nicel, sürekli', 'Kategorik', 'Nicel, kesikli'],
-        correct: 1,
-        figure: { type: 'sutun-grafik', options: { values: [6, 4, 5], names: ['Macera', 'Şiir', 'Bilim'] } },
-        rubric: ['Cevapların gruplara (kategorilere) ayrıldığını söyleme', 'Sayılamayan, ölçülemeyen bir özellik olduğunu belirtme'],
-        hint: 'Cevaplar sayı değil, grup adıdır.',
-      }),
-      activity({
-        id: 'm12-a2',
-        title: 'Yönlendirici soru',
-        skill: 'Veri toplama',
-        instruction: 'Yönlendirici sorunun cevabı nasıl etkilediğini örnekle açıkla.',
-        prompt: 'Bir öğrenci spor alışkanlığını araştırıyor. Aşağıdaki sorulardan hangisi yönlendirici **değildir**?',
-        options: ['“Sence de spor yapmak en iyi alışkanlık değil mi?”', '“Boş zamanında en çok ne yapıyorsun?”', '“Sporun yararlı olduğunu kabul ediyor musun?”'],
-        correct: 1,
-        rubric: ['Yönlendirici sorunun cevabı önceden ima ettiğini söyleme', 'Açık uçlu sorunun seçenek sunmadığını belirtme'],
-        hint: 'Yönlendirici soru, istenen cevabı sorunun içinde taşır.',
-      }),
-    ],
-    13: [
-      activity({
-        id: 'm13-a1',
-        title: 'Haftalık okuma',
-        skill: 'Ortalama ve ortanca',
-        instruction: 'İki ölçüyü ayrı ayrı hesaplayıp farkı yorumla.',
-        prompt: 'Bir öğrenci beş günde sırasıyla $5, 7, 7, 9, 22$ dakika kitap okudu. Bu veri için hangisi doğrudur?',
-        options: ['Ortalama ve ortanca ikisi de $10$', 'Ortalama $7$, ortanca $10$', 'Ortalama $10$, ortanca $7$'],
-        correct: 2,
-        figure: { type: 'sutun-grafik', options: { values: [5, 7, 7, 9, 22], names: ['1', '2', '3', '4', '5'] } },
-        rubric: ['Ortalamayı bulurken $50$ toplamını $5$’e böldüğünü gösterme', 'Sıralı listede ortadaki değerin $7$ olduğunu söyleme'],
-        hint: 'Ortanca, sıralanmış veride tam ortadaki değerdir; uç değerden etkilenmez.',
-      }),
-      activity({
-        id: 'm13-a2',
-        title: 'Broşürdeki grafik',
-        skill: 'Grafik okuma',
-        instruction: 'Eksenin başlangıç değerinin etkisini açıkla.',
-        prompt: 'Bir okul broşüründeki sütun grafiğinde dikey eksen $90$’dan başlıyor. Bu grafik neden yanıltıcıdır?',
-        options: ['Küçük farklar büyük göründüğü için', 'Sütun sayısı az olduğu için', 'Renkler uyumsuz olduğu için'],
-        correct: 0,
-        rubric: ['Eksenin sıfırdan başlamadığını söyleme', 'Küçük farkların abartılı göründüğünü örnekle açıklama'],
-        hint: 'Eksen sıfırdan başlamazsa sütunların yükseklik oranı gerçeği yansıtmaz.',
-      }),
-    ],
-    14: [
-      activity({
-        id: 'm14-a1',
-        title: 'Krokide ağaç',
-        skill: 'Yansıma',
-        instruction: 'Koordinatların hangisinin işaret değiştirdiğini yaz.',
-        prompt: 'Bir park krokisinde ağaç $A(3, -2)$ noktasındadır. Yürüyüş yolu $y$ ekseni boyunca uzanıyor ve ağacın yolun diğer yanındaki görüntüsü işaretlenecek. Görüntü hangi noktadadır?',
-        options: ['$(-3, -2)$', '$(3, 2)$', '$(-3, 2)$'],
-        correct: 0,
-        figure: { type: 'yansima', options: {} },
-        scene: {
-          type: 'yansima',
-          title: 'Yansımayı izle',
-          params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -3, max: 3, step: 1, value: 0 }],
-        },
-        rubric: ['$y$ eksenine göre yansımada apsisin işaret değiştirdiğini söyleme', 'Ordinatın aynı kaldığını belirtme'],
-        hint: '$y$ ekseni ayna ise yatay uzaklık yön değiştirir, dikey konum değişmez.',
-      }),
-      activity({
-        id: 'm14-a2',
-        title: 'Aynadaki şekil',
-        skill: 'Dönüşüm özellikleri',
-        instruction: 'Korunan ve değişen özellikleri karşılaştır.',
-        prompt: 'Bir kâğıt şekil, ayna doğrusuna göre yansıtılıyor. Bu dönüşümde aşağıdakilerden hangisi değişir?',
-        options: ['Kenar uzunlukları', 'Açı ölçüleri', 'Yönelimi'],
-        correct: 2,
-        figure: { type: 'yansima', options: {} },
-        rubric: ['Yansımada uzunluk ve açıların korunduğunu söyleme', 'Şeklin sağ-sol yönünün ters döndüğünü belirtme'],
-        hint: 'Aynaya baktığında yüzün aynı büyüklükte ama ters yönde görünür.',
-      }),
-    ],
-    15: [
-      activity({
-        id: 'm15-a1',
-        title: 'Kuyu nerede?',
-        skill: 'Orta dikme',
-        instruction: 'Neden o doğru üzerinde olması gerektiğini açıkla.',
-        prompt: 'İki köy, $A$ ve $B$ noktalarında. Bu iki köye eşit uzaklıkta olacak bir su kuyusu kazılacak. Kuyunun yeri nerede olmalıdır?',
-        options: ['$AB$’ye paralel bir doğru üzerinde', 'Yalnız $AB$’nin tam orta noktasında', '$AB$ doğru parçasının orta dikmesi üzerinde'],
-        correct: 2,
-        figure: { type: 'ortadikme', options: {} },
-        rubric: ['Orta dikmenin uçlara eşit uzaklıktaki noktaların yeri olduğunu söyleme', 'Bu noktaların birden çok olduğunu belirtme'],
-        hint: 'İki noktaya eşit uzaklıktaki noktalar bir doğru oluşturur.',
-      }),
-      activity({
-        id: 'm15-a2',
-        title: 'Bahçedeki fıskiye',
-        skill: 'Açıortay',
-        instruction: 'Açıortayın iki özelliğini birlikte yaz.',
-        prompt: 'Bir bahçenin köşesinde iki çit dik açıyla birleşiyor. Fıskiye, iki çite eşit uzaklıkta olacak biçimde yerleştirilecek. Fıskiye hangi doğru üzerinde olmalıdır?',
-        options: ['Köşeden çıkan açıortay üzerinde', 'Çitlerden birine paralel bir doğru üzerinde', 'Köşeden çıkan ve çitlerden birine dik olan doğru üzerinde'],
-        correct: 0,
-        figure: { type: 'aciortay', options: {} },
-        rubric: ['Açıortayın açıyı iki eş açıya böldüğünü söyleme', 'Açıortay üzerindeki noktaların kollara eşit uzaklıkta olduğunu belirtme'],
-        hint: 'İki kola eşit uzaklıktaki noktalar açıortayı oluşturur.',
-      }),
-    ],
+  const STAGE_LABEL = {
+    warmup: 'NELER BİLİYORUZ?',
+    start: 'BAŞLAYALIM',
+    learn: 'ÖĞRENELİM',
+    discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA',
+    explore: 'KATIL-UYGULA-KEŞFET',
+    problem: 'PROBLEM',
+    exam: 'TEMA ÖLÇME',
   };
 
-  function forWeek(weekId) {
-    return WEEKS[Number(weekId)] || [];
+  /* Açıklama ölçütleri bölüme göre yazılır; model cevabı asla sızdırmaz. */
+  const RUBRIC = {
+    warmup: ['Önceki bilgini hangi kavrama dayandırdığını yaz', 'Sonucu sayı ya da ifadeyle belirt'],
+    start: ['Soruyu kendi cümlelerinle yeniden ifade et', 'Sonucu yaz ve nasıl bulduğunu bir cümleyle açıkla'],
+    learn: ['Tanımı kendi cümlelerinle yaz', 'Sonucu işlemle birlikte göster'],
+    discuss: ['Düşünceni gerekçesiyle yaz', 'Karşıt görüşün neden yanlış olduğunu belirt'],
+    explore: ['Gözlemini veya ölçümünü yaz', 'Sonucu sayı, tablo ya da çizimle destekle'],
+    problem: ['Hangi bilgilerin verildiğini yaz', 'Kullandığın bağıntıyı ve sonucu birlikte göster'],
+    exam: ['Sorunun ne istediğini yaz', 'Kuralı ve sonucu birlikte açıkla'],
+  };
+
+  const clampText = (value) => String(value == null ? '' : value);
+
+  function weekOf(weekId) {
+    return KITAP.weeks[Number(weekId)] || null;
   }
 
-  function all() {
-    return Object.values(WEEKS).flat();
+  function stageList(weekId) {
+    const week = weekOf(weekId);
+    return week && Array.isArray(week.stages) ? week.stages : [];
+  }
+
+  function makeActivity(weekId, stage, stageIndex, item, itemIndex, kind) {
+    const prompt = clampText(item.prompt);
+    if (!prompt) return null;
+    const section = kind || stage.kind;
+    return {
+      id: `m${weekId}-s${stageIndex}-${itemIndex}`,
+      week: Number(weekId),
+      stageIndex,
+      stageKind: section,
+      stageTitle: stage.title || '',
+      section: STAGE_LABEL[section] || 'ETKİNLİK',
+      title: stage.title || STAGE_LABEL[section] || 'Etkinlik',
+      prompt,
+      hint: clampText(item.hint),
+      thinking: clampText(item.thinking),
+      rubric: (RUBRIC[section] || RUBRIC.learn).slice(),
+      minChars: 40,
+      scene: item.scene || stage.scene || null,
+      figure: item.figure || null,
+    };
+  }
+
+  function stageActivities(weekId, stageIndex) {
+    const stages = stageList(weekId);
+    const stage = stages[stageIndex];
+    if (!stage) return [];
+    const out = [];
+    const add = (list, kind) => {
+      (Array.isArray(list) ? list : []).forEach((item, index) => {
+        const activity = makeActivity(weekId, stage, stageIndex, item, out.length, kind);
+        if (activity) out.push(activity);
+      });
+    };
+    if (stage.kind === 'problem') return out; // problem adımları çözümlü örnek olarak gösterilir
+    add(stage.questions, stage.kind);
+    add(stage.items, stage.kind);
+    add(stage.checks, 'learn');
+    return out;
+  }
+
+  function examActivities(weekId) {
+    const week = weekOf(weekId);
+    if (!week || !week.exam || !Array.isArray(week.exam.items)) return [];
+    return week.exam.items
+      .map((item, index) => (typeof item === 'string' ? null : makeActivity(
+        weekId,
+        { kind: 'exam', title: week.exam.title || 'Tema ölçme' },
+        'exam',
+        item,
+        index,
+        'exam',
+      )))
+      .filter(Boolean);
+  }
+
+  function forWeek(weekId) {
+    const out = [];
+    stageList(weekId).forEach((stage, index) => {
+      stageActivities(weekId, index).forEach((activity) => out.push(activity));
+    });
+    examActivities(weekId).forEach((activity) => out.push(activity));
+    return out;
+  }
+
+  function forStage(weekId, stageIndex) {
+    return stageActivities(weekId, stageIndex);
+  }
+
+  function stageInfo(weekId, stageIndex) {
+    const stage = stageList(weekId)[stageIndex];
+    if (!stage) return null;
+    return {
+      kind: stage.kind,
+      label: STAGE_LABEL[stage.kind] || 'ETKİNLİK',
+      title: stage.title || '',
+    };
   }
 
   window.MATEMATIK_ETKINLIKLER = Object.freeze({
     forWeek,
-    all,
-    FIGURE_NOTE,
-    count: () => all().length,
+    forStage,
+    stageInfo,
+    examActivities,
+    STAGE_LABEL: Object.freeze(STAGE_LABEL),
   });
 })();

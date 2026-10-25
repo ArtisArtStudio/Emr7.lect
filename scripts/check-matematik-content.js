@@ -15,6 +15,7 @@ const sandbox = { window: {} };
 new Function('window', read('matematik-math.js'))(sandbox.window);
 new Function('window', read('matematik-figure.js'))(sandbox.window);
 new Function('window', read('matematik-content.js'))(sandbox.window);
+new Function('window', read('matematik-kitap.js'))(sandbox.window);
 new Function('window', read('matematik-etkinlikler.js'))(sandbox.window);
 new Function('window', read('matematik-sahne.js'))(sandbox.window);
 const content = sandbox.window.MATEMATIK_CONTENT;
@@ -22,12 +23,14 @@ const M = sandbox.window.MATEMATIK_MATH;
 const FIG = sandbox.window.MATEMATIK_FIGURE;
 const ACT = sandbox.window.MATEMATIK_ETKINLIKLER;
 const SAHNE = sandbox.window.MATEMATIK_SAHNE2;
+const KITAP = sandbox.window.MATEMATIK_KITAP;
 assert.ok(SAHNE && typeof SAHNE.mount === 'function' && typeof SAHNE.types === 'function',
   'MATEMATIK_SAHNE2 yerel sahne motoru bulunamadı.');
 assert.ok(FIG && typeof FIG.render === 'function', 'MATEMATIK_FIGURE.render bulunamadı.');
 assert.ok(ACT && typeof ACT.forWeek === 'function', 'MATEMATIK_ETKINLIKLER.forWeek bulunamadı.');
 assert.ok(M && typeof M.render === 'function', 'MATEMATIK_MATH.render bulunamadı.');
 assert.ok(content && Array.isArray(content.weeks), 'MATEMATIK_CONTENT.weeks bulunamadı.');
+assert.ok(KITAP && KITAP.weeks, 'MATEMATIK_KITAP (kitabın bölüm akışı) bulunamadı.');
 
 const EXPECTED_DATES = [
   '14–18 Eyl', '21–25 Eyl', '28 Eyl–2 Eki', '5–9 Eki', '12–16 Eki', '19–23 Eki',
@@ -159,31 +162,39 @@ allScenes.forEach(({ week, scene }) => {
 const sceneTypeList = new Set(allScenes.map((item) => item.scene.type));
 assert.ok(sceneTypeList.size >= 16, `Sahne çeşitliliği az: ${sceneTypeList.size} farklı sahne.`);
 
-// 4b. Etkinlikler: çoktan seçmeli + zorunlu açıklama + yapay zekâ değerlendirmesi
+// 4b. Etkinlikler: kitabın bölüm soruları, zorunlu açıklama + yapay zekâ değerlendirmesi
 const allActivities = content.weeks.flatMap((week) => ACT.forWeek(week.id).map((activity) => ({ week, activity })));
-assert.equal(allActivities.length, 30, `Etkinlik sayısı 30 olmalı, ${allActivities.length} bulundu.`);
+assert.ok(allActivities.length >= 150, `Etkinlik (soru) sayısı az: ${allActivities.length}`);
 content.weeks.forEach((week) => {
   const list = ACT.forWeek(week.id);
-  assert.ok(list.length >= 2, `Hafta ${week.id} en az iki etkinlik içermeli.`);
+  assert.ok(list.length >= 6, `Hafta ${week.id} en az altı açıklamalı soru içermeli (${list.length}).`);
 });
+const activityIds = new Set();
 allActivities.forEach(({ week, activity }) => {
-  assert.ok(activity.title && activity.instruction, `Hafta ${week.id} etkinliğinde başlık/yönerge eksik: ${activity.id}`);
-  assert.equal(activity.options.length, 3, `${activity.id} üç seçenek içermeli.`);
-  assert.ok(activity.correct >= 0 && activity.correct < 3, `${activity.id} doğru şık indeksi hatalı.`);
+  assert.ok(!activityIds.has(activity.id), `Etkinlik kimliği tekrar ediyor: ${activity.id}`);
+  activityIds.add(activity.id);
+  assert.ok(activity.section && activity.title, `Hafta ${week.id} etkinliğinde bölüm/başlık eksik: ${activity.id}`);
+  assert.ok(activity.prompt && activity.prompt.length > 8, `${activity.id} soru kökü eksik.`);
+  assert.ok(activity.hint && activity.hint.length > 8, `${activity.id} ipucu eksik.`);
+  assert.ok(activity.thinking && activity.thinking.length > 3, `${activity.id} model cevap (değerlendirme için) eksik.`);
   assert.ok(activity.minChars >= 40, `${activity.id} açıklama alt sınırı çok düşük.`);
   assert.ok(Array.isArray(activity.rubric) && activity.rubric.length >= 2, `${activity.id} ölçüt listesi eksik.`);
-  assert.ok(activity.hint && activity.hint.length > 15, `${activity.id} ipucu eksik.`);
-  [activity.prompt, activity.instruction, ...activity.options, ...activity.rubric]
-    .forEach((text) => assert.equal(M.lint(text).length, 0, `${activity.id} dizgi hatası: ${text.slice(0, 50)}`));
+  assert.ok(!activity.options, `${activity.id} çoktan seçmeli seçenek taşımamalı; etkinlik = yazılı soru.`);
+  assert.ok(!('correct' in activity), `${activity.id} doğru şık saklamamalı; cevap anahtarı gösterilmez.`);
+  // Öğrenciye gösterilen metinlerde dizgi hatası ve sayfa atfı olmamalı.
+  [activity.prompt, activity.hint, ...activity.rubric].forEach((text) => {
+    assert.equal(M.lint(text).length, 0, `${activity.id} dizgi hatası: ${text.slice(0, 50)}`);
+    assert.ok(!/\bs\.\s?\d/.test(text), `${activity.id} sayfa atfı içeriyor.`);
+    assert.ok(!/ders kitab[ıi]/i.test(text), `${activity.id} kitap atfı içeriyor.`);
+    assert.ok(!/\d+\s*\/\s*\d+/.test(text), `${activity.id} düz metin kesir içeriyor.`);
+  });
   if (activity.figure) {
     assert.ok(FIG.types().includes(activity.figure.type), `${activity.id} bilinmeyen şekil: ${activity.figure.type}`);
     assert.ok(FIG.render(activity.figure.type, activity.figure.options || {}).includes('<svg'),
       `${activity.id} şekli çizilemedi.`);
   }
-  assert.ok(!('geogebra' in activity), `${activity.id} hâlâ GeoGebra komutu taşıyor.`);
   if (activity.scene) {
     assert.ok(sahneTypes.has(activity.scene.type), `${activity.id} bilinmeyen sahne türü: ${activity.scene.type}`);
-    assert.ok(activity.scene.title && activity.scene.title.length > 5, `${activity.id} sahne başlığı eksik.`);
     const defaults = new Map(SAHNE.params(activity.scene.type).map((param) => [param.name, param]));
     (activity.scene.params || []).forEach((param) => {
       assert.ok(defaults.has(param.name), `${activity.id} tanımsız sahne parametresi: ${param.name}`);
@@ -191,21 +202,65 @@ allActivities.forEach(({ week, activity }) => {
     });
   }
 });
-const actPositions = new Set(allActivities.map(({ activity }) => activity.correct));
-assert.ok(actPositions.size >= 2, 'Etkinliklerde doğru şık tek konumda toplanmamalı.');
-// Geometri / 3B haftalarında sorular şekil ya da GeoGebra ile desteklenir.
-['geometri'].forEach((themeId) => {
-  const items = allActivities.filter(({ week }) => week.theme === themeId);
-  const withVisual = items.filter(({ activity }) => activity.figure || activity.scene);
-  assert.equal(withVisual.length, items.length,
-    `Geometri etkinliklerinde şekil ya da sahne yok: ${items.filter(({ activity }) => !(activity.figure || activity.scene)).map(({ activity }) => activity.id).join(', ')}`);
-});
-// Kısa kontrol sorularında geometri haftaları şekilsiz kalmamalı.
+// Geometri temasında her hafta en az bir sahnede 3B cisim incelenir; sorular şekilsiz kalmaz.
 content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
-  assert.ok(week.checks.some((item) => item.figure), `Hafta ${week.id} kısa kontrolünde şekil yok.`);
-  week.checks.filter((item) => item.figure).forEach((item) => {
-    assert.ok(FIG.types().includes(item.figure), `Hafta ${week.id} bilinmeyen soru şekli: ${item.figure}`);
+  const stages = KITAP.weeks[week.id].stages;
+  const withVisual = stages.filter((stage) => stage.scene
+    || stage.figure
+    || (stage.blocks || []).some((block) => block.scene || block.figure));
+  assert.ok(withVisual.length >= 2, `Hafta ${week.id} geometri haftası ama sahne/şekil yok.`);
+});
+
+// 4c. Kitabın bölüm zinciri: her hafta aynı sırayı izlemeli
+const STAGE_ORDER = ['warmup', 'start', 'learn', 'discuss', 'explore', 'problem'];
+const STAGE_LABEL = { warmup: 'NELER BİLİYORUZ?', start: 'BAŞLAYALIM', learn: 'ÖĞRENELİM', discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA', explore: 'KATIL-UYGULA-KEŞFET', problem: 'PROBLEM' };
+assert.equal(Object.keys(KITAP.weeks).length, 15, 'Kitap akışı 15 hafta içermeli.');
+content.weeks.forEach((week) => {
+  const book = KITAP.weeks[week.id];
+  assert.ok(book, `Hafta ${week.id} kitap akışında yok.`);
+  assert.ok(book.bookTopic && book.bookTopic.length > 5, `Hafta ${week.id} kitap konusu eksik.`);
+  assert.ok(Array.isArray(book.stages) && book.stages.length === 6,
+    `Hafta ${week.id} altı bölüm içermeli (${(book.stages || []).length}).`);
+  book.stages.forEach((stage, index) => {
+    assert.equal(stage.kind, STAGE_ORDER[index], `Hafta ${week.id} ${index + 1}. bölüm sırası bozuk: ${stage.kind}`);
+    assert.ok(STAGE_LABEL[stage.kind], `Hafta ${week.id} bilinmeyen bölüm: ${stage.kind}`);
+    assert.ok(stage.title && stage.title.length > 3, `Hafta ${week.id} ${index + 1}. bölüm başlığı eksik.`);
   });
+  const learn = book.stages[2];
+  assert.ok(Array.isArray(learn.blocks) && learn.blocks.length >= 2, `Hafta ${week.id} ÖĞRENELİM bölümü sığ.`);
+  assert.ok(Array.isArray(learn.boxes) && learn.boxes.length >= 2, `Hafta ${week.id} bilgi kutusu eksik.`);
+  assert.ok(Array.isArray(learn.checks) && learn.checks.length >= 1, `Hafta ${week.id} ÖĞRENELİM kontrol sorusu yok.`);
+  const problem = book.stages[5];
+  assert.ok(Array.isArray(problem.steps) && problem.steps.length >= 4,
+    `Hafta ${week.id} PROBLEM bölümü anla-planla-çöz-kontrol adımlarını içermeli.`);
+  // Sahne ve şekil türleri gerçek motorlarla çizilebilmeli.
+  book.stages.forEach((stage) => {
+    const specs = [stage.scene, stage.figure, ...(stage.blocks || []).flatMap((block) => [block.scene, block.figure])].filter(Boolean);
+    specs.forEach((spec) => {
+      if (spec.type && SAHNE.types().includes(spec.type)) {
+        (spec.params || []).forEach((param) => {
+          const defaults = new Map(SAHNE.params(spec.type).map((item) => [item.name, item]));
+          assert.ok(defaults.has(param.name), `Hafta ${week.id} ${spec.type} sahnesinde tanımsız parametre: ${param.name}`);
+        });
+      } else if (spec.type) {
+        assert.ok(FIG.types().includes(spec.type), `Hafta ${week.id} bilinmeyen görsel türü: ${spec.type}`);
+      }
+    });
+  });
+});
+// Performans görevi beş haftada, tema ölçme iki temada bulunur.
+const perfWeeks = Object.values(KITAP.weeks).filter((book) => book.performance);
+assert.equal(perfWeeks.length, 5, `Performans görevi beş haftada olmalı (${perfWeeks.length}).`);
+perfWeeks.forEach((book) => {
+  assert.ok(book.performance.tasks.length >= 3 && book.performance.criteria.length >= 2,
+    `Performans görevi eksik: ${book.performance.title}`);
+});
+const examWeeks = Object.values(KITAP.weeks).filter((book) => book.exam);
+assert.ok(examWeeks.length >= 2, 'Tema ölçme bölümü en az iki temada olmalı.');
+examWeeks.forEach((book) => {
+  assert.ok(book.exam.items.every((item) => typeof item === 'object' && item.prompt && item.thinking),
+    `Tema ölçme soruları model cevaplı olmalı: ${book.exam.title}`);
+  assert.ok(book.exam.items.every((item) => item.thinking.length > 3), `Tema ölçme model cevabı eksik: ${book.exam.title}`);
 });
 
 // 5. Uygulama tarafı
@@ -247,7 +302,7 @@ assert.ok(/\.math-scene-controls\{flex:0 0 auto/.test(css),
 assert.ok(/\.math-example\{/.test(css) && /\.math-example-steps\{/.test(css), 'Çözümlü örnek kartı stilleri tanımlı olmalı.');
 assert.ok(/math-scene-controls/.test(app), 'Sürgü bandı sahnenin altında tanımlı olmalı.');
 assert.ok(/math-scene-frame/.test(app) && /math-scene-frame/.test(css), 'Sahne çerçevesi (çizim + giriş bandı) tanımlı olmalı.');
-assert.ok(/mathEtkinlik\b|mathActivities/.test(app), 'Etkinlik bölümü hafta içeriğine bağlanmalı.');
+assert.ok(/math-etkinlik-list|mathQuestions-/.test(app), 'Etkinlik bölümü hafta içeriğine bağlanmalı.');
 assert.ok(/MATEMATIK_ETKINLIK/.test(app), 'Etkinlik modülü çağrılmalı.');
 const etkinlik = read('matematik-etkinlik.js');
 assert.ok(/EKR7|EMR7_AI_GRADER|api\/groq|api\.groq\.com/.test(etkinlik), 'Etkinlik değerlendirmesi ortak Groq ayarlarını kullanmalı.');
@@ -260,7 +315,7 @@ assert.ok(/#mathActivities/.test(read('activity-cards.css')), 'Etkinlik kartı g
 assert.ok(/MATEMATIK_MATH/.test(app), 'Uygulama dizgi motorunu kullanmalı.');
 
 console.log(`Matematik içeriği geçti: 15 hafta, 4 tema, ${allScenes.length} etkileşimli sahne, `
-  + `${allActivities.length} etkinlik (açıklama zorunlu), `
+  + `${allActivities.length} açıklamalı soru (kitabın bölüm akışından), `
   + `${content.weeks.reduce((total, week) => total + week.checks.length, 0)} kısa kontrol sorusu, `
   + `${content.weeks.reduce((total, week) => total + week.terms.filter((item) => item.visual).length, 0)} terim şekli; `
   + 'dizgi, sınav takvimi ve index.html bağlantıları doğru.');
