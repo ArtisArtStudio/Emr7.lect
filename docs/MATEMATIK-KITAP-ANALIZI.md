@@ -443,3 +443,33 @@ Kullanıcı geri bildirimi: "interaction window küçük, altta GeoGebra Geometr
 **Doğrulama (jsdom, sahte applet):** `setSize` çağrıldı · alt şerit `display:none`, `canvas` korundu ·
 "Tam ekran" düğmesi her sahnede var · `resize` sonrası yeniden ölçüm yapıldı · inşa düğmesi hâlâ
 komut çalıştırmıyor, yalnız `d:true` açıyor. `scripts/check-matematik.js` bu kuralları denetliyor.
+
+## 14. Dördüncü düzeltme turu — çizim alanı kutuyu dolduruyor (25 Ekim 2026)
+
+Kullanıcı geri bildirimi: "Hâlâ GeoGebra yazısının olduğu bölüm %50'den fazla yer tutuyor.
+Tam ekran demedim, GeoGebra görüntü alanını full kaplasın dedim."
+
+**Kök neden.** GeoGebra'nın *Geometri* uygulaması kendi araç çubuğunu ve alt bilgi şeridini
+("GeoGebra Geometri") getiriyor. `showToolBar:false` bu uygulamada etkisiz kalıyor; şerit sabit
+yükseklik kapladığı için 420–520 px'lik kutuda alanın yarısından fazlasını yiyor. Önceki turda
+DOM'dan şerit silme denemesi yanlış sınıf adlarını hedeflediği için hiçbir şey değişmedi.
+
+**Çözüm (belgelenmiş yol).** `SetPerspective("G")` — GeoGebra kılavuzu: *"SetPerspective(\"G\") makes
+only the Graphics View visible"*. Uygulananlar:
+- Applet parametresi `perspective:'G'` (açılışta çubuk hiç oluşmuyor).
+- Yükleme sırasında komutlardan **önce** ve sonra `SetPerspective("G")` çalıştırılıyor; her
+  çağrıdan sonra `fitToStage()` ile `api.setSize(kutu genişliği, kutu yüksekliği)` yeniden uygulanıyor
+  (perspektif değişimi tuvali yeniden ölçekleyebiliyor).
+- Hazır olduktan 500 ms sonra bir kez daha oturtma + şerit temizliği (`hideBranding`) yedek olarak duruyor.
+- Kapatılan parametreler: `showToolBarHelp`, `showStartTooltip`, `showFullscreenButton`,
+  `showZoomButtons`, `showResetIcon`, `allowStyleBar`, `showMenuBar`, `showAlgebraInput`.
+- **"Tam ekran" düğmeleri kaldırıldı** (istenmedi): `data-fullscreen`, `requestFullscreen`,
+  `setupFullscreen()` ve `:fullscreen` CSS'i silindi.
+- Kutu yüksekliği `clamp(460px, 78vh, 780px)`; `.ggb-stage` %100.
+- Durum satırı artık **gerçek ölçüyü** yazıyor: "Hazır: 5 nesne çizildi · yalnız grafik görünümü ·
+  çizim 360×700 / kutu 360×700". Böylece tuvalin kutuyu doldurup doldurmadığı tahmin edilmeden görülür.
+
+**Doğrulama (jsdom, sahte applet):** `perspective:'G'` parametresi geçti · `showToolBar`,
+`showToolBarHelp`, `showFullscreenButton` = false · `SetPerspective("G")` dört kez ve **A=(1,1)
+komutundan önce** çalıştı · `setSize` çağrıldı · tam ekran düğmesi ve `requestFullscreen` kalmadı ·
+inşa düğmesi hâlâ yalnız `d:true` açıyor. `scripts/check-matematik.js` bu kuralları denetliyor.

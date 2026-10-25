@@ -70,18 +70,21 @@ assert.ok(Math.hypot(P.x - (A.x + B.x) / 2, P.y - (A.y + B.y) / 2) > 10, 'P orta
 // 5. Yerleşim ve düğme davranışı
 assert.ok(!/\.ggb-stage\s+svg/.test(demo), 'GeoGebra SVG içeriğine boyut kuralı uygulanmamalı; çizim alanını eziyor.');
 assert.ok(/\.local-scene\s+svg/.test(demo), 'Boyut kuralı yerel sahneye kapsanmalı.');
-assert.ok(/height:clamp\(420px,68vh,720px\)/.test(demo), 'Sahne kutusu ekran yüksekliğine göre ölçeklenmeli.');
+assert.ok(/height:clamp\(460px,78vh,780px\)/.test(demo), 'Sahne kutusu ekran yüksekliğine göre ölçeklenmeli.');
 assert.ok(/\.ggb-stage\{width:100%;height:100%\}/.test(demo), 'Applet kapsayıcısı kutuyu tam doldurmalı.');
 assert.ok(/height:\s*520/.test(demo), 'Applet yedek yüksekliği 520 px olmalı.');
-assert.ok(/ggb-host:fullscreen/.test(demo), 'Tam ekran durumu için stil tanımlı olmalı.');
-assert.ok(/data-fullscreen="bisectorHost"/.test(demo) && /data-fullscreen="reflectHost"/.test(demo), 'Her sahnede tam ekran düğmesi olmalı.');
-assert.ok(/requestFullscreen/.test(demo), 'Tam ekran düğmesi tarayıcı API\'sini kullanmalı.');
+assert.ok(!/data-fullscreen|requestFullscreen/.test(demo), 'Tam ekran düğmesi istenmiyor; kaldırılmış olmalı.');
+assert.ok(/SetPerspective/.test(ggb), 'Yalnız grafik görünümü için SetPerspective kullanılmalı.');
+assert.ok(/perspective:\s*'G'/.test(ggb), 'Applet perspektifi G olmalı (araç çubuğu ve alt şerit yok).');
+assert.ok(/SetPerspective\\\(\\"G\\"\)/.test(ggb) || /SetPerspective\("G"\)/.test(ggb), 'SetPerspective("G") yükleme sırasında çalıştırılmalı.');
+assert.ok(/measureCanvas/.test(ggb), 'Çizim alanı ölçüsü raporlanmalı.');
+assert.ok(/showToolBarHelp:\s*false/.test(ggb) && /showStartTooltip:\s*false/.test(ggb), 'Araç çubuğu yardımı ve açılış ipucu kapalı olmalı.');
 assert.ok(/fitToStage/.test(ggb) && /api\.setSize/.test(ggb), 'Applet kutu ölçüsüne oturtulmalı (setSize).');
 assert.ok(/watchSize/.test(ggb) && /ResizeObserver/.test(ggb), 'Ekran döndürme/yeniden boyutlandırma izlenmeli.');
 assert.ok(/BRANDING_SELECTOR/.test(ggb) && /hideBranding/.test(ggb), 'Appletin alt şeridi kaldırılmalı.');
 assert.ok(/data-branding-hidden/.test(ggb), 'Kaldırılan şerit işaretlenmeli.');
 assert.ok(/canvas/.test(ggb) && /graphicsView/.test(ggb), 'Şerit temizliği çizim alanına dokunmamalı.');
-assert.ok(/showFullscreenButton:\s*true/.test(ggb), 'GeoGebra tam ekran düğmesi açık olmalı.');
+assert.ok(/showFullscreenButton:\s*false/.test(ggb), 'GeoGebra tam ekran düğmesi kapalı olmalı.');
 assert.ok(/allowStyleBar:\s*false/.test(ggb), 'Stil çubuğu kapalı olmalı.');
 const credits = (demo.match(/Geogebra® — geogebra\.org/g) || []).length;
 assert.ok(credits >= 2, 'Alt şerit kaldırıldığı için her sahnede atıf satırı bulunmalı.');
