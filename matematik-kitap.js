@@ -149,6 +149,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: sayı doğrusu ve sıralama',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$-8, 3, 0, -2$ sayılarını küçükten büyüğe sırala.',
+              'Sayı doğrusunda solda olan daha küçüktür.',
+              '$-8 < -2 < 0 < 3$.'),
+            q('$+5$ sayısının ters (zıt) sayısı kaçtır? Sayı doğrusunda ikisi arasındaki uzaklık kaç birimdir?',
+              'Ters sayı, sıfıra göre simetriktir.',
+              'Ters sayı $-5$; aralarındaki uzaklık $10$ birim.'),
+            q('Deniz seviyesinden $250$ m yükseklik $+250$, $80$ m derinlik $-80$ ile gösteriliyor. $+250$ ile $-80$ arasındaki fark kaç metredir?',
+              'Yükseklik ve derinlik zıt yönlerde ölçülür.',
+              '$250 - (-80) = 330$ m.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Apartmanın katları',
           context: [
@@ -300,6 +318,24 @@
               { name: 'n', label: 'Pay', min: 0, max: 8, step: 1, value: 2 },
             ],
           },
+        },
+        {
+          kind: 'practice',
+          title: 'Uygulayalım: rasyonel sayı ve mutlak değer',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$-\\frac{3}{5}$, $\\frac{2}{5}$ ve $0$ sayılarını sayı doğrusunda göster; mutlak değerlerini yaz.',
+              'Mutlak değer sıfıra uzaklıktır.',
+              '$\\left|-\\frac{3}{5}\\right| = \\frac{3}{5}$, $\\left|\\frac{2}{5}\\right| = \\frac{2}{5}$, $|0| = 0$.'),
+            q('$|x| = 6$ eşitliğini sağlayan $x$ değerleri hangileridir?',
+              'Sıfıra uzaklığı $6$ olan iki nokta vardır.',
+              '$x = 6$ veya $x = -6$.'),
+            q('$-\\frac{7}{4}$ sayısı hangi iki tam sayı arasındadır?',
+              'Kesri tam sayılı kesre çevir.',
+              '$-\\frac{7}{4} = -1\\frac{3}{4}$, yani $-2$ ile $-1$ arasında.'),
+          ],
         },
         {
           kind: 'problem',
@@ -455,6 +491,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: ondalık gösterim ve sıralama',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$\\frac{7}{8}$, $0{,}85$ ve $\\frac{4}{5}$ sayılarını büyükten küçüğe sırala.',
+              'Hepsini ondalık gösterime çevir.',
+              '$\\frac{7}{8} = 0{,}875$, $\\frac{4}{5} = 0{,}8$; sıralama $0{,}875 > 0{,}85 > 0{,}8$.'),
+            q('$0{,}4\\overline{5}$ devirli ondalık sayısını rasyonel sayı olarak yaz.',
+              'Paya tüm sayı eksi devretmeyen kısım, paydaya devreden kadar $9$ yazılır.',
+              '$\\frac{45 - 4}{90} = \\frac{41}{90}$.'),
+            q('$2{,}7$ ile $2{,}70$ aynı sayı mıdır? Açıkla.',
+              'Sondaki sıfırın değeri var mı?',
+              'Aynıdır; ondalık kısımdaki son sıfır sayının değerini değiştirmez.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Serbest atış yarışması',
           context: [
@@ -603,6 +657,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: tam sayılarla dört işlem',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$(-12) + 7 - (-5)$ işlemini yap.',
+              'Çıkarmayı, ters işaretliyi toplamaya çevir.',
+              '$-12 + 7 + 5 = 0$.'),
+            q('$(-48) \\div 6$ ve $(-6) \\cdot (-7)$ işlemlerini yap.',
+              'Bölme ve çarpmada işaret kuralını uygula.',
+              '$(-48) \\div 6 = -8$; $(-6) \\cdot (-7) = 42$.'),
+            q('Bir asansör $4.$ kattan $3$ kat aşağı iniyor, sonra $5$ kat yukarı çıkıyor. Hangi kattadır?',
+              'Aşağı inmek çıkarmadır.',
+              '$4 - 3 + 5 = 6.$ kat.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Saat dilimleri',
           context: [
@@ -749,6 +821,24 @@
               { name: 'c', label: 'İkinci kesrin payı', min: 0, max: 3, step: 1, value: 2 },
             ],
           },
+        },
+        {
+          kind: 'practice',
+          title: 'Uygulayalım: rasyonel sayılarla işlemler',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$\\frac{5}{6} - \\frac{1}{3}$ işlemini yap.',
+              'Paydaları $6$\'da eşitle.',
+              '$\\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2}$.'),
+            q('$\\left(-\\frac{2}{3}\\right) \\cdot \\frac{9}{4}$ işlemini yap.',
+              'Sadeleştirerek çarp.',
+              '$-\\frac{2 \\cdot 9}{3 \\cdot 4} = -\\frac{3}{2}$.'),
+            q('$1\\frac{2}{5}$ tam sayılı kesrini bileşik kesre çevir.',
+              'Tam kısmı paydayla çarpıp payı ekle.',
+              '$\\frac{1 \\cdot 5 + 2}{5} = \\frac{7}{5}$.'),
+          ],
         },
         {
           kind: 'problem',
@@ -905,6 +995,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: bölme, üslü ifade, işlem sırası',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$\\frac{5}{8} \\div \\frac{15}{16}$ işlemini yap.',
+              'İkinci kesri ters çevirip çarp.',
+              '$\\frac{5}{8} \\cdot \\frac{16}{15} = \\frac{2}{3}$.'),
+            q('$2^5$ ve $(-4)^2$ ifadelerinin değerini yaz.',
+              'Taban kaç kez çarpılıyor?',
+              '$2^5 = 32$; $(-4)^2 = 16$.'),
+            q('$3 + 2 \\cdot (5^2 - 20)$ işlemini yap.',
+              'Önce üslü ifade, sonra parantez, sonra çarpma, en son toplama.',
+              '$5^2 = 25$; $25 - 20 = 5$; $2 \\cdot 5 = 10$; $3 + 10 = 13$.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Halının ne kadarı süpürüldü?',
           context: [
@@ -1048,6 +1156,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: tema ölçme alıştırmaları',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$\\left(-\\frac{3}{4}\\right) \\div \\left(-\\frac{9}{8}\\right)$ işlemini yap.',
+              'Ters çevir, çarp; işaret kuralını unutma.',
+              '$\\frac{3}{4} \\cdot \\frac{8}{9} = \\frac{2}{3}$.'),
+            q('$|-7| + (-7)$ işlemini yap.',
+              'Mutlak değer pozitiftir.',
+              '$7 + (-7) = 0$.'),
+            q('$0{,}25$ sayısını kesir olarak yaz ve $\\frac{1}{3}$ ile karşılaştır.',
+              '$0{,}25 = \\frac{1}{4}$; paydaları eşitle.',
+              '$\\frac{1}{4} < \\frac{1}{3}$.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Tema ölçme: kart sorusu',
           context: [
@@ -1182,6 +1308,24 @@
               { name: 'h', label: 'Katman sayısı', min: 1, max: 4, step: 1, value: 2 },
             ],
           },
+        },
+        {
+          kind: 'practice',
+          title: 'Uygulayalım: görünümler ve ayrıtlar',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('Ayrıtları $4$, $3$ ve $2$ birim olan dikdörtgenler prizmasının kaç yüzü, kaç ayrıtı, kaç köşesi vardır?',
+              'Yüz, ayrıt ve köşe sayısı ölçüden bağımsızdır.',
+              '$6$ yüz, $12$ ayrıt, $8$ köşe.'),
+            q('Önden görünümü $3 \\times 2$, üstten görünümü $3 \\times 1$ olan yapı en az kaç küple kurulur?',
+              'Üstten görünüm tabandaki küp sayısını verir.',
+              'Taban $3 \\cdot 1 = 3$ küp; ikinci kat için $3$ küp daha: en az $6$.'),
+            q('Bir prizmanın ön görünümü kare, yan görünümü dikdörtgen ise cisim hangi prizma olabilir?',
+              'Ön görünüm genişlik-yükseklik, yan görünüm derinlik-yükseklik verir.',
+              'Kare prizma (taban kare, yükseklik farklı).'),
+          ],
         },
         {
           kind: 'problem',
@@ -1327,6 +1471,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: yüzey alanı hesapları',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('Ayrıtları $6$, $4$ ve $3$ cm olan prizmanın yüzey alanını bul.',
+              '$A = 2(ab + ac + bc)$.',
+              '$2(24 + 18 + 12) = 108\\ \\mathrm{cm}^2$.'),
+            q('Yüzey alanı $96\\ \\mathrm{cm}^2$ olan küpün bir ayrıtı kaç cm\'dir?',
+              'Önce bir yüzün alanını bul.',
+              '$96 \\div 6 = 16$; $\\sqrt{16} = 4$ cm.'),
+            q('Taban ayrıtı $5$ cm, yüksekliği $8$ cm olan kare prizmanın yüzey alanını bul.',
+              '$A = 2a^2 + 4ab$.',
+              '$2 \\cdot 25 + 4 \\cdot 5 \\cdot 8 = 50 + 160 = 210\\ \\mathrm{cm}^2$.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Marangozun sandığı',
           context: [
@@ -1466,6 +1628,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: hacim hesapları',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('Ayrıtları $8$, $5$ ve $4$ cm olan prizmanın hacmini bul.',
+              '$V = a \\cdot b \\cdot c$.',
+              '$160\\ \\mathrm{cm}^3$.'),
+            q('Hacmi $120\\ \\mathrm{cm}^3$, taban alanı $24\\ \\mathrm{cm}^2$ olan prizmanın yüksekliği kaç cm\'dir?',
+              'Hacmi taban alanına böl.',
+              '$5$ cm.'),
+            q('Bir küpün hacmi $125\\ \\mathrm{cm}^3$ ise bir ayrıtı kaç cm\'dir?',
+              'Hangi sayının küpü $125$?',
+              '$5$ cm.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'Cam kap ve özdeş kutular',
           context: [
@@ -1600,6 +1780,24 @@
             type: 'birim-donusum',
             params: [{ name: 's', label: 'Ayrıt (dm)', min: 1, max: 6, step: 1, value: 3 }],
           },
+        },
+        {
+          kind: 'practice',
+          title: 'Uygulayalım: birim dönüşümü ve prizma problemleri',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$4500\\ \\mathrm{cm}^3$ kaç dm³\'tür?',
+              '$1\\ \\mathrm{dm}^3 = 1000\\ \\mathrm{cm}^3$.',
+              '$4{,}5\\ \\mathrm{dm}^3$.'),
+            q('$3$ L $250$ mL kaç mL\'dir?',
+              '$1$ L $= 1000$ mL.',
+              '$3250$ mL.'),
+            q('Ayrıtları $2$ m, $1{,}5$ m ve $1$ m olan bir depo kaç litre su alır?',
+              'Hacmi m³ bul, litreye çevir.',
+              '$3\\ \\mathrm{m}^3 = 3000$ L.'),
+          ],
         },
         {
           kind: 'problem',
@@ -1771,6 +1969,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: ortalama, ortanca, açıklık',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$15, 12, 18, 20, 15$ verisinin ortalamasını, ortancasını ve açıklığını bul.',
+              'Önce sırala.',
+              'Ortalama $80 \\div 5 = 16$; ortanca $15$; açıklık $20 - 12 = 8$.'),
+            q('Ortalaması $14$ olan $5$ verinin toplamı kaçtır?',
+              'Ortalama = toplam ÷ veri sayısı.',
+              '$5 \\cdot 14 = 70$.'),
+            q('$8, 10, 10, 12, 15$ verisine $40$ eklenirse ortalama ve ortanca nasıl değişir?',
+              'Uç değerin etkisini karşılaştır.',
+              'Ortalama $11 \\to 15{,}83$; ortanca $10 \\to 10{,}5$. Ortalama çok, ortanca az değişir.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: 'TÜİK nüfus verisi',
           context: [
@@ -1938,6 +2154,24 @@
           },
         },
         {
+          kind: 'practice',
+          title: 'Uygulayalım: grafik ve sapma',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$120$ kişilik bir grupta $30$ kişi futbolu seçti. Daire grafiğindeki dilimin merkez açısı kaç derecedir?',
+              '$360 \\cdot \\frac{30}{120}$.',
+              '$90^\\circ$.'),
+            q('$4, 6, 8$ verisinin ortalamasını ve ortalama mutlak sapmasını bul.',
+              'Önce ortalama, sonra mutlak farkların ortalaması.',
+              'Ortalama $6$; sapma $(2 + 0 + 2) \\div 3 \\approx 1{,}33$.'),
+            q('Bir sütun grafiğinde dikey eksen sıfırdan başlamazsa ne tür bir yanıltma olur?',
+              'Küçük farklar nasıl görünür?',
+              'Küçük farklar büyük görünür; karşılaştırma yanıltıcı olur.'),
+          ],
+        },
+        {
           kind: 'problem',
           title: '“Su içmek zararlı!” haberi',
           context: [
@@ -2095,6 +2329,24 @@
             type: 'yansima',
             params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -3, max: 3, step: 1, value: 1 }],
           },
+        },
+        {
+          kind: 'practice',
+          title: 'Uygulayalım: yansıma çizimleri',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$A(3, 4)$ noktasının $x$ eksenine ve $y$ eksenine göre görüntülerini yaz.',
+              '$x$ ekseni: $(x, -y)$; $y$ ekseni: $(-x, y)$.',
+              '$x$ eksenine göre $(3, -4)$; $y$ eksenine göre $(-3, 4)$.'),
+            q('$K(-2, 1)$ noktasının $x = 2$ doğrusuna göre görüntüsü nedir?',
+              '$(2k - x, y)$.',
+              '$(2 \\cdot 2 - (-2), 1) = (6, 1)$.'),
+            q('Bir şeklin yansımasında kenar uzunluğu $7$ cm ise görüntüsünde kaç cm olur?',
+              'Yansıma eşlik dönüşümüdür.',
+              '$7$ cm; uzunluklar korunur.'),
+          ],
         },
         {
           kind: 'problem',
@@ -2259,6 +2511,24 @@
               { name: 'by', label: 'B noktası (y)', min: 1, max: 5, step: 1, value: 4 },
             ],
           },
+        },
+        {
+          kind: 'practice',
+          title: 'Uygulayalım: orta dikme ve açıortay inşası',
+          intro: [
+            'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
+          ],
+          questions: [
+            q('$A(1, 2)$ ve $B(5, 2)$ noktalarına eşit uzaklıktaki noktalar hangi doğru üzerindedir?',
+              'Orta dikme doğrusunu bul.',
+              '$x = 3$ doğrusu üzerindedir.'),
+            q('Ölçüsü $70^\\circ$ olan bir açının açıortayı açıyı kaç derecelik iki açıya böler?',
+              'Açıortay açıyı ikiye böler.',
+              '$35^\\circ$ ve $35^\\circ$.'),
+            q('Orta dikme üzerinde bir $P$ noktası seçildiğinde neden $|PA| = |PB|$ olur?',
+              'Tanımı hatırla.',
+              'Orta dikmedeki her nokta uçlara eşit uzaklıktadır; bu, tanımın doğrudan sonucudur.'),
+          ],
         },
         {
           kind: 'problem',

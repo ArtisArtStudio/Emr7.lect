@@ -15,6 +15,7 @@
     learn: 'ÖĞRENELİM',
     discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA',
     explore: 'KATIL-UYGULA-KEŞFET',
+    practice: 'UYGULAYALIM',
     problem: 'PROBLEM',
     exam: 'TEMA ÖLÇME',
   };
@@ -26,6 +27,7 @@
     learn: ['Tanımı kendi cümlelerinle yaz', 'Sonucu işlemle birlikte göster'],
     discuss: ['Düşünceni gerekçesiyle yaz', 'Karşıt görüşün neden yanlış olduğunu belirt'],
     explore: ['Gözlemini veya ölçümünü yaz', 'Sonucu sayı, tablo ya da çizimle destekle'],
+    practice: ['İşlem adımlarını sırayla yaz', 'Sonucu ve kullandığın kuralı birlikte belirt'],
     problem: ['Hangi bilgilerin verildiğini yaz', 'Kullandığın bağıntıyı ve sonucu birlikte göster'],
     exam: ['Sorunun ne istediğini yaz', 'Kuralı ve sonucu birlikte açıkla'],
   };

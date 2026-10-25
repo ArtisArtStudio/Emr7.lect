@@ -212,15 +212,15 @@ content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
 });
 
 // 4c. Kitabın bölüm zinciri: her hafta aynı sırayı izlemeli
-const STAGE_ORDER = ['warmup', 'start', 'learn', 'discuss', 'explore', 'problem'];
-const STAGE_LABEL = { warmup: 'NELER BİLİYORUZ?', start: 'BAŞLAYALIM', learn: 'ÖĞRENELİM', discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA', explore: 'KATIL-UYGULA-KEŞFET', problem: 'PROBLEM' };
+const STAGE_ORDER = ['warmup', 'start', 'learn', 'discuss', 'explore', 'practice', 'problem'];
+const STAGE_LABEL = { warmup: 'NELER BİLİYORUZ?', start: 'BAŞLAYALIM', learn: 'ÖĞRENELİM', discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA', explore: 'KATIL-UYGULA-KEŞFET', practice: 'UYGULAYALIM', problem: 'PROBLEM' };
 assert.equal(Object.keys(KITAP.weeks).length, 15, 'Kitap akışı 15 hafta içermeli.');
 content.weeks.forEach((week) => {
   const book = KITAP.weeks[week.id];
   assert.ok(book, `Hafta ${week.id} kitap akışında yok.`);
   assert.ok(book.bookTopic && book.bookTopic.length > 5, `Hafta ${week.id} kitap konusu eksik.`);
-  assert.ok(Array.isArray(book.stages) && book.stages.length === 6,
-    `Hafta ${week.id} altı bölüm içermeli (${(book.stages || []).length}).`);
+  assert.ok(Array.isArray(book.stages) && book.stages.length === 7,
+    `Hafta ${week.id} yedi bölüm içermeli (${(book.stages || []).length}).`);
   book.stages.forEach((stage, index) => {
     assert.equal(stage.kind, STAGE_ORDER[index], `Hafta ${week.id} ${index + 1}. bölüm sırası bozuk: ${stage.kind}`);
     assert.ok(STAGE_LABEL[stage.kind], `Hafta ${week.id} bilinmeyen bölüm: ${stage.kind}`);
@@ -230,7 +230,7 @@ content.weeks.forEach((week) => {
   assert.ok(Array.isArray(learn.blocks) && learn.blocks.length >= 2, `Hafta ${week.id} ÖĞRENELİM bölümü sığ.`);
   assert.ok(Array.isArray(learn.boxes) && learn.boxes.length >= 2, `Hafta ${week.id} bilgi kutusu eksik.`);
   assert.ok(Array.isArray(learn.checks) && learn.checks.length >= 1, `Hafta ${week.id} ÖĞRENELİM kontrol sorusu yok.`);
-  const problem = book.stages[5];
+  const problem = book.stages[6];
   assert.ok(Array.isArray(problem.steps) && problem.steps.length >= 4,
     `Hafta ${week.id} PROBLEM bölümü anla-planla-çöz-kontrol adımlarını içermeli.`);
   // Sahne ve şekil türleri gerçek motorlarla çizilebilmeli.

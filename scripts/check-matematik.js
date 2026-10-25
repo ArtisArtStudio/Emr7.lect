@@ -97,7 +97,7 @@ assert.ok(/MATEMATIK_SAHNE2\.mount/.test(app), 'Uygulama sahneleri yerel motorla
 assert.ok(/Sürgüler çizimin altında/.test(app), 'Öğrenciye sürgü konumu açıklanmalı.');
 
 // 7. Kitabın bölüm akışı uygulamada görünür
-['NELER BİLİYORUZ?', 'BAŞLAYALIM', 'ÖĞRENELİM', 'DÜŞÜN-TARTIŞ-AÇIKLA', 'KATIL-UYGULA-KEŞFET', 'PROBLEM'].forEach((label) => {
+['NELER BİLİYORUZ?', 'BAŞLAYALIM', 'ÖĞRENELİM', 'DÜŞÜN-TARTIŞ-AÇIKLA', 'KATIL-UYGULA-KEŞFET', 'UYGULAYALIM', 'PROBLEM'].forEach((label) => {
   assert.ok(app.includes(label), `Bölüm adı uygulamada yok: ${label}`);
 });
 assert.ok(/NELER ÖĞRENDİK\?/.test(app), 'NELER ÖĞRENDİK? bölümü basılmalı.');

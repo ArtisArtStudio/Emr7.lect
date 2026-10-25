@@ -21,6 +21,7 @@
     learn: 'ÖĞRENELİM',
     discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA',
     explore: 'KATIL-UYGULA-KEŞFET',
+    practice: 'UYGULAYALIM',
     problem: 'PROBLEM',
   });
 
@@ -30,6 +31,7 @@
     learn: 'Konu anlatımı ve bilgi kutuları; her kutu bir kuralı tek başına anlatır.',
     discuss: 'Tartışma sorusu: düşünceni gerekçesiyle açıkla.',
     explore: 'Katıl, uygula, keşfet: ölç, çiz, kaydet.',
+    practice: 'Uygulayalım: öğrendiğin kuralı alıştırmalarla pekiştir.',
     problem: 'Problem çözme basamakları: anla → planla → çöz → kontrol et.',
   });
 

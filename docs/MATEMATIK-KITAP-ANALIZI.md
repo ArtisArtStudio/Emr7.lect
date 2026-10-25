@@ -705,7 +705,8 @@ telif standardı §8.6 korunuyor; öğrenci metinlerinde sayfa/kitap atfı yok.
 | 3 | `learn` — ÖĞRENELİM | 3 bloklu anlatım + BİLGİ KUTUSU + sahne/şekil + kontrol soruları |
 | 4 | `discuss` — DÜŞÜN-TARTIŞ-AÇIKLA | tartışma soruları (açıklama zorunlu) |
 | 5 | `explore` — KATIL-UYGULA-KEŞFET | malzeme + ölçme/çizme adımları + sahne |
-| 6 | `problem` — PROBLEM | anla → planla → çöz → kontrol + sonuç |
+| 6 | `practice` — UYGULAYALIM | 3 pekiştirme alıştırması (kitabın uygulayalım soru tipi) |
+| 7 | `problem` — PROBLEM | anla → planla → çöz → kontrol + sonuç |
 
 Hafta sonunda sırasıyla **PERFORMANS GÖREVİ** (5 haftada), **NELER ÖĞRENDİK?** ve
 **TEMA ÖLÇME** (2 temada) kartları geliyor. Soru modeli `q(soru, ipucu, modelCevap)`:
@@ -724,7 +725,8 @@ motifleri, bayraklarda yansıma, pergel–ölçüsüz cetvel inşası, daire dil
 
 - `matematik-etkinlikler.js` artık **veri yazmıyor**, kitap akışından türetiyor:
   `forWeek(id)`, `forStage(id, index)`, `examActivities(id)`, `stageInfo(id, index)`.
-  Böylece 30 elle yazılmış serbest etkinlik yerine **157 soru** kitabın kendi bağlamından geliyor.
+  Böylece 30 elle yazılmış serbest etkinlik yerine **202 soru** kitabın kendi bağlamından geliyor
+  (haftada 11–17 soru; her hafta 3 tanesi UYGULAYALIM alıştırması).
 - `matematik-etkinlik.js` çoktan seçmeli karttan **yazılı cevap** kartına geçti: soru, ipucu,
   zorunlu açıklama alanı, bölüme göre ölçüt listesi (`rubric`), “Kontrol et” ve
   “Yapay zekâ ile değerlendir”. Yerel kontrol uzunluk + model cevaptaki sayı/kavram örtüşmesine
@@ -746,10 +748,10 @@ ortalama mutlak sapma, daire grafiği).
 ### 19.4 Doğrulama
 
 - `node --check` (5 dosya), `git diff --check`, 11 denetim betiği: temiz.
-- `scripts/check-matematik-content.js` yeni bölümleri denetliyor: 15 hafta × 6 bölüm sabit sırada,
+- `scripts/check-matematik-content.js` yeni bölümleri denetliyor: 15 hafta × 7 bölüm sabit sırada,
   ÖĞRENELİM'de ≥2 blok + ≥2 bilgi kutusu + kontrol sorusu, PROBLEM'de 4 basamak,
-  5 performans görevi, 2 tema ölçme, 157 sorunun her birinde ipucu + model cevap + ≥2 ölçüt,
+  5 performans görevi, 2 tema ölçme, 202 sorunun her birinde ipucu + model cevap + ≥2 ölçüt,
   seçenek/doğru şık **yok**, öğrenci metinlerinde sayfa atfı ve düz metin kesir yok.
-- jsdom: 15 hafta render edildi; her haftada 6 bölüm doğru sırada, 1–3 sahne, sürgü bandı ve
-  8–14 açıklamalı soru var; hiçbir sahnede `NaN`/`undefined` yok; sürgü kaydırıldığında çıktı ve
+- jsdom: 15 hafta render edildi; her haftada 7 bölüm doğru sırada, 1–3 sahne, sürgü bandı ve
+  11–17 açıklamalı soru var; hiçbir sahnede `NaN`/`undefined` yok; sürgü kaydırıldığında çıktı ve
   çizim değişiyor; 40 karakterden kısa açıklama “açıklama zorunlu” uyarısıyla reddediliyor.
