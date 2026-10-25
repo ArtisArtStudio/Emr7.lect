@@ -628,3 +628,53 @@ kurulması (sistem isteminde cevap koruması + ölçütler), terim kartları ve 
 **Açık risk.** Gerçek GeoGebra DOM'u (giriş bandının yeri, `Sequence` komutları, `setValue`) ağ
 olmadığı için yalnız kullanıcı cihazında doğrulanabilir; giriş alanı bulunamazsa yedek sürgü paneli
 devreye girer.
+
+---
+
+## 18. Kalite onarımı: GeoGebra çıktı, yerel sahne motoru geldi
+
+Kullanıcı PR #22 sürümünü dört başlıkta reddetti: **“GeoGebra sadece eksen gösteriyor,
+sorular saçma, düzen kötü, koyduğun görseller hatalı.”** Bu turda dört başlık da
+kökten ele alındı.
+
+**1. Sahne: dış servis tamamen kaldırıldı.** GeoGebra yükleyicisi (`matematik-geogebra.js`),
+yedek sahne (`matematik-yerel-sahne.js`) ve demo sayfası silindi. Yerine bu depoda yazılan
+`matematik-sahne.js` geldi: **640×380** tuvale çizen, bağımsız, çevrimdışı bir SVG motoru.
+16 sahne türü var: `sayi-dogrusu, mutlak-deger, kesir-serit, sayma-pullari, kesir-toplam,
+kesir-carpim, isaret-kurali, prizma3b, acim, hacim, birim-donusum, veri-grafik, ortalama,
+yansima, ortadikme, aciortay`. Her sahnede **sürgü bandı çizimin altında**, ayrıca
+`data-handle` noktaları doğrudan sürüklenebiliyor (dokunmatik için `touch-action: none`).
+15 haftanın tamamında en az bir sahne var; 8, 10, 11, 14 ve 15. haftalarda iki sahne
+(16 hafta sahnesi + 3 etkinlik içi sahne).
+
+**2. Sorular yeniden yazıldı.** 30 etkinlik ve 30 kısa kontrol sorusunun tamamı günlük hayat
+bağlamıyla değiştirildi (otopark, dalgıç, kek tarifi, pil göstergesi, akvaryum, kütüphane
+anketi, park krokisi, köyler arası kuyu…). Her soruda **tek doğru cevap**, çeldiriciler ise
+tipik öğrenci hatası (payda eşitlemeden toplama, yüzey alanı–hacim karışması, eksen sıfırdan
+başlamazken yorum, yansımada ordinatı da çevirme). Doğru şıklar dengeli dağıtıldı:
+etkinliklerde 10/10/10, kısa kontrollerde 10/10/10. Açıklama zorunluluğu ve yapay zekâ
+değerlendirmesi korundu; anahtar yokken yerel ölçüt kontrolü çalışıyor, doğru şık hiçbir
+koşulda gösterilmiyor.
+
+**3. Görseller baştan yazıldı (`matematik-figure.js`).** 10 şekil türü tek bir yardımcı
+katmanla (`text/line/rect/circle/poly/frame`) çiziliyor; metinler kutuya göre ölçekleniyor,
+taşma ve `NaN` üretilmiyor. Yansıma **gerçek ayna simetrisi** (görüntü koordinatları
+hesaplanıyor), prizma verilen ayrıtlardan oranlı kuruluyor, sütun grafiğinde sütun aralığı
+değer sayısına göre hesaplanıyor, açıortay kolları ve iki eş açı yayı trigonometriyle
+yerleştiriliyor. Etiketler artık kutu içinde: “pay/payda” şeklinde pay, payda ve kesir
+çizgisi ayrı ayrı işaretleniyor (`mark: 'num' | 'den' | 'line'`). Terim kartlarında **Pay**
+ve **Payda** kendi şekliyle ayrı ayrı anlatılıyor.
+
+**4. Düzen.** Hafta akışı numaralandırıldı: 1 konu anlatımı → 2 keşif sahnesi → 3 çözümlü
+örnekler → 4 ana noktalar → 5 terimler → 6 kısa kontrol → 7 etkinlikler. Sahne kartı tek
+çerçevede: çizim üstte, sürgüler altta ayrı bantta (masaüstünde çok kolon, 700 px altında
+tek kolon), “Başa al” düğmesi ve sürükleme ipucu. Sahne kartı sabit yükseklikle kırpılmıyor;
+SVG genişliğe göre ölçekleniyor.
+
+**5. Denetimler.** `check-matematik-content.js` artık sahne türlerini `MATEMATIK_SAHNE2` ile,
+sürgü adlarını ve aralıklarını sahne tanımıyla karşılaştırıyor; GeoGebra komutu kalmadığını
+doğruluyor. `check-matematik.js` yerel motor, şekil motoru, sürgü/sürükleme, mobil tek kolon
+ve GeoGebra bağımsızlığını denetliyor. Doğrulama: 16 sahne türü jsdom'da çizildi ve hiçbir
+etiket 640×380 dışına taşmıyor; 24 farklı şekil 340×190 içinde temiz; 15 hafta jsdom'da
+render edilip her haftada sahne + sürgü + şekil + 2 etkinlik bulundu, sürgü kaydırma
+çıktıyı güncelledi. Tüm zorunlu denetimler ve `node --check` temiz.

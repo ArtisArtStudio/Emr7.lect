@@ -16,10 +16,14 @@ new Function('window', read('matematik-math.js'))(sandbox.window);
 new Function('window', read('matematik-figure.js'))(sandbox.window);
 new Function('window', read('matematik-content.js'))(sandbox.window);
 new Function('window', read('matematik-etkinlikler.js'))(sandbox.window);
+new Function('window', read('matematik-sahne.js'))(sandbox.window);
 const content = sandbox.window.MATEMATIK_CONTENT;
 const M = sandbox.window.MATEMATIK_MATH;
 const FIG = sandbox.window.MATEMATIK_FIGURE;
 const ACT = sandbox.window.MATEMATIK_ETKINLIKLER;
+const SAHNE = sandbox.window.MATEMATIK_SAHNE2;
+assert.ok(SAHNE && typeof SAHNE.mount === 'function' && typeof SAHNE.types === 'function',
+  'MATEMATIK_SAHNE2 yerel sahne motoru bulunamadı.');
 assert.ok(FIG && typeof FIG.render === 'function', 'MATEMATIK_FIGURE.render bulunamadı.');
 assert.ok(ACT && typeof ACT.forWeek === 'function', 'MATEMATIK_ETKINLIKLER.forWeek bulunamadı.');
 assert.ok(M && typeof M.render === 'function', 'MATEMATIK_MATH.render bulunamadı.');
@@ -125,53 +129,35 @@ const studentText = content.weeks.map((week) => [
 assert.ok(!/\bs\.\s?\d/.test(studentText), 'Öğrenci metninde sayfa atfı olmamalı.');
 assert.ok(!/ders kitab[ıi]/i.test(studentText), 'Öğrenci metninde ders kitabı atfı olmamalı.');
 
-// 4. Sahne tanımları (haftada birden çok etkileşim olabilir)
+// 4. Etkileşimli sahneler: birinci taraf SVG motoru (GeoGebra'ya bağımlı değil)
 const sceneWeeks = content.weeks.filter((week) => (week.scenes || []).length);
-assert.ok(sceneWeeks.length === 15, 'On beş haftanın hepsinde GeoGebra sahnesi olmalı.');
+assert.equal(sceneWeeks.length, 15, 'On beş haftanın hepsinde etkileşimli sahne olmalı.');
 const allScenes = sceneWeeks.flatMap((week) => week.scenes.map((scene) => ({ week, scene })));
-assert.ok(allScenes.length >= 18, `Sahne sayısı az: ${allScenes.length}`);
+assert.ok(allScenes.length >= 16, `Sahne sayısı az: ${allScenes.length}`);
+const sahneTypes = new Set(SAHNE.types());
 allScenes.forEach(({ week, scene }) => {
-  assert.ok(['graphing', 'geometry', '3d'].includes(scene.app), `Hafta ${week.id} geçersiz uygulama: ${scene.app}`);
-  assert.ok(Array.isArray(scene.commands) && scene.commands.length >= 3, `Hafta ${week.id} sahne komutları eksik.`);
-  assert.ok(Array.isArray(scene.bounds) && scene.bounds.length === 4, `Hafta ${week.id} sahne çerçevesi hatalı.`);
-  assert.ok(scene.title && scene.hint, `Hafta ${week.id} sahne başlığı/ipucu eksik.`);
-  scene.commands.forEach((command) => {
-    assert.ok(/^[A-Za-z]/.test(command) || /^-?\d/.test(command),
-      `Hafta ${week.id} komutu nesne adı ya da İngilizce komutla başlamalı.`);
-    assert.ok(!/youtube|http/i.test(command), `Hafta ${week.id} komutunda dış bağlantı olmamalı.`);
-  });
-
-  // Sürgüler: her parametre komutlarda başlangıç değeriyle tanımlı olmalı.
+  assert.ok(sahneTypes.has(scene.type), `Hafta ${week.id} bilinmeyen sahne türü: ${scene.type}`);
+  assert.ok(scene.title && scene.title.length > 5, `Hafta ${week.id} sahne başlığı eksik.`);
+  assert.ok(scene.hint && scene.hint.length > 15, `Hafta ${week.id} sahne ipucu zayıf.`);
+  assert.ok(!('commands' in scene) && !('app' in scene),
+    `Hafta ${week.id} sahnesi hâlâ GeoGebra komutu kullanıyor; yerel çizim olmalı.`);
+  const defaults = new Map(SAHNE.params(scene.type).map((param) => [param.name, param]));
   const params = scene.params || [];
+  assert.ok(params.length >= 1, `Hafta ${week.id} sahnesinde oynanabilir parametre olmalı.`);
   params.forEach((param) => {
-    assert.ok(param.name && Number.isFinite(param.min) && Number.isFinite(param.max) && Number.isFinite(param.step)
-      && Number.isFinite(param.value), `Hafta ${week.id} sürgü tanımı hatalı: ${param.name}`);
+    assert.ok(defaults.has(param.name), `Hafta ${week.id} ${scene.type} sahnesinde tanımsız parametre: ${param.name}`);
+    const base = defaults.get(param.name);
+    assert.ok(Number.isFinite(param.min) && Number.isFinite(param.max) && Number.isFinite(param.step),
+      `Hafta ${week.id} sürgü tanımı hatalı: ${param.name}`);
+    assert.ok(param.min <= base.min && param.max <= base.max && param.min >= base.min,
+      `Hafta ${week.id} sürgü aralığı sahne sınırlarını aşıyor: ${param.name}`);
     assert.ok(param.value >= param.min && param.value <= param.max,
       `Hafta ${week.id} sürgü değeri aralık dışında: ${param.name}`);
-    assert.ok(scene.commands.some((command) => new RegExp(`^${param.name}\\s*=`).test(command)),
-      `Hafta ${week.id} ${param.name} parametresi komutlarda tanımlı değil.`);
-    assert.ok(new RegExp(`\\b${param.name}\\b`).test(scene.commands.join(' ')),
-      `Hafta ${week.id} ${param.name} parametresi hiçbir nesnede kullanılmıyor.`);
-  });
-
-  // 3B sahnelerde gerçekten görünen cisim olmalı (2B çokgen boş görünüyordu).
-  if (scene.app === '3d') {
-    assert.ok(/Prism\(|Cube\(/.test(scene.commands.join(' ')),
-      `Hafta ${week.id} 3B sahnesinde prizma/küp nesnesi yok.`);
-    assert.ok(params.length >= 1, `Hafta ${week.id} 3B sahnesinde sürgü yok.`);
-  }
-});
-
-// Her haftada kendi etkileşimi bulunmalı.
-content.weeks.forEach((week) => {
-  assert.ok((week.scenes || []).length >= 1, `Hafta ${week.id} etkileşimli sahne içermeli.`);
-  week.scenes.forEach((scene) => {
-    assert.ok(scene.commands.length >= 3, `Hafta ${week.id} sahnesinde komut eksik.`);
-    assert.ok((scene.params || []).length >= 1, `Hafta ${week.id} sahnesinde oynanabilir parametre olmalı.`);
+    assert.ok(param.label && param.label.length > 2, `Hafta ${week.id} sürgü etiketi eksik: ${param.name}`);
   });
 });
-const sceneTypes = new Set(allScenes.map((item) => item.scene.type));
-assert.ok(sceneTypes.size >= 14, `Sahne çeşitliliği az: ${sceneTypes.size} farklı sahne.`);
+const sceneTypeList = new Set(allScenes.map((item) => item.scene.type));
+assert.ok(sceneTypeList.size >= 16, `Sahne çeşitliliği az: ${sceneTypeList.size} farklı sahne.`);
 
 // 4b. Etkinlikler: çoktan seçmeli + zorunlu açıklama + yapay zekâ değerlendirmesi
 const allActivities = content.weeks.flatMap((week) => ACT.forWeek(week.id).map((activity) => ({ week, activity })));
@@ -194,9 +180,15 @@ allActivities.forEach(({ week, activity }) => {
     assert.ok(FIG.render(activity.figure.type, activity.figure.options || {}).includes('<svg'),
       `${activity.id} şekli çizilemedi.`);
   }
-  if (activity.geogebra) {
-    assert.ok(['graphing', 'geometry', '3d'].includes(activity.geogebra.app), `${activity.id} geçersiz uygulama.`);
-    assert.ok(activity.geogebra.commands.length >= 2, `${activity.id} GeoGebra komutları eksik.`);
+  assert.ok(!('geogebra' in activity), `${activity.id} hâlâ GeoGebra komutu taşıyor.`);
+  if (activity.scene) {
+    assert.ok(sahneTypes.has(activity.scene.type), `${activity.id} bilinmeyen sahne türü: ${activity.scene.type}`);
+    assert.ok(activity.scene.title && activity.scene.title.length > 5, `${activity.id} sahne başlığı eksik.`);
+    const defaults = new Map(SAHNE.params(activity.scene.type).map((param) => [param.name, param]));
+    (activity.scene.params || []).forEach((param) => {
+      assert.ok(defaults.has(param.name), `${activity.id} tanımsız sahne parametresi: ${param.name}`);
+      assert.ok(param.value >= param.min && param.value <= param.max, `${activity.id} sürgü değeri aralık dışında: ${param.name}`);
+    });
   }
 });
 const actPositions = new Set(allActivities.map(({ activity }) => activity.correct));
@@ -204,9 +196,9 @@ assert.ok(actPositions.size >= 2, 'Etkinliklerde doğru şık tek konumda toplan
 // Geometri / 3B haftalarında sorular şekil ya da GeoGebra ile desteklenir.
 ['geometri'].forEach((themeId) => {
   const items = allActivities.filter(({ week }) => week.theme === themeId);
-  const withVisual = items.filter(({ activity }) => activity.figure || activity.geogebra);
+  const withVisual = items.filter(({ activity }) => activity.figure || activity.scene);
   assert.equal(withVisual.length, items.length,
-    `Geometri etkinliklerinde şekil ya da GeoGebra yok: ${items.filter(({ activity }) => !(activity.figure || activity.geogebra)).map(({ activity }) => activity.id).join(', ')}`);
+    `Geometri etkinliklerinde şekil ya da sahne yok: ${items.filter(({ activity }) => !(activity.figure || activity.scene)).map(({ activity }) => activity.id).join(', ')}`);
 });
 // Kısa kontrol sorularında geometri haftaları şekilsiz kalmamalı.
 content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
@@ -235,11 +227,17 @@ assert.ok(/<b>2\. Sınav:<\/b> <strong>tahmini 4–8 Ocak 2027<\/strong>/.test(h
 
 assert.ok(/5 Kasım 2026/.test(app), 'Uygulama sınav tarihini bilmeli.');
 assert.ok(/emr7lect\.matematik\.v1/.test(app), 'İlerleme ayrı anahtarda saklanmalı.');
-assert.ok(/LOCAL_SCENES\s*=\s*new Set\(\['ortadikme', 'yansima'\]\)/.test(app), 'Yerel yedek sahneler tanımlı olmalı.');
-assert.ok(/MATEMATIK_SAHNE/.test(app) && /MATEMATIK_GEOGEBRA/.test(app), 'Uygulama GeoGebra ve yerel sahne modüllerini kullanmalı.');
+assert.ok(/MATEMATIK_SAHNE2/.test(app), 'Uygulama yerel sahne motorunu kullanmalı.');
+assert.ok(!/MATEMATIK_GEOGEBRA/.test(app), 'Uygulama artık GeoGebra’ya bağımlı olmamalı.');
+assert.ok(/matematik-sahne\.js/.test(html), 'index.html yerel sahne motorunu yüklemeli.');
+assert.ok(html.indexOf('matematik-sahne.js') < html.indexOf('matematik.js'),
+  'Sahne motoru uygulamadan önce yüklenmeli.');
+assert.ok(!/matematik-geogebra\.js/.test(html), 'index.html GeoGebra betiğini yüklememeli.');
 assert.ok(!/youtube\.com|youtu\.be/.test(app + css), 'Matematik alanında YouTube bağlantısı olmamalı.');
 assert.ok(/math-week-content\{display:grid/.test(css), 'Hafta içeriği ızgara yerleşimi tanımlı olmalı.');
-assert.ok(/math-scene-host \.ggb-stage\{width:100%;height:300px\}/.test(css), 'Sahne kutusu 300 px yüksekliğinde olmalı.');
+assert.ok(/\.math-scene-svg\{/.test(css), 'Yerel sahne SVG stili tanımlı olmalı.');
+assert.ok(/\.math-scene-stage\{/.test(css), 'Sahne çizim alanı stili tanımlı olmalı.');
+assert.ok(/\.scene-slider\{/.test(css), 'Sahne sürgü bandı stili tanımlı olmalı.');
 assert.ok(/\.m-frac\{/.test(css) && /\.m-num\{/.test(css) && /\.m-den\{/.test(css) && /\.m-radicand\{/.test(css),
   'Dizgi sınıflarının stilleri tanımlı olmalı.');
 assert.ok(/\.math-scene-frame\{display:flex;flex-direction:column/.test(css),
@@ -247,7 +245,7 @@ assert.ok(/\.math-scene-frame\{display:flex;flex-direction:column/.test(css),
 assert.ok(/\.math-scene-controls\{flex:0 0 auto/.test(css),
   'Yedek sürgü paneli sahnenin altında kalmalı.');
 assert.ok(/\.math-example\{/.test(css) && /\.math-example-steps\{/.test(css), 'Çözümlü örnek kartı stilleri tanımlı olmalı.');
-assert.ok(/math-scene-controls/.test(app) && /data-math-param/.test(app), 'Sürgü yedeği HTML tarafında tanımlı olmalı.');
+assert.ok(/math-scene-controls/.test(app), 'Sürgü bandı sahnenin altında tanımlı olmalı.');
 assert.ok(/math-scene-frame/.test(app) && /math-scene-frame/.test(css), 'Sahne çerçevesi (çizim + giriş bandı) tanımlı olmalı.');
 assert.ok(/mathEtkinlik\b|mathActivities/.test(app), 'Etkinlik bölümü hafta içeriğine bağlanmalı.');
 assert.ok(/MATEMATIK_ETKINLIK/.test(app), 'Etkinlik modülü çağrılmalı.');
@@ -259,9 +257,9 @@ assert.ok(/data-math-etkinlik-text/.test(read('matematik-etkinlik.js')) || /text
 assert.ok(/figure|MATEMATIK_FIGURE/.test(app), 'Hafta içeriğinde şekiller kullanılmalı.');
 assert.ok(/\.math-term-card\{/.test(css) && /\.math-etkinlik-option\{/.test(css), 'Terim ve etkinlik stilleri tanımlı olmalı.');
 assert.ok(/#mathActivities/.test(read('activity-cards.css')), 'Etkinlik kartı görünümü matematik alanına da uygulanmalı.');
-assert.ok(/setParam/.test(app) && /MATEMATIK_MATH/.test(app), 'Uygulama dizgi motorunu ve sürgü köprüsünü kullanmalı.');
+assert.ok(/MATEMATIK_MATH/.test(app), 'Uygulama dizgi motorunu kullanmalı.');
 
-console.log(`Matematik içeriği geçti: 15 hafta, 4 tema, ${allScenes.length} GeoGebra sahnesi, `
+console.log(`Matematik içeriği geçti: 15 hafta, 4 tema, ${allScenes.length} etkileşimli sahne, `
   + `${allActivities.length} etkinlik (açıklama zorunlu), `
   + `${content.weeks.reduce((total, week) => total + week.checks.length, 0)} kısa kontrol sorusu, `
   + `${content.weeks.reduce((total, week) => total + week.terms.filter((item) => item.visual).length, 0)} terim şekli; `
