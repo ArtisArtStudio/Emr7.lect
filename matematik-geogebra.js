@@ -1,20 +1,24 @@
-/* GeoGebra applet yükleyicisi — 7. sınıf matematik alanı.
-   Amaç: konu anlatımındaki keşif sahnelerini tek bir yerden, tembel yükleme ile açmak;
-   GeoGebra'ya ulaşılamazsa aynı sahnenin statik karşılığını göstermek. */
+/* GeoGebra applet yükleyicisi — 7. sınıf matematik alanı (v2).
+   Tembel yükler, sahneyi kurar, kurulumu doğrular ve başarısızlığı ekranda görünür kılar.
+   Amaç: "açıldı ama tuval boş" durumunu bir daha sessizce yaşamamak. */
 (() => {
   'use strict';
 
   const DEPLOY_URL = 'https://www.geogebra.org/apps/deployggb.js';
-  const DEFAULT_TIMEOUT = 12000;
+  const SCRIPT_TIMEOUT = 15000;
+  const READY_TIMEOUT = 25000;
+  const RETRY_DELAYS = [0, 300, 900, 2000];
 
-  // Yalnız keşif için gereken en küçük arayüz: menü, cebir girişi ve araç çubuğu kapalı.
   const BASE_PARAMS = Object.freeze({
     language: 'tr',
     showMenuBar: false,
     showToolBar: false,
     showAlgebraInput: false,
     showResetIcon: true,
-    showZoomButtons: true,
+    showZoomButtons: false,
+    showFullscreenButton: false,
+    showAxes: true,
+    showGrid: true,
     enableRightClick: false,
     enableLabelDrags: true,
     errorDialogsActive: false,
@@ -25,8 +29,14 @@
 
   let deployPromise = null;
 
-  function loadDeploy(timeout = DEFAULT_TIMEOUT) {
-    if (typeof window === 'undefined') return Promise.reject(new Error('no-window'));
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function report(spec, state, payload) {
+    if (typeof spec.onStatus === 'function') spec.onStatus(state, payload || {});
+  }
+
+  function loadDeploy(timeout = SCRIPT_TIMEOUT) {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return Promise.reject(new Error('no-window'));
     if (window.GGBApplet) return Promise.resolve(window.GGBApplet);
     if (deployPromise) return deployPromise;
 
@@ -59,25 +69,17 @@
     const height = Number(spec.height) || 360;
     const measured = host && host.clientWidth ? Math.round(host.clientWidth) : 0;
     const width = Math.max(240, measured || Number(spec.width) || 640);
-    const params = Object.assign({}, BASE_PARAMS, {
+    return Object.assign({}, BASE_PARAMS, {
       appName: spec.appName || 'geometry',
       width,
       height,
-      appletOnLoad: (api) => {
-        const failures = runCommands(api, spec.commands || []);
-        if (typeof spec.setup === 'function') spec.setup(api, failures);
-        if (spec.hidden && spec.hidden.length) {
-          spec.hidden.forEach((label) => api.setVisible(label, false));
-        }
-      },
     }, spec.params || {});
-    return params;
   }
 
   // GeoGebra komut adları İngilizce olmak zorunda; hata olursa sahne yine açılır.
   function runCommands(api, commands) {
     const failures = [];
-    commands.forEach((command) => {
+    (commands || []).forEach((command) => {
       try {
         if (!api.evalCommand(command)) failures.push(command);
       } catch (error) {
@@ -87,68 +89,129 @@
     return failures;
   }
 
-  function showFallback(host, message) {
+  function objectCount(api) {
+    try {
+      if (typeof api.getObjectNumber === 'function') return api.getObjectNumber();
+    } catch (error) {
+      return -1;
+    }
+    return -1;
+  }
+
+  function applyView(api, spec) {
+    ['ShowAxes(true)', 'ShowGrid(true)'].forEach((command) => {
+      try { api.evalCommand(command); } catch (error) { /* görünüm komutu kritik değil */ }
+    });
+    if (spec.bounds && typeof api.setCoordSystem === 'function') {
+      try { api.setCoordSystem(spec.bounds[0], spec.bounds[1], spec.bounds[2], spec.bounds[3]); } catch (error) { /* yoksay */ }
+    }
+  }
+
+  // Android Chrome'da appletOnLoad, grafik görünümü hazır olmadan tetiklenebiliyor:
+  // komutlar sessizce başarısız olup tuval boş kalıyor. Birkaç kez yeniden dene ve doğrula.
+  async function prepare(api, spec) {
+    applyView(api, spec);
+    let failures = [];
+    let count = objectCount(api);
+    for (let i = 0; i < RETRY_DELAYS.length; i += 1) {
+      if (count > 0 && i > 0) break;
+      if (RETRY_DELAYS[i]) await sleep(RETRY_DELAYS[i]);
+      failures = runCommands(api, spec.commands);
+      count = objectCount(api);
+      if (count > 0) break;
+    }
+    applyView(api, spec);
+    (spec.hidden || []).forEach((label) => {
+      try { api.setVisible(label, false); } catch (error) { /* yoksay */ }
+    });
+    return { count, failures };
+  }
+
+  function ensureStage(host) {
+    let stage = host.querySelector('.ggb-stage');
+    if (!stage) {
+      stage = document.createElement('div');
+      stage.className = 'ggb-stage';
+      host.prepend(stage);
+    }
+    return stage;
+  }
+
+  function showFallback(host, reason) {
     if (!host) return;
     host.classList.add('ggb-failed');
-    const note = host.querySelector('.ggb-fallback');
-    if (note) {
-      note.hidden = false;
-      if (message) note.dataset.reason = message;
-      return;
+    let note = host.querySelector('.ggb-fallback');
+    if (!note) {
+      note = document.createElement('div');
+      note.className = 'ggb-fallback';
+      note.setAttribute('role', 'status');
+      note.innerHTML = '<b>GeoGebra sahnesi açılamadı.</b> Aynı kazanım yerel sahne ile sürüyor.';
+      host.appendChild(note);
     }
-    const box = document.createElement('div');
-    box.className = 'ggb-fallback';
-    box.setAttribute('role', 'status');
-    box.innerHTML = '<b>Etkileşimli sürüm açılamadı.</b> Aynı şekli aşağıdaki statik görselden inceleyebilirsin; sorular bu görselle çözülebilir.';
-    host.appendChild(box);
+    note.hidden = false;
+    if (reason) note.dataset.reason = reason;
   }
 
   /**
-   * host: applet'in yerleşeceği boş kapsayıcı
-   * spec: { appName, height, commands, hidden, setup(api, failures), fallback }
+   * host : applet'in yerleşeceği kapsayıcı
+   * spec : { appName, height, width, bounds, commands, hidden, onStatus, onFallback, timeout }
+   * dönüş: Promise<{ api, count, failures }>
    */
   function createApplet(host, spec = {}) {
     if (!host) return Promise.reject(new Error('no-host'));
     if (host.dataset.ggbState === 'loading' || host.dataset.ggbState === 'ready') {
       return Promise.reject(new Error('already-mounted'));
     }
+
+    const finish = (state, payload) => {
+      host.dataset.ggbState = state;
+      report(spec, state, payload);
+    };
+
     if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-      host.dataset.ggbState = 'failed';
       showFallback(host, 'offline');
+      finish('failed', { reason: 'offline' });
+      if (spec.onFallback) spec.onFallback('offline');
       return Promise.reject(new Error('offline'));
     }
 
     host.dataset.ggbState = 'loading';
-    const stage = document.createElement('div');
-    stage.className = 'ggb-stage';
-    host.prepend(stage);
+    host.classList.add('is-loading');
+    const stage = ensureStage(host);
+    report(spec, 'loading');
 
-    return loadDeploy(spec.timeout)
+    return loadDeploy(spec.scriptTimeout)
       .then((GGBApplet) => new Promise((resolve, reject) => {
-        let settled = false;
+        let loaded = false;
         const params = buildParams(spec, stage);
-        const originalOnLoad = params.appletOnLoad;
         params.appletOnLoad = (api) => {
-          settled = true;
-          host.dataset.ggbState = 'ready';
-          host.classList.add('ggb-ready');
-          originalOnLoad(api);
-          resolve(api);
+          if (loaded) return;
+          loaded = true;
+          host.classList.remove('is-loading');
+          finish('booting');
+          prepare(api, spec).then((result) => {
+            if (!result.count) {
+              reject(Object.assign(new Error('empty-construction'), { failures: result.failures }));
+              return;
+            }
+            finish('ready', result);
+            resolve({ api, count: result.count, failures: result.failures });
+          }).catch(reject);
         };
+
         const applet = new GGBApplet(params, true);
         applet.inject(stage);
+
         setTimeout(() => {
-          if (settled) return;
-          host.dataset.ggbState = 'failed';
-          showFallback(host, 'slow');
+          if (loaded) return;
           reject(new Error('applet-timeout'));
-        }, (Number(spec.timeout) || DEFAULT_TIMEOUT) + 6000);
+        }, Number(spec.readyTimeout) || READY_TIMEOUT);
       }))
       .catch((error) => {
-        if (host.dataset.ggbState !== 'failed') {
-          host.dataset.ggbState = 'failed';
-          showFallback(host, error.message);
-        }
+        host.classList.remove('is-loading');
+        showFallback(host, error.message);
+        finish('failed', { reason: error.message, failures: error.failures || [] });
+        if (spec.onFallback) spec.onFallback(error.message, error.failures || []);
         throw error;
       });
   }
@@ -159,6 +222,7 @@
     loadDeploy,
     buildParams,
     runCommands,
+    objectCount,
     createApplet,
   });
 })();

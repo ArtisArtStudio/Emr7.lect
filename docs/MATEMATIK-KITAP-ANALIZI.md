@@ -349,3 +349,41 @@ Tahmini içerik hacmi: 15 hafta × ~600 kelime konu anlatımı + 14 GeoGebra sah
    statik SVG ile açılış, sahne onaylandıkça eklenir.
 4. GeoGebra appletinin ilk açılışta sizin tarayıcınızda göründüğü **doğrulanmalı**; sandbox'tan test
    edilemiyor. `matematik-geogebra-demo.html` bunun için eklendi.
+
+---
+
+## 11. Birinci düzeltme turu (25 Ekim 2026)
+
+Yayınlanan deneme sayfası Android Chrome'da iki kusur gösterdi; ikisi de giderildi.
+
+**1. Applet açılıyor, tuval boş kalıyordu.** Belirti: "Hazır" yazıyor, GeoGebra açılış ekranı
+görünüp kayboluyor, geriye beyaz alan kalıyordu. Neden: `appletOnLoad` grafik görünümü hazır olmadan
+tetikleniyor, komutlar sessizce `false` dönüyor ve eksenler kapalı olduğu için boş tuval düz beyaz
+görünüyordu. Yapılanlar:
+- Komutlar `[0, 300, 900, 2000]` ms aralıklarıyla yeniden denenir; her turda
+  `api.getObjectNumber()` ile **nesne sayısı doğrulanır**.
+- `ShowAxes(true)`, `ShowGrid(true)` ve `setCoordSystem(...)` ile sahne çerçevesi sabitlenir.
+- Nesne sayısı sıfır kalırsa `empty-construction` hatası üretilir ve **ekranda** yazılır; hata artık
+  sessiz değil.
+- Sahne altındaki satır "Hazır: 6 nesne çizildi" gibi doğrulanabilir bilgi verir.
+- Yükleme sırasında iskelet + "Sahne hazırlanıyor…" gösterilir; boş beyaz kutu kalmaz.
+
+**2. GeoGebra hiç açılamazsa sahne ölüydü.** `matematik-yerel-sahne.js` eklendi: ağ gerektirmeyen,
+sürüklenebilir ve klavye ile kullanılabilir SVG sahneleri (`ortadikme`, `yansima`). GeoGebra
+başarısız olduğunda aynı kazanım yerel sahne ile sürer; kullanıcıya sebep yazılır.
+
+**3. Statik soru görseli hatalıydı.** Kesikli çizgi AB'ye dik değildi (dikey çizilmişti, AB'nin
+eğimi −0,57) ve P noktası orta noktaya denk geldiği için cevabı ele veriyordu. Düzeltildi:
+- Soru görselinde orta dikme **hiç çizilmez**; uzaklık ve dik açı işareti de yok.
+- P, orta noktadan uzakta ve gerçekten eşit uzaklıkta: |PA| = |PB| ≈ 90,1 birim.
+- Q eşit uzaklıkta değil: |QA| = 120, |QB| ≈ 82,5.
+- Soru "A ve B'ye eşit uzaklıkta olan nokta hangisidir?" biçiminde.
+- Konu anlatımı sahnesinde orta dikme **doğru** kurulur; yerel sahnede AB ile arasındaki açı
+  90,000° olarak ölçüldü ve orta noktadan geçtiği doğrulandı.
+
+**Denetim:** `scripts/check-matematik.js` eklendi. Doğruladıkları: yalnız GeoGebra'ya dış bağlantı,
+nesne sayısı doğrulaması, yeniden deneme listesi, `empty-construction` raporu, yedek sahne çağrısı,
+eksen/ızgara, Türkçe arayüz, statik görselde orta dikmenin olmaması, P–Q uzaklık ayrımı,
+P'nin orta noktadan uzaklığı, lisans atfı. Ayrıca jsdom ile üç yol denendi: gecikmeli komutlar
+(yeniden deneme başarılı), hiç çalışmayan komutlar (yerel sahne devreye giriyor), çevrimdışı
+(anında yedek).
