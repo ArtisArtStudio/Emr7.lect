@@ -318,6 +318,15 @@
     if (examHost && examItems.length) engine.mountQuestions(examHost, examItems);
     const score = document.querySelector(`[data-math-week-score="${week.id}"]`);
     if (score) score.textContent = weekScore(week);
+    // Değerlendirmeden sonra ilerleme satırı güncellensin (dinleyici hafta başına bir kez bağlanır).
+    const content = document.getElementById('mathWeekContent');
+    if (content && content.dataset.scoreBound !== String(week.id)) {
+      content.dataset.scoreBound = String(week.id);
+      content.addEventListener('click', () => {
+        const line = document.querySelector(`[data-math-week-score="${week.id}"]`);
+        if (line) window.setTimeout(() => { line.textContent = weekScore(week); }, 400);
+      });
+    }
   }
 
   function bindDone(week) {
