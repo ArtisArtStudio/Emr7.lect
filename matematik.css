@@ -96,6 +96,54 @@
 .math-done button.is-done{background:#fff;color:var(--math-accent)}
 .math-note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
 
+
+/* --- Dizgi (matematik yazımı) --- */
+.m{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",Cambria,"Times New Roman",serif;font-size:1.02em;white-space:nowrap;line-height:1.15;color:#1b2f49;display:inline-block;vertical-align:-0.12em;padding:0 .06em}
+.m .m-frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em}
+.m .m-num{display:block;padding:0 .22em;line-height:1.05;border-bottom:1.2px solid currentColor}
+.m .m-den{display:block;padding:0 .22em;line-height:1.05}
+.m .m-sqrt{display:inline-flex;align-items:flex-start;vertical-align:middle;margin:0 .1em}
+.m .m-radical{font-size:1.18em;line-height:1;margin-right:-.06em}
+.m .m-radicand{display:inline-block;padding:.05em .16em 0;border-top:1.2px solid currentColor;line-height:1.12}
+.m .m-op{padding:0 .16em}
+.m .m-var{font-style:italic}
+.m .m-fn{font-style:normal;padding:0 .05em}
+.m .m-text{font-family:inherit;font-style:normal;padding:0 .1em}
+.m .m-overline{text-decoration:overline}
+.m sup,.m sub{font-size:.72em;line-height:0}
+
+/* --- Çözümlü örnekler --- */
+.math-example{border:1px solid #ece9f8;background:#fbfaff;border-radius:14px;padding:14px 16px}
+.math-example + .math-example{margin-top:12px}
+.math-example h4{margin:0 0 9px;font-size:14.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.math-example-no{display:inline-grid;place-items:center;padding:3px 8px;border-radius:8px;background:var(--math-accent);color:#fff;font-size:11px;font-weight:850;letter-spacing:.02em}
+.math-example-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;line-height:1.6}
+.math-example-answer{margin:10px 0 0;padding:9px 12px;border-radius:11px;background:#eefaf3;border:1px solid #cfeadd;font-size:14px;font-weight:700;display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+.math-example-answer span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#1f6b4c;font-weight:850}
+
+/* --- Sahne bölünmüş yerleşim: sahne 2/3, kontrol paneli 1/3 --- */
+.math-scene-split{display:grid;gap:0;grid-template-rows:auto}
+.math-scene-split.has-controls{grid-template-rows:minmax(0,2fr) minmax(0,1fr);height:460px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.math-scene-split.has-controls .math-scene-host{min-height:0;height:100%;border:0;border-radius:0;border-bottom:1px solid var(--line)}
+.math-scene-split.has-controls .math-scene-host .ggb-stage{height:100%}
+.math-scene-controls{background:#f7f6fd;padding:12px 14px;overflow:auto;min-height:0;display:grid;gap:9px;align-content:start}
+.math-controls-title{margin:0;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:#4d3f7d}
+.math-slider{display:grid;gap:4px}
+.math-slider label{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:12.5px;font-weight:750;color:#3c2f6b}
+.math-slider output{font-family:"Cambria Math",Cambria,serif;font-size:13.5px;font-weight:800;background:#fff;border:1px solid #ded8f5;border-radius:7px;padding:1px 9px;min-width:34px;text-align:center}
+.math-slider input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;margin:0}
+.math-slider input[type="range"]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,#cbc3ef,#7056c9)}
+.math-slider input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-7px;border-radius:50%;background:#fff;border:3px solid var(--math-accent);box-shadow:0 1px 3px rgba(20,20,40,.25)}
+.math-slider input[type="range"]::-moz-range-track{height:6px;border-radius:99px;background:#cbc3ef}
+.math-slider input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--math-accent)}
+.math-slider input[type="range"]:disabled{opacity:.45;cursor:not-allowed}
+
+@media(max-width:700px){
+  .math-scene-split.has-controls{height:auto;grid-template-rows:300px auto}
+  .math-scene-controls{max-height:none}
+  .m{font-size:1em}
+}
+
 @media(max-width:900px){
   .math-layout{grid-template-columns:1fr}
   .math-nav{position:static}

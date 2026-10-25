@@ -37,6 +37,9 @@ assert.ok(/onFallback/.test(ggb), 'Başarısızlıkta yedek sahne çağrılmalı
 assert.ok(/ShowAxes\(true\)/.test(ggb) && /ShowGrid\(true\)/.test(ggb), 'Eksen ve ızgara açık olmalı.');
 assert.ok(/is-loading/.test(ggb), 'Yükleme sırasında iskelet durumu işaretlenmeli.');
 assert.ok(/language:\s*'tr'/.test(ggb), 'Arayüz dili Türkçe olmalı.');
+assert.ok(/function setParam\(api, name, value\)/.test(ggb) && /api\.setValue\(name, value\)/.test(ggb),
+  'Sahne sürgüleri GeoGebra setValue köprüsüyle bağlanmalı.');
+assert.ok(/setParam,/.test(ggb) && /setParams,/.test(ggb), 'Sürgü köprüsü dışa açılmalı.');
 assert.ok(/showToolBar:\s*false/.test(ggb) && /showAlgebraInput:\s*false/.test(ggb), 'Araç çubuğu ve cebir girişi kapalı olmalı.');
 
 // 3. Yerel yedek sahneler

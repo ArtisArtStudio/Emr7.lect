@@ -516,3 +516,52 @@ jsdom ile uçtan uca denendi: 15 hafta listelendi · 1. haftada 4 paragraf, 4 an
 2 kontrol, 3 görev oluştu · yanlış cevapta ipucu, doğru cevapta açıklama ve seçenek kilidi ·
 "tamamladım" ilerlemeyi 1/15 yapıp kaydetti · 14. haftada GeoGebra yokken yerel yansıma sahnesi
 açıldı · 5. haftada sahne kartı (tanım yok) görünmedi.
+
+## 16. Tur: konu anlatımının derinleştirilmesi, dizgi, sürgülü sahneler ve 3B onarımı
+
+Bu turda kullanıcı dört eksik bildirdi: konu anlatımları zayıf, matematiksel terimler düz metin
+(`2/3`), sürgüler çizim alanının üstünde kalıyor ve 3B sahnelerin etkileşimleri boş görünüyor.
+
+**1. Dizgi motoru (`matematik-math.js`, yeni).** Harici CDN yok, çevrimdışı çalışır.
+`$...$` arası matematik yorumlanır: `\frac`, `\sqrt`, `^`/`_`, `\text`/`\mathrm`, `\overline`/`\bar`,
+`\left`–`\right` (yalnız ayraç boyutu), `\,` (ince aralık), `\%` gibi kaçışlar, TeX gruplaması
+(`2{,}5` → 2,5), sembol tablosu (`\times \div \cdot \pm \le \ge \ne \approx \equiv \degree \pi
+\angle \perp \parallel \triangle \ldots`), tek harf → eğik değişken, bilinen fonksiyonlar (sin, cos,
+tan, log, EKOK, EBOB, max, min) düz yazılır. Dışı HTML-escape edilir. `lint()` dengesiz `{}`,
+eşleşmeyen `$` ve `$` dışında kalan komutları yakalar. Sözleşme: `.m`, `.m-frac`, `.m-num`,
+`.m-den`, `.m-sqrt`, `.m-radical`, `.m-radicand`, `.m-op`, `.m-var`, `.m-text`, `.m-fn`,
+`.m-overline`.
+
+**2. İçerik şeması yenilendi.** `summary` 5–6 paragrafa çıktı; her haftaya **iki çözümlü örnek**
+(`examples[].steps` + `answer`) eklendi. Konu anlatımı + örnek metni haftada **325–377 kelime**
+(önceki sürüm 253–310). Ayrıca `**kalın**` vurgusu destekleniyor. Hafta 7 sınav hazırlığı,
+hafta 12 ölçme tekrarı olarak yeniden yazıldı; her hafta beş-altı paragraflık anlatım taşıyor.
+
+**3. Sürgüler ve split yerleşim.** Her sahnenin `params` alanı var
+(`{name,label,min,max,step,value}`); komutların ilk satırı parametrenin başlangıç değerini tanımlar
+(`a = 3`). HTML sürgüleri `api.setValue` üzerinden GeoGebra serbest sayılarını sürer; sürgü yalnız
+applet hazır olduktan sonra etkinleşir. Yerleşim `.math-scene-split.has-controls` ile
+`grid-template-rows: minmax(0,2fr) minmax(0,1fr)`: **sahne üstte 2/3, kontrol paneli altta 1/3**.
+Sürgü yoksa panel üretilmez. "Sıfırla" sürgüleri başlangıç değerine döndürür.
+
+**4. 3B onarımı.** Boş 3B tuvalin nedeni 3B uygulamasına `SetPerspective("G")` uygulanmasıydı;
+artık `appName === '3d'` için `SetPerspective("T")` kullanılıyor ve 2B `setCoordSystem` pencere
+ayarı 3B sahnelerde çalıştırılmıyor. 3B komutları da gerçekten görünen cisim üretiyor:
+`Polygon` + `Prism(p, h)` (h8 `uc-boyut`, h10 `hacim`, h9 `acinim`) ve `Cube((0,0,0),(s,0,0))`
+(h11 `birim-donusum`). h14 yansımaya `k` (ayna doğrusu), h15 orta dikmeye `u` (B noktası)
+sürgüsü eklendi; böylece **15 haftanın tamamı sürgülü** ve 15 farklı sahne türü var.
+
+**5. Denetimler.** `check-matematik-content.js`: çözümlü örnek ≥2 ve adım ≥3, kelime alt sınırı 320,
+dizgi `lint` taraması (643 metin), düz metin kesir yasağı, `\frac` sayısı ≥40, `params` ↔ komut
+tanımı ve kullanımı, 3B sahnede `Prism`/`Cube` zorunluluğu, her haftada sürgü, sahne çeşitliliği
+≥12, `.m-frac`/`.m-radicand`/`.math-scene-split.has-controls`/`.math-example` CSS kuralları,
+dizgi motorunun içerikten önce yüklenmesi. `check-matematik.js`: 3B için `SetPerspective("T")`,
+3B'ye pencere ayarı uygulanmaması ve `setValue` sürgü köprüsü.
+
+**6. Doğrulama.** Tüm zorunlu denetimler, `node --check` ve `git diff --check` geçti. jsdom uçtan
+uca: 15 hafta, **193 dizgi kesri**, örnek kartları, sürgü → `setValue` (rozet güncellemesi dahil),
+"İnşayı göster" yeni nesne üretmiyor, 3B prizma komutları, GeoGebra açılamayınca yerel SVG yedeği,
+ilerleme kaydı.
+
+**Açık risk.** Gerçek GeoGebra davranışı (3B `SetPerspective("T")`, `Prism`, `setValue`) sandbox'ta
+ağ olmadığı için yalnız kullanıcı cihazında doğrulanabilir.
