@@ -40,7 +40,12 @@ assert.ok(/language:\s*'tr'/.test(ggb), 'Arayüz dili Türkçe olmalı.');
 assert.ok(/function setParam\(api, name, value\)/.test(ggb) && /api\.setValue\(name, value\)/.test(ggb),
   'Sahne sürgüleri GeoGebra setValue köprüsüyle bağlanmalı.');
 assert.ok(/setParam,/.test(ggb) && /setParams,/.test(ggb), 'Sürgü köprüsü dışa açılmalı.');
-assert.ok(/showToolBar:\s*false/.test(ggb) && /showAlgebraInput:\s*false/.test(ggb), 'Araç çubuğu ve cebir girişi kapalı olmalı.');
+assert.ok(/showToolBar:\s*false/.test(ggb), 'Araç çubuğu kapalı olmalı (şekil öğrenci tarafından bozulmasın).');
+// GeoGebra'nın KENDİ giriş alanı açık ve çizim alanının altında: sürgü yerine bu bant kullanılıyor.
+assert.ok(/showAlgebraInput:\s*true/.test(ggb), 'GeoGebra giriş alanı açık olmalı.');
+assert.ok(/algebraInputPosition:\s*'bottom'/.test(ggb), 'Giriş alanı çizim alanının altında olmalı (split bant).');
+assert.ok(/function styleInputBand\(stage\)/.test(ggb) && /ggb-input-band/.test(ggb), 'Giriş alanı bant olarak biçimlendirilmeli.');
+assert.ok(/function hasNativeInput\(stage\)/.test(ggb), 'Giriş alanı varlığı denetlenmeli (yoksa sürgü yedeği).');
 
 // 3. Yerel yedek sahneler
 assert.ok(/window\.MATEMATIK_SAHNE\s*=\s*Object\.freeze/.test(local), 'Yerel sahne modülü dışa açılmalı.');

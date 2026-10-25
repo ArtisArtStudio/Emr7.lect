@@ -12,8 +12,10 @@
     { id: 'donusum', no: 4, title: 'Dönüşüm', short: 'Dönüşüm', pages: '201–217' },
   ];
 
-  const check = (prompt, options, correct, hint, explain) => ({ prompt, options, correct, hint, explain });
-  const term = (word, definition) => ({ word, definition });
+  // figure: şekil anahtarı (matematik-figure.js) — sorunun yanında çizilir.
+  const check = (prompt, options, correct, hint, explain, figure) => ({ prompt, options, correct, hint, explain, figure: figure || null });
+  // visual: terim kartındaki küçük şekil; where: terimin nerede karşımıza çıktığı.
+  const term = (word, definition, visual, where) => ({ word, definition, visual: visual || null, where: where || '' });
   const example = (title, steps, answer) => ({ title, steps, answer });
 
   const week = (data) => ({
@@ -26,9 +28,9 @@
     examples: data.examples,
     points: data.points,
     terms: data.terms,
-    tasks: data.tasks,
     checks: data.checks,
-    scene: data.scene || null,
+    // Sahneler dizi hâlinde: bir haftada birden çok etkileşim olabilir.
+    scenes: (data.scenes || (data.scene ? [data.scene] : [])).map((scene) => ({ ...scene })),
   });
 
   const WEEKS = [
@@ -66,16 +68,11 @@
         'Negatif sayılarda mutlak büyüklük arttıkça sayı küçülür: $-8 < -2$.',
       ],
       terms: [
-        term('Tam sayı', 'Kesirli kısmı olmayan; sıfırı ve negatifleri de içeren sayılar kümesinin elemanı.'),
-        term('Ters (zıt) sayı', 'Sayı doğrusunda sıfıra göre simetrik olan, toplamı sıfır eden iki sayıdan her biri.'),
-        term('Sayı doğrusu', 'Sayıların büyüklük sırasına göre yerleştirildiği, sıfırın başlangıç kabul edildiği doğru.'),
+        term('Tam sayı', 'Kesirli kısmı olmayan; sıfırı ve negatifleri de içeren sayılar kümesinin elemanı.', 'sayi-dogrusu', 'Sıcaklık, asansör katı, deniz seviyesi gibi durumlarda'),
+        term('Ters (zıt) sayı', 'Sayı doğrusunda sıfıra göre simetrik olan, toplamı sıfır eden iki sayıdan her biri.', 'sayi-dogrusu', 'Çıkarma işlemini toplamaya çevirirken'),
+        term('Sayı doğrusu', 'Sayıların büyüklük sırasına göre yerleştirildiği, sıfırın başlangıç kabul edildiği doğru.', 'sayi-dogrusu', 'Karşılaştırma ve sıralamada'),
       ],
-      tasks: [
-        'Günlük hayattan üç negatif sayı örneği bul; her birini sayı doğrusunda göster ve sıfırın neyi temsil ettiğini yaz.',
-        '$-6, -1, 0, 3, 5$ sayılarını küçükten büyüğe sırala; sıralamayı sayı doğrusundaki konumla açıkla.',
-        '$-4$, $7-4$ ve $4-7$ ifadelerini sözel olarak oku; birbirinden farkını birer cümleyle yaz.',
-      ],
-      scene: {
+      scenes: [{
         type: 'sayi-dogrusu',
         title: 'Sayı doğrusunda konum ve ters sayı',
         hint: 'Sürgüyü oynat: $P$ noktası ile tersi $Q$ noktası sıfıra göre simetrik kalır.',
@@ -91,6 +88,24 @@
           't = Segment(O, Q)',
         ],
       },
+      {
+        type: 'ters-sayi',
+        title: 'Ters sayı: toplamları sıfır',
+        hint: 'Sürgüyü kaydır; $a$ ve $-a$ noktalarının sıfıra uzaklığının eşit kaldığını gör.',
+        app: 'graphing',
+        bounds: [-8, 8, -3, 3],
+        params: [{ name: 'b', label: 'Sayı (b)', min: -6, max: 6, step: 1, value: 4 }],
+        commands: [
+          'b = 4',
+          'O = (0, 0)',
+          'A = (b, 0)',
+          'B = (-b, 0)',
+          'k = Segment(A, B)',
+          'd1 = Segment(O, A)',
+          'd2 = Segment(O, B)',
+        ],
+      },
+      ],
       checks: [
         check(
           'Sayı doğrusunda $-7$ ile $-3$ arasında hangi tam sayılar bulunur?',
@@ -144,14 +159,9 @@
         'Negatif rasyonel sayılarda büyüklük sırası tersine döner.',
       ],
       terms: [
-        term('Rasyonel sayı', 'İki tam sayının oranı biçiminde yazılabilen sayı; payda sıfırdan farklı olmalıdır.'),
-        term('Mutlak değer', 'Sayının sıfıra olan uzaklığı; $|a|$ biçiminde gösterilir ve negatif olamaz.'),
-        term('Sadeleştirme', 'Pay ve paydayı aynı sıfırdan farklı sayıya bölerek kesri en basit biçime getirme.'),
-      ],
-      tasks: [
-        '$\\frac{3}{4}$, $0{,}8$, $\\%80$ ve $\\frac{12}{15}$ sayılarından birbirine eşit olanları eşleştir.',
-        '$|x| = 7$ koşulunu sağlayan sayıları yaz ve sayı doğrusunda göster.',
-        '$-\\frac{2}{3}$ ile $-\\frac{5}{6}$ sayılarını karşılaştır; kullandığın yöntemi bir cümleyle açıkla.',
+        term('Rasyonel sayı', 'İki tam sayının oranı biçiminde yazılabilen sayı; payda sıfırdan farklı olmalıdır.', 'pay-payda', 'Kesir, ondalık ve yüzde gösterimlerinde'),
+        term('Mutlak değer', 'Sayının sıfıra olan uzaklığı; $|a|$ biçiminde gösterilir ve negatif olamaz.', 'sayi-dogrusu', 'Uzaklık ve fark hesaplarında'),
+        term('Sadeleştirme', 'Pay ve paydayı aynı sıfırdan farklı sayıya bölerek kesri en basit biçime getirme.', 'pay-payda', 'Sonucu en sade biçimde yazarken'),
       ],
       scene: {
         type: 'mutlak-deger',
@@ -221,16 +231,12 @@
         'Negatif sayılarda büyüklük sırası tersine döner.',
       ],
       terms: [
-        term('Devirli ondalık sayı', 'Ondalık açılımında bir basamak veya basamak grubu sonsuza kadar tekrar eden sayı.'),
-        term('Ortak payda', 'İki veya daha fazla kesrin paydalarını eşitlemek için kullanılan ortak kat.'),
-        term('Yüzde', 'Bir bütünün yüz eşit parçasından kaçının alındığını gösteren oran; $\\%$ ile yazılır.'),
+        term('Pay', 'Kesir çizgisinin **üstündeki** sayı. Bütünden kaç eş parça alındığını söyler.', 'pay-payda', '$\\frac{3}{4}$ kesrinde pay $3$’tür'),
+        term('Payda', 'Kesir çizgisinin **altındaki** sayı. Bütünün kaç eş parçaya ayrıldığını söyler.', 'pay-payda', '$\\frac{3}{4}$ kesrinde payda $4$’tür'),
+        term('Kesir çizgisi', 'Pay ile paydayı ayıran yatay çizgi; aynı zamanda bölme anlamı taşır: $\\frac{3}{4} = 3 \\div 4$.', 'pay-payda', 'Kesri bölmeye çevirirken'),
+        term('Devirli ondalık sayı', 'Ondalık açılımında bir basamak veya basamak grubu sonsuza kadar tekrar eden sayı.', null, '$\\frac{1}{3} = 0{,}\\overline{3}$ gibi'),
       ],
-      tasks: [
-        '$\\frac{5}{8}$, $\\%60$ ve $0{,}55$ sayılarını küçükten büyüğe sırala; her birini ondalık olarak yaz.',
-        '$\\frac{1}{6}$ kesrini ondalık olarak yaz; sonucun devirli olup olmadığını açıkla.',
-        '$-\\frac{7}{10}$, $-\\frac{2}{3}$ ve $-0{,}65$ sayılarını sırala ve sayı doğrusunda göster.',
-      ],
-      scene: {
+      scenes: [{
         type: 'temsil',
         title: 'Kesir, ondalık ve yüzde aynı noktada',
         hint: 'Pay ve paydayı değiştir; noktanın sayı doğrusundaki yeri, kesrin değerini gösterir.',
@@ -249,6 +255,24 @@
           'C = Circle(O, 1)',
         ],
       },
+      {
+        type: 'kesir-serit-geo',
+        title: 'Kesir şeridi: pay ve payda',
+        hint: 'Pay ve payda sürgülerini değiştir; boyalı parça sayısının paya eşit kaldığını gör.',
+        app: 'graphing',
+        bounds: [-1, 11, -1, 3],
+        params: [
+          { name: 'd', label: 'Payda (kaç eş parça)', min: 2, max: 10, step: 1, value: 4 },
+          { name: 'n', label: 'Pay (kaç parça boyandı)', min: 0, max: 10, step: 1, value: 3 },
+        ],
+        commands: [
+          'd = 4',
+          'n = 3',
+          'bars = Sequence(Polygon((k - 1, 0), (k, 0), (k, 1), (k - 1, 1)), k, 1, d)',
+          'shade = Sequence(Polygon((k - 1, 0), (k, 0), (k, 1), (k - 1, 1)), k, 1, n)',
+        ],
+      },
+      ],
       checks: [
         check(
           'Hangi sıralama doğrudur?',
@@ -303,14 +327,9 @@
         'Sıfıra bölme tanımsızdır.',
       ],
       terms: [
-        term('Toplanan', 'Toplama işleminde bir araya getirilen sayılardan her biri.'),
-        term('İşaret kuralı', 'Çarpma ve bölmede sonucun işaretini belirleyen kural.'),
-        term('Ters eleman', 'Bir sayıyla toplandığında sıfır veren sayı; örneğin $-9$’un ters elemanı $+9$.'),
-      ],
-      tasks: [
-        '$\\left(-8\\right) + \\left(+3\\right)$, $\\left(-8\\right) + \\left(-3\\right)$, $\\left(+8\\right) - \\left(-3\\right)$ işlemlerini sayı doğrusunda göstererek çöz.',
-        '$\\left(-6\\right)\\cdot\\left(+4\\right)$ ve $\\left(-6\\right)\\cdot\\left(-4\\right)$ işlemlerini yap; sonuçların neden farklı işaretli olduğunu açıkla.',
-        'Bir asansör $3$. kattan $5$ kat aşağı iniyor, sonra $2$ kat yukarı çıkıyor. Bulunduğu katı işlemle göster.',
+        term('Toplanan', 'Toplama işleminde bir araya getirilen sayılardan her biri.', 'sayi-dogrusu', 'Toplama ve çıkarma problemlerinde'),
+        term('İşaret kuralı', 'Çarpma ve bölmede sonucun işaretini belirleyen kural: aynı işaretler çarpımı pozitif yapar.', 'sayi-dogrusu', 'Çok adımlı işlemlerde'),
+        term('Ters eleman', 'Bir sayıyla toplandığında sıfır veren sayı; örneğin $-9$’un ters elemanı $+9$.', 'sayi-dogrusu', 'Çıkarmayı eklemeye çevirirken'),
       ],
       scene: {
         type: 'sayma-pullari',
@@ -385,16 +404,12 @@
         'Çıkarmada eksilen ile çıkanın sırası sonucu değiştirir.',
       ],
       terms: [
-        term('En küçük ortak kat (EKOK)', 'Verilen sayıların hepsine tam bölünebilen en küçük pozitif sayı.'),
-        term('Bileşik kesir', 'Payı paydasından büyük veya paydasına eşit olan kesir.'),
-        term('Tam sayılı kesir', 'Bir tam sayı ile bir basit kesrin birlikte yazıldığı gösterim.'),
+        term('Pay', 'Kesir çizgisinin üstündeki sayı; alınan parça sayısı.', 'pay-payda', 'Toplama–çıkarmada paylar işaretleriyle toplanır'),
+        term('Payda', 'Kesir çizgisinin altındaki sayı; bütünün bölündüğü eş parça sayısı.', 'pay-payda', 'Toplama–çıkarmada payda eşitlenir, kendisi değişmez'),
+        term('En küçük ortak kat (EKOK)', 'Verilen paydaların hepsine tam bölünebilen en küçük pozitif sayı.', 'kesir-serit', 'Payda eşitlerken'),
+        term('Tam sayılı kesir', 'Bir tam sayı ile bir basit kesrin birlikte yazıldığı gösterim.', null, '$2\\frac{1}{3}$ biçiminde'),
       ],
-      tasks: [
-        '$\\frac{2}{5} + \\frac{3}{4}$ ve $\\frac{5}{6} - \\frac{1}{3}$ işlemlerini yap; her adımda paydayı nasıl eşitlediğini yaz.',
-        '$1\\frac{3}{4} + 2\\frac{1}{2}$ işlemini iki farklı yöntemle çöz ve sonuçları karşılaştır.',
-        'Bir dalgıç deniz seviyesinden $12$ m aşağıda, ardından $7$ m daha aşağı iniyor. Derinliği işlemle göster.',
-      ],
-      scene: {
+      scenes: [{
         type: 'rasyonel-toplam',
         title: 'Kesirlerde toplama: ortak payda',
         hint: 'Payları değiştir; iki kesrin toplamının sayı doğrusunda nereye düştüğünü izle.',
@@ -413,6 +428,27 @@
           's = Segment(A, B)',
         ],
       },
+      {
+        type: 'payda-esitle',
+        title: 'Payda eşitleme: 2 ve 3 → 6',
+        hint: 'Payları değiştir; altı eş parçalı şeritte toplamın nasıl oluştuğunu gör.',
+        app: 'graphing',
+        bounds: [-1, 8, -1, 5],
+        params: [
+          { name: 'a', label: 'Birinci kesrin payı (bölü 2)', min: 0, max: 2, step: 1, value: 1 },
+          { name: 'c', label: 'İkinci kesrin payı (bölü 3)', min: 0, max: 3, step: 1, value: 1 },
+        ],
+        commands: [
+          'a = 1',
+          'c = 1',
+          'bar1 = Sequence(Polygon((k - 1, 3), (k, 3), (k, 3.8), (k - 1, 3.8)), k, 1, 2)',
+          'bar2 = Sequence(Polygon((k - 1, 2), (k, 2), (k, 2.8), (k - 1, 2.8)), k, 1, 3)',
+          'shade1 = Sequence(Polygon((k - 1, 3), (k, 3), (k, 3.8), (k - 1, 3.8)), k, 1, a)',
+          'shade2 = Sequence(Polygon((k - 1, 2), (k, 2), (k, 2.8), (k - 1, 2.8)), k, 1, c)',
+          'toplam = Sequence(Polygon((k - 1, 0), (k, 0), (k, 0.8), (k - 1, 0.8)), k, 1, a * 3 + c * 2)',
+        ],
+      },
+      ],
       checks: [
         check(
           '$\\frac{3}{8} + \\frac{1}{6}$ işleminin sonucu kaçtır?',
@@ -468,14 +504,10 @@
         'Kesir çizgisi pay ve payda için görünmez parantez işlevi görür.',
       ],
       terms: [
-        term('Çarpmanın değişme özelliği', 'Çarpanların yeri değişse de sonucun değişmemesi.'),
-        term('Ters kesir', 'Bir kesrin payı ile paydasının yer değiştirmesiyle elde edilen kesir.'),
-        term('İşlem önceliği', 'Birden fazla işlem içeren ifadelerde hangi işlemin önce yapılacağını belirleyen sıra.'),
-      ],
-      tasks: [
-        '$\\frac{5}{6}\\cdot\\frac{9}{10}$ işlemini önce sadeleştirerek, sonra sadeleştirmeden çöz; sonuçları karşılaştır.',
-        '$\\frac{7}{8} \\div \\frac{14}{16}$ işlemini yap ve sonucun neden $1$ olduğunu açıkla.',
-        '$4 + 3\\cdot\\left(6 - 2\\right)^2$ işlemini adım adım yaz; her adımda hangi kuralı uyguladığını belirt.',
+        term('Pay', 'Kesir çizgisinin üstündeki sayı; çarpma ve bölmede pay ile işlem yapılır.', 'pay-payda', 'Çarpma ve bölmede'),
+        term('Payda', 'Kesir çizgisinin altındaki sayı; çarpmada paydalar da çarpılır.', 'pay-payda', 'Çarpma ve bölmede'),
+        term('Ters kesir', 'Bir kesrin payı ile paydasının yer değiştirmesiyle elde edilen kesir; çarpımı $1$ eder.', 'kesir-carpim', 'Bölmeyi çarpmaya çevirirken'),
+        term('İşlem önceliği', 'Birden fazla işlem içeren ifadelerde önce parantez, sonra çarpma–bölme, en son toplama–çıkarma yapılır.', null, 'Çok adımlı sorularda'),
       ],
       scene: {
         type: 'kesir-carpim',
@@ -548,14 +580,9 @@
         'Şüpheli sonuçta büyüklük tahmini yap; tahminle uyuşmayan sonuç hatalıdır.',
       ],
       terms: [
-        term('Tanı çalışması', 'Hangi konuda eksik olduğunu bulmak için yapılan kısa, karışık soru seti.'),
-        term('Hata listesi', 'Yapılan hataların türü, doğru yöntemi ve örneğiyle yazıldığı kişisel liste.'),
-        term('Süre yönetimi', 'Sınavda kolay soruları öne alıp zor sorulara yeterli zaman bırakma planı.'),
-      ],
-      tasks: [
-        'Her alt başlıktan birer soru seçip sekiz soruluk bir tanı testi hazırla ve çöz.',
-        'Yanlışlarını hata türüne göre ayır; en çok hangi türde hata yaptığını yaz.',
-        'Kendi hata listenden üç maddelik bir sınav öncesi kontrol kartı oluştur.',
+        term('Tanı çalışması', 'Hangi konuda eksik olduğunu bulmak için yapılan kısa, karışık soru seti.', 'kesir-serit', 'Sınav öncesi tekrar planında'),
+        term('Hata listesi', 'Yapılan hataların türü, doğru yöntemi ve örneğiyle yazıldığı kişisel liste.', 'pay-payda', 'Sınavdan önce son tekrarda'),
+        term('Süre yönetimi', 'Sınavda kolay soruları öne alıp zor sorulara yeterli zaman bırakma planı.', null, 'Sınav sırasında'),
       ],
       scene: {
         type: 'isaret-kurali',
@@ -631,14 +658,9 @@
         'Küp, bütün yüzleri eş kare olan özel bir prizmadır.',
       ],
       terms: [
-        term('Ayrıt', 'İki yüzün kesiştiği doğru parçası.'),
-        term('Üst görünüm', 'Cisme tepeden bakıldığında görülen, taban alanını yansıtan görünüm.'),
-        term('Eş küp', 'Kenar uzunluğu aynı olan, birim hacim olarak kullanılabilen küp.'),
-      ],
-      tasks: [
-        'Evdeki bir kutunun ön, yan ve üst görünümünü kareli kâğıda çiz; yüz, ayrıt, köşe sayılarını yaz.',
-        'Beş eş küple iki farklı yapı kur; iki yapının ön görünümü aynı olsun.',
-        'Üç görünümü verilen bir yapının küp sayısını bulmayı gerektiren bir soru yaz ve çöz.',
+        term('Ayrıt', 'İki yüzün kesiştiği doğru parçası. Prizmada $12$ ayrıt vardır.', 'prizma', 'Ayrıt, yüz ve köşe sayarken'),
+        term('Ön / yan / üst görünüm', 'Cisme önden, yandan ve üstten bakıldığında görülen iki boyutlu görüntü.', 'prizma', 'Görünüm sorularında'),
+        term('Eş küp', 'Kenar uzunluğu aynı olan, birim hacim olarak kullanılabilen küp.', 'hacim', 'Küplerle kurulan yapılarda'),
       ],
       scene: {
         type: 'uc-boyut',
@@ -663,7 +685,7 @@
           ['$6$', '$8$', '$12$'],
           2,
           'Her yüz $4$ ayrıta sahiptir ve her ayrıt iki yüze aittir.',
-          '$6 \\cdot 4 = 24$, her ayrıt iki kez sayıldığı için $24 \\div 2 = 12$ ayrıt vardır.',
+          '$6 \\cdot 4 = 24$, her ayrıt iki kez sayıldığı için $24 \\div 2 = 12$ ayrıt vardır.', 'prizma'
         ),
         check(
           'Önden bakışta $3$ kare genişliğinde ve $2$ kare yüksekliğinde görünen bir yapı için hangisi kesinlikle doğrudur?',
@@ -710,14 +732,9 @@
         'Tüm yüzleri eş kabul etmek en sık yapılan hatadır.',
       ],
       terms: [
-        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli.'),
-        term('Yüzey alanı', 'Cismin bütün yüzeylerinin alanları toplamı.'),
-        term('Kare birim', 'Kenarı bir birim olan karenin alanına dayanan alan ölçü birimi.'),
-      ],
-      tasks: [
-        '$4$ cm, $3$ cm ve $2$ cm boyutlu prizmanın açınımını kareli kâğıda çiz ve yüzey alanını hesapla.',
-        'Yüzey alanı $96\\ \\mathrm{cm}^2$ olan küpün bir ayrıtını bul.',
-        'Kapaksız bir kutunun yüzey alanını hesaplarken hangi yüzü çıkardığını örnekle açıkla.',
+        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli; prizmada $6$ dikdörtgen.', 'prizma', 'Yüzey alanı hesabının öncesinde'),
+        term('Yüzey alanı', 'Cismin bütün yüzeylerinin alanları toplamı: $2\\left(ab+ac+bc\\right)$.', 'prizma', 'Kutu kaplama, boya, fayans sorularında'),
+        term('Kare birim', 'Kenarı bir birim olan karenin alanına dayanan alan ölçü birimi ($\\mathrm{cm}^2$).', null, 'Bütün alan sonuçlarında'),
       ],
       scene: {
         type: 'acinim',
@@ -745,7 +762,7 @@
           ['$24$', '$46$', '$52$'],
           2,
           'Üç farklı yüz çiftinin alanını topla, sonra $2$ ile çarp.',
-          '$2\\left(2\\cdot 3 + 2\\cdot 4 + 3\\cdot 4\\right) = 2\\left(6 + 8 + 12\\right) = 52\\ \\mathrm{cm}^2$.',
+          '$2\\left(2\\cdot 3 + 2\\cdot 4 + 3\\cdot 4\\right) = 2\\left(6 + 8 + 12\\right) = 52\\ \\mathrm{cm}^2$.', 'prizma'
         ),
         check(
           'Yüzey alanı $150\\ \\mathrm{cm}^2$ olan bir küpün bir ayrıtı kaç cm’dir?',
@@ -793,14 +810,9 @@
         '$1\\ \\mathrm{dm}^3 = 1\\ \\mathrm{L}$ ve $1\\ \\mathrm{cm}^3 = 1\\ \\mathrm{mL}$.',
       ],
       terms: [
-        term('Hacim', 'Bir cismin uzayda kapladığı yerin ölçüsü.'),
-        term('Birim küp', 'Kenar uzunluğu $1$ birim olan, hacim ölçmede kullanılan küp.'),
-        term('Kapasite', 'Bir kabın içine sığabilecek sıvı miktarı.'),
-      ],
-      tasks: [
-        'Bir küpün ayrıtı iki katına çıkarılırsa hacmi kaç katına çıkar? Örnekle göster.',
-        '$20$ cm, $15$ cm ve $10$ cm boyutlu bir kabın hacmini $\\mathrm{cm}^3$ ve litre olarak yaz.',
-        'Taban alanı $30\\ \\mathrm{cm}^2$, yüksekliği $8$ cm olan prizmanın hacmini iki yolla hesapla.',
+        term('Hacim', 'Bir cismin uzayda kapladığı yerin ölçüsü; $V = a\\cdot b\\cdot c$.', 'hacim', 'Depo, akvaryum, kutu sorularında'),
+        term('Birim küp', 'Kenar uzunluğu $1$ birim olan, hacim ölçmede kullanılan küp.', 'hacim', 'Katman mantığını kurarken'),
+        term('Kapasite', 'Bir kabın içine sığabilecek sıvı miktarı; litre ile ölçülür.', null, '$1\\ \\mathrm{dm}^3 = 1\\ \\mathrm{L}$ dönüşümünde'),
       ],
       scene: {
         type: 'hacim',
@@ -828,7 +840,7 @@
           ['$12$', '$60$', '$94$'],
           1,
           'Üç ayrıt uzunluğunu çarp; birimin küp olduğuna dikkat et.',
-          '$5\\cdot 4\\cdot 3 = 60\\ \\mathrm{cm}^3$.',
+          '$5\\cdot 4\\cdot 3 = 60\\ \\mathrm{cm}^3$.', 'hacim'
         ),
         check(
           'Bir ayrıtı $3$ cm olan küpün hacmi ile yüzey alanı için hangisi doğrudur?',
@@ -875,14 +887,9 @@
         'İşlemden önce bütün ölçüler aynı birime çevrilmelidir.',
       ],
       terms: [
-        term('Birim dönüşümü', 'Bir ölçüyü farklı bir birimle ifade etme işlemi.'),
-        term('Desimetreküp', 'Kenarı $1$ desimetre olan küpün hacmi; $1$ litreye eşittir.'),
-        term('Mililitre', 'Litrenin binde biri; $1\\ \\mathrm{cm}^3$ hacme eşittir.'),
-      ],
-      tasks: [
-        '$0{,}75\\ \\mathrm{m}^3$ kaç $\\mathrm{dm}^3$ ve kaç litre eder? Adım adım yaz.',
-        'Hacmi $2$ litre olan sürahinin taban alanı $250\\ \\mathrm{cm}^2$ ise yüksekliği kaç cm’dir?',
-        'Ölçüleri $60$ cm, $30$ cm ve $40$ cm olan akvaryum kaç litre su alır?',
+        term('Birim dönüşümü', 'Bir ölçüyü farklı bir birimle ifade etme; hacimde her adım $1000$ kattır.', 'hacim', '$\\mathrm{dm}^3 \\leftrightarrow \\mathrm{cm}^3$ çevrimlerinde'),
+        term('Desimetreküp', 'Kenarı $1$ desimetre olan küpün hacmi; $1$ litreye eşittir.', 'hacim', 'Kapasite–hacim ilişkisinde'),
+        term('Mililitre', 'Litrenin binde biri; $1\\ \\mathrm{cm}^3$ hacme eşittir.', null, 'İlaç ve içecek etiketlerinde'),
       ],
       scene: {
         type: 'birim-donusum',
@@ -903,7 +910,7 @@
           ['$350$', '$3500$', '$35.000$'],
           1,
           'Desimetreküpten santimetreküpe inerken kaç kat fark var?',
-          '$1\\ \\mathrm{dm}^3 = 1000\\ \\mathrm{cm}^3$ olduğu için $3{,}5 \\cdot 1000 = 3500\\ \\mathrm{cm}^3$.',
+          '$1\\ \\mathrm{dm}^3 = 1000\\ \\mathrm{cm}^3$ olduğu için $3{,}5 \\cdot 1000 = 3500\\ \\mathrm{cm}^3$.', 'hacim'
         ),
         check(
           'Taban alanı $40\\ \\mathrm{cm}^2$ olan prizmanın hacmi $360\\ \\mathrm{cm}^3$ ise yüksekliği kaç cm’dir?',
@@ -950,14 +957,9 @@
         'Yönlendirici sorular veriyi bozar; tarafsız soru kökleri kullanılır.',
       ],
       terms: [
-        term('Kategorik veri', 'Gruplara veya sınıflara ayrılarak ifade edilen, sayılmayan veri.'),
-        term('Nicel veri', 'Sayılarak veya ölçülerek elde edilen veri.'),
-        term('Sürekli veri', 'Aralıksız değerler alabilen, ölçümle elde edilen nicel veri.'),
-      ],
-      tasks: [
-        'Sınıfında iki soru hazırla: biri kategorik, biri nicel veri toplasın; soruların yönlendirici olmadığını kontrol et.',
-        'On kişilik bir veri kümesi uydur; sıklık tablosunu ve sütun grafiğini çiz.',
-        'Bir gazete grafiği bul; dikey eksenin sıfırdan başlayıp başlamadığını incele ve sonucu yorumla.',
+        term('Kategorik veri', 'Gruplara veya sınıflara ayrılarak ifade edilen, sayılmayan veri.', 'sutun-grafik', '“En sevdiğin mevsim” gibi sorularda'),
+        term('Nicel veri', 'Sayılarak veya ölçülerek elde edilen veri; kesikli ya da sürekli olabilir.', 'sutun-grafik', 'Boy, ağırlık, kardeş sayısı'),
+        term('Sürekli veri', 'Aralıksız değerler alabilen, ölçümle elde edilen nicel veri.', null, 'Boy ve sıcaklık ölçümlerinde'),
       ],
       scene: {
         type: 'veri-turu',
@@ -1032,14 +1034,9 @@
         'Dikey ekseni sıfırdan başlamayan grafikler yanıltıcıdır.',
       ],
       terms: [
-        term('Ortanca', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.'),
-        term('Tepe değer', 'Veri kümesinde en çok tekrar eden değer.'),
-        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark.'),
-      ],
-      tasks: [
-        'Kendi araştırma sorunu belirle; kim, ne zaman ve kaç kişiye soracağını yaz.',
-        'On kişilik bir veri kümesi için ortalama, ortanca, tepe değer ve açıklığı hesapla.',
-        'Yanıltıcı bir grafik çiz; neden yanıltıcı olduğunu bir paragrafla açıkla.',
+        term('Ortanca', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.', 'sutun-grafik', 'Uç değer varken tipik değeri anlatırken'),
+        term('Tepe değer', 'Veri kümesinde en çok tekrar eden değer.', null, 'Kategorik veride'),
+        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark: $x_{\\max} - x_{\\min}$.', 'sutun-grafik', 'Verinin yayılımını anlatırken'),
       ],
       scene: {
         type: 'ortalama',
@@ -1117,14 +1114,9 @@
         'Karede $4$, eşkenar üçgende $3$, dikdörtgende $2$ simetri doğrusu vardır.',
       ],
       terms: [
-        term('Dönüşüm', 'Şeklin konumunu ya da yönünü değiştiren, biçimini koruyan işlem.'),
-        term('Simetri doğrusu', 'Şeklin katlandığında kendisiyle çakışmasını sağlayan doğru; ayna doğrusu.'),
-        term('Yönelim', 'Şeklin köşelerinin saat yönünde ya da tersine sıralanma özelliği.'),
-      ],
-      tasks: [
-        'Kareli kâğıtta bir üçgen çiz; $x$ eksenine ve $y$ eksenine göre yansımalarını ayrı ayrı çiz.',
-        'Adının harflerinden simetri doğrusu olanları belirle ($A$, $E$, $M$ gibi) ve olmayanlarla karşılaştır.',
-        'Aynada ters görünen bir yazı örneği bul; neden ters göründüğünü açıkla.',
+        term('Dönüşüm', 'Şeklin konumunu ya da yönünü değiştiren, biçimini koruyan işlem.', 'yansima', 'Yansıma, öteleme, döndürme'),
+        term('Simetri doğrusu', 'Şeklin katlandığında kendisiyle çakışmasını sağlayan doğru; ayna doğrusu.', 'yansima', 'Yansıma sorularında'),
+        term('Yönelim', 'Şeklin köşelerinin saat yönünde ya da tersine sıralanma özelliği.', null, 'Yansımada tersine döner'),
       ],
       scene: {
         type: 'yansima',
@@ -1150,7 +1142,7 @@
           ['$\\left(-3, -2\\right)$', '$\\left(3, 2\\right)$', '$\\left(-3, 2\\right)$'],
           0,
           '$y$ eksenine göre yansımada sağ–sol değişir, yukarı–aşağı aynı kalır.',
-          '$y$ eksenine göre yansımada $x$ işareti değişir: $\\left(3, -2\\right) \\rightarrow \\left(-3, -2\\right)$.',
+          '$y$ eksenine göre yansımada $x$ işareti değişir: $\\left(3, -2\\right) \\rightarrow \\left(-3, -2\\right)$.', 'yansima'
         ),
         check(
           'Bir şeklin yansıması alındığında aşağıdakilerden hangisi değişir?',
@@ -1198,14 +1190,9 @@
         'Dört tema birbirini besler; sorular genellikle birden fazla beceri ister.',
       ],
       terms: [
-        term('Orta dikme', 'Bir doğru parçasının orta noktasından geçen ve parçaya dik olan doğru.'),
-        term('Açıortay', 'Bir açıyı iki eş açıya bölen ışın.'),
-        term('İnşa', 'Yalnız pergel ve cetvel kullanılarak yapılan geometrik çizim.'),
-      ],
-      tasks: [
-        'Bir doğru parçası çiz ve orta dikmesini pergel-cetvel ile inşa et; adımları yaz.',
-        'Bir açı çiz ve açıortayını inşa et; açıortayın kollara eşit uzaklıkta olduğunu göster.',
-        'Dört temadan birer cümlelik özet çıkar; hangi konuda daha çok çalışman gerektiğini yaz.',
+        term('Orta dikme', 'Bir doğru parçasının orta noktasından geçen ve parçaya dik olan doğru.', 'ortadikme', 'İki noktaya eşit uzaklıkta yer ararken'),
+        term('Açıortay', 'Bir açıyı iki eş açıya bölen ışın; üzerindeki noktalar kollara eşit uzaklıktadır.', 'aciortay', 'Üçgende iç merkezi bulurken'),
+        term('İnşa', 'Yalnız pergel ve cetvel kullanılarak yapılan geometrik çizim.', null, 'Ölçmeden çizim yaparken'),
       ],
       scene: {
         type: 'ortadikme',
@@ -1230,7 +1217,7 @@
           ['Parçanın uçlarına eşit uzaklıktadır', 'Parçanın orta noktasındadır', 'Parçaya paraleldir'],
           0,
           'Orta dikmenin tanımı iki uca eşit uzaklık üzerine kuruludur.',
-          'Orta dikme, uçlara eşit uzaklıktaki noktaların geometrik yeridir; nokta orta noktada olmak zorunda değildir.',
+          'Orta dikme, uçlara eşit uzaklıktaki noktaların geometrik yeridir; nokta orta noktada olmak zorunda değildir.', 'ortadikme'
         ),
         check(
           'Açıortay ile ilgili hangisi doğrudur?',

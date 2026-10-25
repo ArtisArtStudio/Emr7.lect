@@ -13,6 +13,7 @@
     triangle: '△', square: '□', percent: '%', mid: '|',
     ldots: '…', dots: '…', cdots: '⋯', prime: '′',
     leftarrow: '←', rightarrow: '→', Rightarrow: '⇒',
+    leftrightarrow: '↔', Leftrightarrow: '⇔', to: '→', mapsto: '↦',
   };
   const FUNCTIONS = new Set(['sin', 'cos', 'tan', 'log', 'ln', 'abs', 'max', 'min', 'EKOK', 'EBOB']);
 
