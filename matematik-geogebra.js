@@ -16,7 +16,9 @@
     showAlgebraInput: false,
     showResetIcon: true,
     showZoomButtons: false,
-    showFullscreenButton: false,
+    showFullscreenButton: true,
+    allowStyleBar: false,
+    autoHeight: false,
     showAxes: true,
     showGrid: true,
     enableRightClick: false,
@@ -65,10 +67,66 @@
     return deployPromise;
   }
 
+  function measure(host, fallbackWidth, fallbackHeight) {
+    const rect = host && host.getBoundingClientRect ? host.getBoundingClientRect() : null;
+    const width = Math.max(240, Math.round((rect && rect.width) || (host && host.clientWidth) || fallbackWidth || 640));
+    const height = Math.max(280, Math.round((rect && rect.height) || (host && host.clientHeight) || fallbackHeight || 420));
+    return { width, height };
+  }
+
+  // Applet kutuyu tam doldursun: ekran döndürme ve klavye açılması sonrası yeniden ölçülür.
+  function fitToStage(api, stage) {
+    if (!api || typeof api.setSize !== 'function' || !stage) return null;
+    const size = measure(stage, 0, 0);
+    try { api.setSize(size.width, size.height); } catch (error) { return null; }
+    return size;
+  }
+
+  function watchSize(api, stage) {
+    if (typeof window === 'undefined' || !window.addEventListener) return () => {};
+    let timer = null;
+    const update = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => { timer = null; fitToStage(api, stage); }, 220);
+    };
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    if (typeof window.ResizeObserver === 'function') {
+      const observer = new window.ResizeObserver(update);
+      observer.observe(stage);
+      return () => {
+        window.removeEventListener('resize', update);
+        window.removeEventListener('orientationchange', update);
+        observer.disconnect();
+      };
+    }
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+    };
+  }
+
+  // Appletin alt şeridi (GeoGebra logosu + bağlantı) sahne alanını daraltıyor.
+  // Atıf yükümlülüğü sayfadaki kendi atıf satırımızla karşılanır.
+  const BRANDING_SELECTOR = '[class*="footer" i],[class*="Footer"],[class*="branding" i],[id*="footer" i],[id*="Footer"]';
+
+  function hideBranding(stage) {
+    if (!stage) return 0;
+    let hidden = 0;
+    const candidates = stage.querySelectorAll(BRANDING_SELECTOR);
+    candidates.forEach((element) => {
+      if (element.querySelector('canvas') || element.querySelector('.graphicsView')) return;
+      element.style.display = 'none';
+      element.setAttribute('data-branding-hidden', 'true');
+      hidden += 1;
+    });
+    return hidden;
+  }
+
   function buildParams(spec, host) {
-    const height = Number(spec.height) || 360;
-    const measured = host && host.clientWidth ? Math.round(host.clientWidth) : 0;
-    const width = Math.max(240, measured || Number(spec.width) || 640);
+    const measuredSize = measure(host, spec.width, spec.height);
+    const width = measuredSize.width;
+    const height = measuredSize.height;
     return Object.assign({}, BASE_PARAMS, {
       appName: spec.appName || 'geometry',
       width,
@@ -194,8 +252,18 @@
               reject(Object.assign(new Error('empty-construction'), { failures: result.failures }));
               return;
             }
+            fitToStage(api, stage);
+            hideBranding(stage);
+            // Alt şerit bazen applet hazır olduktan sonra ekleniyor: kısa süre izle.
+            if (typeof window !== 'undefined' && window.MutationObserver) {
+              const watcher = new window.MutationObserver(() => hideBranding(stage));
+              watcher.observe(stage, { childList: true, subtree: true });
+              setTimeout(() => watcher.disconnect(), 8000);
+            }
+            const stopWatching = watchSize(api, stage);
+            if (typeof api.setAnimating === 'function') { /* yoksay: bazı sürümlerde yok */ }
             finish('ready', result);
-            resolve({ api, count: result.count, failures: result.failures });
+            resolve({ api, count: result.count, failures: result.failures, stopWatching, fit: () => fitToStage(api, stage) });
           }).catch(reject);
         };
 
@@ -219,8 +287,13 @@
   window.MATEMATIK_GEOGEBRA = Object.freeze({
     DEPLOY_URL,
     BASE_PARAMS,
+    BRANDING_SELECTOR,
     loadDeploy,
     buildParams,
+    measure,
+    fitToStage,
+    watchSize,
+    hideBranding,
     runCommands,
     objectCount,
     createApplet,
