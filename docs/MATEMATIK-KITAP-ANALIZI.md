@@ -473,3 +473,46 @@ only the Graphics View visible"*. Uygulananlar:
 `showToolBarHelp`, `showFullscreenButton` = false · `SetPerspective("G")` dört kez ve **A=(1,1)
 komutundan önce** çalıştı · `setSize` çağrıldı · tam ekran düğmesi ve `requestFullscreen` kalmadı ·
 inşa düğmesi hâlâ yalnız `d:true` açıyor. `scripts/check-matematik.js` bu kuralları denetliyor.
+
+## 15. Uygulama — 15 haftalık konu anlatımı (25 Ekim 2026)
+
+Matematik alanı uygulamaya eklendi. Ders düğmesindeki "Yakında" etiketi kaldırıldı; alan artık
+Fen ve Sosyal ile aynı iskeleti kullanıyor.
+
+**Yeni dosyalar**
+
+| Dosya | İçerik |
+|---|---|
+| `matematik-content.js` | 15 hafta × (4–5 paragraflık özgün konu anlatımı, 3–5 ana nokta, 3 kavram, 2 kısa kontrol, 3 görev, sahne tanımı) |
+| `matematik.js` | Hafta listesi (4 tema), hafta içeriği, ilerleme kaydı (`emr7lect.matematik.v1`), kısa kontrol geri bildirimi, görev onayları, GeoGebra + yerel yedek sahne bağlantısı |
+| `matematik.css` | Alan yerleşimi, kartlar, sahne kutusu (300 px), kontrol/görev stilleri |
+| `scripts/check-matematik-content.js` | İçerik ve bağlantı denetimi |
+
+**Kapsam**
+- **15 hafta, 4 tema:** Sayılar 1–7 · Geometri 8–12 · Veri 12–13 · Dönüşüm 14–15.
+- Hafta tarihleri uygulamadaki 2026–2027 ızgarasıyla birebir aynı; **1. sınav 5 Kasım 2026**,
+  8. haftada hem hafta listesinde hem hafta başlığında görünüyor. 2. sınav kartı
+  "tahmini 4–8 Ocak 2027".
+- Konu anlatımı uzunluğu **253–310 kelime** (ortalama 282). Bu, Sosyal'deki 450–600 kelimelik
+  ölçünün altında; matematikte kural–örnek dengesi farklı olduğu için ilk sürümde bilinçli olarak
+  daha yoğun tutuldu. Gerekirse ikinci turda her hafta 350–400 kelimeye çıkarılabilir.
+- **13 GeoGebra sahnesi** (7–8. hafta hariç her haftada). Sahne tanımları `app`, `commands`,
+  `bounds` ve gerekliyse `hidden` alanlarından oluşuyor; yükleme stratejisi §14'teki gibidir
+  (`SetPerspective("G")`, `setSize`, yeniden deneme, nesne doğrulama).
+- Sahne açılamazsa **14 ve 15. haftalarda yerel SVG sahnesi** devreye giriyor; diğer haftalarda
+  durum satırı sebebi yazıp konu anlatımı + kısa kontrolle devam ediliyor.
+- Öğrenci metninde kitap/sayfa atfı yok; kavram tanımları ve sorular özgün.
+- Kısa kontrolde **cevap anahtarı yok**: yanlışta ipucu, doğruda kısa açıklama gösterilir;
+  doğru şıklar tek konumda toplanmaz (30 soru, 3 farklı konum).
+
+**Denetimler**
+`scripts/check-matematik-content.js` şunları doğruluyor: 15 hafta ve sıralı kimlikler, takvimle
+birebir tarihler, tema dağılımı, kelime aralığı (250–520), ana nokta 3–5, kavram 3–4, görev 3,
+kontrol 2 × 3 seçenek, ipucu/açıklama uzunluğu, doğru şıkların dağılımı, öğrenci metninde
+sayfa/kitap atfı olmaması, sahne tanımlarının bütünlüğü, `index.html` bağlantıları ve sınav
+kartları. `check-static.py` içindeki "üç ders" varsayımı **dört derse** güncellendi.
+
+jsdom ile uçtan uca denendi: 15 hafta listelendi · 1. haftada 4 paragraf, 4 ana nokta, 3 kavram,
+2 kontrol, 3 görev oluştu · yanlış cevapta ipucu, doğru cevapta açıklama ve seçenek kilidi ·
+"tamamladım" ilerlemeyi 1/15 yapıp kaydetti · 14. haftada GeoGebra yokken yerel yansıma sahnesi
+açıldı · 5. haftada sahne kartı (tanım yok) görünmedi.

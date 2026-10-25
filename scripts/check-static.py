@@ -1181,17 +1181,17 @@ def main() -> int:
     if "const EXAM_DATES_BY_WEEK=Object.freeze({9:'10 Kasım 2026'});" not in html or "[9,'9–13 Kas'" not in html or '1. sınav (${examDate})' not in html or 'id="weekExamNotice"' not in html:
         errors.append("Turkish first-term exam notices must map to the user-provided date inside week nine only")
     # Sınav kartları kısa tek satırdır: "1. Sınav: tarih" ve "2. Sınav: tahmini tarih".
-    if html.count('class="term-exam-plan"') != 3 or "4–8 Ocak 2027" not in html or ".term-exam-plan{" not in html:
-        errors.append("All three courses must show the tentative second-exam window (two weeks before 22 January)")
-    if html.count('class="term-exam-plan term-exam-plan--first"') != 3:
+    if html.count('class="term-exam-plan"') != 4 or "4–8 Ocak 2027" not in html or ".term-exam-plan{" not in html:
+        errors.append("All four courses must show the tentative second-exam window (two weeks before 22 January)")
+    if html.count('class="term-exam-plan term-exam-plan--first"') != 4:
         errors.append("Each course sidebar needs a short first-exam card above the second-exam estimate")
     if 'term-exam-plan--end' in html:
         errors.append("The bottom second-exam card must be removed; the date belongs under the last week item")
-    for label, date_text in (("1. Sınav:", "6 Kasım 2026"), ("1. Sınav:", "3 Kasım 2026"), ("1. Sınav:", "10 Kasım 2026")):
+    for label, date_text in (("1. Sınav:", "6 Kasım 2026"), ("1. Sınav:", "3 Kasım 2026"), ("1. Sınav:", "10 Kasım 2026"), ("1. Sınav:", "5 Kasım 2026")):
         if f"<b>{label}</b> <strong>{date_text}</strong>" not in html:
             errors.append(f"The first-exam card must read “{label} {date_text}”")
-    if html.count("<b>2. Sınav:</b> <strong>tahmini 4–8 Ocak 2027</strong>") != 3:
-        errors.append("The second-exam card must read “2. Sınav: tahmini 4–8 Ocak 2027” in all three courses")
+    if html.count("<b>2. Sınav:</b> <strong>tahmini 4–8 Ocak 2027</strong>") != 4:
+        errors.append("The second-exam card must read “2. Sınav: tahmini 4–8 Ocak 2027” in all four courses")
     # Listenin son maddesinin altında kırmızı 2. sınav satırı.
     if "2. sınav: 4–8 Ocak 2027 (tahmini)" not in html:
         errors.append("The tentative second exam must appear in red under the last week item")

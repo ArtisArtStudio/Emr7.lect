@@ -212,11 +212,12 @@
 @media(max-width:520px){.week-study-schedule{padding:16px}.schedule-week{padding:13px}.schedule-week-title{font-size:16px}.study-schedule-table{min-width:700px}}
 @media print{.schedule-week{break-inside:avoid}.schedule-table-wrap{overflow:visible}.study-schedule-table{min-width:0}.schedule-link{color:#111}}
 </style><link rel="stylesheet" href="theme1-practice.css?v=12"><link rel="stylesheet" href="tema2-practice.css?v=2"><link rel="stylesheet" href="social-studies.css?v=17"><link rel="stylesheet" href="science.css?v=13">
-<link rel="stylesheet" href="activity-cards.css?v=3"></head><body data-subject="turkce"><div class="app">
+<link rel="stylesheet" href="activity-cards.css?v=3"><link rel="stylesheet" href="matematik.css?v=1">
+</head><body data-subject="turkce"><div class="app">
 <header class="top"><div class="brand"><span>7</span>7. Sınıf Öğrenme Rotası</div><div class="topright"><button class="print" id="exportBtn">İlerlemeyi yedekle</button><button class="print" id="importBtn">Yedekten yükle</button><input id="importFile" type="file" accept="application/json" hidden><span id="saved">İlerleme bu tarayıcıya kaydedilir</span><span class="pill">2026—27</span></div></header>
 <nav class="subject-nav" id="subjectNav" aria-label="Ders seçimi">
   <button type="button" class="subject-btn active" data-subject="turkce" aria-current="page"><span class="subject-icon">Aa</span><span>Türkçe</span><small>Aktif</small></button>
-  <button type="button" class="subject-btn" data-subject="matematik"><span class="subject-icon">∑</span><span>Matematik</span><small>Yakında</small></button>
+  <button type="button" class="subject-btn" data-subject="matematik"><span class="subject-icon">∑</span><span>Matematik</span><small>Yeni</small></button>
   <button type="button" class="subject-btn" data-subject="fen"><span class="subject-icon">⚗</span><span>Fen Bilimleri</span><small>Yeni</small></button>
   <button type="button" class="subject-btn" data-subject="sosyal"><span class="subject-icon">◎</span><span>Sosyal Bilgiler</span><small>Yeni</small></button>
   <button type="button" class="subject-btn" data-subject="din"><span class="subject-icon">☼</span><span>Din Kültürü ve Ahlak Bilgisi</span><small>Yakında</small></button>
@@ -252,6 +253,30 @@
     <div class="science-week-main">
       <section class="card science-week-prompt" id="scienceWeekPrompt"><div class="tag">HAFTA SEÇİMİ</div><h2>Çalışmak istediğin haftayı seç</h2><p>Soldaki ünitelerden bir hafta seç. Konu özeti, görsel şema, etkinlik ve mini plan bu alanda açılır; yanıtlar bu tarayıcıya otomatik kaydedilir.</p></section>
       <main class="science-week-content" id="scienceWeekContent" aria-live="polite" hidden></main>
+    </div>
+  </div>
+</section>
+<section class="math-workspace" id="mathWorkspace" hidden aria-labelledby="mathWorkspaceTitle">
+  <header class="math-hero">
+    <div class="math-eyebrow">7. sınıf · haftada 5 ders saati · 15 hafta</div>
+    <h1 id="mathWorkspaceTitle">Matematik: kuralı keşfet, işlemi güvenle yap.</h1>
+    <p>MEB 7. sınıf matematik ders kitabının dört teması, 1. dönemin 15 haftasına yerleştirildi. Her hafta özgün konu anlatımı, GeoGebra keşif sahnesi, kısa kontrol ve ev görevleri var; 1. sınav 5 Kasım 2026.</p>
+    <div class="math-hero-actions">
+      <div class="math-progress" id="mathProgressTrack" role="progressbar" aria-label="Matematik haftalık ilerlemesi" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0"><div class="math-progress-value" id="mathProgressBar"></div></div>
+      <span class="math-progress-text" id="mathProgressText">0 / 15 hafta tamamlandı</span>
+    </div>
+  </header>
+  <div class="math-layout">
+    <aside class="panel math-nav" aria-label="Matematik hafta seçimi">
+      <h2>Temalar ve haftalar</h2>
+      <p class="math-nav-note">Temayı açıp çalışmak istediğin haftayı seç. Her hafta kendi konu anlatımını ve görevlerini taşır.</p>
+      <aside class="term-exam-plan term-exam-plan--first" role="note" aria-label="Birinci sınav tarihi"><b>1. Sınav:</b> <strong>5 Kasım 2026</strong></aside>
+      <aside class="term-exam-plan" role="note" aria-label="İkinci sınav tarihi (tahmini)"><b>2. Sınav:</b> <strong>tahmini 4–8 Ocak 2027</strong></aside>
+      <div id="mathWeekList"></div>
+    </aside>
+    <div class="math-main">
+      <section class="card math-prompt" id="mathWeekPrompt"><div class="tag">HAFTA SEÇİMİ</div><h2>Çalışmak istediğin haftayı seç</h2><p>Soldaki temalardan bir hafta seç. Konu anlatımı, kavramlar, GeoGebra keşfi, kısa kontrol ve görevler bu alanda açılır; işaretlemeler bu tarayıcıya kaydedilir.</p></section>
+      <main class="math-week-content" id="mathWeekContent" aria-live="polite" hidden></main>
     </div>
   </div>
 </section>
@@ -301,6 +326,7 @@
 <div class="footer">Türkçe alanı MEB 2026–2027 taslak çerçeve planını temel alır. Sosyal Bilgiler alanı MEB 2026 7. sınıf ders kitabındaki üç öğrenme alanına dayalı özgün ev çalışması önerisidir; okulun yıllık planı ve öğretmen yönlendirmesi önceliklidir. Fen Bilimleri için ders kitabına dayalı haftalık rota aktiftir; Matematik ve Din Kültürü içerikleri aşamalı olarak eklenecektir.</div></div></div>
 <script src="book-texts.js"></script><script src="ai-grader.js?v=1"></script>
 <script src="social-studies-content.js?v=6"></script><script src="social-studies-extras.js?v=3"></script><script src="social-studies-visual.js?v=1"></script><script src="social-studies.js?v=15"></script><script src="science-content.js?v=8"></script><script src="science-term-notes.js?v=1"></script><script src="science-activities.js?v=15"></script><script src="science.js?v=34"></script><script src="theme1-practice.js?v=10"></script><script src="theme1-practice-forms.js?v=12"></script><script src="theme1-practice-app.js?v=21"></script>
+<script src="matematik-content.js?v=1"></script><script src="matematik-geogebra.js?v=3"></script><script src="matematik-yerel-sahne.js?v=2"></script><script src="matematik.js?v=1"></script>
 <script src="turkce-qr.js?v=4"></script>
 <script src="turkce-qr-app.js?v=5"></script>
 <script src="social-studies-qr.js?v=18"></script>
@@ -497,7 +523,7 @@ document.getElementById('importFile').onchange=async e=>{const f=e.target.files[
 document.getElementById('toggleKey').onclick=()=>{const visible=apiInput.type==='password';apiInput.type=visible?'text':'password';document.getElementById('toggleKey').textContent=visible?'Gizle':'Göster'};document.getElementById('saveKey').onclick=()=>{if(rememberKey.checked&&apiInput.value.trim())localStorage.setItem(groqKeyStorage,apiInput.value.trim());else localStorage.removeItem(groqKeyStorage);if(rememberEleven.checked&&elevenInput.value.trim())localStorage.setItem(elevenKeyStorage,elevenInput.value.trim());else localStorage.removeItem(elevenKeyStorage);localStorage.setItem(elevenVoiceStorage,elevenVoice.value.trim());localStorage.setItem(groqModelStorage,modelInput.value||'openai/gpt-oss-20b');document.getElementById('keyStatus').textContent='Ayarlar kaydedildi. Anahtarlar yalnızca ilgili hatırlama kutusu işaretliyse bu cihazda tutulur.';document.getElementById('apiSettings').open=true};document.getElementById('clearKey').onclick=()=>{apiInput.value='';rememberKey.checked=false;elevenInput.value='';rememberEleven.checked=false;elevenVoice.value='';localStorage.removeItem(groqKeyStorage);localStorage.removeItem(groqModelStorage);localStorage.removeItem(elevenKeyStorage);localStorage.removeItem(elevenVoiceStorage);document.getElementById('keyStatus').textContent='Kaydedilmiş Groq/ElevenLabs anahtarları ve ses ayarları silindi.';document.getElementById('aiStatus').textContent='API anahtarları bu cihazdan silindi.'};
 
 const SUBJECT_NAMES={turkce:'Türkçe',matematik:'Matematik',fen:'Fen Bilimleri',sosyal:'Sosyal Bilgiler',din:'Din Kültürü ve Ahlak Bilgisi'};
-function selectSubject(id){document.body.dataset.subject=id;const isTurkish=id==='turkce',isSocial=id==='sosyal',isScience=id==='fen';document.querySelectorAll('.subject-btn').forEach(btn=>{const active=btn.dataset.subject===id;btn.classList.toggle('active',active);if(active)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')});document.getElementById('turkishWorkspace').hidden=!isTurkish;const social=document.getElementById('socialWorkspace');social.hidden=!isSocial;const science=document.getElementById('scienceWorkspace');science.hidden=!isScience;const placeholder=document.getElementById('subjectPlaceholder');placeholder.hidden=isTurkish||isSocial||isScience;if(!isTurkish&&!isSocial&&!isScience)document.getElementById('subjectPlaceholderTitle').textContent=SUBJECT_NAMES[id]||'Ders';if(isSocial)window.SOCIAL_STUDIES?.render();if(isScience)window.SCIENCE?.render();}
+function selectSubject(id){document.body.dataset.subject=id;const isTurkish=id==='turkce',isSocial=id==='sosyal',isScience=id==='fen',isMath=id==='matematik';document.querySelectorAll('.subject-btn').forEach(btn=>{const active=btn.dataset.subject===id;btn.classList.toggle('active',active);if(active)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')});document.getElementById('turkishWorkspace').hidden=!isTurkish;const social=document.getElementById('socialWorkspace');social.hidden=!isSocial;const science=document.getElementById('scienceWorkspace');science.hidden=!isScience;const math=document.getElementById('mathWorkspace');if(math)math.hidden=!isMath;const placeholder=document.getElementById('subjectPlaceholder');placeholder.hidden=isTurkish||isSocial||isScience||isMath;if(!isTurkish&&!isSocial&&!isScience&&!isMath)document.getElementById('subjectPlaceholderTitle').textContent=SUBJECT_NAMES[id]||'Ders';if(isSocial)window.SOCIAL_STUDIES?.render();if(isScience)window.SCIENCE?.render();if(isMath)window.MATEMATIK?.render();}
 document.querySelectorAll('.subject-btn').forEach(btn=>btn.addEventListener('click',()=>selectSubject(btn.dataset.subject)));
 document.getElementById('backToTurkish').addEventListener('click',()=>selectSubject('turkce'));
 document.getElementById('socialBackToTurkish').addEventListener('click',()=>selectSubject('turkce'));document.getElementById('scienceBackToTurkish').addEventListener('click',()=>selectSubject('turkce'));

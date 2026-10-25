@@ -70,7 +70,7 @@ assert.ok(Math.hypot(P.x - (A.x + B.x) / 2, P.y - (A.y + B.y) / 2) > 10, 'P orta
 // 5. Yerleşim ve düğme davranışı
 assert.ok(!/\.ggb-stage\s+svg/.test(demo), 'GeoGebra SVG içeriğine boyut kuralı uygulanmamalı; çizim alanını eziyor.');
 assert.ok(/\.local-scene\s+svg/.test(demo), 'Boyut kuralı yerel sahneye kapsanmalı.');
-assert.ok(/height:clamp\(460px,78vh,780px\)/.test(demo), 'Sahne kutusu ekran yüksekliğine göre ölçeklenmeli.');
+assert.ok(/height:clamp\(300px,44vh,380px\)/.test(demo), 'Sahne kutusu ekran yüksekliğine göre ölçeklenmeli.');
 assert.ok(/\.ggb-stage\{width:100%;height:100%\}/.test(demo), 'Applet kapsayıcısı kutuyu tam doldurmalı.');
 assert.ok(/height:\s*520/.test(demo), 'Applet yedek yüksekliği 520 px olmalı.');
 assert.ok(!/data-fullscreen|requestFullscreen/.test(demo), 'Tam ekran düğmesi istenmiyor; kaldırılmış olmalı.');
