@@ -15,12 +15,12 @@
   .card h2{font-size:17px;margin:0 0 4px}
   .card p{margin:0 0 12px;color:var(--muted);font-size:14px}
   .tag{display:inline-block;background:var(--tint);color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 9px;border-radius:99px;text-transform:uppercase;margin-bottom:8px}
-  .ggb-host{position:relative;min-height:340px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
-  .ggb-stage{width:100%;min-height:340px}
-  .ggb-stage svg{width:100%;height:auto;display:block}
+  .ggb-host{position:relative;min-height:400px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+  .ggb-stage{width:100%;min-height:400px}
+  .local-scene svg{width:100%;height:auto;display:block}
   .ggb-host.is-loading .ggb-stage{position:relative;background:#fbfbfe}
-  .ggb-host.is-loading .ggb-stage::before{content:"";position:absolute;left:50%;top:40%;width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid #ded8f5;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
-  .ggb-host.is-loading .ggb-stage::after{content:"Sahne hazırlanıyor…";position:absolute;left:0;right:0;top:calc(40% + 22px);text-align:center;font-size:13px;color:var(--muted)}
+  .ggb-host.is-loading .ggb-stage::before{content:"";position:absolute;left:50%;top:calc(50% - 30px);width:26px;height:26px;margin:-13px 0 0 -13px;border:3px solid #ded8f5;border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+  .ggb-host.is-loading .ggb-stage::after{content:"Sahne hazırlanıyor…";position:absolute;left:0;right:0;top:calc(50% - 8px);text-align:center;font-size:13px;color:var(--muted)}
   @keyframes spin{to{transform:rotate(360deg)}}
   .ggb-fallback{border-top:1px solid var(--line);background:#fff8e8;color:#6b4b12;font-size:13px;padding:10px 12px}
   .ggb-fallback[hidden]{display:none}
@@ -95,10 +95,10 @@
   <section class="card">
     <div class="tag">3 · Yanıt sonrası</div>
     <h2>Yansıma: cevabı yazdıktan sonra kendi gözüyle doğrula</h2>
-    <p>Öğrenci önce kağıtta yansımayı çizer, sonra burada karşılaştırır. Ayna doğrusunu sağa sola çekerek etkisini görür.</p>
+    <p>Sahnede üçgen ve <b>ayna doğrusu</b> hazır durur. Düğme, aynadaki görüntüyü açar; köşelerden görüntülerine kesikli bağlantılar çizilir. GeoGebra açılamazsa yerel sahnede ayna doğrusu sağa sola sürüklenebilir.</p>
     <div class="ggb-host" id="reflectHost" data-scene="reflect"></div>
     <div class="row">
-      <button type="button" class="primary" id="showReflect" disabled>Yansımayı göster</button>
+      <button type="button" class="primary" id="showReflect" disabled>Aynadaki görüntüyü göster</button>
       <button type="button" id="resetReflect" disabled>Sıfırla</button>
     </div>
     <div class="status" id="reflectStatus" data-state="idle">Sahne hazırlanıyor…</div>
@@ -107,6 +107,7 @@
   <section class="card">
     <h2>Teknik durum</h2>
     <ul class="notes">
+      <li>Bütün nesneler sahne kurulurken oluşturulur; düğme yalnız <b>görünürlüğü</b> değiştirir.</li>
       <li>Komutlar kurulumdan sonra <b>doğrulanır</b>: nesne sayısı sıfırsa birkaç kez yeniden denenir.</li>
       <li>Sahnenin altındaki satır <b>kaç nesne çizildiğini</b> yazar; boş tuval artık sessiz kalmaz.</li>
       <li>Eksen ve ızgara açık: sahne boş kalsa bile düzlem görünür.</li>
@@ -136,9 +137,15 @@
       localType: 'ortadikme',
       spec: {
         appName: 'geometry',
-        height: 340,
+        height: 400,
         bounds: [-2, 8, -1, 7],
-        commands: ['A = (1, 1)', 'B = (5, 3)', 's = Segment(A, B)', 'M = Midpoint(A, B)'],
+        commands: [
+          'A = (1, 1)',
+          'B = (5, 3)',
+          's = Segment(A, B)',
+          'M = Midpoint(A, B)',
+          'd = PerpendicularBisector(A, B)',
+        ],
         hidden: ['d'],
       },
     },
@@ -148,14 +155,21 @@
       status: 'reflectStatus',
       show: 'showReflect',
       reset: 'resetReflect',
-      label: 'Yansımayı göster',
+      label: 'Aynadaki görüntüyü göster',
       hidden: 'p2',
       localType: 'yansima',
       spec: {
         appName: 'geometry',
-        height: 340,
-        bounds: [-2, 8, -1, 7],
-        commands: ['A = (1, 1)', 'B = (4, 1)', 'C = (1, 3)', 'p = Polygon(A, B, C)'],
+        height: 400,
+        bounds: [-5, 8, -2, 7],
+        commands: [
+          'm = Line((0, -6), (0, 6))',
+          'A = (1, 1)',
+          'B = (4, 1)',
+          'C = (1, 3)',
+          'p = Polygon(A, B, C)',
+          'p2 = Reflect(p, m)',
+        ],
         hidden: ['p2'],
       },
     },
@@ -175,35 +189,28 @@
     return local;
   }
 
-  function buildAdapter(scene, ggbResult, notify) {
+  function buildAdapter(scene, ggbResult, notify, onBroken) {
     const { api, count } = ggbResult;
-    const commands = scene.id === 'bisector'
-      ? ['PerpendicularBisector(A, B)', 'PerpendicularLine(M, s)']
-      : ['Reflect(p, yAxis)'];
     const exists = (label) => {
-      try { return typeof api.exists === 'function' ? api.exists(label) : true; } catch (error) { return true; }
+      try { return typeof api.exists === 'function' ? api.exists(label) : true; } catch (error) { return false; }
     };
+    // Bütün nesneler sahne kurulurken oluşturuldu; düğme yalnız görünürlüğü değiştirir.
     return {
       show() {
-        for (let i = 0; i < commands.length; i += 1) {
-          if (exists(scene.hidden)) break;
-          try { api.evalCommand(`${scene.hidden} = ${commands[i]}`); } catch (error) { /* sıradaki denenir */ }
-        }
-        try { api.setVisible(scene.hidden, true); } catch (error) { /* yoksay */ }
         if (!exists(scene.hidden)) {
-          notify('failed', 'İnşa çizilemedi: GeoGebra komutu bu sürümde çalışmadı. Sayfayı yenileyip tekrar dene.');
+          if (onBroken) onBroken('inşa kurulamadı');
           return false;
         }
-        notify('ready', `Hazır: ${count} nesne + inşa · noktaları sürükleyebilirsin.`);
+        try { api.setVisible(scene.hidden, true); } catch (error) { /* yoksay */ }
+        notify('ready', `Hazır: ${count} nesne · inşa açıldı. Noktaları sürükleyebilirsin.`);
         return true;
       },
       reset() {
         try {
           api.setVisible(scene.hidden, false);
-          api.evalCommand('SetActiveView(1)');
         } catch (error) { /* yoksay */ }
       },
-      describe() { return `${count} nesne çizildi · eksen ve ızgara açık`; },
+      describe() { return `${count} nesne çizildi · eksen ve ızgara açık · inşa gizli`; },
     };
   }
 
@@ -272,7 +279,7 @@
 
       GGB.createApplet(host, spec)
         .then((result) => {
-          adapter = buildAdapter(scene, result, notify);
+          adapter = buildAdapter(scene, result, notify, fallbackToLocal);
           bindButtons();
           setStatus(scene.status, 'ready', `Hazır: ${adapter.describe()}.`);
         })

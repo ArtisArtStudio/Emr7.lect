@@ -50,7 +50,8 @@
     }
   }
 
-  function dragHandle(group, f, point, label, colour, onChange, axisLock) {
+  function dragHandle(group, f, point, label, colour, onChange, axisLock, bounds) {
+    const limit = bounds || { xmin: -2, xmax: 8, ymin: -1, ymax: 7 };
     const hit = node('circle', {
       cx: f.px(point.x), cy: f.py(point.y), r: 17, fill: 'transparent',
       style: 'cursor:grab;touch-action:none', tabindex: '0', role: 'slider',
@@ -85,8 +86,8 @@
       const svg = hit.ownerSVGElement;
       if (!svg) return;
       const world = f.toWorld(event.clientX, event.clientY, svg.getBoundingClientRect());
-      if (axisLock !== 'y') point.x = round(clamp(world.x, -2.6, 8.6));
-      if (axisLock !== 'x') point.y = round(clamp(world.y, -1.6, 7.6));
+      if (axisLock !== 'y') point.x = round(clamp(world.x, limit.xmin + 0.4, limit.xmax - 0.4));
+      if (axisLock !== 'x') point.y = round(clamp(world.y, limit.ymin + 0.4, limit.ymax - 0.4));
       place();
       onChange();
     });
@@ -95,8 +96,8 @@
       const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] };
       if (!moves[event.key]) return;
       event.preventDefault();
-      if (axisLock !== 'y') point.x = round(clamp(point.x + moves[event.key][0], -2.6, 8.6));
-      if (axisLock !== 'x') point.y = round(clamp(point.y + moves[event.key][1], -1.6, 7.6));
+      if (axisLock !== 'y') point.x = round(clamp(point.x + moves[event.key][0], limit.xmin + 0.4, limit.xmax - 0.4));
+      if (axisLock !== 'x') point.y = round(clamp(point.y + moves[event.key][1], limit.ymin + 0.4, limit.ymax - 0.4));
       place();
       onChange();
     });
@@ -187,8 +188,8 @@
         if (typeof options.onChange === 'function') options.onChange({ ...state });
       };
 
-      const handleA = dragHandle(draw, f, state.A, 'A', '#102238', () => { redraw(); handleA.place(); });
-      const handleB = dragHandle(draw, f, state.B, 'B', '#102238', () => { redraw(); handleB.place(); });
+      const handleA = dragHandle(draw, f, state.A, 'A', '#102238', () => { redraw(); handleA.place(); }, null, bounds);
+      const handleB = dragHandle(draw, f, state.B, 'B', '#102238', () => { redraw(); handleB.place(); }, null, bounds);
 
       host.appendChild(svg);
       redraw();
@@ -202,7 +203,7 @@
 
     // Yansıma: üçgen ve ayna doğrusu sürüklenir.
     yansima(host, options = {}) {
-      const bounds = { xmin: -2, xmax: 8, ymin: -1, ymax: 7 };
+      const bounds = { xmin: -5, xmax: 8, ymin: -2, ymax: 7 };
       const f = frame(bounds);
       const state = { A: { x: 1, y: 1 }, B: { x: 4, y: 1 }, C: { x: 1, y: 3 }, mirrorX: 0, showImage: false };
       const svg = node('svg', {
@@ -216,11 +217,15 @@
       drawGrid(grid, bounds, f);
 
       const mirror = node('line', { stroke: '#b42318', 'stroke-width': 2.4, 'stroke-dasharray': '9 6' });
+      const links = node('g', { stroke: '#b42318', 'stroke-width': 1.2, 'stroke-dasharray': '4 4', opacity: '.6' });
       const shape = node('polygon', { fill: '#7056c9', 'fill-opacity': '.18', stroke: '#7056c9', 'stroke-width': 2.4 });
       const image = node('polygon', { fill: '#b42318', 'fill-opacity': '.12', stroke: '#b42318', 'stroke-width': 2.4 });
+      const mirrorLabel = node('text', { x: 0, y: 0, 'font-size': 13, 'font-weight': 700, fill: '#b42318' }, 'ayna');
+      draw.appendChild(links);
       draw.appendChild(image);
       draw.appendChild(shape);
       draw.appendChild(mirror);
+      draw.appendChild(mirrorLabel);
 
       const points = () => [state.A, state.B, state.C];
       const polygonPoints = (list) => list.map((p) => `${f.px(p.x)},${f.py(p.y)}`).join(' ');
@@ -233,14 +238,24 @@
         mirror.setAttribute('x2', f.px(state.mirrorX));
         mirror.setAttribute('y1', f.py(bounds.ymax));
         mirror.setAttribute('y2', f.py(bounds.ymin));
+        mirrorLabel.setAttribute('x', f.px(state.mirrorX) + 7);
+        mirrorLabel.setAttribute('y', f.py(bounds.ymax) + 16);
+        while (links.firstChild) links.removeChild(links.firstChild);
+        points().forEach((p) => {
+          links.appendChild(node('line', {
+            x1: f.px(p.x), y1: f.py(p.y),
+            x2: f.px(2 * state.mirrorX - p.x), y2: f.py(p.y),
+          }));
+        });
+        links.setAttribute('visibility', state.showImage ? 'visible' : 'hidden');
         if (typeof options.onChange === 'function') options.onChange({ ...state });
       };
 
-      const handleA = dragHandle(draw, f, state.A, 'A', '#7056c9', () => { redraw(); handleA.place(); });
-      const handleB = dragHandle(draw, f, state.B, 'B', '#7056c9', () => { redraw(); handleB.place(); });
-      const handleC = dragHandle(draw, f, state.C, 'C', '#7056c9', () => { redraw(); handleC.place(); });
+      const handleA = dragHandle(draw, f, state.A, 'A', '#7056c9', () => { redraw(); handleA.place(); }, null, bounds);
+      const handleB = dragHandle(draw, f, state.B, 'B', '#7056c9', () => { redraw(); handleB.place(); }, null, bounds);
+      const handleC = dragHandle(draw, f, state.C, 'C', '#7056c9', () => { redraw(); handleC.place(); }, null, bounds);
       const mirrorPoint = { get x() { return state.mirrorX; }, set x(value) { state.mirrorX = value; }, y: 6.4 };
-      const mirrorHandle = dragHandle(draw, f, mirrorPoint, 'ayna', '#b42318', () => { redraw(); mirrorHandle.place(); }, 'x');
+      const mirrorHandle = dragHandle(draw, f, mirrorPoint, 'ayna', '#b42318', () => { redraw(); mirrorHandle.place(); }, 'x', bounds);
 
       host.appendChild(svg);
       redraw();
@@ -264,6 +279,7 @@
     if (!factory) throw new Error(`bilinmeyen sahne: ${type}`);
     host.innerHTML = '';
     host.dataset.localScene = type;
+    host.classList.add('local-scene');
     return factory(host, options || {});
   }
 
