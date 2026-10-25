@@ -74,17 +74,15 @@
     return `<figure class="math-etkinlik-figure">${svg}</figure>`;
   }
 
-  function inlineAppletMarkup(activity) {
-    if (!activity.geogebra) return '';
+  function inlineSceneMarkup(activity) {
+    if (!activity.scene) return '';
+    const id = escapeHTML(activity.id);
     return `<div class="math-etkinlik-scene">
-        <div class="math-etkinlik-scene-head">
-          <span>${escapeHTML(activity.geogebra.title || 'GeoGebra’da incele')}</span>
-          <button type="button" class="btn" data-math-etkinlik-scene="${escapeHTML(activity.id)}">Sahneyi aç</button>
-        </div>
+        <p class="math-etkinlik-scene-title">${escapeHTML(activity.scene.title || 'İnteraktif inceleme')}</p>
         <div class="math-scene-frame is-compact">
-          <div class="math-scene-host" id="mathEtkinlikHost-${escapeHTML(activity.id)}" data-app="${escapeHTML(activity.geogebra.app || 'graphing')}"></div>
+          <div class="math-scene-stage" id="mathEtkinlikStage-${id}"></div>
+          <div class="math-scene-controls" id="mathEtkinlikControls-${id}"></div>
         </div>
-        <p class="math-scene-caption" data-math-etkinlik-status="${escapeHTML(activity.id)}">Şekli GeoGebra’da döndürüp inceleyebilirsin; alt banttaki giriş alanına değer yazabilirsin.</p>
       </div>`;
   }
 
@@ -129,7 +127,7 @@
             ${figureMarkup(activity)}
             <div class="math-etkinlik-options">${options}</div>
           </fieldset>
-          ${inlineAppletMarkup(activity)}
+          ${inlineSceneMarkup(activity)}
           <div class="math-etkinlik-write">
             <label for="mathEtkinlikText-${escapeHTML(activity.id)}">Açıklaman (zorunlu): neden bu seçeneği seçtin?</label>
             <ul class="math-etkinlik-rubric">${rubric}</ul>
@@ -303,7 +301,7 @@
           paint(host, activity, entry);
           return;
         }
-        if (String(entry.text || '').trim().length < 24) {
+        if (String(entry.text || '').trim().length < activity.minChars) {
           entry.state = '';
           entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakterlik bir gerekçe yazmadan değerlendirme başlamaz.`;
           paint(host, activity, entry);
@@ -348,40 +346,14 @@
       });
     });
 
-    host.querySelectorAll('[data-math-etkinlik-scene]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const id = button.dataset.mathEtkinlikScene;
-        const activity = activities.find((item) => item.id === id);
-        if (!activity || !activity.geogebra) return;
-        const sceneHost = document.getElementById(`mathEtkinlikHost-${id}`);
-        const status = host.querySelector(`[data-math-etkinlik-status="${id}"]`);
-        const GGB = window.MATEMATIK_GEOGEBRA;
-        if (!sceneHost || !GGB) {
-          if (status) status.textContent = 'GeoGebra yüklenemedi; yukarıdaki şekli kullanabilirsin.';
-          return;
-        }
-        button.disabled = true;
-        button.textContent = 'Yükleniyor…';
-        sceneHost.classList.add('is-loading');
-        GGB.createApplet(sceneHost, {
-          appName: activity.geogebra.app || 'graphing',
-          commands: activity.geogebra.commands || [],
-          bounds: activity.geogebra.bounds,
-          height: 260,
-          onStatus: (state, payload) => {
-            if (state === 'ready' && status) status.textContent = `Hazır: ${payload.count} nesne · giriş alanı altta.`;
-          },
-        }).then(() => {
-          sceneHost.classList.remove('is-loading');
-          button.textContent = 'Sahne açık';
-        }).catch((error) => {
-          sceneHost.classList.remove('is-loading');
-          button.disabled = false;
-          button.textContent = 'Yeniden dene';
-          if (status) status.textContent = `GeoGebra açılamadı (${error.message}); yukarıdaki şekil aynı soruyu çözmeye yeter.`;
-        });
+    if (window.MATEMATIK_SAHNE2) {
+      activities.forEach((activity) => {
+        if (!activity.scene) return;
+        const stage = host.querySelector(`#mathEtkinlikStage-${activity.id}`);
+        const controls = host.querySelector(`#mathEtkinlikControls-${activity.id}`);
+        if (stage) window.MATEMATIK_SAHNE2.mount(stage, controls, activity.scene);
       });
-    });
+    }
   }
 
   function mount(host, weekId) {

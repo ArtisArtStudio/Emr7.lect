@@ -1,4 +1,4 @@
-/* 7. sınıf matematik alanı — haftalık konu anlatımı, GeoGebra keşfi, kısa kontrol ve görevler. */
+/* 7. sınıf matematik alanı — haftalık konu anlatımı, etkileşimli keşif sahneleri, kısa kontrol ve etkinlikler. */
 (() => {
   'use strict';
 
@@ -7,7 +7,6 @@
 
   const STORAGE_KEY = 'emr7lect.matematik.v1';
   const EXAM_BY_WEEK = Object.freeze({ 8: '5 Kasım 2026' });
-  const LOCAL_SCENES = new Set(['ortadikme', 'yansima']);
   const THEME_BY_ID = new Map(CONTENT.themes.map((theme) => [theme.id, theme]));
 
   let state = loadState();
@@ -21,11 +20,10 @@
         return {
           done: Array.isArray(parsed.done) ? parsed.done.filter(Number.isFinite) : [],
           checks: parsed.checks && typeof parsed.checks === 'object' ? parsed.checks : {},
-          tasks: parsed.tasks && typeof parsed.tasks === 'object' ? parsed.tasks : {},
         };
       }
     } catch (error) { /* bozuk kayıt: sıfırdan başla */ }
-    return { done: [], checks: {}, tasks: {} };
+    return { done: [], checks: {} };
   }
 
   function saveState() {
@@ -96,39 +94,18 @@
     if (track) track.setAttribute('aria-valuenow', String(done));
   }
 
-  function paramsMarkup(scene, index) {
-    const params = Array.isArray(scene.params) ? scene.params : [];
-    if (!params.length) return '';
-    const rows = params.map((param) => `<div class="math-slider" data-param="${escapeHTML(param.name)}">
-        <label for="mathParam-${index}-${escapeHTML(param.name)}">${escapeHTML(param.label || param.name)}
-          <output id="mathParamOut-${index}-${escapeHTML(param.name)}">${escapeHTML(param.value)}</output>
-        </label>
-        <input type="range" id="mathParam-${index}-${escapeHTML(param.name)}"
-          min="${param.min}" max="${param.max}" step="${param.step}"
-          value="${param.value}" data-math-param="${escapeHTML(param.name)}" data-scene-index="${index}" disabled>
-      </div>`).join('');
-    return rows;
-  }
-
   function sceneCard(scene, index, total) {
-    const viewLabel = scene.app === '3d' ? '3B görünüm' : 'grafik görünümü';
     return `<section class="math-card math-scene-card" aria-labelledby="mathSceneTitle-${index}">
-      <h3 id="mathSceneTitle-${index}"><span class="math-step">Keşif</span>${escapeHTML(scene.title)}${total > 1 ? `<span class="math-scene-order">${index + 1}/${total}</span>` : ''}</h3>
+      <h3 id="mathSceneTitle-${index}"><span class="math-step">2</span><span class="math-scene-kind">Keşif</span><span class="math-scene-name">${escapeHTML(scene.title)}</span>${total > 1 ? `<span class="math-scene-order">${index + 1}/${total}</span>` : ''}</h3>
       <p class="math-note">${rich(scene.hint || '')}</p>
-      <div class="math-scene-frame" data-scene-frame="${index}">
-        <div class="math-scene-host" id="mathSceneHost-${index}" data-scene-type="${escapeHTML(scene.type)}" data-app="${escapeHTML(scene.app || 'graphing')}"></div>
-        <div class="math-scene-controls" id="mathSceneControls-${index}" hidden>
-          <p class="math-controls-title">Sürgüler (yedek)</p>
-          ${paramsMarkup(scene, index)}
-        </div>
+      <div class="math-scene-frame">
+        <div class="math-scene-stage" id="mathSceneStage-${index}"></div>
+        <div class="math-scene-controls" id="mathSceneControls-${index}"></div>
       </div>
       <div class="math-scene-actions">
-        <button type="button" class="primary" id="mathSceneStart-${index}" data-scene-start="${index}">Etkileşimli sahneyi aç</button>
-        ${(scene.hidden && scene.hidden.length) ? `<button type="button" id="mathSceneReveal-${index}" data-scene-reveal="${index}" disabled>İnşayı göster</button>` : ''}
-        <button type="button" id="mathSceneReset-${index}" data-scene-reset="${index}" disabled>Sıfırla</button>
+        <button type="button" id="mathSceneReset-${index}">Başa al</button>
+        <span class="math-scene-tip">Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.</span>
       </div>
-      <p class="math-status" id="mathSceneStatus-${index}" data-state="idle">Sahne henüz açılmadı. GeoGebra’nın kendi giriş alanı çizim alanının altında ayrı bir bantta açılır.</p>
-      <p class="math-credit">Geogebra® — geogebra.org · ticari olmayan kullanım, atıf ile. ${viewLabel}.</p>
     </section>`;
   }
 
@@ -169,7 +146,7 @@
   function termsMarkup(week) {
     return week.terms.map((item) => {
       const figure = item.visual && window.MATEMATIK_FIGURE
-        ? `<div class="math-term-figure">${window.MATEMATIK_FIGURE.render(item.visual, {})}</div>` : '';
+        ? `<div class="math-term-figure">${window.MATEMATIK_FIGURE.render(item.visual, item.visualOptions || {})}</div>` : '';
       return `<article class="math-term-card">
         <div class="math-term-head">
           <h4>${rich(item.word)}</h4>
@@ -198,7 +175,7 @@
         <p class="math-example-answer"><span>Sonuç</span>${rich(item.answer)}</p>
       </article>`).join('');
     return `<section class="math-card" aria-labelledby="mathExamplesTitle">
-        <h3 id="mathExamplesTitle"><span class="math-step">2</span>Çözümlü örnekler</h3>
+        <h3 id="mathExamplesTitle"><span class="math-step">3</span>Çözümlü örnekler</h3>
         ${cards}
       </section>`;
   }
@@ -220,22 +197,22 @@
         ${week.summary.map((paragraph) => `<p>${rich(paragraph)}</p>`).join('')}
       </section>
 
+      ${scenesMarkup(week)}
+
       ${examplesMarkup(week)}
 
       <section class="math-card" aria-labelledby="mathPointsTitle">
-        <h3 id="mathPointsTitle"><span class="math-step">3</span>Ana noktalar</h3>
+        <h3 id="mathPointsTitle"><span class="math-step">4</span>Ana noktalar</h3>
         <ul class="math-points">${week.points.map((point) => `<li>${rich(point)}</li>`).join('')}</ul>
       </section>
 
       <section class="math-card" aria-labelledby="mathTermsTitle">
-        <h3 id="mathTermsTitle"><span class="math-step">4</span>Terimler, tek tek</h3>
+        <h3 id="mathTermsTitle"><span class="math-step">5</span>Terimler, tek tek</h3>
         <div class="math-terms">${termsMarkup(week)}</div>
       </section>
 
-      ${scenesMarkup(week)}
-
       <section class="math-card" aria-labelledby="mathCheckTitle">
-        <h3 id="mathCheckTitle"><span class="math-step">5</span>Kısa kontrol</h3>
+        <h3 id="mathCheckTitle"><span class="math-step">6</span>Kısa kontrol</h3>
         <div class="math-check">${checksMarkup(week)}</div>
       </section>
 
@@ -301,153 +278,15 @@
     });
   }
 
-  function localSceneKey(week) {
-    return LOCAL_SCENES.has(week.scene && week.scene.type) ? week.scene.type : null;
-  }
-
   function bindScene(week, index) {
-    const start = document.getElementById(`mathSceneStart-${index}`);
-    const reset = document.getElementById(`mathSceneReset-${index}`);
-    const reveal = document.getElementById(`mathSceneReveal-${index}`);
-    const host = document.getElementById(`mathSceneHost-${index}`);
-    const status = document.getElementById(`mathSceneStatus-${index}`);
+    const stage = document.getElementById(`mathSceneStage-${index}`);
     const controls = document.getElementById(`mathSceneControls-${index}`);
-    if (!start || !host || !status) return;
-
+    const reset = document.getElementById(`mathSceneReset-${index}`);
+    if (!stage || !window.MATEMATIK_SAHNE2) return;
     const scene = (week.scenes || [])[index];
     if (!scene) return;
-    const params = Array.isArray(scene.params) ? scene.params : [];
-    const sliders = Array.from(document.querySelectorAll(`[data-math-param][data-scene-index="${index}"]`));
-    const viewLabel = scene.app === '3d' ? '3B görünüm' : 'grafik görünümü';
-
-    const setStatus = (stateName, text) => {
-      status.dataset.state = stateName;
-      status.textContent = text;
-    };
-
-    const showFallbackControls = () => {
-      if (!controls || !params.length) return;
-      controls.hidden = false;
-      setStatus('local', 'GeoGebra giriş alanı bulunamadı; sürgüler yedek panelde açıldı.');
-    };
-
-    const bindSliders = (api) => {
-      sliders.forEach((input) => {
-        input.disabled = false;
-        if (input.dataset.bound === '1') return;
-        input.dataset.bound = '1';
-        input.addEventListener('input', () => {
-          const name = input.dataset.mathParam;
-          const value = Number(input.value);
-          const out = document.getElementById(`mathParamOut-${index}-${name}`);
-          if (out) out.textContent = String(value);
-          if (window.MATEMATIK_GEOGEBRA) window.MATEMATIK_GEOGEBRA.setParam(api, name, value);
-        });
-      });
-    };
-
-    let adapter = null;
-    let mounted = false;
-
-    const mountLocal = (reason) => {
-      const key = LOCAL_SCENES.has(scene.type) ? scene.type : null;
-      host.classList.remove('is-loading');
-      if (!key || !window.MATEMATIK_SAHNE) {
-        setStatus('failed', `Etkileşimli sahne açılamadı (${reason}). Konu anlatımı, çözümlü örnekler ve etkinliklerle devam edebilirsin.`);
-        start.disabled = false;
-        start.textContent = 'Yeniden dene';
-        mounted = false;
-        return;
-      }
-      const local = window.MATEMATIK_SAHNE.mount(host, key);
-      adapter = {
-        show() {
-          if (typeof local.setBisector === 'function') local.setBisector(true);
-          if (typeof local.setImage === 'function') local.setImage(true);
-          setStatus('local', 'Yerel yedek sahne açık: noktaları parmakla sürükle, ok tuşları da çalışır.');
-          return true;
-        },
-        reset() {
-          local.reset();
-          setStatus('local', 'Yerel sahne başa alındı.');
-        },
-      };
-      start.disabled = true;
-      start.textContent = 'Sahne hazır';
-      if (reveal) reveal.disabled = false;
-      reset.disabled = false;
-      setStatus('local', `GeoGebra açılamadı (${reason}). Yerel sahne hazır.`);
-    };
-
-    start.addEventListener('click', () => {
-      if (mounted) return;
-      mounted = true;
-      start.disabled = true;
-      const GGB = window.MATEMATIK_GEOGEBRA;
-      if (!GGB) { mountLocal('yükleyici yok'); return; }
-      host.classList.add('is-loading');
-      setStatus('idle', 'GeoGebra yükleniyor…');
-      const height = host.clientHeight || 320;
-      GGB.createApplet(host, {
-        appName: scene.app || 'graphing',
-        commands: scene.commands || [],
-        hidden: scene.hidden || [],
-        bounds: scene.bounds,
-        height,
-        onStatus: (stateName, payload) => {
-          if (stateName === 'ready') {
-            host.classList.remove('is-loading');
-            setStatus('ready', `Hazır: ${payload.count} nesne çizildi · ${viewLabel}. Değerleri alttaki giriş alanına yazabilirsin.`);
-          }
-          if (stateName === 'failed') {
-            host.classList.remove('is-loading');
-            setStatus('failed', `GeoGebra açılamadı (${payload.reason}).`);
-          }
-        },
-      }).then((result) => {
-        host.classList.remove('is-loading');
-        const api = result.api;
-        const hidden = (Array.isArray(scene.hidden) && scene.hidden[0]) || null;
-        // GeoGebra'nın kendi giriş alanı yoksa sürgü yedeği devreye girer.
-        const stage = host.querySelector('.ggb-stage');
-        if (GGB.hasNativeInput && GGB.hasNativeInput(stage)) {
-          GGB.styleInputBand(stage);
-        } else {
-          showFallbackControls();
-        }
-        bindSliders(api);
-        adapter = {
-          show() {
-            if (!hidden) return true;
-            try { api.setVisible(hidden, true); } catch (error) { return false; }
-            setStatus('ready', `İnşa açıldı · ${viewLabel}.`);
-            return true;
-          },
-          reset() {
-            if (hidden) { try { api.setVisible(hidden, false); } catch (error) { /* yoksay */ } }
-            params.forEach((param) => {
-              const input = document.getElementById(`mathParam-${index}-${param.name}`);
-              const out = document.getElementById(`mathParamOut-${index}-${param.name}`);
-              if (input) input.value = String(param.value);
-              if (out) out.textContent = String(param.value);
-            });
-            if (params.length && window.MATEMATIK_GEOGEBRA) window.MATEMATIK_GEOGEBRA.setParams(api, params);
-            setStatus('ready', `Sahne başa alındı · ${viewLabel}.`);
-          },
-        };
-        start.disabled = true;
-        start.textContent = 'Sahne hazır';
-        if (reveal) reveal.disabled = false;
-        reset.disabled = false;
-        setStatus('ready', `Hazır: ${result.count} nesne çizildi · ${viewLabel}. Değerleri alttaki giriş alanına yazabilirsin.`);
-      }).catch((error) => {
-        mounted = false;
-        mountLocal(error.message || 'bağlantı');
-      });
-    });
-
-    if (reveal) reveal.addEventListener('click', () => { if (adapter) adapter.show(); });
-    reset.addEventListener('click', () => { if (adapter) adapter.reset(); });
+    const instance = window.MATEMATIK_SAHNE2.mount(stage, controls, scene);
+    if (reset && instance) reset.addEventListener('click', () => instance.reset());
   }
 
   function selectWeek(id) {
@@ -489,7 +328,7 @@
     weekById,
     getState: () => JSON.parse(JSON.stringify(state)),
     resetProgress() {
-      state = { done: [], checks: {}, tasks: {} };
+      state = { done: [], checks: {} };
       saveState();
       renderWeekList();
       renderProgress();

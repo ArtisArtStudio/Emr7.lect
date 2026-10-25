@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Matematik alanı: GeoGebra yerleşimi ve statik soru görselleri denetimi.
+/* Matematik alanı: yerel sahne motoru, şekiller ve yerleşim denetimi.
    Ağ gerektirmez; dosyaları okuyup kuralları doğrular. */
 'use strict';
 
@@ -10,106 +10,95 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
-const ggb = read('matematik-geogebra.js');
-const local = read('matematik-yerel-sahne.js');
-const demo = read('matematik-geogebra-demo.html');
+const sandbox = { window: {} };
+const load = (file) => new Function('window', read(file))(sandbox.window);
+load('matematik-sahne.js');
+load('matematik-figure.js');
+const SAHNE = sandbox.window.MATEMATIK_SAHNE2;
+const FIG = sandbox.window.MATEMATIK_FIGURE;
+
+const scene = read('matematik-sahne.js');
+const figure = read('matematik-figure.js');
+const app = read('matematik.js');
+const css = read('matematik.css');
+const html = read('index.html');
+
+// 1. Motor sözleşmesi
+assert.ok(SAHNE && typeof SAHNE.mount === 'function', 'MATEMATIK_SAHNE2.mount bulunamadı.');
+assert.ok(typeof SAHNE.types === 'function' && typeof SAHNE.params === 'function', 'Sahne motoru tür ve parametre listesi vermeli.');
+assert.equal(SAHNE.width, 640, 'Sahne tuvali 640 birim geniş olmalı.');
+assert.equal(SAHNE.height, 380, 'Sahne tuvali 380 birim yüksek olmalı.');
+assert.ok(SAHNE.types().length >= 16, `Sahne türü sayısı az: ${SAHNE.types().length}`);
+SAHNE.types().forEach((type) => {
+  const params = SAHNE.params(type);
+  assert.ok(params.length >= 1, `${type} sahnesinde oynanabilir sürgü olmalı.`);
+  params.forEach((param) => {
+    assert.ok(param.name && param.label, `${type} sürgü adı/etiketi eksik.`);
+    assert.ok(Number.isFinite(param.min) && Number.isFinite(param.max) && Number.isFinite(param.step) && Number.isFinite(param.value),
+      `${type} ${param.name} sürgü değerleri sayı olmalı.`);
+  });
+});
+
+// 2. Dış bağımlılık sınırı: sahne çevrimdışı çalışır
+[scene, figure, app].forEach((source, index) => {
+  const hosts = [...source.matchAll(/https?:\/\/([^/"'\s]+)/g)].map((match) => match[1]);
+  hosts.forEach((host) => {
+    assert.equal(host, 'www.w3.org', `Matematik kaynağı dış adres çağırmamalı: ${host} (${index + 1}. dosya).`);
+  });
+  assert.ok(!/localhost|127\.0\.0\.1/.test(source), 'Yerel adres kullanılmamalı.');
+  assert.ok(!/youtube\.com|youtu\.be/.test(source), 'Matematik alanında YouTube bağlantısı olmamalı.');
+});
+assert.ok(!/geogebra/i.test(scene + figure + app + html), 'GeoGebra bağımlılığı tamamen kaldırılmalı.');
+assert.ok(!fs.existsSync(path.join(root, 'matematik-geogebra.js')), 'GeoGebra yükleyicisi silinmiş olmalı.');
+assert.ok(!fs.existsSync(path.join(root, 'matematik-yerel-sahne.js')), 'Yerel yedek sahne dosyası silinmiş olmalı.');
+
+// 3. Sürgü + sürükleme davranışı
+assert.ok(/data-scene-param/.test(scene), 'Sürgüler data-scene-param ile bağlanmalı.');
+assert.ok(/scene-out-/.test(scene), 'Sürgü değeri canlı okunmalı (output).');
+assert.ok(/pointerdown/.test(scene) && /pointermove/.test(scene), 'Sahne noktaları sürüklenebilmeli.');
+assert.ok(/data-handle/.test(scene), 'Sürüklenebilir nokta işaretlenmeli.');
+assert.ok(/touch-action/.test(css), 'Dokunmatik sürükleme için touch-action tanımlı olmalı.');
+assert.ok(/aria-label/.test(scene), 'Sahne erişilebilir etiket taşımalı.');
+
+// 4. Şekil motoru: tüm türler çizilir, bozuk değer üretmez
+assert.ok(FIG && typeof FIG.render === 'function', 'MATEMATIK_FIGURE.render bulunamadı.');
+assert.ok(FIG.types().length >= 10, `Şekil türü sayısı az: ${FIG.types().length}`);
+FIG.types().forEach((type) => {
+  const svg = FIG.render(type, {});
+  assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>'), `${type} şekli geçerli SVG üretmeli.`);
+  assert.ok(!/NaN|undefined|Infinity/.test(svg), `${type} şeklinde sayısal bozukluk var.`);
+  assert.ok(/viewBox="0 0 340 190"/.test(svg), `${type} şekli 340×190 tuvaline oturmalı.`);
+});
+assert.equal(FIG.render('bilinmeyen-tur', {}), '', 'Bilinmeyen şekil boş dönmeli.');
+FIG.types().forEach((type) => {
+  const svg = FIG.render(type, {});
+  assert.ok(/role="img"/.test(svg) && /aria-label="[^"]{6,}"/.test(svg), `${type} şekli erişilebilir etiket taşımalı.`);
+  assert.ok(/<text[^>]*>[^<]+<\/text>/.test(svg), `${type} şekli en az bir okunur etiket içermeli.`);
+});
+
+// 5. Yerleşim: çizim üstte, sürgü bandı altta; mobil tek kolon
+assert.ok(/math-scene-stage/.test(app) && /math-scene-controls/.test(app), 'Sahne kartı çizim + sürgü bandı içermeli.');
+assert.ok(/\.math-scene-frame\{display:flex;flex-direction:column/.test(css), 'Sahne çerçevesi dikey yerleşimde olmalı.');
+assert.ok(/\.math-scene-stage\{flex:1 1 auto/.test(css), 'Çizim alanı üstte esnemeli.');
+assert.ok(/\.math-scene-controls\{flex:0 0 auto/.test(css), 'Sürgü bandı altta sabit kalmalı.');
+assert.ok(/\.math-scene-controls\{[^}]*grid-template-columns:repeat\(auto-fit/.test(css), 'Sürgüler masaüstünde çok kolonlu olmalı.');
+assert.ok(/@media\(max-width:700px\)[\s\S]{0,220}\.math-scene-controls\{grid-template-columns:1fr/.test(css),
+  'Mobilde sürgüler tek kolonda olmalı.');
+assert.ok(/\.math-scene-svg\{[^}]*width:100%/.test(css), 'Sahne genişliğe uyum sağlamalı.');
+assert.ok(!/\.math-scene-card \.math-scene-frame\{height:/.test(css), 'Sahne kartı sabit yükseklikle kırpılmamalı.');
+
+// 6. Bağlantılar
+assert.ok(/matematik-sahne\.js/.test(html), 'index.html sahne motorunu yüklemeli.');
+assert.ok(html.indexOf('matematik-sahne.js') < html.indexOf('matematik-content.js'), 'Sahne motoru içerikten önce yüklenmeli.');
+assert.ok(html.indexOf('matematik-figure.js') < html.indexOf('matematik-content.js'), 'Şekil motoru içerikten önce yüklenmeli.');
+assert.ok(/MATEMATIK_SAHNE2\.mount/.test(app), 'Uygulama sahneleri yerel motorla çizmeli.');
+assert.ok(/Sürgüler çizimin altında/.test(app), 'Öğrenciye sürgü konumu açıklanmalı.');
+
+// 7. Belge
 const notices = read('THIRD-PARTY-NOTICES.md');
 const analysis = read('docs/MATEMATIK-KITAP-ANALIZI.md');
+assert.ok(/GeoGebra/i.test(notices), 'THIRD-PARTY-NOTICES.md GeoGebra notunu korumalı.');
+assert.ok(/yerel SVG/.test(analysis), 'Analiz dokümanı yerel sahne kararını anlatmalı.');
 
-// 1. Dosyalar ve dış bağımlılık sınırı
-['matematik-geogebra.js', 'matematik-yerel-sahne.js', 'matematik-geogebra-demo.html'].forEach((file) => {
-  assert.ok(fs.existsSync(path.join(root, file)), `${file} bulunamadı.`);
-});
-
-const externalHosts = [...`${ggb}\n${local}\n${demo}`.matchAll(/https?:\/\/([^/"'\s]+)/g)].map((match) => match[1]);
-externalHosts.forEach((host) => {
-  assert.ok(/geogebra\.org$/.test(host) || host === 'www.w3.org',
-    `Beklenmeyen dış adres: ${host}. Matematik sahneleri yalnız GeoGebra'ya bağlanır (www.w3.org SVG ad alanıdır).`);
-});
-assert.ok(!/youtube\.com|youtu\.be/.test(`${ggb}\n${demo}`), 'Matematik sahnelerinde YouTube bağlantısı olmamalı.');
-assert.ok(!/localhost|127\.0\.0\.1/.test(`${ggb}\n${local}\n${demo}`), 'Yerel adres kullanılmamalı.');
-
-// 2. Yükleyici davranışı: doğrulama, yeniden deneme, yedek yol
-assert.ok(/getObjectNumber/.test(ggb), 'Yükleyici nesne sayısını doğrulamalı.');
-assert.ok(/RETRY_DELAYS\s*=\s*\[0,\s*300,\s*900,\s*2000\]/.test(ggb), 'Komutlar için kademeli yeniden deneme tanımlı olmalı.');
-assert.ok(/'empty-construction'/.test(ggb), 'Boş kurulum ayrı bir hata olarak raporlanmalı.');
-assert.ok(/onFallback/.test(ggb), 'Başarısızlıkta yedek sahne çağrılmalı.');
-assert.ok(/ShowAxes\(true\)/.test(ggb) && /ShowGrid\(true\)/.test(ggb), 'Eksen ve ızgara açık olmalı.');
-assert.ok(/is-loading/.test(ggb), 'Yükleme sırasında iskelet durumu işaretlenmeli.');
-assert.ok(/language:\s*'tr'/.test(ggb), 'Arayüz dili Türkçe olmalı.');
-assert.ok(/function setParam\(api, name, value\)/.test(ggb) && /api\.setValue\(name, value\)/.test(ggb),
-  'Sahne sürgüleri GeoGebra setValue köprüsüyle bağlanmalı.');
-assert.ok(/setParam,/.test(ggb) && /setParams,/.test(ggb), 'Sürgü köprüsü dışa açılmalı.');
-assert.ok(/showToolBar:\s*false/.test(ggb), 'Araç çubuğu kapalı olmalı (şekil öğrenci tarafından bozulmasın).');
-// GeoGebra'nın KENDİ giriş alanı açık ve çizim alanının altında: sürgü yerine bu bant kullanılıyor.
-assert.ok(/showAlgebraInput:\s*true/.test(ggb), 'GeoGebra giriş alanı açık olmalı.');
-assert.ok(/algebraInputPosition:\s*'bottom'/.test(ggb), 'Giriş alanı çizim alanının altında olmalı (split bant).');
-assert.ok(/function styleInputBand\(stage\)/.test(ggb) && /ggb-input-band/.test(ggb), 'Giriş alanı bant olarak biçimlendirilmeli.');
-assert.ok(/function hasNativeInput\(stage\)/.test(ggb), 'Giriş alanı varlığı denetlenmeli (yoksa sürgü yedeği).');
-
-// 3. Yerel yedek sahneler
-assert.ok(/window\.MATEMATIK_SAHNE\s*=\s*Object\.freeze/.test(local), 'Yerel sahne modülü dışa açılmalı.');
-assert.ok(/ortadikme\(/.test(local) && /yansima\(/.test(local), 'Orta dikme ve yansıma sahneleri bulunmalı.');
-assert.ok(/role:\s*'slider'/.test(local), 'Sürüklenebilir noktalar erişilebilir olmalı.');
-assert.ok(/keydown/.test(local), 'Klavye ile taşıma desteklenmeli.');
-assert.ok(/yansima\(host/.test(local) && /xmin: -5/.test(local), 'Yerel yansıma sahnesi de görüntüyü pencere içinde tutmalı.');
-assert.ok(/stroke-dasharray': '4 4'/.test(local), 'Yerel sahnede köşe–görüntü bağlantı çizgileri olmalı.');
-assert.ok(/local-scene/.test(local), 'Yerel sahne kendi sınıfıyla işaretlenmeli.');
-
-// 4. Statik soru görseli: orta dikme çizilmemeli, P eşit uzaklıkta, Q değil
-const figure = demo.slice(demo.indexOf('<figure>'), demo.indexOf('</figure>'));
-assert.ok(figure.length > 200, 'Statik soru görseli bulunamadı.');
-assert.ok(!/stroke-dasharray/.test(figure), 'Soru görselinde orta dikme (kesikli çizgi) olmamalı; cevabı verir.');
-
-const point = (label) => {
-  const match = figure.match(new RegExp(`<circle cx="(\\d+)" cy="(\\d+)"[^>]*\\/><text[^>]*>${label}</text>`));
-  assert.ok(match, `${label} noktası bulunamadı.`);
-  return { x: Number(match[1]), y: Number(match[2]) };
-};
-const A = point('A');
-const B = point('B');
-const P = point('P');
-const Q = point('Q');
-const distance = (u, v) => Math.hypot(u.x - v.x, u.y - v.y);
-assert.ok(Math.abs(distance(P, A) - distance(P, B)) < 0.5, 'P, A ve B noktalarına eşit uzaklıkta olmalı.');
-assert.ok(Math.abs(distance(Q, A) - distance(Q, B)) > 5, 'Q eşit uzaklıkta olmamalı; yoksa soru ayırt etmez.');
-assert.ok(Math.hypot(P.x - (A.x + B.x) / 2, P.y - (A.y + B.y) / 2) > 10, 'P orta noktaya denk gelmemeli; cevabı ele verir.');
-
-// 5. Yerleşim ve düğme davranışı
-assert.ok(!/\.ggb-stage\s+svg/.test(demo), 'GeoGebra SVG içeriğine boyut kuralı uygulanmamalı; çizim alanını eziyor.');
-assert.ok(/\.local-scene\s+svg/.test(demo), 'Boyut kuralı yerel sahneye kapsanmalı.');
-assert.ok(/height:clamp\(300px,44vh,380px\)/.test(demo), 'Sahne kutusu ekran yüksekliğine göre ölçeklenmeli.');
-assert.ok(/\.ggb-stage\{width:100%;height:100%\}/.test(demo), 'Applet kapsayıcısı kutuyu tam doldurmalı.');
-assert.ok(/height:\s*520/.test(demo), 'Applet yedek yüksekliği 520 px olmalı.');
-assert.ok(!/data-fullscreen|requestFullscreen/.test(demo), 'Tam ekran düğmesi istenmiyor; kaldırılmış olmalı.');
-assert.ok(/SetPerspective/.test(ggb), 'Yalnız grafik görünümü için SetPerspective kullanılmalı.');
-assert.ok(/perspective:\s*'G'/.test(ggb), 'Applet perspektifi G olmalı (araç çubuğu ve alt şerit yok).');
-assert.ok(/SetPerspective\\\(\\"G\\"\)/.test(ggb) || /SetPerspective\("G"\)/.test(ggb), 'SetPerspective("G") yükleme sırasında çalıştırılmalı.');
-assert.ok(/measureCanvas/.test(ggb), 'Çizim alanı ölçüsü raporlanmalı.');
-assert.ok(/showToolBarHelp:\s*false/.test(ggb) && /showStartTooltip:\s*false/.test(ggb), 'Araç çubuğu yardımı ve açılış ipucu kapalı olmalı.');
-assert.ok(/fitToStage/.test(ggb) && /api\.setSize/.test(ggb), 'Applet kutu ölçüsüne oturtulmalı (setSize).');
-assert.ok(/watchSize/.test(ggb) && /ResizeObserver/.test(ggb), 'Ekran döndürme/yeniden boyutlandırma izlenmeli.');
-assert.ok(/BRANDING_SELECTOR/.test(ggb) && /hideBranding/.test(ggb), 'Appletin alt şeridi kaldırılmalı.');
-assert.ok(/data-branding-hidden/.test(ggb), 'Kaldırılan şerit işaretlenmeli.');
-assert.ok(/canvas/.test(ggb) && /graphicsView/.test(ggb), 'Şerit temizliği çizim alanına dokunmamalı.');
-assert.ok(/showFullscreenButton:\s*false/.test(ggb), 'GeoGebra tam ekran düğmesi kapalı olmalı.');
-assert.ok(/allowStyleBar:\s*false/.test(ggb), 'Stil çubuğu kapalı olmalı.');
-const credits = (demo.match(/Geogebra® — geogebra\.org/g) || []).length;
-assert.ok(credits >= 2, 'Alt şerit kaldırıldığı için her sahnede atıf satırı bulunmalı.');
-assert.ok(/d = PerpendicularBisector\(A, B\)/.test(demo), 'Orta dikme sahne kurulurken oluşturulmalı.');
-assert.ok(/m = Line\(\(0, -6\), \(0, 6\)\)/.test(demo), 'Yansıma sahnesinde ayna doğrusu açıkça çizilmeli.');
-assert.ok(/p2 = Reflect\(p, m\)/.test(demo), 'Yansıma açık ayna doğrusuna göre kurulmalı.');
-assert.ok(!/api\.evalCommand\(`\$\{scene\.hidden\}/.test(demo), 'Düğme yeni nesne üretmemeli; yalnız görünürlük değiştirmeli.');
-assert.ok(/setVisible\(scene\.hidden, true\)/.test(demo), 'Düğme görünürlüğü açmalı.');
-assert.ok(/bounds:\s*\[-5, 8, -2, 7\]/.test(demo), 'Yansıma penceresi görüntüyü içine alacak kadar geniş olmalı.');
-
-// 6. Sahne tekrarı ve soru metni tutarlılığı
-assert.ok(/A ve B noktalarına eşit uzaklıkta olan nokta/.test(demo), 'Soru metni kazanımla uyumlu olmalı.');
-assert.ok(/Yerel sahne/.test(demo) || /yerel sahne/.test(demo), 'Yedek sahne kullanıcıya duyurulmalı.');
-
-// 7. Lisans ve atıf
-assert.ok(/GeoGebra/i.test(notices), 'THIRD-PARTY-NOTICES.md GeoGebra atfını içermeli.');
-assert.ok(/geogebra\.org/.test(notices), 'Atıf geogebra.org bağlantısı vermeli.');
-assert.ok(/GeoGebra/.test(analysis), 'Analiz dokümanı GeoGebra sözleşmesini anlatmalı.');
-
-console.log('Matematik denetimi geçti: GeoGebra yükleyicisi doğrulanıyor (nesne sayısı + yeniden deneme), sahne açılamazsa yerel SVG devreye giriyor, statik soru görselinde orta dikme yok ve P–Q ayrımı doğru.');
+console.log(`Matematik denetimi geçti: ${SAHNE.types().length} yerel sahne türü, ${FIG.types().length} şekil türü; `
+  + 'çevrimdışı çizim, sürgü + sürükleme, tek kolon mobil yerleşim ve GeoGebra bağımsızlığı doğru.');
