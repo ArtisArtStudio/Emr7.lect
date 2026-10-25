@@ -1,0 +1,953 @@
+/* 7. sınıf matematik — 1. dönem haftalık konu anlatımları (özgün metin).
+   Kaynak: MEB 7. sınıf matematik ders kitabı (2026) temalarının kapsamı; metinler özgün yazıldı.
+   Öğrenci metninde kitap/sayfa atfı yoktur; sayfa alanları yalnız iç denetim içindir. */
+(() => {
+  'use strict';
+
+  const THEMES = [
+    { id: 'sayilar', no: 1, title: 'Sayılar ve Nicelikler', short: 'Sayılar', pages: '12–116' },
+    { id: 'geometri', no: 2, title: 'Geometrik Nicelikler', short: 'Geometri', pages: '117–158' },
+    { id: 'veri', no: 3, title: 'İstatistiksel Araştırma Süreci', short: 'Veri', pages: '159–200' },
+    { id: 'donusum', no: 4, title: 'Dönüşüm', short: 'Dönüşüm', pages: '201–217' },
+  ];
+
+  const check = (prompt, options, correct, hint, explain) => ({ prompt, options, correct, hint, explain });
+  const term = (word, definition) => ({ word, definition });
+
+  const week = (data) => ({
+    id: data.id,
+    date: data.date,
+    theme: data.theme,
+    topic: data.topic,
+    pages: data.pages,
+    summary: data.summary,
+    points: data.points,
+    terms: data.terms,
+    tasks: data.tasks,
+    checks: data.checks,
+    scene: data.scene || null,
+  });
+
+  const WEEKS = [
+    week({
+      id: 1,
+      date: '14–18 Eyl',
+      theme: 'sayilar',
+      topic: 'Tam sayılar',
+      pages: '12–24',
+      summary: [
+        'Sayıları yalnızca “kaç tane” sorusuna cevap olarak düşündüğümüzde, sıfırın altına inen durumları anlatmakta zorlanırız. Hava sıcaklığı −3 °C olduğunda, deniz seviyesinin 40 metre altında bir tünelde yürüdüğümüzde ya da bir hesapta 250 lira borç kaldığında sayının yönü de önemlidir. İşte bu yüzden sayı doğrusunu iki yöne doğru genişletiriz: sıfırın sağındaki sayılar pozitif tam sayılar, solundaki sayılar negatif tam sayılardır. Sıfır ne pozitif ne negatiftir; başlangıç noktasıdır.',
+        'Tam sayılar kümesi, sayma sayılarına sıfırı ve negatifleri ekler: …, −3, −2, −1, 0, 1, 2, 3, … Bu kümede her sayının sıfıra göre bir simetriği vardır. −5 ile 5 sayı doğrusunda sıfıra eşit uzaklıktadır; bu iki sayıya birbirinin **tersi** (zıttı) denir. Bir sayının tersini bulmak için önündeki işareti değiştirmek yeterlidir: −7’nin tersi 7, 0’ın tersi yine 0’dır.',
+        'Tam sayılarla işlem yaparken en çok karıştırılan nokta, eksi işaretinin iki farklı görevi olmasıdır. Eksi işareti hem sayının yönünü gösterir (−4) hem de çıkarma işlemini anlatır (9 − 4). “−4 sayısı” ile “4 çıkar” aynı şey değildir. Bu ayrımı netleştirmek için her ifadeyi önce sözel olarak okuyun: “Sıfırın 4 birim solundaki sayı” ve “4 birim geri git”.',
+        'Tam sayılar günlük hayatta karşılaştırma yapmayı da kolaylaştırır. −8 °C, −2 °C’den daha soğuktur; çünkü sayı doğrusunda daha soldadır. Banka hesabında −150 lira, −40 liradan daha büyük bir borçtur. Aynı mantıkla asansörde −2 kat, 3. kattan aşağıdadır. Sayı doğrusunda sağa gidildikçe sayılar büyür, sola gidildikçe küçülür; negatif sayılarda “mutlak büyüklük” arttıkça sayı küçülür.',
+      ],
+      points: [
+        'Tam sayılar: …, −3, −2, −1, 0, 1, 2, 3, … Sıfır ne pozitif ne negatiftir.',
+        'Sayı doğrusunda sağa giden sayılar büyür, sola giden sayılar küçülür.',
+        'Bir sayının tersi, sayı doğrusunda sıfıra göre simetriğidir; işaret değiştirilerek bulunur.',
+        'Eksi işareti hem yönü hem çıkarma işlemini gösterebilir; ifadeyi sözel okumak karışıklığı önler.',
+      ],
+      terms: [
+        term('Tam sayı', 'Kesirli kısmı olmayan, sıfırı ve negatifleri de içeren sayılar kümesinin elemanı.'),
+        term('Ters (zıt) sayı', 'Sayı doğrusunda sıfıra göre simetrik olan, toplamı sıfır eden iki sayıdan her biri.'),
+        term('Sayı doğrusu', 'Sayıların büyüklük sırasına göre yerleştirildiği, sıfırın başlangıç kabul edildiği doğru.'),
+      ],
+      tasks: [
+        'Günlük hayattan üç negatif sayı örneği bul (hava, borç, kat, deniz seviyesi) ve her birini sayı doğrusunda göster.',
+        '−6, −1, 0, 3, 5 sayılarını küçükten büyüğe sırala; sıralamayı sayı doğrusundaki konumla açıkla.',
+        'Aşağıdaki üç ifadeyi sözel olarak oku ve birbirinden farkını yaz: −4, 7 − 4, 4 − 7.',
+      ],
+      scene: {
+        type: 'sayi-dogrusu',
+        title: 'Sayı doğrusunda yön ve büyüklük',
+        hint: 'Noktayı sürükleyerek negatif ve pozitif bölgede sayının nasıl değiştiğini izle.',
+        app: 'graphing',
+        bounds: [-8, 8, -2, 2],
+        commands: [
+          'a = Slider(-7, 7, 0.5)',
+          'P = (a, 0)',
+          'O = (0, 0)',
+          's = Segment(O, P)',
+        ],
+      },
+      checks: [
+        check(
+          'Sayı doğrusunda −7 ile −3 arasında hangi tam sayılar bulunur?',
+          ['−6, −5, −4', '−8, −9, −10', '−2, −1, 0'],
+          0,
+          'İki negatif sayı arasındaki tam sayıları sayı doğrusunda sağa doğru say.',
+          '−7 ile −3 arasında −6, −5 ve −4 vardır; sağa gidildikçe sayı büyür.',
+        ),
+        check(
+          'Hava sıcaklığı sabah −8 °C, öğlen −2 °C ölçüldü. Hangisi doğrudur?',
+          ['Sabah daha soğuktu; −8 < −2', 'Öğlen daha soğuktu; −2 < −8', 'İkisi eşittir'],
+          0,
+          'Negatif sayılarda sayı doğrusunda daha solda olan daha küçüktür.',
+          '−8 sayı doğrusunda −2’nin solundadır; bu yüzden −8 < −2 ve sabah hava daha soğuktur.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 2,
+      date: '21–25 Eyl',
+      theme: 'sayilar',
+      topic: 'Rasyonel sayılar ve mutlak değer',
+      pages: '25–40',
+      summary: [
+        'Bir bütünü ikiye, üçe, dörde böldüğümüzde elde ettiğimiz parçaları tam sayılarla ifade edemeyiz. Bu yüzden tam sayıların arasını dolduran sayılara ihtiyaç duyarız: **rasyonel sayılar**. İki tam sayının birbirine oranı biçiminde yazılabilen her sayı rasyoneldir. a ve b tam sayı, b sıfırdan farklı olmak üzere a/b biçimindeki sayılar rasyonel sayıdır. Payda sıfır olamaz; çünkü bir bütünü sıfır parçaya bölmek anlamsızdır.',
+        'Rasyonel sayılar farklı biçimlerde yazılabilir: 3/4, 0,75, %75 ve 75/100 aynı büyüklüğü anlatır. Kesir çizgisi aslında bir bölme işaretidir; 3/4 demek 3’ü 4’e bölmek demektir. Negatif rasyonel sayılarda eksi işareti paya, paydaya ya da kesir çizgisinin önüne yazılabilir: −3/4 = 3/−4 = −(3/4). Payda negatifken işaretin nereye ait olduğunu karıştırmamak için kesri sadeleştirirken işareti kesir çizgisinin önüne taşımak en güvenli yoldur.',
+        '**Mutlak değer**, bir sayının sıfıra olan uzaklığıdır ve uzaklık negatif olamayacağı için mutlak değer hiçbir zaman negatif değildir. |−6| = 6, |6| = 6, |0| = 0. Bu tanım iki önemli sonuç doğurur: birbirinin tersi olan sayıların mutlak değerleri eşittir; mutlak değeri verilen bir sayı iki farklı değer olabilir. |x| = 5 ise x, 5 ya da −5’tir. Günlük hayatta mutlak değer “ne kadar fark” sorusunun cevabıdır: hedefe 4 adım kala olmak ile 4 adım geçmiş olmak, hedeften aynı uzaklıktadır.',
+        'Rasyonel sayıları karşılaştırırken üç araç kullanılır: sayı doğrusundaki konum, ortak paydaya getirme ve ondalık karşılaştırma. Negatif rasyonel sayılarda dikkat: −1/2 ile −3/4 arasında hangisi küçüktür? Sayı doğrusunda −0,75, −0,5’in solundadır; bu yüzden −3/4 < −1/2. Paydaları eşitleyip payı büyük olanı seçmek yalnız pozitif sayılarda doğrudan işe yarar; negatiflerde yön tersine döner.',
+      ],
+      points: [
+        'a/b (b ≠ 0) biçiminde yazılabilen sayılar rasyoneldir; payda sıfır olamaz.',
+        'Aynı büyüklük kesir, ondalık ve yüzde olarak yazılabilir.',
+        'Mutlak değer sıfıra uzaklıktır; sonucu hiçbir zaman negatif olmaz.',
+        '|x| = a ise x = a ya da x = −a olabilir.',
+        'Negatif rasyonel sayılarda büyüklük sırası, sayı doğrusundaki konuma göre ters yönde işler.',
+      ],
+      terms: [
+        term('Rasyonel sayı', 'İki tam sayının oranı biçiminde yazılabilen sayı; payda sıfırdan farklı olmalıdır.'),
+        term('Mutlak değer', 'Sayının sıfıra olan uzaklığı; |a| biçiminde gösterilir ve negatif olamaz.'),
+        term('Sadeleştirme', 'Pay ve paydayı aynı sıfırdan farklı sayıya bölerek kesri en basit biçime getirme.'),
+      ],
+      tasks: [
+        '3/4, 0,8, %80 ve 12/15 sayılarından birbirine eşit olanları eşleştir.',
+        '|x| = 7 koşulunu sağlayan sayıları yaz ve sayı doğrusunda göster.',
+        '−2/3 ile −5/6 sayılarını karşılaştır; seçtiğin yöntemi bir cümleyle açıkla.',
+      ],
+      scene: {
+        type: 'mutlak-deger',
+        title: 'Mutlak değer: sıfıra uzaklık',
+        hint: 'Sürgüyü oynat; sayının işareti değişirken sıfıra uzaklığın nasıl aynı kaldığını izle.',
+        app: 'graphing',
+        bounds: [-8, 8, -3, 3],
+        commands: [
+          'a = Slider(-7, 7, 0.5)',
+          'P = (a, 0)',
+          'O = (0, 0)',
+          'd = Segment(O, P)',
+          'M = (abs(a), 1.2)',
+        ],
+      },
+      checks: [
+        check(
+          '|x| = 9 eşitliğini sağlayan x değerleri hangileridir?',
+          ['Yalnız 9', '9 ve −9', 'Yalnız −9'],
+          1,
+          'Sıfıra uzaklığı 9 birim olan kaç nokta vardır? Sayı doğrusunda iki yönü düşün.',
+          'Sıfırın 9 birim sağında 9, 9 birim solunda −9 bulunur; iki değer de eşitliği sağlar.',
+        ),
+        check(
+          'Hangisi yanlıştır?',
+          ['−3/4 = 3/−4', '−2/5 < −4/5', '|−7| = 7'],
+          1,
+          'Negatif kesirlerde sayı doğrusunda daha solda olan daha küçüktür.',
+          '−2/5 = −0,4 ve −4/5 = −0,8’dir. −0,4 daha sağdadır, yani −2/5 > −4/5 olmalıdır; verilen ifade yanlıştır.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 3,
+      date: '28 Eyl–2 Eki',
+      theme: 'sayilar',
+      topic: 'Rasyonel sayıların farklı temsilleri, karşılaştırma ve sıralama',
+      pages: '41–61',
+      summary: [
+        'Aynı miktarı anlatmanın birden çok yolu vardır: bir kutunun yarısı “1/2”, “0,5” ya da “%50” olarak yazılabilir. Bu üç gösterim farklı bilgiler değil, aynı bilginin farklı dilleridir. Hangi gösterimi seçeceğimiz, hangi işlemi yapacağımıza bağlıdır: karşılaştırmada ondalık, oran hesaplarında kesir, indirim ve zam hesaplarında yüzde daha kullanışlıdır. Bu yüzden üçü arasında hızlı geçiş yapabilmek, işlem güvenliğinin temelidir.',
+        'Kesri ondalığa çevirmek için payı paydaya böleriz: 7/8 = 0,875. Paydası 10, 100, 1000 gibi sayılara genişletilebilen kesirler sonlu ondalık verir. Ancak her kesir sonlu ondalık değildir: 1/3 = 0,333… ve 2/9 = 0,222… gibi bölmelerde bir basamak ya da basamak grubu sonsuza kadar tekrar eder. Bu sayılara **devirli ondalık** sayı denir; tekrar eden kısım üzerine çizgi konularak ya da “0,3̅” biçiminde gösterilir. Devirli ondalık sayılar da rasyoneldir.',
+        'Karşılaştırmada en güvenli yöntem, sayıları aynı biçime getirmektir. İki yöntem öne çıkar. Birincisi ondalık karşılaştırma: 3/8 = 0,375 ve 0,4 = 0,400 olduğu için 0,4 daha büyüktür. İkincisi ortak payda: 5/6 ve 7/9 için paydaları 18’de eşitlersek 15/18 ve 14/18 elde ederiz; 5/6 daha büyüktür. Paydaları eşitlemek çarpma işlemi gerektirdiğinden büyük sayılarda ondalığa çevirmek daha hızlı olabilir.',
+        'Sıralamada negatif sayılar yön değiştirir. Kolay bir yol: sayıları önce işaretsiz düşünüp büyükten küçüğe sırala, sonra negatiflerde sırayı ters çevir. Örneğin −1/2, −3/4, −0,6 sayılarını ele alalım. Ondalık karşılıkları −0,5; −0,75; −0,6’dır. Pozitif gibi düşününce sıra 0,75 > 0,6 > 0,5 olur; negatiflerde bu sıra tersine döner: −0,5 > −0,6 > −0,75. Yani küçükten büyüğe doğru yazılışı −3/4 < −0,6 < −1/2 biçimindedir.',
+      ],
+      points: [
+        'Kesir, ondalık ve yüzde aynı büyüklüğün farklı gösterimleridir.',
+        'Kesri ondalığa çevirmek için payı paydaya böl.',
+        'Bölme sonsuza kadar tekrar ediyorsa sayı devirli ondalıktır ve yine rasyoneldir.',
+        'Karşılaştırmada iki güvenli yol: ondalığa çevirmek ya da ortak paydaya getirmek.',
+        'Negatif sayılarda büyüklük sırası tersine döner.',
+      ],
+      terms: [
+        term('Devirli ondalık sayı', 'Ondalık açılımında bir basamak ya da basamak grubu sonsuza kadar tekrar eden sayı.'),
+        term('Ortak payda', 'İki veya daha fazla kesrin paydalarını eşitlemek için kullanılan ortak kat.'),
+        term('Yüzde', 'Bir bütünün yüz eşit parçasından kaçının alındığını gösteren oran; % sembolüyle yazılır.'),
+      ],
+      tasks: [
+        '5/8, %60 ve 0,55 sayılarını küçükten büyüğe sırala; her birini ondalık olarak yaz.',
+        '1/6 kesrini ondalık olarak yaz; sonucun devirli olup olmadığını açıkla.',
+        '−7/10, −2/3 ve −0,65 sayılarını sırala ve sıralamayı sayı doğrusu üzerinde göster.',
+      ],
+      scene: {
+        type: 'temsil',
+        title: 'Kesir–ondalık–yüzde aynı sayı',
+        hint: 'Sürgüyü oynat; kesir, ondalık ve yüzde gösterimlerinin birlikte değiştiğini gör.',
+        app: 'graphing',
+        bounds: [0, 4, -1, 3],
+        commands: [
+          'n = Slider(1, 9, 1)',
+          'd = Slider(2, 10, 1)',
+          'P = (n / d, 0)',
+          'O = (0, 0)',
+          's = Segment(O, P)',
+        ],
+      },
+      checks: [
+        check(
+          'Hangi sıralama doğrudur?',
+          ['−0,75 < −0,6 < −0,5', '−0,5 < −0,6 < −0,75', '−0,6 < −0,75 < −0,5'],
+          0,
+          'Sayıları önce pozitif gibi sırala, sonra negatiflerde sırayı ters çevir.',
+          'Pozitif karşılıkları 0,75 > 0,6 > 0,5’tir; negatiflerde sıra tersine döner: −0,75 < −0,6 < −0,5.',
+        ),
+        check(
+          '1/3 kesrinin ondalık gösterimi için hangisi doğrudur?',
+          ['0,3 tam olarak eşittir', '0,333… biçiminde devirlidir', 'Ondalık gösterimi yoktur'],
+          1,
+          'Payı paydaya böl: 1’i 3’e böldüğünde kalan hep aynı kalıyor mu?',
+          '1 ÷ 3 = 0,333… olur; 3 basamağı sonsuza kadar tekrar ettiği için sayı devirli ondalıktır.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 4,
+      date: '5–9 Eki',
+      theme: 'sayilar',
+      topic: 'Tam sayılarla işlemler',
+      pages: '62–75',
+      summary: [
+        'Tam sayılarla toplama, sayı doğrusunda yürümeye benzer. Pozitif sayı sağa, negatif sayı sola gidiştir. (+5) + (+3) işlemi sıfırdan 5 birim sağa, sonra 3 birim daha sağa gitmek demektir; sonuç +8’dir. (−5) + (−3) ise sola doğru 5, ardından 3 birim daha gitmektir; sonuç −8’dir. İşaretler aynıysa sayılar toplanır ve ortak işaret korunur.',
+        'İşaretler farklı olduğunda mantık değişir: zıt yönlere gidildiği için bir miktar diğerini götürür. (+7) + (−4) işleminde 7 birim sağa, sonra 4 birim sola gidilir ve 3 birim sağda kalınır: sonuç +3. Kural olarak mutlak değerleri farkı alınır, büyük mutlak değerin işareti yazılır. 7 ile 4’ün farkı 3’tür ve mutlak değeri büyük olan +7 olduğu için sonuç pozitiftir.',
+        'Çıkarma işlemi ayrı bir kural gerektirmez: “çıkarmak, tersini eklemektir”. a − b = a + (−b). Bu yüzden (+3) − (+8) işlemi (+3) + (−8) = −5 olur. (−6) − (−2) ise (−6) + (+2) = −4’tür. Bu dönüşüm, “eksi eksiyi artı yapar” gibi ezber bir cümleye değil, çıkarmanın tanımına dayanır ve her durumda çalışır.',
+        'Çarpma ve bölmede işaret kuralı sadedir: aynı işaretli iki sayının çarpımı ve bölümü pozitif, farklı işaretli iki sayının çarpımı ve bölümü negatiftir. (+4)·(−5) = −20, (−4)·(−5) = +20, (−12) ÷ (+3) = −4. Sıfırla çarpma sonucu sıfır yapar; sıfıra bölme tanımsızdır. Çok işaretli ifadelerde işaretleri ikişer ikişer saymak pratik bir yol sağlar: üç eksi işareti çarpımda tek başına kalır ve sonuç negatif olur.',
+      ],
+      points: [
+        'İşaretler aynı: sayıları topla, ortak işareti yaz.',
+        'İşaretler farklı: mutlak değer farkını al, büyük mutlak değerin işaretini yaz.',
+        'Çıkarma, tersini eklemektir: a − b = a + (−b).',
+        'Aynı işaretli iki sayının çarpımı ve bölümü pozitif, farklı işaretlilerinki negatiftir.',
+        'Sıfıra bölme tanımsızdır.',
+      ],
+      terms: [
+        term('Toplanan', 'Toplama işleminde bir araya getirilen sayılardan her biri.'),
+        term('İşaret kuralı', 'Çarpma ve bölmede sonucun işaretini belirleyen kural.'),
+        term('Ters eleman (toplamaya göre)', 'Bir sayıyla toplandığında sıfır veren sayı; örneğin −9’un tersi +9.'),
+      ],
+      tasks: [
+        '(−8) + (+3), (−8) + (−3), (+8) − (−3) işlemlerini sayı doğrusunda göstererek çöz.',
+        '(−6)·(+4) ve (−6)·(−4) işlemlerini yap; sonuçların neden farklı işaretli olduğunu açıkla.',
+        'Bir asansör 3. kattan 5 kat aşağı iniyor, sonra 2 kat yukarı çıkıyor. Bulunduğu katı işlemle göster.',
+      ],
+      scene: {
+        type: 'sayma-pullari',
+        title: 'Pullarla toplama: artı ve eksi pullar',
+        hint: 'Sürgüleri değiştir; bir artı ve bir eksi pulun birbirini nasıl götürdüğünü izle.',
+        app: 'geometry',
+        bounds: [-6, 6, -4, 4],
+        commands: [
+          'p = Slider(0, 6, 1)',
+          'n = Slider(0, 6, 1)',
+          'A = (p, 1)',
+          'B = (-n, -1)',
+          't = p - n',
+          'T = (t, -3)',
+        ],
+      },
+      checks: [
+        check(
+          '(−9) − (−4) işleminin sonucu kaçtır?',
+          ['−13', '−5', '+5'],
+          1,
+          'Çıkarmayı eklemeye çevir: −(−4) ne olur?',
+          '(−9) − (−4) = (−9) + (+4) = −5. Mutlak değer farkı 5, büyük olan −9 olduğu için sonuç negatiftir.',
+        ),
+        check(
+          '(−3)·(+5)·(−2) işleminin sonucu kaçtır?',
+          ['+30', '−30', '+10'],
+          0,
+          'İki eksi işareti çarpımda birbirini götürür; üçüncü işarete dikkat et.',
+          '(−3)·(+5) = −15, sonra (−15)·(−2) = +30. İki negatif çarpım pozitif verir.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 5,
+      date: '12–16 Eki',
+      theme: 'sayilar',
+      topic: 'Tam sayılarla problem çözme, rasyonel sayılarla toplama ve çıkarma',
+      pages: '76–95',
+      summary: [
+        'Problem çözmenin ilk adımı işlem yapmak değil, problemi anlamaktır. Verilenler, istenen ve aralarındaki ilişki yazılmadan işleme geçildiğinde işaret hataları kaçınılmaz olur. Bir problemi çözerken dört adımı izlemek güvenlidir: problemi kendi cümlelerinle yaz, planı belirle, işlemi yap, sonucu problemi tekrar okuyarak kontrol et. Özellikle sıcaklık, borç–alacak, kat–asansör ve deniz seviyesi problemlerinde sonucun işareti, “neyi pozitif kabul ettim” sorusunun cevabına bağlıdır.',
+        'Rasyonel sayılarla toplama ve çıkarmada temel koşul paydaların eşit olmasıdır. Paydalar eşit değilse kesirler, paydaların en küçük ortak katına genişletilir. 2/3 + 1/4 işleminde payda 12’de eşitlenir: 8/12 + 3/12 = 11/12. Paydaları doğrudan çarpmak da doğru sonuç verir, ancak sayılar büyür ve sadeleştirme ihtiyacı artar; bu yüzden en küçük ortak katı aramak daha verimlidir.',
+        'Tam sayılı kesirlerle işlem yaparken iki yol vardır: bileşik kesre çevirmek ya da tam ve kesirli kısmı ayrı işlemek. 1 tam 1/2 + 2 tam 1/3 işleminde bileşik kesir yöntemi 3/2 + 7/3 = 9/6 + 14/6 = 23/6 = 3 tam 5/6 verir. İkinci yolda tamlar toplanır (3), kesirler ayrıca toplanır (1/2 + 1/3 = 5/6) ve sonuç yine 3 tam 5/6 olur. İkinci yöntem zihinden işlemde daha hızlıdır.',
+        'Çıkarmada eksilen ile çıkanın yerini karıştırmamak gerekir; sıra değişirse sonucun işareti de değişir. Negatif rasyonel sayılarda işlem yaparken önce tüm sayıları aynı biçime getirmek, sonra işaretleri parantez içinde tutmak hata riskini azaltır. Sonucu her zaman sadeleştir ve gerekirse tam sayılı kesre çevir; ancak sadeleştirme işlemi sonucu değiştirmez, yalnız gösterimini sadeleştirir.',
+      ],
+      points: [
+        'Önce problemi anla, sonra planla, en son işlem yap ve sonucu kontrol et.',
+        'Rasyonel sayılarda toplama–çıkarma için paydalar eşitlenir.',
+        'En küçük ortak katı kullanmak sayıları küçük tutar.',
+        'Tam sayılı kesirlerde tam ve kesirli kısımlar ayrı işlenebilir.',
+        'Çıkarmada sıra önemlidir; eksilen ile çıkan yer değiştirirse sonuç değişir.',
+      ],
+      terms: [
+        term('En küçük ortak kat', 'Verilen sayıların hepsine tam bölünebilen en küçük pozitif sayı.'),
+        term('Bileşik kesir', 'Payı paydasından büyük veya paydasına eşit olan kesir.'),
+        term('Tam sayılı kesir', 'Bir tam sayı ile bir basit kesrin birlikte yazıldığı gösterim.'),
+      ],
+      tasks: [
+        '2/5 + 3/4 ve 5/6 − 1/3 işlemlerini yap; her adımda paydayı nasıl eşitlediğini yaz.',
+        'Bir dalgıç deniz seviyesinden 12 m aşağıda, ardından 7 m daha aşağı iniyor. Derinliği işlemle göster.',
+        '1 tam 3/4 + 2 tam 1/2 işlemini iki farklı yöntemle çöz ve sonuçları karşılaştır.',
+      ],
+      scene: null,
+      checks: [
+        check(
+          '3/8 + 1/6 işleminin sonucu kaçtır?',
+          ['13/24', '4/14', '9/24'],
+          0,
+          'Paydaları eşitlemek için 8 ve 6’nın en küçük ortak katını bul.',
+          '8 ve 6’nın en küçük ortak katı 24’tür: 9/24 + 4/24 = 13/24.',
+        ),
+        check(
+          'Bir problemde “deniz seviyesinin 15 m altı” ifadesi için hangi tam sayı kullanılır?',
+          ['+15', '−15', '0'],
+          1,
+          'Deniz seviyesini 0 kabul et; altına inmek sayı doğrusunda hangi yönde?',
+          'Deniz seviyesi 0 alınırsa aşağısı negatif yöndedir; bu yüzden −15 kullanılır.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 6,
+      date: '19–23 Eki',
+      theme: 'sayilar',
+      topic: 'Rasyonel sayılarla çarpma, bölme ve çok adımlı işlemler',
+      pages: '96–111',
+      summary: [
+        'Rasyonel sayılarda çarpma, toplamadan daha kolaydır: paydaları eşitlemeye gerek yoktur. Paylar çarpılıp paya, paydalar çarpılıp paydaya yazılır: (2/3)·(4/5) = 8/15. Çarpmadan önce sadeleştirme yapmak işi küçültür; 6/7 ile 14/9 çarpılırken 6 ile 9 üçe, 7 ile 14 yediye bölünerek sonuç doğrudan 4/3 bulunabilir. İşaret kuralı tam sayılardakiyle aynıdır: iki negatif çarpım pozitif, tek negatif çarpım negatiftir.',
+        'Bölmede kesirlerle çalışırken iki cümleyi ayırt etmek gerekir: “bir sayıyı kesre bölmek” ve “bir kesri sayıya bölmek”. Kural, bölmeyi çarpmaya çevirmektir: birinci kesir aynen kalır, bölme işareti çarpmaya döner, ikinci kesrin payı ile paydası yer değiştirir. (3/4) ÷ (2/5) = (3/4)·(5/2) = 15/8. Bölmede sıfıra bölme tanımsız olduğu için bölenin sıfır olmadığını kontrol etmek gerekir.',
+        'Çok adımlı işlemlerde sıra önemlidir: önce parantez içi, sonra üslü ifadeler, ardından çarpma–bölme (soldan sağa), en son toplama–çıkarma (soldan sağa). 3 + 2·(5 − 1)² işleminde önce parantez (4), sonra üs (16), sonra çarpma (32), en son toplama (35) yapılır. Aynı öncelikteki işlemler soldan sağa yürütülür; 20 ÷ 5 · 2 ifadesi 8’dir, çünkü bölme önce gelir. Bu nedenle işlem sırasını değiştirmek isteyen biri parantez kullanmalıdır.',
+        'Kesir çizgisi görünmez bir parantez gibidir: (2 + 3)/(4 + 1) ifadesinde pay ve payda ayrı ayrı hesaplanır. Uzun ifadelerde her adımı yazmak, zihinden atlanan adımın hatasını önler. Sonucu bulduktan sonra tahminle karşılaştırmak güçlü bir kontroldür: 3/4 ile 2/5 çarpımı 1’den küçük olmalıdır, çünkü her iki çarpan da 1’den küçüktür.',
+      ],
+      points: [
+        'Çarpmada paylar çarpılır paya, paydalar çarpılır paydaya yazılır.',
+        'Çarpmadan önce sadeleştirmek sayıları küçük tutar.',
+        'Bölmede ikinci kesir ters çevrilip çarpılır.',
+        'İşlem sırası: parantez → üs → çarpma/bölme → toplama/çıkarma.',
+        'Kesir çizgisi, pay ve payda için görünmez parantez işlevi görür.',
+      ],
+      terms: [
+        term('Çarpma işleminin değişme özelliği', 'Çarpanların yeri değişse de sonucun değişmemesi.'),
+        term('Ters kesir', 'Bir kesrin payı ile paydasının yer değiştirmesiyle elde edilen kesir.'),
+        term('İşlem önceliği', 'Birden fazla işlem içeren ifadelerde hangi işlemin önce yapılacağını belirleyen sıra.'),
+      ],
+      tasks: [
+        '(5/6)·(9/10) işlemini önce sadeleştirerek, sonra sadeleştirmeden çöz; iki sonucu karşılaştır.',
+        '(7/8) ÷ (14/16) işlemini yap ve sonucun neden 1 olduğunu açıkla.',
+        '4 + 3·(6 − 2)² işlemini adım adım yaz; her adımda hangi kuralı uyguladığını belirt.',
+      ],
+      scene: {
+        type: 'kesir-carpim',
+        title: 'Kesirlerde çarpımın alan modeli',
+        hint: 'Sürgülerle pay ve paydayı değiştir; dikdörtgenin kaçta kaçının tarandığını izle.',
+        app: 'geometry',
+        bounds: [-1, 5, -1, 5],
+        commands: [
+          'a = Slider(1, 4, 1)',
+          'b = Slider(1, 4, 1)',
+          'R = Polygon((0,0), (a,0), (a,b), (0,b))',
+          'P = (a/2, b/2)',
+        ],
+      },
+      checks: [
+        check(
+          '(2/3) ÷ (4/9) işleminin sonucu kaçtır?',
+          ['8/27', '3/2', '2/3'],
+          1,
+          'Bölmeyi çarpmaya çevir: ikinci kesir ters çevrilir.',
+          '(2/3)·(9/4) = 18/12 = 3/2. Sonuç 1’den büyük olmalıydı, çünkü 2/3’ü 1’den küçük bir sayıya bölüyoruz.',
+        ),
+        check(
+          '18 ÷ 3 · 2 işleminin sonucu kaçtır?',
+          ['3', '12', '18'],
+          1,
+          'Çarpma ve bölme aynı önceliktedir; soldan sağa ilerle.',
+          'Önce 18 ÷ 3 = 6, sonra 6 · 2 = 12. Soldan sağa ilerlemek kuralın parçasıdır.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 7,
+      date: '26–30 Eki',
+      theme: 'sayilar',
+      topic: '1. tema ölçme ve sınav hazırlığı',
+      pages: '112–116',
+      summary: [
+        'Bu hafta yeni bir konu eklenmiyor; ilk yedi haftanın tamamı tekrar edilip sınav hazırlığı yapılıyor. Tekrar, konuları baştan okumak değildir; hangi soru tipinde hata yaptığını bulup o hatayı kapatmaktır. Bu yüzden önce kısa bir tanı çalışması yap: her alt başlıktan birer soru çöz ve yanlışlarını “işaret hatası”, “payda eşitleme”, “işlem sırası”, “soru okuma” başlıklarına ayır.',
+        'Sık yapılan hatalar bellidir. Birincisi, negatif sayılarda büyüklük sırasını tersine çevirmeyi unutmak: −7 < −2 olmasına rağmen 7 > 2 alışkanlığıyla yanlış işaretlemek. İkincisi, çıkarmayı eklemeye çevirirken işareti kaçırmak. Üçüncüsü, rasyonel sayılarda paydaları eşitlemeden payları toplamak. Dördüncüsü, çok adımlı işlemde parantezi atlayıp soldan sağa gitmek. Beşincisi, problemde “hangi yönü pozitif kabul ettim” sorusunu yanıtsız bırakmak.',
+        'Sınavda süre yönetimi de bir beceridir. Önce kolay ve kısa soruları çöz, uzun problemleri sona bırak. Her sorudan sonra sonucu bir saniye kontrol et: işaret mantıklı mı, büyüklük tahminle uyuşuyor mu? Örneğin toplamın, toplananlardan birinden küçük çıkması genellikle işaret hatasına işaret eder. Boş bırakmak yerine mantıklı bir tahmin yazmak, düşünceni görünür kılar.',
+        'Bu haftanın ürünü kişisel bir hata listesi olsun. Her hata için tek satır yaz: hata türü, doğru yöntem, bir örnek. Sınavdan önce yalnız bu listeyi okumak, tüm konuyu baştan okumaktan daha etkilidir. Ayrıca her konu başlığı için kendine üç soru sor: tanımı söyleyebiliyor muyum, kuralı örnekle açıklayabiliyor muyum, tipik hatayı tanıyor muyum?',
+      ],
+      points: [
+        'Tekrar, hata türlerini kapatmaktır; baştan sona okumak değildir.',
+        'Negatif sayılarda büyüklük sırası tersine döner.',
+        'Çıkarma yaparken işareti eklemeye çevirerek çalış.',
+        'Rasyonel sayılarda toplama–çıkarma için payda eşitlenir.',
+        'Şüpheli sonuçta büyüklük tahmini yap; tahminle uyuşmayan sonuç hatalıdır.',
+      ],
+      terms: [
+        term('Tanı çalışması', 'Hangi konuda eksik olduğunu bulmak için yapılan kısa, karışık soru seti.'),
+        term('Hata listesi', 'Yapılan hataların türü, doğru yöntemi ve örneğiyle yazıldığı kişisel liste.'),
+        term('Süre yönetimi', 'Sınavda kolay soruları öne alıp zor sorulara yeterli zaman bırakma planı.'),
+      ],
+      tasks: [
+        'Her alt başlıktan birer soru seçip 8 soruluk bir tanı testi hazırla ve çöz.',
+        'Yanlışlarını hata türüne göre ayır; en çok hangi türde hata yaptığını yaz.',
+        'Kendi hata listenden üç maddelik bir sınav öncesi kontrol kartı oluştur.',
+      ],
+      scene: null,
+      checks: [
+        check(
+          'Sınavda bir toplama sonucu, toplananlardan birinden küçük çıktı. İlk olarak neyi kontrol edersin?',
+          ['İşlem sırasını ve işaretleri', 'Sorunun puanını', 'Yazı biçimini'],
+          0,
+          'Toplamanın sonucu, negatif sayı yoksa toplananlardan küçük olamaz.',
+          'Negatif sayı yokken toplam küçülüyorsa işaret ya da işlem sırası hatası vardır; önce onu kontrol et.',
+        ),
+        check(
+          'Hangisi bir “hata listesi” maddesi olarak en kullanışlıdır?',
+          ['“Kesirler zor.”', '“Payda eşitlemeden topladım; önce EKOK al.”', '“Daha çok soru çözmeliyim.”'],
+          1,
+          'İyi bir madde hatayı, doğru yöntemi ve yapılacak adımı birlikte söyler.',
+          'Hatayı ve doğru yöntemi birlikte yazan madde, sınavdan önce okunup uygulanabilir.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 8,
+      date: '2–6 Kas',
+      theme: 'geometri',
+      topic: 'Cisimlerin farklı yönlerden görünümleri',
+      pages: '117–124',
+      summary: [
+        'Bir cismi tek bir açıdan görmek, onun biçimi hakkında yeterli bilgi vermez. Bir kutuyu masanın üstünde dururken de, yandan da, üstten de görürüz; her bakış farklı bir görünüm verir. Dikdörtgenler prizmasının üç temel görünümü vardır: **ön görünüm**, **yan görünüm** ve **üst görünüm**. Bu üç görünüm birlikte cismin biçimini büyük ölçüde belirler; ancak her zaman tek başına yeterli değildir, çünkü farklı cisimler aynı görünümü verebilir.',
+        'Prizmaların temel elemanları yüz, ayrıt ve köşedir. Dikdörtgenler prizmasında 6 yüz, 12 ayrıt ve 8 köşe bulunur. Yüzler karşılıklı olarak eş ve paraleldir. Küp, tüm yüzleri kare olan özel bir dikdörtgenler prizmasıdır; 6 yüzü de eş karedir. Bu sayıları ezberlemek yerine bir kutu üzerinde saymak, ilişkiyi kalıcı kılar: her yüzün 4 ayrıtı vardır, her ayrıt iki yüze aittir; bu yüzden 6·4 ÷ 2 = 12 ayrıt bulunur.',
+        'Eş küplerle yapılmış yapıların görünümleri, “kaç küp var” sorusuyla birlikte düşünülmelidir. Önden bakıldığında görünen kare sayısı, o yönde en yüksek sütunun yüksekliğini verir. Üstten bakıldığında ise taban alanındaki küp sayısı görülür; arkada kalan küpler üstten bakışta görünür ama önden bakışta gizlenebilir. Bu yüzden bir yapının küp sayısını bulurken üç görünümü birlikte kullanmak, gizli küpleri fark etmeyi sağlar.',
+        'Görünüm çizimlerinde ölçek ve hizalama önemlidir. Ön görünümde genişlik ve yükseklik, yan görünümde derinlik ve yükseklik, üst görünümde genişlik ve derinlik görülür. Bu üç çift büyüklük aslında üç boyutun (genişlik, yükseklik, derinlik) ikili eşleşmeleridir. Bu ilişkiyi fark etmek, ilerleyen haftalarda yüzey alanı ve hacim hesaplarının temelini kurar.',
+      ],
+      points: [
+        'Dikdörtgenler prizmasının 6 yüzü, 12 ayrıtı, 8 köşesi vardır.',
+        'Ön, yan ve üst görünüm birlikte cismin biçimini belirler.',
+        'Önden görünen kare sayısı, o yöndeki en yüksek sütunu verir.',
+        'Üstten görünüm taban alanını, yan görünüm derinliği gösterir.',
+        'Küp, tüm yüzleri eş kare olan özel bir prizmadır.',
+      ],
+      terms: [
+        term('Ayrıt', 'İki yüzün kesiştiği doğru parçası.'),
+        term('Üst görünüm', 'Cisme tepeden bakıldığında görülen, taban alanını yansıtan görünüm.'),
+        term('Eş küp', 'Kenar uzunluğu aynı olan, birim hacim olarak kullanılabilen küp.'),
+      ],
+      tasks: [
+        'Evdeki bir kutunun ön, yan ve üst görünümünü kareli kâğıda çiz; yüz, ayrıt, köşe sayılarını yaz.',
+        'Beş eş küple iki farklı yapı kur; iki yapının da ön görünümü aynı olacak şekilde seç.',
+        'Bir yapının üç görünümünü verip küp sayısını bulmayı gerektiren bir soru yaz ve çöz.',
+      ],
+      scene: {
+        type: 'uc-boyut',
+        title: 'Üç görünüm: küplerle yapı',
+        hint: 'Sahneyi döndürerek ön, yan ve üst görünümün nasıl değiştiğini izle.',
+        app: '3d',
+        bounds: [-3, 3, -3, 3],
+        commands: [
+          'A = (0, 0, 0)',
+          'B = (2, 0, 0)',
+          'C = (2, 2, 0)',
+          'D = (0, 2, 0)',
+          'p = Polygon(A, B, C, D)',
+          'k = Prism(p, 2)',
+        ],
+      },
+      checks: [
+        check(
+          'Bir dikdörtgenler prizmasında toplam ayrıt sayısı kaçtır?',
+          ['6', '8', '12'],
+          2,
+          'Her yüz 4 ayrıta sahiptir ve her ayrıt iki yüze aittir.',
+          '6 yüz × 4 ayrıt = 24, her ayrıt iki kez sayıldığı için 24 ÷ 2 = 12 ayrıt vardır.',
+        ),
+        check(
+          'Önden bakışta 3 kare genişliğinde ve 2 kare yüksekliğinde görünen bir yapı için hangisi kesinlikle doğrudur?',
+          ['Yapıda 6 küp vardır', 'En yüksek sütun 2 küpdür', 'Yapıda 3 küp vardır'],
+          1,
+          'Önden görünen yükseklik, o yöndeki en yüksek sütunun yüksekliğidir.',
+          'Önden 2 kare yükseklik görünüyorsa en yüksek sütun 2 küptür; küp sayısı bundan fazla olabilir.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 9,
+      date: '9–13 Kas',
+      theme: 'geometri',
+      topic: 'Dikdörtgenler prizmasının açınımı ve yüzey alanı',
+      pages: '125–133',
+      summary: [
+        'Bir kutuyu makasla ayrıtları boyunca kesip açtığında elde ettiğin düz şekle **açınım** denir. Açınım, cismin yüzeyini tek bir düzlemde gösterir; bu yüzden yüzey alanı hesabının en somut aracıdır. Bir dikdörtgenler prizmasının açınımında 6 dikdörtgen bulunur ve karşılıklı yüzler eş olduğu için üç farklı boyutta dikdörtgen çifti vardır.',
+        'Kenar uzunlukları a, b ve c olan bir dikdörtgenler prizmasının yüzey alanı şu bağıntıyla bulunur: **Yüzey alanı = 2·(a·b + a·c + b·c)**. Buradaki üç çarpım, üç farklı yüz çiftinin alanıdır; 2 çarpanı her yüzün karşıtının da aynı alana sahip olmasından gelir. Küp için a = b = c olduğundan bağıntı 6a² biçimini alır. Yüzey alanının birimi santimetrekare, metrekare gibi kare birimlerdir.',
+        'Yüzey alanı sorularında en sık yapılan hata, tüm yüzleri aynı kabul etmektir. 5 cm × 3 cm × 2 cm boyutlu bir prizmada yüzey alanı 2·(5·3 + 5·2 + 3·2) = 2·(15 + 10 + 6) = 62 cm² olur. Yalnız iki yüzün alanını hesaplayıp 6 ile çarpmak yanlış sonuç verir; çünkü yüzler eş değildir. Açınımı çizmek, hangi yüzün hangi boyutta olduğunu görmenin en güvenli yoludur.',
+        'Günlük hayatta yüzey alanı, “ne kadar malzeme gerekir” sorusunun cevabıdır: bir kutuyu kaplamak için gereken karton, bir odanın duvarlarını boyamak için gereken boya miktarı, bir havuzun iç yüzeyini kaplamak için gereken fayans. Bu tür problemlerde bazı yüzlerin sayılmadığına dikkat et: kapaksız bir kutu için üst yüz hesaba katılmaz. Soruyu okurken “hangi yüzeyler gerçekten var” sorusunu sormak, fazladan malzeme hesabını önler.',
+      ],
+      points: [
+        'Açınım, cismin yüzeyini düzlemde gösteren şekildir; prizmada 6 dikdörtgen bulunur.',
+        'Yüzey alanı = 2·(a·b + a·c + b·c).',
+        'Küpte yüzey alanı 6a² olur.',
+        'Yüzey alanının birimi kare birimdir (cm², m²).',
+        'Kapaksız veya tabansız cisimlerde eksik yüzeyler hesaba katılmaz.',
+      ],
+      terms: [
+        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli.'),
+        term('Yüzey alanı', 'Cismin tüm yüzeylerinin alanları toplamı.'),
+        term('Kare birim', 'Alan ölçüsünde kullanılan, kenarı bir birim olan karenin alanına dayanan birim.'),
+      ],
+      tasks: [
+        '4 cm × 3 cm × 2 cm boyutlu prizmanın açınımını kareli kâğıda çiz ve yüzey alanını hesapla.',
+        'Bir küpün yüzey alanı 96 cm² ise bir ayrıtının uzunluğunu bul.',
+        'Kapaksız bir kutunun yüzey alanını hesaplarken hangi yüzü çıkardığını örnekle açıkla.',
+      ],
+      scene: {
+        type: 'acimim',
+        title: 'Prizmanın açınımı ve yüzey alanı',
+        hint: 'Sürgülerle boyutları değiştir; yüzey alanının nasıl arttığını izle.',
+        app: '3d',
+        bounds: [-4, 4, -4, 4],
+        commands: [
+          'a = Slider(1, 5, 1)',
+          'b = Slider(1, 5, 1)',
+          'h = Slider(1, 5, 1)',
+          'p = Polygon((0,0), (a,0), (a,b), (0,b))',
+          'k = Prism(p, h)',
+          'y = 2 * (a*b + a*h + b*h)',
+        ],
+      },
+      checks: [
+        check(
+          '2 cm, 3 cm ve 4 cm ayrıtlı bir dikdörtgenler prizmasının yüzey alanı kaç cm²’dir?',
+          ['24', '46', '52'],
+          2,
+          'Üç farklı yüz çiftinin alanını topla, sonra 2 ile çarp.',
+          '2·(2·3 + 2·4 + 3·4) = 2·(6 + 8 + 12) = 2·26 = 52 cm².',
+        ),
+        check(
+          'Yüzey alanı 150 cm² olan bir küpün bir ayrıtı kaç cm’dir?',
+          ['5', '6', '25'],
+          0,
+          'Küpte yüzey alanı 6a²’dir; önce 6’ya böl, sonra karekök al.',
+          '6a² = 150, a² = 25, a = 5 cm.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 10,
+      date: '23–27 Kas',
+      theme: 'geometri',
+      topic: 'Hacim: eş nesnelerle yorumlama ve hacim bağıntısı',
+      pages: '134–143',
+      summary: [
+        'Hacim, bir cismin uzayda kapladığı yerdir; başka bir deyişle cismin içine ne kadar madde ya da sıvı sığdığının ölçüsüdür. Hacmi ölçmenin en somut yolu birim küp kullanmaktır: kenarı 1 birim olan küpün hacmi 1 birimküptür. Bir kutunun içine kaç birim küp yerleştirilebiliyorsa hacmi o sayı kadardır. Bu yöntem, hacim bağıntısını ezberlemeden önce anlamayı sağlar.',
+        'Dikdörtgenler prizmasının hacmi üç boyutun çarpımıdır: **Hacim = a·b·c**. Bunu bir katman mantığıyla açıklayabiliriz: tabana bir sıra birim küp dizdiğinde taban alanı kadar (a·b) küp olur; bu katmandan c kadar üst üste konduğunda toplam a·b·c küp elde edilir. Bu yüzden hacim, “taban alanı × yükseklik” olarak da yazılabilir. Küpte a = b = c olduğundan hacim a³ olur.',
+        'Hacim ölçüsünde birim seçimi önemlidir: santimetreküp (cm³), desimetreküp (dm³) ve metreküp (m³). Bir kenarı 1 cm olan küpün hacmi 1 cm³, 1 dm olanın hacmi 1 dm³, 1 m olanın hacmi 1 m³’tür. Boyutlar aynı birime çevrilmeden çarpılırsa sonuç yanlış birimde çıkar. 40 cm × 30 cm × 20 cm boyutlu bir kutunun hacmi 24.000 cm³’tür; bu da 24 dm³ ya da 0,024 m³ demektir.',
+        'Hacim ile kapasite sık karıştırılır. Kapasite, bir kabın içine sığan sıvı miktarıdır ve litre ile ölçülür. 1 dm³ = 1 litre, 1 cm³ = 1 mililitre eşitliği bu iki kavramı birbirine bağlar. Bu yüzden “2 litrelik şişe” aslında 2 dm³ hacminde bir kaptır. Problem çözerken önce birimleri uyumlu hâle getirmek, sonra çarpmak gerekir.',
+      ],
+      points: [
+        'Hacim, cismin uzayda kapladığı yerdir; birim küple ölçülür.',
+        'Dikdörtgenler prizmasının hacmi a·b·c’dir.',
+        'Hacim, taban alanı × yükseklik olarak da hesaplanır.',
+        'Küpte hacim a³’tür.',
+        '1 dm³ = 1 L ve 1 cm³ = 1 mL’dir.',
+      ],
+      terms: [
+        term('Hacim', 'Bir cismin uzayda kapladığı yerin ölçüsü.'),
+        term('Birim küp', 'Kenar uzunluğu 1 birim olan, hacim ölçmede kullanılan küp.'),
+        term('Kapasite', 'Bir kabın içine sığabilecek sıvı miktarı.'),
+      ],
+      tasks: [
+        'Bir küpün bir ayrıtı iki katına çıkarılırsa hacmi kaç katına çıkar? Örnekle göster.',
+        '20 cm × 15 cm × 10 cm boyutlu bir kabın hacmini cm³ ve litre olarak yaz.',
+        'Taban alanı 30 cm², yüksekliği 8 cm olan bir prizmanın hacmini iki yolla hesapla.',
+      ],
+      scene: {
+        type: 'hacim',
+        title: 'Hacim: birim küplerle katmanlar',
+        hint: 'Yükseklik sürgüsünü artır; her katmanda kaç birim küp eklendiğini say.',
+        app: '3d',
+        bounds: [-4, 4, -4, 4],
+        commands: [
+          'a = Slider(1, 4, 1)',
+          'b = Slider(1, 4, 1)',
+          'h = Slider(1, 4, 1)',
+          'p = Polygon((0,0), (a,0), (a,b), (0,b))',
+          'k = Prism(p, h)',
+          'V = a * b * h',
+        ],
+      },
+      checks: [
+        check(
+          '5 cm, 4 cm ve 3 cm ayrıtlı bir prizmanın hacmi kaç cm³’tür?',
+          ['12', '60', '94'],
+          1,
+          'Üç ayrıt uzunluğunu çarp.',
+          '5 · 4 · 3 = 60 cm³. Yüzey alanı sorusuyla karıştırmamak için birimin küp olduğuna dikkat et.',
+        ),
+        check(
+          'Bir ayrıtı 3 cm olan küpün hacmi ile aynı küpün yüzey alanı için hangisi doğrudur?',
+          ['Hacim 27 cm³, yüzey alanı 54 cm²', 'Hacim 54 cm³, yüzey alanı 27 cm²', 'İkisi de 27'],
+          0,
+          'Küpte hacim a³, yüzey alanı 6a²; birimler farklıdır.',
+          'Hacim 3³ = 27 cm³, yüzey alanı 6·3² = 54 cm² olur. Birimler cm³ ve cm² olarak ayrılır.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 11,
+      date: '30 Kas–4 Ara',
+      theme: 'geometri',
+      topic: 'Hacim ölçme birimleri ve prizma problemleri',
+      pages: '144–156',
+      summary: [
+        'Hacim ölçme birimleri onluk sistemin küpüyle büyür: her adımda 10 değil **1000** kat fark vardır. Çünkü hacim üç boyutlu bir ölçüdür; bir kenar 10 katına çıktığında hacim 10·10·10 = 1000 katına çıkar. Bu yüzden 1 m³ = 1000 dm³, 1 dm³ = 1000 cm³ ve 1 cm³ = 1000 mm³ olur. Büyük birimden küçüğe çevirirken 1000 ile çarpar, küçükten büyüğe çevirirken 1000’e böleriz.',
+        'Sıvı ölçme birimleriyle ilişki bu tabloyu daha da kullanışlı hâle getirir: 1 dm³ tam olarak 1 litreye, 1 cm³ tam olarak 1 mililitreye eşittir. Bu eşitlik sayesinde “2,5 litrelik sürahi” gibi bir ifadeyi hacim diliyle 2,5 dm³ ya da 2500 cm³ olarak yazabiliriz. Mutfakta 200 mL’lik bir bardak, 200 cm³ hacminde bir kabı anlatır. Bu geçişleri akıcı yapmak, problem çözerken birim karmaşasını ortadan kaldırır.',
+        'Prizma problemlerinde iki soru tipi öne çıkar: verilen boyutlardan hacmi bulmak ve verilen hacimden bir boyutu bulmak. İkinci tipte bağıntıyı tersine kullanırız: V = a·b·c ise c = V ÷ (a·b). Örneğin hacmi 120 cm³, taban boyutları 5 cm ve 4 cm olan bir prizmanın yüksekliği 120 ÷ 20 = 6 cm’dir. Burada dikkat edilecek nokta, hacmin biriminin diğer boyutlarla uyumlu olmasıdır; metre ile santimetre aynı ifadede kullanılmaz.',
+        'Gerçek yaşam problemleri çoğu zaman birkaç adım ister: bir akvaryumun kaç litre su aldığını bulmak, bir deponun dolma süresini hesaplamak, bir kutunun içine kaç küçük kutu sığacağını belirlemek. Bu problemlerde önce tüm ölçüleri aynı birime çevir, sonra hacmi hesapla, en son istenen birime dönüştür. Sonucun büyüklüğünü tahminle karşılaştırmak, birim hatasını yakalamanın en hızlı yoludur.',
+      ],
+      points: [
+        'Hacim birimleri arasında her adımda 1000 kat fark vardır.',
+        'Büyük birimden küçüğe çevirirken 1000 ile çarp.',
+        '1 dm³ = 1 L, 1 cm³ = 1 mL.',
+        'Verilen hacimden boyut bulmak için bağıntı tersine kullanılır: c = V ÷ (a·b).',
+        'İşlemden önce tüm ölçüler aynı birime çevrilmelidir.',
+      ],
+      terms: [
+        term('Birim dönüşümü', 'Bir ölçüyü farklı bir birimle ifade etme işlemi.'),
+        term('Desimetreküp', 'Kenarı 1 desimetre olan küpün hacmi; 1 litreye eşittir.'),
+        term('Mililitre', 'Litrenin binde biri; 1 cm³ hacme eşittir.'),
+      ],
+      tasks: [
+        '0,75 m³ kaç dm³ ve kaç litre eder? Adım adım yaz.',
+        'Hacmi 2 litre olan bir sürahinin taban alanı 250 cm² ise yüksekliği kaç cm’dir?',
+        'Bir akvaryumun ölçüleri 60 cm × 30 cm × 40 cm. Kaç litre su alır?',
+      ],
+      scene: {
+        type: 'birim-donusum',
+        title: 'Hacim ve sıvı birimleri',
+        hint: 'Sürgüyle hacmi değiştir; litre ve cm³ karşılığını birlikte izle.',
+        app: 'graphing',
+        bounds: [-1, 6, -1, 6],
+        commands: [
+          'v = Slider(1, 10, 0.5)',
+          'P = (v, v)',
+          'O = (0, 0)',
+          's = Segment(O, P)',
+        ],
+      },
+      checks: [
+        check(
+          '3,5 dm³ kaç cm³’tür?',
+          ['350', '3500', '35.000'],
+          1,
+          'Desimetreküpten santimetreküpe inerken kaç kat fark var?',
+          '1 dm³ = 1000 cm³ olduğu için 3,5 × 1000 = 3500 cm³ bulunur.',
+        ),
+        check(
+          'Taban alanı 40 cm² olan bir prizmanın hacmi 360 cm³ ise yüksekliği kaç cm’dir?',
+          ['9', '90', '6'],
+          0,
+          'Hacmi taban alanına böl.',
+          '360 ÷ 40 = 9 cm. Kontrol: 40 · 9 = 360 cm³.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 12,
+      date: '7–11 Ara',
+      theme: 'veri',
+      topic: '2. tema ölçme, kategorik ve nicel veri',
+      pages: '157–175',
+      summary: [
+        'Bir soruya cevap vermek için toplanan her bilgi veridir; ancak tüm veriler aynı türden değildir. “En sevdiğin mevsim” sorusuna verilen cevaplar **kategorik (nitel)** veridir; bu veriler sayıyla değil gruplarla ifade edilir. “Bir haftada kaç saat ders çalışıyorsun” sorusuna verilen cevaplar ise **nicel** veridir; sayılabilir ya da ölçülebilir. Nicel veriler de ikiye ayrılır: kişi sayısı gibi sayılarak bulunanlar kesikli, boy uzunluğu gibi ölçümle bulunanlar süreklidir.',
+        'Veri türünü bilmek, hangi grafiğin kullanılacağını belirler. Kategorik veriler için sıklık tablosu ve sütun grafiği, daire grafiği uygundur. Nicel veriler için ise sütun grafiği, çizgi grafiği ya da histogram kullanılabilir. Sürekli bir veriyi (boy, ağırlık, sıcaklık) kategorilere ayırmadan göstermek zordur; bu yüzden aralıklara bölünür. Kategorik veride “ortalama” hesaplamak anlamsızdır; bu ayrım veri okuma becerisinin temelidir.',
+        'Veri toplama sürecinde üç soru sorulur: kime soracağım, kaç kişiye soracağım, cevapları nasıl kaydedeceğim. Yanıtların kimden geldiği önemlidir; yalnız bir sınıfa sorulan soru tüm okul hakkında genelleme yapmaya yetmez. Bu duruma örneklemin sınırlılığı denir. Ayrıca sorunun yönlendirici olmaması gerekir: “Sence de kitap okumak en iyi alışkanlık değil mi?” sorusu cevabı yönlendirir; “Boş zamanında en çok ne yapıyorsun?” sorusu daha tarafsızdır.',
+        'Bu hafta ayrıca ikinci temanın ölçme ve değerlendirme bölümü tamamlanıyor. Geometri temasının üç büyük fikri geri geliyor: görünümler, açınım–yüzey alanı ve hacim. Bu üç fikrin ortak noktası, iki boyutlu gösterimlerden üç boyutlu bilgi çıkarmaktır. Ölçme sorularında birim tutarlılığını ve “hangi yüzeyler hesaba katılıyor” sorusunu yeniden kontrol etmek, hataların büyük kısmını eler.',
+      ],
+      points: [
+        'Veri kategorik (gruplarla) ya da nicel (sayıyla) olabilir.',
+        'Nicel veri kesikli veya sürekli olabilir.',
+        'Kategorik veride ortalama hesaplanmaz.',
+        'Veri toplarken kim, kaç kişi ve nasıl kaydedileceği belirlenir.',
+        'Yönlendirici sorular veriyi bozar; tarafsız soru kökleri kullanılır.',
+      ],
+      terms: [
+        term('Kategorik veri', 'Gruplara ya da sınıflara ayrılarak ifade edilen, sayılmayan veri.'),
+        term('Nicel veri', 'Sayılarak veya ölçülerek elde edilen veri.'),
+        term('Sürekli veri', 'Aralıksız değerler alabilen, ölçümle elde edilen nicel veri.'),
+      ],
+      tasks: [
+        'Sınıfında iki soru hazırla: biri kategorik, biri nicel veri toplasın. Soruların yönlendirici olmadığını kontrol et.',
+        '10 kişilik bir veri kümesi uydur; sıklık tablosu ve sütun grafiğini çiz.',
+        'Bir gazete grafiği bul; eksenlerin başlangıcının sıfır olup olmadığını incele ve sonucu yorumla.',
+      ],
+      scene: {
+        type: 'veri-turu',
+        title: 'Kategorik ve nicel veri',
+        hint: 'Sütunların yüksekliğini say; hangi sorunun kategorik, hangisinin nicel olduğunu düşün.',
+        app: 'graphing',
+        bounds: [-1, 7, -1, 7],
+        commands: [
+          'a = Slider(1, 6, 1)',
+          'b = Slider(1, 6, 1)',
+          'c = Slider(1, 6, 1)',
+          'P = (1, a)',
+          'Q = (3, b)',
+          'R = (5, c)',
+        ],
+      },
+      checks: [
+        check(
+          '“Okuduğun kitap türü” sorusuna verilen cevaplar hangi veri türüdür?',
+          ['Nicel, sürekli', 'Kategorik', 'Nicel, kesikli'],
+          1,
+          'Cevaplar sayı mı, grup adı mı?',
+          'Roman, öykü, şiir gibi cevaplar gruplara ayrılır; bu nedenle veri kategoriktir.',
+        ),
+        check(
+          'Hangi soru yönlendirici değildir?',
+          ['“Sence de spor yapmak en iyi alışkanlık değil mi?”', '“Boş zamanında en çok ne yapıyorsun?”', '“Spor yapmanın faydalı olduğunu kabul ediyor musun?”'],
+          1,
+          'Yönlendirici soru, beklenen cevabı seçeneğin içine saklar.',
+          '“En çok ne yapıyorsun?” sorusu seçenek sunmadan öğrencinin kendi cevabını alır; diğerleri cevabı yönlendirir.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 13,
+      date: '14–18 Ara',
+      theme: 'veri',
+      topic: 'İstatistiksel araştırma süreci adımları',
+      pages: '176–200',
+      summary: [
+        'İstatistiksel araştırma dört adımda yürür: araştırma sorusunu belirleme, veri toplama, veriyi analiz edip görselleştirme, sonucu yorumlayıp karar verme. Bu adımlar sıralıdır ve her adım bir öncekine dayanır. Soru net değilse toplanan veri işe yaramaz; veri uygun toplanmamışsa grafik yanıltıcı olur; grafik doğru okunmazsa karar hatalı çıkar.',
+        'İyi bir araştırma sorusu ölçülebilir, sınırları belli ve cevaplanabilir olmalıdır. “Spor iyi midir?” sorusu ölçülemez; “7. sınıf öğrencileri haftada kaç saat spor yapıyor?” sorusu ölçülebilir. Soru belirlenirken kim, ne zaman ve hangi aralıkta sorulacağı da tanımlanır. Böylece veri toplama aşamasında kararsızlık yaşanmaz.',
+        'Veri toplandıktan sonra özetlenir: sıklık tablosu, ortalama, ortanca, tepe değer (en çok tekrar eden değer) ve açıklık (en büyük ile en küçük değer arasındaki fark). Bu ölçülerin her biri farklı bir şey anlatır. Ortalama, verinin dengesini; ortanca, sıralı verinin ortasındaki değeri; tepe değer, en sık görülen durumu; açıklık ise verinin ne kadar yayıldığını gösterir. Uç değerler (çok büyük ya da çok küçük bir gözlem) ortalamayı güçlü biçimde etkiler, ortancayı ise daha az etkiler.',
+        'Görselleştirmede grafiğin türü ve ölçeği sonucu değiştirebilir. Dikey eksen sıfırdan başlamıyorsa küçük farklar büyük görünür; bu, yanıltıcı grafiğin en yaygın biçimidir. Daire grafiğinde dilimler toplamı bütünü vermelidir. Son adımda yorum yaparken “veri neyi destekliyor, neyi desteklemiyor” ayrımını yapmak gerekir: 20 kişilik bir gruptan elde edilen sonuç tüm ülke için geçerli sayılamaz. İyi bir rapor; soruyu, yöntemi, bulguları ve sınırlılığı birlikte yazar.',
+      ],
+      points: [
+        'Dört adım: soru → veri toplama → analiz ve görselleştirme → yorum ve karar.',
+        'Araştırma sorusu ölçülebilir ve sınırları belli olmalıdır.',
+        'Ortalama, ortanca, tepe değer ve açıklık veriyi farklı yönlerden özetler.',
+        'Uç değerler ortalamayı güçlü, ortancayı daha az etkiler.',
+        'Dikey ekseni sıfırdan başlamayan grafikler yanıltıcıdır.',
+      ],
+      terms: [
+        term('Ortanca', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.'),
+        term('Tepe değer', 'Veri kümesinde en çok tekrar eden değer.'),
+        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark.'),
+      ],
+      tasks: [
+        'Kendi araştırma sorunu belirle; kim, ne zaman ve kaç kişiye soracağını yaz.',
+        '10 kişilik bir veri kümesi için ortalama, ortanca, tepe değer ve açıklığı hesapla.',
+        'Yanıltıcı bir grafik çiz; neden yanıltıcı olduğunu bir paragrafla açıkla.',
+      ],
+      scene: {
+        type: 'ortalama',
+        title: 'Ortalama ve açıklık',
+        hint: 'Değerleri değiştir; ortalama ile açıklığın nasıl tepki verdiğini karşılaştır.',
+        app: 'graphing',
+        bounds: [-1, 7, -1, 9],
+        commands: [
+          'a = Slider(1, 8, 1)',
+          'b = Slider(1, 8, 1)',
+          'c = Slider(1, 8, 1)',
+          'O = ((a + b + c) / 3, 8)',
+          'P = (1, a)',
+          'Q = (3, b)',
+          'R = (5, c)',
+        ],
+      },
+      checks: [
+        check(
+          '5, 7, 7, 9, 22 verisi için ortalama ile ortancayı karşılaştırdığında hangisi doğrudur?',
+          ['Ortalama 10, ortanca 7', 'Ortalama 7, ortanca 10', 'İkisi de 10'],
+          0,
+          'Toplamı 5’e böl; sonra veriyi sıralayıp ortadaki değeri bul.',
+          'Toplam 50, ortalama 10’dur. Sıralı veride ortadaki değer 7’dir; 22 uç değeri ortalamayı yukarı çekmiştir.',
+        ),
+        check(
+          'Bir araştırmada yalnız bir sınıfa soru sorulup tüm okul hakkında sonuç çıkarılıyor. Bu durumdaki temel sorun nedir?',
+          ['Grafik türü yanlış', 'Örneklem sınırlı, genelleme yapılamaz', 'Açıklık çok küçük'],
+          1,
+          'Sonuçların kime genellenebileceğini düşün.',
+          'Yalnız bir sınıftan toplanan veri tüm okulu temsil etmez; örneklem sınırlıdır ve genelleme yapılamaz.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 14,
+      date: '21–25 Ara',
+      theme: 'donusum',
+      topic: 'Yansıma dönüşümü',
+      pages: '201–210',
+      summary: [
+        'Bir şekli hareket ettirdiğimizde biçimi değişmiyorsa, yalnızca konumu ya da yönü değişiyorsa buna **dönüşüm** denir. Yansıma, bu dönüşümlerin en tanıdık olanıdır: bir şeklin bir doğruya göre aynadaki görüntüsüdür. Bu doğruya **simetri doğrusu** (ayna doğrusu) denir. Yansımada şeklin her noktası ayna doğrusuna dik olacak biçimde karşı tarafa taşınır ve ayna doğrusuna olan uzaklığı korunur.',
+        'Yansımanın en önemli özelliği, şeklin biçimini değiştirmemesidir: kenar uzunlukları ve açı ölçüleri aynı kalır. Buna “yansımada şekil eştir” denir. Değişen tek şey yönelimdir: sağa bakan bir okun yansıması sola bakar. Bu yüzden yansımayı “kopyalamak” ile karıştırmamak gerekir; kopya aynı yönelimi korur, yansıma tersine çevirir.',
+        'Koordinat düzleminde yansıma kuralları sadedir. x eksenine göre yansımada (x, y) noktası (x, −y) olur; çünkü aşağı–yukarı yön değişir, sağ–sol aynı kalır. y eksenine göre yansımada (x, y) noktası (−x, y) olur. Orijine göre yansımada ise her iki işaret de değişir: (−x, −y). Bu kuralları ezberlemek yerine bir noktanın aynaya olan uzaklığını düşünmek, hatırlamayı kolaylaştırır.',
+        'Yansıma günlük yaşamda ve tasarımda sık kullanılır: aynalar, vitrin düzenlemeleri, halı ve çini desenleri, harflerin simetrisi, logolar. Bir şeklin kaç simetri doğrusu olduğunu bulmak da bir yansıma sorusudur. Karede 4, eşkenar üçgende 3, dikdörtgende 2 simetri doğrusu vardır; dairede sonsuzdur. “Simetrik görünüyor” demek için şeklin ayna doğrusu boyunca katlandığında üst üste gelmesi gerekir.',
+      ],
+      points: [
+        'Yansıma, bir doğruya göre aynadaki görüntüdür; doğruya simetri doğrusu denir.',
+        'Yansımada uzunluklar ve açılar korunur; yönelim tersine döner.',
+        'x eksenine göre yansıma: (x, y) → (x, −y).',
+        'y eksenine göre yansıma: (x, y) → (−x, y).',
+        'Karede 4, eşkenar üçgende 3, dikdörtgende 2 simetri doğrusu vardır.',
+      ],
+      terms: [
+        term('Dönüşüm', 'Şeklin konumunu ya da yönünü değiştiren, biçimini koruyan işlem.'),
+        term('Simetri doğrusu', 'Şeklin katlandığında kendisiyle çakışmasını sağlayan doğru; ayna doğrusu.'),
+        term('Yönelim', 'Şeklin köşelerinin saat yönünde ya da tersine sıralanma özelliği.'),
+      ],
+      tasks: [
+        'Kareli kâğıtta bir üçgen çiz; x eksenine ve y eksenine göre yansımalarını ayrı ayrı çiz.',
+        'Adının harflerinden simetri doğrusu olanları belirle (A, E, M gibi) ve olmayanlarla karşılaştır.',
+        'Aynada ters görünen bir yazı örneği bul; neden ters göründüğünü açıkla.',
+      ],
+      scene: {
+        type: 'yansima',
+        title: 'Yansıma: ayna doğrusu ve görüntü',
+        hint: 'Ayna doğrusunu kaydır; görüntünün aynı uzaklıkta, ters yönelimde oluştuğunu izle.',
+        app: 'geometry',
+        bounds: [-5, 8, -2, 7],
+        commands: [
+          'm = Line((0, -6), (0, 6))',
+          'A = (1, 1)',
+          'B = (4, 1)',
+          'C = (1, 3)',
+          'p = Polygon(A, B, C)',
+          'p2 = Reflect(p, m)',
+        ],
+        hidden: ['p2'],
+      },
+      checks: [
+        check(
+          '(3, −2) noktasının y eksenine göre yansıması hangisidir?',
+          ['(−3, −2)', '(3, 2)', '(−3, 2)'],
+          0,
+          'y eksenine göre yansımada sağ–sol değişir, yukarı–aşağı aynı kalır.',
+          'y eksenine göre yansımada x’in işareti değişir: (3, −2) → (−3, −2).',
+        ),
+        check(
+          'Bir şeklin yansıması alındığında aşağıdakilerden hangisi değişir?',
+          ['Kenar uzunlukları', 'Açı ölçüleri', 'Yönelimi'],
+          2,
+          'Yansıma biçimi korur; sağ–sol ilişkisi tersine döner.',
+          'Uzunluklar ve açılar korunur; yalnızca yönelim tersine döner. Bu yüzden yansıma “eş” ama “ters yönelimli” bir şekil verir.',
+        ),
+      ],
+    }),
+
+    week({
+      id: 15,
+      date: '28–31 Ara',
+      theme: 'donusum',
+      topic: 'Orta dikme ve açıortay inşası, dönem tekrarı',
+      pages: '211–217',
+      summary: [
+        'Bir doğru parçasının orta noktasından geçen ve ona dik olan doğruya **orta dikme** denir. Orta dikmenin en önemli özelliği, üzerindeki her noktanın parçanın iki ucuna eşit uzaklıkta olmasıdır. Bu özellik sayesinde orta dikme, “iki noktaya eşit uzaklıkta olan noktaların yeri” olarak da tanımlanır. Günlük hayatta iki şehre eşit uzaklıkta bir tesis kurmak istendiğinde tam olarak bu doğru kullanılır.',
+        'Orta dikme pergel ve cetvel ile inşa edilir. Pergelin iğnesi A noktasına konur, yarıçapı AB’nin yarısından büyük seçilir ve iki yay çizilir. Aynı işlem B noktasından tekrarlanır. Yayların kesiştiği iki noktayı birleştiren doğru, AB’nin orta dikmesidir. Bu inşada cetvel yalnızca doğru çizmek için kullanılır; uzunluk ölçülmez. Yani sonuç, ölçmeye değil geometrici bir ilişkiye dayanır.',
+        '**Açıortay**, bir açıyı iki eş açıya bölen ışındır. Açıortay üzerindeki her nokta, açının kollarına eşit uzaklıktadır. Bir açının açıortayı da pergel-cetvel ile çizilebilir: açının köşesine pergelin iğnesi konur, kolları kesen bir yay çizilir; bu iki kesişim noktasından eşit yarıçaplarla yeni yaylar çizilip kesişim köşeye birleştirilir. Açıortay, üçgende iç merkezin bulunmasında da kullanılır.',
+        'Dönemin son haftasında dört temayı birbirine bağlayan bir bakış yapmak yararlıdır: sayılar teması işlem güvenliğini, geometri teması iki boyuttan üç boyuta geçişi, veri teması bilgiyi yorumlamayı, dönüşüm teması ise şekillerin korunan özelliklerini kurdu. Bu dört beceri birbirinden bağımsız değildir: bir hacim probleminde birim dönüşümü (sayılar), yüzey hesabı (geometri), veri okuma (tablo) ve yansıma (desen) aynı soruda bir arada bulunabilir.',
+      ],
+      points: [
+        'Orta dikme, doğru parçasını iki eş parçaya böler ve parçaya diktir.',
+        'Orta dikme üzerindeki her nokta, parçanın uçlarına eşit uzaklıktadır.',
+        'Orta dikme ve açıortay pergel-cetvel ile ölçü yapılmadan inşa edilir.',
+        'Açıortay, açıyı iki eş açıya böler; kollara eşit uzaklıktadır.',
+        'Dört tema birbirini besler; sorular çoğu zaman birden fazla beceri ister.',
+      ],
+      terms: [
+        term('Orta dikme', 'Bir doğru parçasının orta noktasından geçen ve parçaya dik olan doğru.'),
+        term('Açıortay', 'Bir açıyı iki eş açıya bölen ışın.'),
+        term('İnşa', 'Yalnız pergel ve cetvel kullanılarak yapılan geometrik çizim.'),
+      ],
+      tasks: [
+        'Bir doğru parçası çiz ve orta dikmesini pergel-cetvel ile inşa et; adımları yaz.',
+        'Bir açı çiz ve açıortayını inşa et; açıortayın kollarına eşit uzaklıkta olduğunu göster.',
+        'Dönem boyunca öğrendiğin dört temadan birer cümlelik özet çıkar; hangi konuda daha çok çalışman gerektiğini yaz.',
+      ],
+      scene: {
+        type: 'ortadikme',
+        title: 'Orta dikme: eşit uzaklıktaki noktalar',
+        hint: 'A ve B’yi sürükle, sonra inşayı aç; noktaların uçlara eşit uzaklıkta kaldığını gör.',
+        app: 'geometry',
+        bounds: [-2, 8, -1, 7],
+        commands: [
+          'A = (1, 1)',
+          'B = (5, 3)',
+          's = Segment(A, B)',
+          'M = Midpoint(A, B)',
+          'd = PerpendicularBisector(A, B)',
+        ],
+        hidden: ['d'],
+      },
+      checks: [
+        check(
+          'Bir doğru parçasının orta dikmesi üzerindeki bir nokta için hangisi kesinlikle doğrudur?',
+          ['Parçanın uçlarına eşit uzaklıktadır', 'Parçanın orta noktasındadır', 'Parçaya paraleldir'],
+          0,
+          'Orta dikmenin tanımı, iki uca eşit uzaklık üzerinedir.',
+          'Orta dikme, uçlara eşit uzaklıktaki noktaların geometrik yeridir; nokta orta noktada olmak zorunda değildir.',
+        ),
+        check(
+          'Açıortay ile ilgili hangisi doğrudur?',
+          ['Açıyı iki eş parçaya böler ve kollara eşit uzaklıktadır', 'Açıyı her zaman 90° yapar', 'Yalnız dik açılarda çizilebilir'],
+          0,
+          'Açıortayın hem bölme hem uzaklık özelliği vardır.',
+          'Açıortay açıyı iki eş açıya böler; üzerindeki her nokta açının kollarına eşit uzaklıktadır.',
+        ),
+      ],
+    }),
+
+  ];
+
+  // Her haftanın anlatımını bir uygulama paragrafıyla derinleştirir (ne yapacağını adım adım gösterir).
+  const EXTRA = {
+    1: 'Bu hafta çalışırken şu sırayı izle: önce sayı doğrusunu boş bir kâğıda çiz ve −10 ile +10 arasını işaretle. Sonra günlük hayattan bulduğun üç örneği (hava sıcaklığı, banka hesabı, asansör katı) aynı doğru üzerinde göster. Ardından her örnek için iki cümle yaz: “Sıfırı ne kabul ettim?” ve “Negatif yön hangi taraf?” Bu iki cümle, ilerleyen haftalarda işlem yaparken karıştırdığın tek noktayı baştan netleştirir.',
+    2: 'Mutlak değer konusunu pekiştirmek için bir “uzaklık defteri” tutabilirsin. Defterin sol sütununa sayıyı, sağ sütununa sıfıra uzaklığını yaz: −3 → 3, 3 → 3, 0 → 0, −0,5 → 0,5. On satır sonunda şu soruyu cevapla: “Mutlak değeri aynı olan iki sayı arasındaki ilişki nedir?” Cevabın “birbirinin tersi” olmalı. Bu tablo, bir hafta sonraki karşılaştırma konusunda da işine yarayacak.',
+    3: 'Kesirleri ondalığa çevirirken bölmeyi yanlış yapmak en sık hatadır. 7/8 gibi bir kesirde 7’yi 8’e bölerken virgülden sonra sıfır eklemeyi unutma: 7,0 ÷ 8 = 0,875. Alıştırma olarak 1/2, 1/4, 3/4, 1/5, 1/8 ve 1/10 kesirlerinin ondalık karşılıklarını yaz; bu altı değer, zihinden karşılaştırma yaparken referans noktan olacak. 1/3 ve 1/6 gibi devirli olanları ayrı işaretle.',
+    4: 'İşaret kurallarını ezberlemek yerine iki soruyla çalış: “Hangi yöne gidiyorum?” ve “Ne kadar gidiyorum?” Birinci soru işareti, ikinci soru büyüklüğü verir. Örneğin (−7) + (+2): 7 birim sola, 2 birim sağa; net 5 birim sola, yani −5. Bu yöntemi bir hafta boyunca her işlemde sesli olarak uygula; kuralı hatırlamak zorunda kalmadan sonucu bulduğunu göreceksin.',
+    5: 'Problem çözerken her problemi bir tabloya yerleştir: verilenler, istenen, işlem, kontrol. Bu dört sütun, özellikle sıcaklık ve borç–alacak problemlerinde işaret hatasını yakalar. Ayrıca sonucu bulduktan sonra “bu sonuç gerçek hayatta ne anlama geliyor?” cümlesini yaz. Örneğin “−19 m” cevabı “deniz seviyesinin 19 metre altında” demektir; bu çeviri, sorunun cevabını gerçekten verdiğini gösterir.',
+    6: 'Çok adımlı işlemlerde tek satırda sonuç yazmak yerine her adımı ayrı satıra yaz ve o adımda hangi kuralı kullandığını yanına not et. Örneğin “önce parantez”, “sonra üs”, “sonra çarpma”. Bu alışkanlık sınavda puan kaybını azaltır ve hatanın hangi adımda olduğunu görmeni sağlar. Kesirli ifadelerde ara sonucu sadeleştirmeyi unutma; sadeleştirilmemiş kesirlerle devam etmek işlem hacmini büyütür.',
+    7: 'Sınav öncesi son üç gün için kısa bir plan yap: birinci gün yalnız hata listendeki üç konuya, ikinci gün karışık on soruya, üçüncü gün yalnız gözden geçirmeye ayır. Yeni konu öğrenmeye çalışma. Sınav sabahı hata listendeki tek satırlık maddeleri oku; bu, bildiğin hâlde yanlış yaptığın soruların önüne geçer.',
+    8: 'Küp sayısı sorularında sistematik saymak çok işe yarar: önce tabanı, sonra ikinci katmanı, en son tepe katmanı say. Her katmanda kaç küp olduğunu yaz ve topla. Görünmeyen küp var mı diye sor: bir küpün üstünde küp varsa, o küp destekleniyordur ve sayıya dahildir. Üç görünümü çizerek kendi cevabını kontrol edebilirsin.',
+    9: 'Açınım çizerken önce altı yüzü kâğıda yerleştir, sonra katlama çizgilerini belirle. Katlarken hangi kenarların birleştiğini işaretlersen yüzey alanı hesabında yüz kaybetmezsin. Bir prizmanın açınımı 11 farklı biçimde çizilebilir; sen yalnız birini kullanacaksan da yüzlerin eşleşmesini kontrol etmek için ikinci bir açınım denemek iyi bir alıştırmadır.',
+    10: 'Hacim hesabını kontrol etmenin pratik yolu, sonucu tahminle karşılaştırmaktır. 20 cm × 15 cm × 10 cm boyutlu bir kutu için önce “yaklaşık 20 × 15 = 300, 300 × 10 = 3000” diye zihinden hesapla, sonra ayrıntılı işlemi yap. İki sonuç birbirine yakın değilse birim ya da çarpma hatası vardır. Bu alışkanlık, sınavda zaman kazandırır.',
+    11: 'Birim dönüşümlerinde oku yönü belirle: büyük birimden küçüğe giderken sayı büyür, küçükten büyüğe giderken küçülür. 2 m³ → 2000 dm³ → 2.000.000 cm³ zincirini bir kez yazıp duvara as. Sıvı ölçüleriyle çalışırken “litreyi dm³ gibi düşün” cümlesi, akvaryum ve depo problemlerinde hatayı büyük ölçüde önler.',
+    12: 'Veri toplarken soruyu ve cevap seçeneklerini önceden yaz. Açık uçlu sorular zengin bilgi verir ama düzenlenmesi zordur; kapalı uçlu sorular kolay sayılır ama ayrıntıyı kaçırabilir. Küçük bir araştırmada ikisini birlikte kullanmak dengeli sonuç verir: önce seçenekli soruyla grubu belirle, sonra açık uçlu soruyla nedeni öğren.',
+    13: 'Grafik okurken üç şeyi kontrol et: eksenlerin adı ve birimi, eksenlerin başlangıç değeri, ölçek. Bu üç kontrol, yanıltıcı grafiklerin çoğunu yakalar. Yorum yazarken “veri şunu gösteriyor” ile “ben şöyle düşünüyorum” cümlelerini ayır; ikincisini birinciden sonra yaz. Bu ayrım, araştırma raporunun güvenilirliğini artırır.',
+    14: 'Yansıma çizerken her köşe için ayna doğrusuna dik bir çizgi indir ve aynı uzaklığı karşı tarafa taşı. Sonra köşeleri birleştir. Bu yöntem, koordinat kuralını unuttuğunda bile doğru sonucu verir. Kendi çizimini kontrol etmek için iki şeklin karşılıklı kenarlarının eşit olup olmadığına bak; eşit değilse bir köşeyi yanlış taşımışsındır.',
+    15: 'İnşa çalışmalarında pergelin yarıçapını çok küçük seçmek yayların kesişmemesine yol açar; yarıçap, parçanın yarısından büyük olmalıdır. İnşa bittikten sonra sonucu ölçerek değil, özellikle doğrula: orta dikme için iki uca uzaklığı, açıortay için iki açının eşitliğini kontrol et. Bu doğrulama, çizimin rastlantıyla değil kuralla oluştuğunu gösterir.',
+  };
+
+  WEEKS.forEach((item) => {
+    if (EXTRA[item.id]) item.summary = item.summary.concat([EXTRA[item.id]]);
+  });
+
+  window.MATEMATIK_CONTENT = Object.freeze({ themes: THEMES, weeks: WEEKS });
+})();
