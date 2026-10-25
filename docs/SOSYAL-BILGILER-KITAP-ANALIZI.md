@@ -248,7 +248,15 @@ Sonuç: konu kısmı **yetersizdi**. En büyük boşluk 2. öğrenme alanındayd
 - `scripts/check-social-studies.js`'e üç yeni ölçü eklendi: 6–8. hafta özeti > 2500 karakter, en az 8 paragraf, konu örneklerinin (Orta Koridor, TİKA, tahıl/gıda, arabuluculuk) metinde bulunması.
 - `UNITS` sayfa aralıkları zaten doğruydu (10–55 / 56–83 / 84–159); kaymış değerler yalnızca dokümanlarda kalmıştı, düzeltildi.
 
-### 9.2 Sıradaki turlar
+### 9.2 2. tur — uygulandı (9–15. hafta, ders 19–37)
 
-2. tur — `LESSONS` 13–37'nin kalanı: 28–42 kelimelik kayıtlar 100–140 kelimeye çıkarılacak, `summaryTitle` doldurulacak, 3 madde + 3 kavram standardı korunacak.
+- `LESSONS` 19–34 (dönem planında kullanılan tüm kayıtlar) yeniden yazıldı: her biri 160–220 kelime, 3–4 paragraf, 3 hatırlama maddesi, 3–4 anahtar kavram ve dolu `summaryTitle`.
+- `LESSONS` 35–37 (dönem planında kullanılmıyor) da yer tutucu olmaktan çıkarıldı: 124–134 kelime, 3 paragraf, dolu başlık. İleride plana bağlanabilir.
+- Hafta toplamları: 9 → 522, 10 → 453, 11 → 476, 12 → 495, 13 → 636, 14 → 646, 15 → 474 kelime. Dönem toplamı **2.835 → 6.956 kelime**.
+- Kitaptaki somut bilgiler metne girdi: Çaka Beyliği ve beyliklerin yerleri, iskân–istimâlet, Bursa/İznik/Çimpe, Fetret Devri, Rumeli Hisarı ve 29 Mayıs 1453, Mısır Seferi ve Preveze, Dias–Kolomb–Vasco da Gama, Luther ve Westphalia, Nizam-ı Cedid ve Tanzimat, Watt ve 1838 ticaret anlaşması, Divan-ı Hümâyun ve Mimar Sinan.
+- `summaryTitle` alanı ders kaydının kendisine (5. argüman) taşındı; 1. turda yanlışlıkla `transfer` nesnesine yazılmıştı.
+- `scripts/check-social-studies.js`: 9–15. hafta için 420+ kelime ve 8+ paragraf; 13–37 arası dersler için 100+ kelime, dolu başlık, 3 madde + 3 kavram ve hafta 13/14/15 konu assert'leri eklendi.
+
+### 9.3 Sıradaki tur
+
 3. tur — her haftaya bir "görsel okuma" adımı (harita/grafik/gazete haberi + 2 soru), üç öğrenme alanı için "Kendimi Değerlendiriyorum" kapanış adımı ve her hafta sonuna "gelecek haftaya hazırlık" cümlesi.

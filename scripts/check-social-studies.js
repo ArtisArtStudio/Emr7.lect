@@ -77,6 +77,21 @@ assert.ok(/Orta Koridor/.test(heritageText(6)) && /TİKA/.test(heritageText(6)),
 assert.ok(/gıda|tahıl/i.test(heritageText(7)), 'Week 7 should show a regional problem growing global (food crisis).');
 assert.ok(/arabulucu|TİKA/.test(heritageText(8)), 'Week 8 should cover Türkiye’s mediation and humanitarian aid roles.');
 
+// 9–15. haftalar da tek paragraflık özet değil, kitaptaki derinlikte konu anlatımı olmalı.
+assert.ok(social.weeks.filter((week) => week.id >= 9).every((week) => week.summary.split(/\s+/).filter(Boolean).length >= 420), 'Weeks 9–15 need textbook-depth topic summaries (420+ words).');
+assert.ok(social.weeks.filter((week) => week.id >= 9).every((week) => week.summary.split(/\n\s*\n/).length >= 8), 'Weeks 9–15 summaries must be built from multiple subject paragraphs.');
+
+// Ders kayıtları: 13–37 arasındaki yer tutucular onarıldı; her kayıt başlık ve yeterli metin taşır.
+const lessonRecords = Object.entries(window.SOCIAL_STUDIES_CONTENT.lessons).map(([id, item]) => ({ id: Number(id), ...item }));
+const repairedLessons = lessonRecords.filter((item) => item.id >= 13 && item.id <= 37);
+assert.ok(repairedLessons.length === 25, 'Lessons 13–37 must all exist.');
+assert.ok(repairedLessons.every((item) => item.summary.trim().split(/\s+/).length >= 100), 'Lessons 13–37 need at least 100 words of topic explanation.');
+assert.ok(repairedLessons.every((item) => typeof item.summaryTitle === 'string' && item.summaryTitle.length > 8), 'Lessons 13–37 need a filled summaryTitle.');
+assert.ok(repairedLessons.every((item) => item.points.length >= 3 && item.terms.length >= 3), 'Lessons 13–37 need at least three learning points and three key terms.');
+assert.ok(/Rönesans/.test(heritageText(13)) && /Reform/.test(heritageText(13)) && /Aydınlanma/.test(heritageText(13)), 'Week 13 should cover Renaissance, Reformation and Enlightenment.');
+assert.ok(/Sanayi İnkılabı/.test(heritageText(14)) && /Lale Devri/.test(heritageText(14)), 'Week 14 should cover the Industrial Revolution and the Tulip Period.');
+assert.ok(/Divan-ı Hümâyun/.test(heritageText(15)) && /vakıf/.test(heritageText(15)) && /ahilik/i.test(heritageText(15)), 'Week 15 should cover Ottoman institutions, waqf and the Akhi order.');
+
 
 const renewedWeekFlows = {
   3: ['perspective-reading', 'language-sort', 'rewrite-and-reflect'],
