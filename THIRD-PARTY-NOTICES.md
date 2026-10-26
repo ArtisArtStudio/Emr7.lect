@@ -14,14 +14,15 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-## GeoGebra (matematik alanı) — isteğe bağlı katman
+## GeoGebra (matematik alanı) — birincil çizim motoru
 
-Matematik alanında dört sahne (yansıma, orta dikme, açıortay, prizma) GeoGebra web
-uygulamasıyla açılır. Applet, GeoGebra'nın resmî yükleyicisiyle
+Matematik alanındaki yirmi dört etkileşimli sahnenin tamamı GeoGebra web uygulamasıyla
+açılır. Applet, GeoGebra'nın resmî yükleyicisiyle
 <https://www.geogebra.org/apps/deployggb.js> adresinden **yalnız o sahne ekranda
-göründüğünde** yüklenir; sayfa açılışında dış istek yapılmaz. Kalan yirmi sahne bu
-depoda yazılmış bağımsız SVG motoruyla (`matematik-sahne.js`, `matematik-figure.js`)
-çizilir; o motorlar üçüncü taraf kod içermez ve çevrimdışı çalışır.
+göründüğünde** yüklenir; sayfa açılışında dış istek yapılmaz. Bu depoda yazılmış bağımsız
+SVG motoru (`matematik-sahne.js`, `matematik-figure.js`) silinmedi: ağ yoksa, CDN
+engelliyse ya da nesneler kurulamazsa **yedek** olarak aynı sahneyi çizer; o motorlar
+üçüncü taraf kod içermez ve çevrimdışı çalışır.
 
 - **Kapsam:** Bu site ücretsiz bir aile çalışma alanıdır; kullanım **ticari değildir**
   (oğul ve birkaç arkadaşı). GeoGebra'nın ücretsiz, ticari olmayan kullanım koşulları

@@ -130,7 +130,8 @@
     <div class="math-scene-actions">
       <button type="button" id="${id}-reset">Başa al</button>
       <button type="button" id="${id}-engine" hidden>Yerel çizime geç</button>
-      <span class="math-scene-tip">Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.</span>
+      <span class="math-scene-engine-note">Çizimler GeoGebra ile açılır; açılamazsa aynı sahne yerel çizimle sürer.</span>
+      <span class="math-scene-tip">Sürgüler çizimin altında; GeoGebra hazır olduğunda noktaları doğrudan sürükleyebilirsin.</span>
     </div>
     <p class="math-scene-status" id="${id}-status" role="status" aria-live="polite"></p>
     <p class="math-ggb-credit" id="${id}-credit" hidden>GeoGebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</p>`;
