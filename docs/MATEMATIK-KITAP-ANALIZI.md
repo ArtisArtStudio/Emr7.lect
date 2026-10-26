@@ -983,3 +983,158 @@ kartları ortak kabuğu almıyordu. Kapsam `.math-activities` sınıfına çevri
 bu sınıfı taşıyor. Ayrıca matematikte başlık bandı ve simge biraz küçültüldü
 (`#mathWeekContent .math-activities …`), böylece kart Türkçe/Fen/Sosyal ile aynı dili kullanıyor
 ama daha derli toplu duruyor.
+
+## 23. Katıl-Uygula onarımı: çizim cevap yazmaz, sahne soruyla aynı konuyu anlatır (26 Ekim 2026)
+
+### 23.1 Sorun
+
+Şikâyet tek tek sahnelere değil, bölümün bütününe bakınca ortaya çıktı: on beş haftanın
+**KATIL-UYGULA-KEŞFET** bölümünde sahne ile sorular çoğu yerde farklı şeyler anlatıyordu.
+Sahne bir konuyu, sorular başka bir konuyu işliyordu. Ayrıca sahnelerin bir kısmı
+öğrencinin bulması gereken sonucu doğrudan yazıyordu (`Toplam = 2`, `Hacim = 24`,
+`ortalama = 7`, `A(2, 1) → A'(−2, 1)` gibi). Cevap çizimde yazılınca soru anlamsız kalıyor.
+
+### 23.2 Sahne–soru eşleşmesi
+
+On beş bölüm tek tek karşılaştırıldı; sekizi uyuşmuyordu:
+
+| Hafta | Eski durum | Yeni durum |
+| --- | --- | --- |
+| h2 Eksi işareti | Sahne `kesir-serit` (2/4 şeridi), sorular işaretin yeri | Yeni **`kesir-isaret`** sahnesi: eksi işareti üç yuvaya (kesrin önü · pay · payda) sürüklenir |
+| h4 Sayma pulları | Giriş “kırmızı +1, mavi −1”, sahne yeşil/kırmızı | Sahne girişe uyduruldu: kırmızı +1, mavi −1 |
+| h5 Payda eşitleme | Giriş 1/2 ve 1/3, sahne 1/2 ve 2/3 | Sahne 1/2 ve 1/3 şeritlerine çekildi |
+| h6 Sirke şişeleri | Sahne çarpma alan modeli, sorular bölme | Bölüm alan modeliyle yeniden yazıldı: 2/3 × 3/4 (şişenin 3/4’ü dolu, 2/3’ü kullanılıyor) |
+| h7 Hata avı | Sahne işaret kuralı, sorular kesir ve işlem sırası | Sorular işaret kuralına taşındı: a + b, a · b, bölmede işaret |
+| h8 Küplerle yapı | Giriş görünümler, sahne katman/hacim | Sorular katman–hacim ilişkisine çekildi |
+| h11 Hacim ölçme | Sahne dm³ küpü, sorular 80 → 112 mL | Sorular desimetreküp–litre–santimetreküp zincirine çekildi |
+| h12 Veri | Giriş 9 veri, sahne 3 sütun | Giriş 3 gruba (4 · 6 · 8) uyduruldu; 9 verilik karşılaştırma son adımda soru olarak duruyor |
+| h13 Ortalama | Giriş iki oyuncu, sahne tek seri | Bölüm “Üç maçın ortalaması” oldu; ortalama · ortanca · açıklık aynı seride |
+
+`check-matematik-content.js` artık bunu kilitliyor: her haftada bir `explore` bölümü, sahnede
+tanınan bir tür, en az iki adım, her adımda soru + ipucu, en az bir giriş cümlesi.
+
+### 23.3 Çizimde cevap yazılmaz
+
+Sonucu yazan on dört sahne “= ?” biçimine çevrildi; ifade ve model kalıyor, sayı öğrencide
+kalıyor:
+
+- `sifir-toplama`: adım etiketleri yalnız kartı gösterir (`1. kart: +3`), `Toplam = ?`
+- `sicaklik`: iki fark ve sıralama satırı `?`
+- `sayma-pullari`: `Toplam = ( +4 ) + ( −6 ) = ?`; çift sayısı yazılmıyor
+- `kesir-toplam`: ortak payda ve boyanan parça `?`, “Payı sen yaz”
+- `kesir-carpim`: `Boyanan: 2 × 3 = ?`
+- `isaret-kurali`: `a + b = (−3) + (5) = ?`, `a · b = ?`
+- `prizma3b`, `acim`, `hacim`, `birim-donusum`: hacim/yüzey `?`
+- `veri-grafik`, `ortalama`: toplam · ortalama · ortanca · açıklık `?`
+- `yansima`: `A(2, 1) → A'(?, ?)`
+- `kesir-isaret`: hiç sayı yazmaz, yalnız “Üç yazım aynı sayıyı mı gösterir?” sorusu
+
+`check-matematik.js` her sahne için beklenen “sonuç yazılmıyor” kalıbını arıyor; kalıp
+bozulursa denetim kırılıyor.
+
+### 23.4 Yeni ve yeniden yazılan sahneler
+
+- **`kesir-dogru`** — rasyonel sayının sayı doğrusunda yeri: ana çentikler tam sayı, aralarında
+  payda kadar ara çentik; işaret yalnız `1/payda` adımlarına oturur (`clampValue(raw, −3 + 1/payda, 3, 1/payda)`).
+  Varsayılan 0 · 3/5; −7/4 sorusunda 0 · 1/4.
+- **`kat-yerlestir`** — apartman katları (+4 … −3), “Sığınak” kutusu sürükle-bırak.
+- **`asansor-kat`** — asansör sorusu için ayrı sahne (+6 … −3, bodrum ve otopark etiketli);
+  “Sığınak” etiketi asansör sorusunda görünmüyor.
+- **`kesir-isaret`** — eksi işaretinin üç yeri; sürükleme üç yuvaya oturur.
+- **`kesir-toplam`** — iki şerit, sürükleyerek boyama; sonuç satırı yok.
+- **`kesir-carpim`** — alan modeli, sürükleyerek boyalı alan seçimi; çarpım sonucu yok.
+- **`uc-gorunum`** — h8’in konusu “cisimlerin farklı yönlerden görünümleri” iken haftanın sahnesi
+  prizmanın yüz/ayrıt/hacim paneliydi. Yerine ön · yan · üst görünümlerini eş karelerle çizen
+  yeni sahne geldi; kare sayıları yazılmıyor.
+
+Sahne türü sayısı **19 → 24** oldu (`check-matematik.js` eşiği 24’e çekildi).
+
+### 23.5 Kesir dizgisi
+
+`\frac` yolunda iki onarım yapıldı:
+
+- `-\frac{7}{4}` artık tek blok: `<span class="m-frac is-signed"><span class="m-sign">−</span>…`.
+  CSS’te `.m-frac` `inline-grid` 2×2; eksi işareti birinci sütunda kesir çizgisi hizasında.
+- Aynı düzeltme metin içindeki bütün kesirlerde geçerli (kitap, soru, ipucu, gerekçe).
+
+### 23.6 Aşamalı çözüm
+
+`stepsMarkup` üç katmana ayrıldı: `.math-solution-map` (yol haritası, basamak başlıkları),
+`.math-example-steps` (yalnız ilk iki basamak: **Anla**, **Planla**) ve
+`<details class="math-solution"><summary>Cevabı göster</summary>` içinde kalan basamaklar ve
+sonuç. Cevap anahtarı görünür yerde durmuyor; isteyen açıyor.
+
+### 23.7 Doğrulama
+
+- `node --check`: `matematik-sahne.js`, `matematik-kitap.js`, `matematik.js`, `matematik-math.js` temiz.
+- `check-matematik-layout.js`: **24 sahne türü (187 çizim)** ve 41 şekil türü; taşma ve çakışma yok.
+- `check-matematik-content.js`: 15 hafta, 4 tema, 203 soru, 30 kısa kontrol, 48 terim şekli;
+  yeni katıl-uygula kuralları geçiyor.
+- `check-matematik.js`: 24 sahne türü; her sahne için “sonuç yazılmıyor” kalıbı, `kesir-dogru`
+  ara çentikleri, `kesir-isaret` sürüklemesi, kat sahnelerinde sürükleme yönergesi.
+- jsdom: 15 hafta × sahne montajı (h1 4, h2 4, h4 3, h8 2, h10 2, h12 2, h13 2, h15 2 sahne),
+  `details.math-solution` kapalı. Sürükleme: `kesir-dogru` 2,4 → 2 · 2/5; −2,1 → −2 · 1/5;
+  `asansor-kat` tepe → kat 6; `kesir-isaret` sağ yuva → payda.
+
+## 24. GeoGebra geri geldi — isteğe bağlı, yedekli ve dört sahneyle (26 Ekim 2026)
+
+Kullanıcı kararı: site **ticari değil** (oğlu ve birkaç arkadaşı kullanıyor), GeoGebra daha
+etkileşimli ve doğru programlanırsa kullanılmalı. §18'de “dış servis tamamen kaldırıldı” kararı
+böylece tersine döndü; ancak **yerel SVG motoru korunuyor** ve GeoGebra onun yerine değil,
+üstüne binen bir katman olarak çalışıyor.
+
+### 24.1 Sözleşme
+
+| Konu | Karar |
+|---|---|
+| Kapsam | Yalnız 4 sahne: `yansima`, `ortadikme`, `aciortay`, `prizma3b` (3B) |
+| Yükleme | `deployggb.js`, **yalnız sahne ekranda göründüğünde**; sayfa açılışında dış istek yok; 8 sn sonra yedek |
+| Yedek | Yükleme/nesne hatasında aynı sahne yerel SVG ile çizilir, sebep durum satırına yazılır |
+| Doğrulama | `getObjectNumber()` + `exists(label)`; komutlar 0 · 300 · 900 · 2000 ms'de yeniden denenir |
+| Görünüm | Gömülü kutu, tam ekran yok; araç çubuğu, menü, cebir girişi, stil çubuğu kapalı |
+| Lisans | Ticari olmayan kullanım; sahne altında atıf satırı + `THIRD-PARTY-NOTICES.md` |
+| Kullanıcı denetimi | “Yerel çizime geç / GeoGebra ile aç” düğmesi; tercih `localStorage`'da |
+
+### 24.2 Dört applet ve kurulan nesneler
+
+- **yansima** (`geometry`, `SetPerspective("G")`, pencere `[-5, 8, -3, 7]`):
+  `k = Slider(-3,4,1)`, `ayna = Line((k,-4),(k,6))`, `A,B,C`, `ucgen = Polygon(...)`,
+  `A1..C1 = Reflect(..., ayna)`, `goruntu`, üç kesikli bağlantı. 13 nesne.
+- **ortadikme** (`geometry`): `ax`, `by` sürgüleri, `A`, `B`, `AB`, eş yarıçaplı iki çember,
+  `d = PerpendicularBisector(A,B)`, `M = Midpoint(AB)`, `P = Point(d)` (doğru üzerinde
+  sürüklenebilir nokta), `PA`, `PB`.
+- **aciortay** (`geometry`): `aci` sürgüsü, `K`, `A`, `B = (5cos, 5sin)`, iki ışın,
+  `b1 = AngleBisector(A,K,B)`.
+- **prizma3b** (`3d`): `a`, `b`, `h` sürgüleri; taban ve üst `Polygon`, dört dikey `Segment`.
+  **`Prism` komutu bilinçli olarak kullanılmadı**: sürüm değişince nesne üretmeyip tuvali boş
+  bırakıyordu (§11'deki “sadece eksen” hatası). 3B'de `SetPerspective("G")` uygulanmıyor.
+
+### 24.3 Neden bu dördü?
+
+Dinamik geometri ve 3B döndürme GeoGebra'nın gerçekten üstün olduğu yer: noktayı sürükleyip
+“her durumda eşit mi?” sorusunu yaşayarak görmek yerel SVG'de taklit edilemez. Sayı doğrusu,
+kesir şeridi, veri grafiği gibi sahnelerde ise yerel çizim daha hızlı, daha hafif ve cevap
+sızdırmıyor; onlar yerel kaldı. Soruya bağlı sahneler (`kesir-dogru`, `asansor-kat`,
+`uc-gorunum`, `veri-grafik`) **hiçbir zaman** GeoGebra ile açılmaz.
+
+### 24.4 Hata yolları (jsdom, sahte applet)
+
+| Yol | Sonuç |
+|---|---|
+| Normal | 13 nesne kuruldu, “GeoGebra hazır · 13 nesne”, atıf satırı görünür, yerel SVG yok |
+| `evalCommand` sessizce başarısız | Dört denemeden sonra yerel SVG: “GeoGebra çizimi oluşturamadı; yerel çizim gösteriliyor.” |
+| Ağ hatası / çevrimdışı | Anında yerel SVG: “GeoGebra yüklenemedi (çevrimdışı ya da ağ engeli)…” |
+| “Yerel çizime geç” | Yerel SVG çizildi, tercih `off` olarak saklandı; düğme “GeoGebra ile aç”a döndü |
+
+### 24.5 Açık risk ve doğrulama sınırı
+
+Sandbox'tan geogebra.org'a çıkış yok; gerçek applet **yalnız kullanıcı cihazında** doğrulanabilir.
+Bu yüzden: (1) dört sahneyle sınırlı kalındı, (2) her sahne için yerel yedek ve görünür durum
+satırı var, (3) her applet kendi sürgülerini GeoGebra içinde kuruyor, HTML sürgü bandı
+`setValue` ile aynı değişkeni sürüyor. Sahne açılmazsa kutu boş kalmaz.
+
+`scripts/check-matematik.js` artık şunları denetliyor: resmî yükleyici, 8 sn zaman aşımı,
+kademeli yeniden deneme, `getObjectNumber`/`exists` doğrulaması, yerel yedeğe dönüş, atıf
+satırı, tam ekranın kapalı olması, araç çubuğu/menü/cebir girişinin kapalı olması, motor
+değiştirme düğmesi ve tercih saklama, `is-ggb` yerleşimi, 3B'de perspektif zorlaması olmaması,
+ve applet sayısının **tam 4** olması.

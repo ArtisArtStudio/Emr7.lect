@@ -14,17 +14,25 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-## GeoGebra (matematik alanı) — artık kullanılmıyor
+## GeoGebra (matematik alanı) — isteğe bağlı katman
 
-Matematik sahnelerinin ilk sürümü GeoGebra web uygulamalarını
-<https://www.geogebra.org/apps/deployggb.js> adresinden yüklüyordu. Sahne gerçek
-cihazlarda yalnız eksen gösterdiği için bu yol tamamen kaldırıldı; sitenin hiçbir
-sayfası GeoGebra servisine bağlanmıyor ve depoda GeoGebra kodu bulunmuyor.
+Matematik alanında dört sahne (yansıma, orta dikme, açıortay, prizma) GeoGebra web
+uygulamasıyla açılır. Applet, GeoGebra'nın resmî yükleyicisiyle
+<https://www.geogebra.org/apps/deployggb.js> adresinden **yalnız o sahne ekranda
+göründüğünde** yüklenir; sayfa açılışında dış istek yapılmaz. Kalan yirmi sahne bu
+depoda yazılmış bağımsız SVG motoruyla (`matematik-sahne.js`, `matematik-figure.js`)
+çizilir; o motorlar üçüncü taraf kod içermez ve çevrimdışı çalışır.
 
-GeoGebra® GeoGebra GmbH’nin tescilli markasıdır. Geçmiş sürümlerde yalnız ücretsiz,
-ticari olmayan kullanım koşullarıyla (<https://www.geogebra.org/license>) kullanıldı;
-bu atıf tarihsel kayıt için korunmuştur.
+- **Kapsam:** Bu site ücretsiz bir aile çalışma alanıdır; kullanım **ticari değildir**
+  (oğul ve birkaç arkadaşı). GeoGebra'nın ücretsiz, ticari olmayan kullanım koşulları
+  (<https://www.geogebra.org/license>) bu kapsam içindedir.
+- **Atıf:** Her GeoGebra sahnesinin altında “GeoGebra® — geogebra.org · ticari olmayan
+  kullanım, atıf ile.” satırı görünür.
+- **Yedek:** GeoGebra yüklenemezse (çevrimdışı, ağ engeli, okul filtresi) ya da nesneleri
+  oluşturamazsa aynı sahne yerel SVG ile çizilir ve durum satırında sebep yazılır.
+  Kullanıcı sahne içindeki düğmeyle GeoGebra'yı kapatıp yerel çizime geçebilir; tercih
+  tarayıcıda saklanır.
+- **Tam ekran yok:** Applet gömülü kutuda açılır (`showFullscreenButton:false`), araç
+  çubuğu, menü, cebir girişi ve stil çubuğu kapalıdır.
 
-Yerine, bu depoda yazılmış bağımsız bir SVG sahne motoru (`matematik-sahne.js`) ve
-şekil motoru (`matematik-figure.js`) kullanılıyor; ikisi de üçüncü taraf kod
-içermez ve çevrimdışı çalışır.
+GeoGebra® GeoGebra GmbH’nin tescilli markasıdır.

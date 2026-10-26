@@ -161,6 +161,23 @@ allScenes.forEach(({ week, scene }) => {
 });
 const sceneTypeList = new Set(allScenes.map((item) => item.scene.type));
 assert.ok(sceneTypeList.size >= 16, `Sahne çeşitliliği az: ${sceneTypeList.size} farklı sahne.`);
+// Katıl-Uygula-Keşfet: her haftada sahne var ve sahne sahnenin sorularıyla aynı konuyu anlatıyor.
+const exploreStages = [];
+Object.keys(KITAP.weeks).forEach((key) => {
+  (KITAP.weeks[key].stages || []).forEach((stage) => {
+    if (stage.kind === 'explore') exploreStages.push({ week: key, stage });
+  });
+});
+assert.equal(exploreStages.length, 15, `On beş haftada katıl-uygula bölümü olmalı: ${exploreStages.length}`);
+exploreStages.forEach(({ week, stage }) => {
+  assert.ok(stage.scene && stage.scene.type, `h${week} katıl-uygula sahnesi eksik.`);
+  assert.ok(SAHNE.types().includes(stage.scene.type), `h${week} sahnesi tanınmıyor: ${stage.scene.type}`);
+  assert.ok((stage.steps || []).length >= 2, `h${week} katıl-uygula bölümünde en az iki adım olmalı.`);
+  (stage.steps || []).forEach((step, index) => {
+    assert.ok(step.prompt && step.hint, `h${week} katıl-uygula ${index + 1}. adımında soru veya ipucu eksik.`);
+  });
+  assert.ok((stage.intro || []).length >= 1, `h${week} katıl-uygula bölümünde giriş cümlesi olmalı.`);
+});
 
 // 4b. Etkinlikler: kitabın bölüm soruları, zorunlu açıklama + yapay zekâ değerlendirmesi
 const allActivities = content.weeks.flatMap((week) => ACT.forWeek(week.id).map((activity) => ({ week, activity })));
@@ -398,11 +415,15 @@ assert.ok(/<b>2\. Sınav:<\/b> <strong>tahmini 4–8 Ocak 2027<\/strong>/.test(h
 assert.ok(/5 Kasım 2026/.test(app), 'Uygulama sınav tarihini bilmeli.');
 assert.ok(/emr7lect\.matematik\.v1/.test(app), 'İlerleme ayrı anahtarda saklanmalı.');
 assert.ok(/MATEMATIK_SAHNE2/.test(app), 'Uygulama yerel sahne motorunu kullanmalı.');
-assert.ok(!/MATEMATIK_GEOGEBRA/.test(app), 'Uygulama artık GeoGebra’ya bağımlı olmamalı.');
+assert.ok(/MATEMATIK_GEOGEBRA/.test(app) && /MATEMATIK_SAHNE2/.test(app),
+  'Uygulama GeoGebra’yı isteğe bağlı kullanmalı, yerel motor yedek kalmalı.');
 assert.ok(/matematik-sahne\.js/.test(html), 'index.html yerel sahne motorunu yüklemeli.');
 assert.ok(html.indexOf('matematik-sahne.js') < html.indexOf('matematik.js'),
   'Sahne motoru uygulamadan önce yüklenmeli.');
-assert.ok(!/matematik-geogebra\.js/.test(html), 'index.html GeoGebra betiğini yüklememeli.');
+assert.ok(/matematik-geogebra\.js/.test(html), 'index.html GeoGebra köprüsünü yüklemeli.');
+assert.ok(html.indexOf('matematik-sahne.js') < html.indexOf('matematik-geogebra.js')
+  && html.indexOf('matematik-geogebra.js') < html.indexOf('matematik.js'),
+  'Sıra: yerel sahne motoru → GeoGebra köprüsü → uygulama.');
 assert.ok(!/youtube\.com|youtu\.be/.test(app + css), 'Matematik alanında YouTube bağlantısı olmamalı.');
 assert.ok(/math-week-content\{display:grid/.test(css), 'Hafta içeriği ızgara yerleşimi tanımlı olmalı.');
 assert.ok(/\.math-scene-svg\{/.test(css), 'Yerel sahne SVG stili tanımlı olmalı.');

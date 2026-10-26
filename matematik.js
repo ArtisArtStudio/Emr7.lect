@@ -129,8 +129,11 @@
     </div>
     <div class="math-scene-actions">
       <button type="button" id="${id}-reset">Başa al</button>
+      <button type="button" id="${id}-engine" hidden>Yerel çizime geç</button>
       <span class="math-scene-tip">Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.</span>
-    </div>`;
+    </div>
+    <p class="math-scene-status" id="${id}-status" role="status" aria-live="polite"></p>
+    <p class="math-ggb-credit" id="${id}-credit" hidden>GeoGebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</p>`;
   }
 
   function figureBlock(figure) {
@@ -166,14 +169,28 @@
     }).join('');
   }
 
-  /* Çözüm doğrudan görünmez: “Cevabı göster” açılınca basamaklar ve sonuç gelir. */
+  /* Çözüm aşama aşama açılır: önce yol haritası ve ilk iki basamak (Anla, Planla)
+     görünür; hesaplı basamaklar ve sonuç “Cevabı göster” ile açılır. */
   function stepsMarkup(steps, result) {
     if (!Array.isArray(steps) || !steps.length) return '';
-    return `<details class="math-solution">
+    const roadmap = steps.map((step, index) => `<li><span>${index + 1}</span>${rich(step.title)}</li>`).join('');
+    const visible = steps.slice(0, 2);
+    const hidden = steps.slice(2);
+    const openList = visible.length
+      ? `<ol class="math-example-steps">${visible.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>`
+      : '';
+    const rest = hidden.length || result
+      ? `<details class="math-solution">
       <summary>Cevabı göster</summary>
-      <ol class="math-example-steps">${steps.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>
+      ${hidden.length ? `<ol class="math-example-steps">${hidden.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>` : ''}
       ${result ? `<p class="math-example-answer"><span>Sonuç</span>${rich(result)}</p>` : ''}
-    </details>`;
+    </details>`
+      : '';
+    return `<div class="math-solution-flow">
+      <ol class="math-solution-map" aria-label="Çözüm basamakları">${roadmap}</ol>
+      ${openList}
+      ${rest}
+    </div>`;
   }
 
   function stageCard(week, stage, index, scenes) {
@@ -302,9 +319,72 @@
     const stage = document.getElementById(`${entry.id}-stage`);
     const controls = document.getElementById(`${entry.id}-controls`);
     const reset = document.getElementById(`${entry.id}-reset`);
+    const engineButton = document.getElementById(`${entry.id}-engine`);
+    const statusLine = document.getElementById(`${entry.id}-status`);
+    const credit = document.getElementById(`${entry.id}-credit`);
     if (!stage || !window.MATEMATIK_SAHNE2) return;
-    const instance = window.MATEMATIK_SAHNE2.mount(stage, controls, entry.scene);
-    if (reset && instance) reset.addEventListener('click', () => instance.reset());
+    const scene = entry.scene;
+    const GG = window.MATEMATIK_GEOGEBRA;
+    const canGeo = Boolean(GG && GG.supports(scene));
+    let instance = null;
+
+    const say = (text) => {
+      if (statusLine) statusLine.textContent = text || '';
+    };
+    const showCredit = (visible) => {
+      if (credit) credit.hidden = !visible;
+    };
+
+    function mountLocal(note) {
+      stage.classList.remove('is-ggb');
+      showCredit(false);
+      instance = window.MATEMATIK_SAHNE2.mount(stage, controls, scene);
+      if (reset) reset.onclick = () => instance && instance.reset();
+      if (engineButton && canGeo) {
+        engineButton.hidden = false;
+        engineButton.textContent = 'GeoGebra ile aç';
+      }
+      say(note || (canGeo ? 'Yerel çizim açık.' : ''));
+    }
+
+    function mountGeo() {
+      stage.classList.add('is-ggb');
+      const made = GG.mount(stage, controls, scene, {
+        fallback: (reason) => mountLocal(reason || 'GeoGebra açılamadı; aynı sahne yerel çizimle sürüyor.'),
+        onStatus: say,
+      });
+      if (!made) {
+        mountLocal('GeoGebra bu sahne için kullanılamıyor; yerel çizim açık.');
+        if (engineButton) {
+          engineButton.hidden = false;
+          engineButton.textContent = 'GeoGebra ile dene';
+        }
+        return;
+      }
+      instance = made;
+      showCredit(true);
+      if (reset) reset.onclick = () => instance.reset();
+      if (engineButton) {
+        engineButton.hidden = false;
+        engineButton.textContent = 'Yerel çizime geç';
+      }
+    }
+
+    if (canGeo && GG.prefers()) mountGeo();
+    else mountLocal();
+
+    if (engineButton && canGeo) {
+      engineButton.addEventListener('click', () => {
+        const usingGeo = Boolean(instance && instance.engine === 'geogebra');
+        GG.setPrefers(!usingGeo);
+        if (usingGeo) {
+          if (instance && instance.destroy) instance.destroy();
+          mountLocal('Yerel çizim açık; GeoGebra bir sonraki açılışta kapalı kalacak.');
+        } else {
+          mountGeo();
+        }
+      });
+    }
   }
 
   function weekScore(week) {
