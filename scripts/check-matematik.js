@@ -53,12 +53,12 @@ SAHNE.types().forEach((type) => {
 assert.ok(!/geogebra/i.test(scene + figure + kitap), 'Yerel sahne, şekil ve kitap dosyaları GeoGebra çağırmamalı.');
 assert.ok(!fs.existsSync(path.join(root, 'matematik-yerel-sahne.js')), 'Eski yedek sahne dosyası geri gelmemeli.');
 
-// 2b. GeoGebra isteğe bağlı katman: yalnız dört sahne, her zaman yerel yedekli
+// 2b. GeoGebra birincil motor: yirmi dört sahnenin hepsi, her zaman yerel yedekli
 const ggbPath = path.join(root, 'matematik-geogebra.js');
 assert.ok(fs.existsSync(ggbPath), 'GeoGebra köprüsü (matematik-geogebra.js) bulunmalı.');
 const ggb = read('matematik-geogebra.js');
 assert.ok(/deployggb\.js/.test(ggb), 'GeoGebra resmî yükleyicisinden gelmeli (deployggb.js).');
-assert.ok(/const LOAD_TIMEOUT = 8000/.test(ggb), 'Yükleme için 8 sn zaman aşımı olmalı.');
+assert.ok(/const LOAD_TIMEOUT = 12000/.test(ggb), 'Yükleme için 12 sn zaman aşımı olmalı.');
 assert.ok(/BUILD_DELAYS = \[0, 300, 900, 2000\]/.test(ggb), 'Komutlar kademeli yeniden denenmeli.');
 assert.ok(/getObjectNumber\(\)/.test(ggb) && /api\.exists\(/.test(ggb), 'Nesne sayısı ve varlığı doğrulanmalı.');
 assert.ok(/çizimi oluşturamadı/.test(ggb), 'Boş tuval sessiz kalmamalı, durum satırına yazılmalı.');
@@ -70,16 +70,75 @@ assert.ok(/showToolBar: false/.test(ggb) && /showAlgebraInput: false/.test(ggb),
 assert.ok(/showMenuBar: false/.test(ggb) && /allowStyleBar: false/.test(ggb), 'Menü ve stil çubuğu kapalı olmalı.');
 assert.ok(/setPrefers/.test(ggb) && /localStorage/.test(ggb), 'GeoGebra açma/kapama tercihi saklanmalı.');
 assert.ok(/Yerel çizime geç/.test(app) && /GeoGebra ile aç/.test(app), 'Sahne içinde motor değiştirme düğmesi olmalı.');
+/* Komut adları yerelleştirilmiş arayüzde değişmesin diye applet dili sabit. */
+assert.ok(/language: 'en'/.test(ggb), 'GeoGebra komutları için applet dili sabitlenmeli.');
 assert.ok(/is-ggb/.test(css), 'GeoGebra kutusu için ayrı yerleşim sınıfı tanımlı olmalı.');
 /* 3B uygulamasına perspektif komutu uygulanmaz: tuval boş kalıyordu. */
 const ggb3d = ggb.slice(ggb.indexOf("appName: '3d'") - 200, ggb.indexOf("appName: '3d'") + 2400);
 assert.ok(!/SetPerspective\("G"\)/.test(ggb3d) || /3B uygulamasında perspektif/.test(ggb),
   '3B sahnede grafik perspektifi zorlanmamalı.');
-const appletCount = (ggb.match(/appName: '/g) || []).length;
-assert.equal(appletCount, 4, `GeoGebra yalnız dört sahnede kullanılmalı, bulunan: ${appletCount}`);
-['yansima', 'ortadikme', 'aciortay', 'prizma3b'].forEach((type) => {
-  assert.ok(new RegExp(`^    ${type}: \\{`, 'm').test(ggb), `${type} için GeoGebra appleti tanımlı olmalı.`);
-  assert.ok(SAHNE.types().includes(type), `${type} için yerel yedek sahne korunmalı.`);
+/* Birincil motor GeoGebra: yirmi dört sahnenin hepsi applet olarak tanımlı,
+   yerel SVG motoru aynı yirmi dört sahneyi yedek olarak çizmeye devam ediyor. */
+load('matematik-geogebra.js');
+const GG = sandbox.window.MATEMATIK_GEOGEBRA;
+assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function',
+  'MATEMATIK_GEOGEBRA köprüsü yüklenemedi.');
+const localTypes = SAHNE.types();
+const geoTypes = GG.types();
+assert.equal(geoTypes.length, localTypes.length,
+  `GeoGebra ve yerel motor aynı sayıda sahne tanımlamalı (${geoTypes.length} / ${localTypes.length}).`);
+localTypes.forEach((type) => {
+  assert.ok(geoTypes.includes(type), `${type} için GeoGebra appleti tanımlı olmalı.`);
+  const local = SAHNE.params(type).map((param) => param.name);
+  const geo = GG.params(type).map((param) => param.name);
+  assert.deepEqual(geo, local, `${type} sürgüleri iki motorda aynı olmalı.`);
+});
+assert.ok(/\.is-ggb/.test(css) || /is-ggb/.test(css), 'GeoGebra kutusu için yerleşim sınıfı tanımlı olmalı.');
+
+/* Sürgü yoklaması: her sahne için uç değerlerde üretilen GeoGebra komutları denetlenir.
+   Nokta ondalığı, dengeli parantez, beyaz listedeki komutlar ve tanımlı nesne adları. */
+const GEO_COMMANDS = new Set([
+  'Slider', 'SetValue', 'SetVisibleInView', 'SetCaption', 'SetLabelMode', 'SetFixed',
+  'SetLineThickness', 'SetLineStyle', 'SetPointSize', 'SetFilling', 'Delete', 'Text',
+  'Segment', 'Polygon', 'Circle', 'Vector', 'BarChart', 'Sequence', 'Cube', 'If',
+  'Ray', 'Line', 'Reflect', 'Midpoint', 'PerpendicularBisector', 'AngleBisector', 'Min',
+  'Element', 'SetColor',
+  'abs', 'cos', 'sin', 'pi', 'Point',
+]);
+localTypes.forEach((type) => {
+  const base = GG.params(type);
+  const combos = [{}];
+  base.forEach((param) => {
+    combos.push({ [param.name]: param.min });
+    combos.push({ [param.name]: param.max });
+  });
+  combos.push(Object.fromEntries(base.map((param) => [param.name, param.min])));
+  combos.push(Object.fromEntries(base.map((param) => [param.name, param.max])));
+  combos.forEach((values) => {
+    const commands = GG.script(type, values);
+    const where = `${type} ${JSON.stringify(values)}`;
+    assert.ok(commands.length >= 4, `${where}: GeoGebra komutu üretilmedi.`);
+    const defined = new Set();
+    commands.forEach((command) => {
+      /* Etiket metinleri (tırnak içi) serbest; sayısal ifadeler nokta ondalıklı ve ASCII olmalı. */
+      const bare = command.replace(/"[^"]*"/g, '""');
+      assert.ok(!/[−–—]/.test(bare), `${where}: tipografik eksi GeoGebra komutunda geçersiz → ${command}`);
+      assert.ok(!/\d,\d/.test(bare), `${where}: virgüllü ondalık GeoGebra komutunda geçersiz → ${command}`);
+      const open = (bare.match(/\(/g) || []).length;
+      const close = (bare.match(/\)/g) || []).length;
+      assert.equal(open, close, `${where}: parantezler dengeli değil → ${command}`);
+      assert.ok(!/undefined|NaN|null/.test(bare), `${where}: tanımsız değer → ${command}`);
+      const assign = /^([A-Za-z_][A-Za-z0-9_]*)\s*=/.exec(command);
+      if (assign) defined.add(assign[1]);
+      [...bare.matchAll(/\b([A-Za-z][A-Za-z0-9]*)\s*\(/g)].forEach((match) => {
+        const name = match[1];
+        assert.ok(GEO_COMMANDS.has(name), `${where}: bilinmeyen GeoGebra komutu → ${name} (${command})`);
+      });
+    });
+    GG.required(type).forEach((label) => {
+      assert.ok(defined.has(label), `${where}: zorunlu nesne tanımlanmadı → ${label}`);
+    });
+  });
 });
 
 // 3. Sürgü + sürükleme davranışı
@@ -261,6 +320,6 @@ assert.ok(/ticari olmayan/i.test(notices) && /geogebra\.org/i.test(notices),
   'Atıf notu ticari olmayan kullanım ve geogebra.org bağlantısını içermeli.');
 assert.ok(/yerel SVG/.test(analysis), 'Analiz dokümanı yerel sahne kararını anlatmalı.');
 
-console.log(`Matematik denetimi geçti: ${SAHNE.types().length} yerel sahne türü, ${FIG.types().length} şekil türü, `
-  + '4 GeoGebra appleti; çevrimdışı çizim, sürgü + sürükleme, tek kolon mobil yerleşim ve '
-  + 'GeoGebra’nın isteğe bağlı katman + yerel yedek kuralı doğru.');
+console.log(`Matematik denetimi geçti: ${GG.types().length} GeoGebra appleti (birincil motor), `
+  + `${SAHNE.types().length} yerel yedek sahne, ${FIG.types().length} şekil türü; sürgü koordinatları, `
+  + 'sürükleme, tek kolon mobil yerleşim, GeoGebra komut geçerliliği ve yerel yedek kuralı doğru.');

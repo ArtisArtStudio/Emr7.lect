@@ -440,7 +440,9 @@ assert.ok(/5 Kasım 2026/.test(app), 'Uygulama sınav tarihini bilmeli.');
 assert.ok(/emr7lect\.matematik\.v1/.test(app), 'İlerleme ayrı anahtarda saklanmalı.');
 assert.ok(/MATEMATIK_SAHNE2/.test(app), 'Uygulama yerel sahne motorunu kullanmalı.');
 assert.ok(/MATEMATIK_GEOGEBRA/.test(app) && /MATEMATIK_SAHNE2/.test(app),
-  'Uygulama GeoGebra’yı isteğe bağlı kullanmalı, yerel motor yedek kalmalı.');
+  'Uygulama sahneleri GeoGebra ile açmalı, yerel motor yedek kalmalı.');
+assert.ok(/if \(canGeo && GG\.prefers\(\)\) mountGeo\(\)/.test(app),
+  'GeoGebra birincil motor olmalı; yerel çizim yalnız yedek.');
 assert.ok(/matematik-sahne\.js/.test(html), 'index.html yerel sahne motorunu yüklemeli.');
 assert.ok(html.indexOf('matematik-sahne.js') < html.indexOf('matematik.js'),
   'Sahne motoru uygulamadan önce yüklenmeli.');

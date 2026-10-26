@@ -1169,3 +1169,73 @@ yukarıda, solda alakasız bir “3”, ara çentikler görünmüyor. Kök neden
 - Çizim kuralı sıkılaştırıldı: `hacim` artık birimküp sayısını, `kesir-serit` ondalık/yüzde
   karşılığını yazmıyor. Kitabın KATIL-UYGULA sahnelerinin sürgü aralıkları da
   `check-matematik-content.js` içinde sahne motorunun sınırlarına karşı denetleniyor.
+
+## 26. GeoGebra tüm sahnelerde birincil motor (26 Ekim 2026)
+
+Kullanıcı kararı: “hepsinde GeoGebra kullan, senin yaptıklarında çok hata var.” §24'teki “yalnız
+dört sahne” sınırı kaldırıldı. **Yirmi dört sahnenin hepsi GeoGebra appleti olarak açılıyor**;
+yerel SVG motoru silinmedi, **yedek** olarak duruyor (ağ yoksa, CDN engelliyse ya da nesneler
+kurulamazsa aynı sahne yerel çizimle sürüyor ve durum satırı sebebi yazıyor).
+
+### 26.1 Neden bu kez hata çıkmaz?
+
+Önceki turlarda görsellerin bozulma sebebi, elle üretilen SVG koordinatlarıydı (§25). GeoGebra'da
+eksen, çentik, etiket ve ölçek motorun kendi işi; sahne tanımı yalnız **ne çizileceğini** söylüyor:
+
+| Katman | Sorumluluk |
+|---|---|
+| Applet tanımı (`APPLETS[type]`) | sürgüler, kurulan nesneler, `required` doğrulama listesi |
+| `builder` | `coord` benzeri tek kapı: sayı biçimi (nokta ondalık, ASCII), renk, kalınlık, etiket |
+| Sürgü bandı (HTML) | `SetValue` ile aynı değişkeni sürer; `normalize` ile kırpılır |
+| `refresh()` | sürgüye bağlı **metin/LaTeX** (ör. kesir yazımı) yeniden kurulur |
+| `applyLabels()` | nokta etiketleri görünür, çizgi/çokgen/daire etiketleri kapalı |
+
+`scripts/check-matematik.js` her sahneyi bütün sürgülerin uç değerlerinde çalıştırıp üretilen
+GeoGebra komutlarını denetliyor: dengeli parantez, ASCII ve nokta ondalığı, beyaz listede komut
+adı, `undefined/NaN` yok, `required` nesneleri tanımlı. Ek olarak jsdom + sahte `GGBApplet` ile
+24/24 sahne açılıp sürgüleri çekildi, boş tuval senaryosunda yedeğe düşüş 3,2 sn'de doğrulandı.
+
+### 26.2 Yirmi dört applet
+
+| Sahne | Uygulama | Kurulan başlıca nesneler |
+|---|---|---|
+| `sayi-dogrusu` | geometry | `a`, `sifir`, `P`, `ters`, iki doğru parçası |
+| `iki-sayi` | geometry | `a`, `b`, `A`, `B`, aralarındaki uzaklık |
+| `sicaklik` | geometry | `t1..t3`, üç nokta, fark parçası |
+| `sifir-toplama` | geometry | `s1..s3`, `P1..P3`, üç vektör (kart toplamı) |
+| `mutlak-deger` | geometry | `a`, `P`, `ters`, uzaklık parçası, çember |
+| `kesir-serit` | geometry | şerit çokgeni, `Sequence` bölmeler, boyanan parçalar |
+| `sayma-pullari` | geometry | iki `Sequence` pul, sıfır çiftleri |
+| `kesir-isaret` | geometry | üç kutu, `Text($…$)` ile LaTeX kesir, `yer` sürgüsü |
+| `kesir-dogru` | geometry | ana/ara çentik dizileri, işaret noktası, LaTeX kesir başlığı |
+| `kat-yerlestir` | geometry | kat kutuları, sürüklenebilir sığınak noktası |
+| `asansor-kat` | geometry | kat kutuları, kabin noktası |
+| `kesir-toplam` | geometry | üç şerit, eşit parçalara bölünmüş ortak şerit |
+| `kesir-carpim` | geometry | birim kare, satır/sütun bölmeleri, boyanan alan |
+| `isaret-kurali` | geometry | `a`, `b`, toplam noktası, işaretli alan |
+| `prizma3b` | 3d | taban/üst çokgen, dört dikey ayrıt |
+| `acim` | geometry | beş yüz çokgeni (açınım) |
+| `uc-gorunum` | geometry | üç `Sequence` (ön/yan/üst kareler) |
+| `hacim` | geometry | taban + katman dizisi |
+| `birim-donusum` | 3d | `Cube((0,0,0),(s,0,0))` + birim küp |
+| `veri-grafik` | geometry | `Element(seri, i)` ile üç sütun |
+| `ortalama` | geometry | üç değer noktası + ortalama noktası |
+| `yansima` | geometry | ayna doğrusu, üçgen, `Reflect` görüntüsü |
+| `ortadikme` | geometry | iki çember, `PerpendicularBisector`, doğru üzerinde `P` |
+| `aciortay` | geometry | iki ışın, `AngleBisector` |
+
+### 26.3 Bilinçli sınırlar
+
+- **Dil sabit `en`**: arayüz görünmediği için fark etmiyor; komut adları (`Segment`, `Polygon`)
+  yerelleştirilmiş arayüzde değişip sessizce düşmesin.
+- **3B sahnelerde `SetPerspective("G")` yok** (§24.2'deki boş tuval hatası).
+- **Dejenere nesneler zorunlu sayılmaz**: `a = 0` iken sıfır uzunlukta parça, yarıçapı 0 çember
+  ya da tek noktaya inen çokgen GeoGebra'da oluşmaz; bunlar `required` listesine yazılmadı,
+  böylece sahne gereksiz yere yedeğe düşmüyor.
+- **`BarChart` kullanılmadı**: ham veriyi sıklığa çeviriyordu; sütunlar `Sequence` + `Element`
+  ile doğrudan değerden çiziliyor.
+- **`Prism` ve `Cube` dışındaki hacim komutları** sürüm değişince nesne üretmeyebiliyor; prizma
+  yine `Polygon` + `Segment` ile kuruluyor.
+- **Açık risk**: gerçek applet yalnız kullanıcı cihazında doğrulanabilir (sandbox'tan
+  geogebra.org'a çıkış yok). Bu yüzden her sahnede yerel yedek, görünür durum satırı ve
+  “Yerel çizime geç” düğmesi var.
