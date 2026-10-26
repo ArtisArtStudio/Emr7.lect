@@ -267,9 +267,16 @@
         <div class="tag">${escapeHTML(theme ? `${theme.no}. TEMA · ${theme.short.toUpperCase()}` : 'MATEMATİK')}</div>
         <h2 id="mathWeekTitle" tabindex="-1">${week.id}. hafta · ${escapeHTML(week.topic)}</h2>
         <p class="math-week-sub">${escapeHTML(week.date)} · haftada 5 ders saati</p>
-        <p class="math-week-book">Kitaptaki akış: ${escapeHTML(book.bookTopic || '')}</p>
+        <p class="math-week-book">Bu haftanın akışı: ${escapeHTML(book.bookTopic || '')}</p>
         ${exam ? `<p class="math-week-exam" style="margin:8px 0 0">1. Sınav: ${escapeHTML(exam)}</p>` : ''}
       </article>
+
+      <section class="math-card math-summary" aria-labelledby="mathSummaryTitle">
+        <h3 id="mathSummaryTitle"><span class="math-step">0</span>Konu anlatımı</h3>
+        ${(week.summary || []).map((paragraph) => `<p>${rich(paragraph)}</p>`).join('')}
+        <p class="math-note">Aşağıda aynı konu, bölüm bölüm ve etkinliklerle işleniyor.</p>
+      </section>
+
       ${stages}
       ${performanceMarkup(week, book.performance)}
       ${learnedMarkup(week, book)}

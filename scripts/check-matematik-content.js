@@ -263,6 +263,77 @@ examWeeks.forEach((book) => {
   assert.ok(book.exam.items.every((item) => item.thinking.length > 3), `Tema ölçme model cevabı eksik: ${book.exam.title}`);
 });
 
+
+// 4d. Sıfır/dizgi/etkinlik motoru ayrıntıları
+const allStudentText = [
+  ...content.weeks.flatMap((week) => [...week.summary, ...week.points]),
+  ...Object.values(KITAP.weeks).flatMap((book) => book.stages.flatMap((stage) => [
+    ...(stage.context || []), ...(stage.intro || []), stage.title,
+    ...(stage.blocks || []).flatMap((block) => [block.heading, ...block.paragraphs]),
+    ...(stage.questions || stage.items || stage.steps || stage.checks || []).map((item) => `${item.prompt || item.body || ''}`),
+  ])),
+].join(' ');
+// Matematik dizgisinde desteklenmeyen komut kullanılmamalı (\mathbb gibi).
+assert.ok(!/\\mathbb/.test(allStudentText), 'Desteklenmeyen TeX komutu (\\mathbb) öğrenci metninde olmamalı.');
+assert.ok(!/\$\s*\\\{/.test(allStudentText), 'Kaçışlı süslü parantez dizgiyi bozar.');
+// Sıfırın anlamları ve doğal sayılar açıkça anlatılmalı.
+const week1Text = JSON.stringify(KITAP.weeks[1].stages);
+assert.ok(/doğal sayı/i.test(week1Text), 'Birinci haftada doğal sayılar anlatılmalı.');
+assert.ok(/başlangıç noktası/i.test(week1Text) && /yokluk/i.test(week1Text),
+  'Sıfırın yokluk ve başlangıç noktası anlamları birlikte anlatılmalı.');
+// Her haftada terim görselleri birbirinden farklı olmalı.
+content.weeks.forEach((week) => {
+  const visuals = week.terms.map((item) => item.visual).filter(Boolean);
+  assert.equal(new Set(visuals).size, visuals.length,
+    `Hafta ${week.id} terimlerinde aynı görsel tekrar ediyor: ${visuals.join(', ')}`);
+});
+// Etkinlik kartında tek kontrol düğmesi vardır ve doğrudan yapay zekâya gider.
+const etkinlikMotoru = read('matematik-etkinlik.js');
+assert.ok(/data-math-etkinlik-check/.test(etkinlikMotoru), 'Etkinlikte “Kontrol et” düğmesi olmalı.');
+assert.ok(!/data-math-etkinlik-ai/.test(etkinlikMotoru), 'Ayrı “yapay zekâ ile değerlendir” düğmesi kaldırılmalı.');
+assert.ok(/await askAI\(activity, entry\)/.test(etkinlikMotoru), 'Kontrol et düğmesi yapay zekâ değerlendirmesini çağırmalı.');
+assert.ok(/localVerdict\(activity, entry\)/.test(etkinlikMotoru), 'Anahtar yokken yerel kontrole düşülmeli.');
+// Konu anlatımı kartı haftanın başında geri gelmeli.
+assert.ok(/Konu anlatımı/.test(read('matematik.js')) && /math-summary/.test(read('matematik.js')),
+  'Hafta başında konu anlatımı kartı olmalı.');
+// Aynı haftada iki etkinlik aynı sahneyi kullanamaz; her etkinlik kendi görselini kurar.
+Object.values(KITAP.weeks).forEach((book) => {
+  const weekId = book.id;
+  const scenes = book.stages.flatMap((stage) => [
+    stage.scene ? { type: stage.scene.type, label: stage.title } : null,
+    ...(stage.blocks || []).map((block) => (block.scene ? { type: block.scene.type, label: block.heading } : null)),
+  ]).filter(Boolean);
+  const used = new Map();
+  scenes.forEach((item) => {
+    assert.ok(!used.has(item.type),
+      `Hafta ${weekId} aynı sahneyi iki etkinlikte kullanıyor: ${item.type} (“${used.get(item.type)}” ve “${item.label}”).`);
+    used.set(item.type, item.label);
+  });
+});
+// Soruda/metinde geçen sayılar sahnede işaretli olmalı: sayı doğrusu sahnelerinin
+// varsayılan değerleri, yanındaki metinde geçen sayılarla aynı olmalı.
+const TEXT_ONLY = new Set(['sayi-dogrusu', 'iki-sayi', 'sicaklik']);
+Object.values(KITAP.weeks).forEach((book) => {
+  book.stages.forEach((stage) => {
+    const pairs = [];
+    if (stage.scene) pairs.push({ spec: stage.scene, text: [stage.title, ...(stage.intro || []), ...(stage.steps || []).flatMap((step) => [step.prompt, step.hint, step.thinking])].join(' ') });
+    (stage.blocks || []).forEach((block) => {
+      if (block.scene) pairs.push({ spec: block.scene, text: [block.heading, ...block.paragraphs].join(' ') });
+    });
+    pairs.filter((item) => TEXT_ONLY.has(item.spec.type)).forEach((item) => {
+      const numbers = new Set((item.text.replace(/\$/g, ' ').replace(/\\[a-zA-Z]+/g, ' ').match(/-?\d+/g) || []).map(Number));
+      (item.spec.params || []).forEach((param) => {
+        assert.ok(numbers.has(Number(param.value)),
+          `Hafta ${book.id} ${item.spec.type} sahnesinde ${param.name}=${param.value} işaretli ama metinde bu sayı geçmiyor.`);
+      });
+    });
+  });
+});
+// Sahne türleri: iki sayıyı birlikte gösteren ve toplama yolunu gösteren sahneler bulunmalı.
+assert.ok(SAHNE.types().includes('iki-sayi'), 'İki noktayı birlikte gösteren sahne bulunmalı.');
+assert.ok(SAHNE.types().includes('sicaklik'), 'Negatif ve pozitif sıcaklıkları birlikte okuyan sahne bulunmalı.');
+assert.ok(SAHNE.types().includes('sifir-toplama'), 'Toplayarak sıfıra ulaşma sahnesi bulunmalı.');
+
 // 5. Uygulama tarafı
 const app = read('matematik.js');
 const html = read('index.html');

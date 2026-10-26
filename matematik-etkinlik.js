@@ -224,7 +224,6 @@
               placeholder="Sonucu ve gerekçeni kendi cümlelerinle yaz…">${escapeHTML(text)}</textarea>
             <div class="math-etkinlik-actions">
               <button type="button" class="btn check-button" data-math-etkinlik-check="${escapeHTML(activity.id)}">✦ Kontrol et</button>
-              <button type="button" class="btn ai-button" data-math-etkinlik-ai="${escapeHTML(activity.id)}">Yapay zekâ ile değerlendir</button>
               <span class="math-etkinlik-count" data-math-etkinlik-count="${escapeHTML(activity.id)}">${count}/${activity.minChars} karakter</span>
             </div>
             <p class="math-etkinlik-hint" data-math-etkinlik-hint="${escapeHTML(activity.id)}" hidden>İpucu: ${rich(activity.hint)}</p>
@@ -269,14 +268,15 @@
       });
     });
 
-    host.querySelectorAll('[data-math-etkinlik-check], [data-math-etkinlik-ai]').forEach((button) => {
+    /* Tek düğme: “Kontrol et” doğrudan yapay zekâ değerlendirmesini çalıştırır.
+       Anahtar yoksa ya da ağ kesilirse aynı düğme yerel ölçüt kontrolüne düşer. */
+    host.querySelectorAll('[data-math-etkinlik-check]').forEach((button) => {
       button.addEventListener('click', async () => {
-        const id = button.dataset.mathEtkinlikCheck || button.dataset.mathEtkinlikAi;
+        const id = button.dataset.mathEtkinlikCheck;
         const activity = activities.find((item) => item.id === id);
         if (!activity) return;
         const entry = entryFor(id);
         const hint = host.querySelector(`[data-math-etkinlik-hint="${id}"]`);
-        const wantAI = Boolean(button.dataset.mathEtkinlikAi);
         if (String(entry.text || '').trim().length < activity.minChars) {
           entry.state = '';
           entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakterlik bir cevap yazmadan değerlendirme başlamaz.`;
@@ -284,35 +284,32 @@
           return;
         }
         const previous = button.textContent;
-        if (wantAI) {
-          button.disabled = true;
-          button.textContent = 'Değerlendiriliyor…';
-        }
+        button.disabled = true;
+        button.textContent = 'Değerlendiriliyor…';
         try {
-          const result = wantAI ? await askAI(activity, entry) : localVerdict(activity, entry);
+          const result = await askAI(activity, entry);
           entry.state = result.state;
           entry.feedback = result.feedback;
-          entry.checkedAt = new Date().toISOString();
-          if (entry.state && entry.state !== 'correct' && hint) hint.hidden = false;
-          store.save();
-          paint(host, activity, entry);
         } catch (error) {
           const message = String(error?.message || error);
-          const friendly = error?.code === 'missing-key'
-            ? 'Yapay zekâ değerlendirmesi için sayfa başındaki “Ortak yapay zekâ ayarları” bölümüne Groq API anahtarını gir. Anahtar yokken yerel kontrol çalışır.'
-            : /failed to fetch|networkerror|load failed|cors/i.test(message)
-              ? 'Groq’a ulaşılamadı; internet bağlantısını kontrol edip yeniden dene. Cevabın kayıtlı.'
-              : `Değerlendirme tamamlanamadı: ${message}`;
-          entry.state = '';
-          entry.feedback = friendly;
-          store.save();
-          paint(host, activity, entry);
-        } finally {
-          if (wantAI) {
-            button.disabled = false;
-            button.textContent = previous;
+          if (error?.code === 'missing-key' || /failed to fetch|networkerror|load failed|cors/i.test(message)) {
+            const fallback = localVerdict(activity, entry);
+            entry.state = fallback.state;
+            entry.feedback = error?.code === 'missing-key'
+              ? `Yapay zekâ anahtarı girilmediği için cevabın yerel ölçütlerle kontrol edildi. ${fallback.feedback}`
+              : `Yapay zekâya ulaşılamadı; cevabın yerel ölçütlerle kontrol edildi. ${fallback.feedback}`;
+          } else {
+            entry.state = '';
+            entry.feedback = `Değerlendirme tamamlanamadı: ${message}`;
           }
+        } finally {
+          button.disabled = false;
+          button.textContent = previous;
         }
+        entry.checkedAt = new Date().toISOString();
+        if (entry.state && entry.state !== 'correct' && hint) hint.hidden = false;
+        store.save();
+        paint(host, activity, entry);
       });
     });
 

@@ -30,7 +30,7 @@ assert.ok(SAHNE && typeof SAHNE.mount === 'function', 'MATEMATIK_SAHNE2.mount bu
 assert.ok(typeof SAHNE.types === 'function' && typeof SAHNE.params === 'function', 'Sahne motoru tür ve parametre listesi vermeli.');
 assert.equal(SAHNE.width, 640, 'Sahne tuvali 640 birim geniş olmalı.');
 assert.equal(SAHNE.height, 380, 'Sahne tuvali 380 birim yüksek olmalı.');
-assert.ok(SAHNE.types().length >= 16, `Sahne türü sayısı az: ${SAHNE.types().length}`);
+assert.ok(SAHNE.types().length >= 18, `Sahne türü sayısı az: ${SAHNE.types().length}`);
 SAHNE.types().forEach((type) => {
   const params = SAHNE.params(type);
   assert.ok(params.length >= 1, `${type} sahnesinde oynanabilir sürgü olmalı.`);
@@ -64,7 +64,7 @@ assert.ok(/aria-label/.test(scene), 'Sahne erişilebilir etiket taşımalı.');
 
 // 4. Şekil motoru: tüm türler çizilir, bozuk değer üretmez
 assert.ok(FIG && typeof FIG.render === 'function', 'MATEMATIK_FIGURE.render bulunamadı.');
-assert.ok(FIG.types().length >= 10, `Şekil türü sayısı az: ${FIG.types().length}`);
+assert.ok(FIG.types().length >= 40, `Şekil türü sayısı az: ${FIG.types().length}`);
 FIG.types().forEach((type) => {
   const svg = FIG.render(type, {});
   assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>'), `${type} şekli geçerli SVG üretmeli.`);
