@@ -1075,3 +1075,66 @@ sonuç. Cevap anahtarı görünür yerde durmuyor; isteyen açıyor.
 - jsdom: 15 hafta × sahne montajı (h1 4, h2 4, h4 3, h8 2, h10 2, h12 2, h13 2, h15 2 sahne),
   `details.math-solution` kapalı. Sürükleme: `kesir-dogru` 2,4 → 2 · 2/5; −2,1 → −2 · 1/5;
   `asansor-kat` tepe → kat 6; `kesir-isaret` sağ yuva → payda.
+
+## 24. GeoGebra geri geldi — isteğe bağlı, yedekli ve dört sahneyle (26 Ekim 2026)
+
+Kullanıcı kararı: site **ticari değil** (oğlu ve birkaç arkadaşı kullanıyor), GeoGebra daha
+etkileşimli ve doğru programlanırsa kullanılmalı. §18'de “dış servis tamamen kaldırıldı” kararı
+böylece tersine döndü; ancak **yerel SVG motoru korunuyor** ve GeoGebra onun yerine değil,
+üstüne binen bir katman olarak çalışıyor.
+
+### 24.1 Sözleşme
+
+| Konu | Karar |
+|---|---|
+| Kapsam | Yalnız 4 sahne: `yansima`, `ortadikme`, `aciortay`, `prizma3b` (3B) |
+| Yükleme | `deployggb.js`, **yalnız sahne ekranda göründüğünde**; sayfa açılışında dış istek yok; 8 sn sonra yedek |
+| Yedek | Yükleme/nesne hatasında aynı sahne yerel SVG ile çizilir, sebep durum satırına yazılır |
+| Doğrulama | `getObjectNumber()` + `exists(label)`; komutlar 0 · 300 · 900 · 2000 ms'de yeniden denenir |
+| Görünüm | Gömülü kutu, tam ekran yok; araç çubuğu, menü, cebir girişi, stil çubuğu kapalı |
+| Lisans | Ticari olmayan kullanım; sahne altında atıf satırı + `THIRD-PARTY-NOTICES.md` |
+| Kullanıcı denetimi | “Yerel çizime geç / GeoGebra ile aç” düğmesi; tercih `localStorage`'da |
+
+### 24.2 Dört applet ve kurulan nesneler
+
+- **yansima** (`geometry`, `SetPerspective("G")`, pencere `[-5, 8, -3, 7]`):
+  `k = Slider(-3,4,1)`, `ayna = Line((k,-4),(k,6))`, `A,B,C`, `ucgen = Polygon(...)`,
+  `A1..C1 = Reflect(..., ayna)`, `goruntu`, üç kesikli bağlantı. 13 nesne.
+- **ortadikme** (`geometry`): `ax`, `by` sürgüleri, `A`, `B`, `AB`, eş yarıçaplı iki çember,
+  `d = PerpendicularBisector(A,B)`, `M = Midpoint(AB)`, `P = Point(d)` (doğru üzerinde
+  sürüklenebilir nokta), `PA`, `PB`.
+- **aciortay** (`geometry`): `aci` sürgüsü, `K`, `A`, `B = (5cos, 5sin)`, iki ışın,
+  `b1 = AngleBisector(A,K,B)`.
+- **prizma3b** (`3d`): `a`, `b`, `h` sürgüleri; taban ve üst `Polygon`, dört dikey `Segment`.
+  **`Prism` komutu bilinçli olarak kullanılmadı**: sürüm değişince nesne üretmeyip tuvali boş
+  bırakıyordu (§11'deki “sadece eksen” hatası). 3B'de `SetPerspective("G")` uygulanmıyor.
+
+### 24.3 Neden bu dördü?
+
+Dinamik geometri ve 3B döndürme GeoGebra'nın gerçekten üstün olduğu yer: noktayı sürükleyip
+“her durumda eşit mi?” sorusunu yaşayarak görmek yerel SVG'de taklit edilemez. Sayı doğrusu,
+kesir şeridi, veri grafiği gibi sahnelerde ise yerel çizim daha hızlı, daha hafif ve cevap
+sızdırmıyor; onlar yerel kaldı. Soruya bağlı sahneler (`kesir-dogru`, `asansor-kat`,
+`uc-gorunum`, `veri-grafik`) **hiçbir zaman** GeoGebra ile açılmaz.
+
+### 24.4 Hata yolları (jsdom, sahte applet)
+
+| Yol | Sonuç |
+|---|---|
+| Normal | 13 nesne kuruldu, “GeoGebra hazır · 13 nesne”, atıf satırı görünür, yerel SVG yok |
+| `evalCommand` sessizce başarısız | Dört denemeden sonra yerel SVG: “GeoGebra çizimi oluşturamadı; yerel çizim gösteriliyor.” |
+| Ağ hatası / çevrimdışı | Anında yerel SVG: “GeoGebra yüklenemedi (çevrimdışı ya da ağ engeli)…” |
+| “Yerel çizime geç” | Yerel SVG çizildi, tercih `off` olarak saklandı; düğme “GeoGebra ile aç”a döndü |
+
+### 24.5 Açık risk ve doğrulama sınırı
+
+Sandbox'tan geogebra.org'a çıkış yok; gerçek applet **yalnız kullanıcı cihazında** doğrulanabilir.
+Bu yüzden: (1) dört sahneyle sınırlı kalındı, (2) her sahne için yerel yedek ve görünür durum
+satırı var, (3) her applet kendi sürgülerini GeoGebra içinde kuruyor, HTML sürgü bandı
+`setValue` ile aynı değişkeni sürüyor. Sahne açılmazsa kutu boş kalmaz.
+
+`scripts/check-matematik.js` artık şunları denetliyor: resmî yükleyici, 8 sn zaman aşımı,
+kademeli yeniden deneme, `getObjectNumber`/`exists` doğrulaması, yerel yedeğe dönüş, atıf
+satırı, tam ekranın kapalı olması, araç çubuğu/menü/cebir girişinin kapalı olması, motor
+değiştirme düğmesi ve tercih saklama, `is-ggb` yerleşimi, 3B'de perspektif zorlaması olmaması,
+ve applet sayısının **tam 4** olması.

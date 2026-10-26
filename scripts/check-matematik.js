@@ -50,9 +50,37 @@ SAHNE.types().forEach((type) => {
   assert.ok(!/localhost|127\.0\.0\.1/.test(source), 'Yerel adres kullanılmamalı.');
   assert.ok(!/youtube\.com|youtu\.be/.test(source), 'Matematik alanında YouTube bağlantısı olmamalı.');
 });
-assert.ok(!/geogebra/i.test(scene + figure + app + html), 'GeoGebra bağımlılığı tamamen kaldırılmalı.');
-assert.ok(!fs.existsSync(path.join(root, 'matematik-geogebra.js')), 'GeoGebra yükleyicisi silinmiş olmalı.');
-assert.ok(!fs.existsSync(path.join(root, 'matematik-yerel-sahne.js')), 'Yerel yedek sahne dosyası silinmiş olmalı.');
+assert.ok(!/geogebra/i.test(scene + figure + kitap), 'Yerel sahne, şekil ve kitap dosyaları GeoGebra çağırmamalı.');
+assert.ok(!fs.existsSync(path.join(root, 'matematik-yerel-sahne.js')), 'Eski yedek sahne dosyası geri gelmemeli.');
+
+// 2b. GeoGebra isteğe bağlı katman: yalnız dört sahne, her zaman yerel yedekli
+const ggbPath = path.join(root, 'matematik-geogebra.js');
+assert.ok(fs.existsSync(ggbPath), 'GeoGebra köprüsü (matematik-geogebra.js) bulunmalı.');
+const ggb = read('matematik-geogebra.js');
+assert.ok(/deployggb\.js/.test(ggb), 'GeoGebra resmî yükleyicisinden gelmeli (deployggb.js).');
+assert.ok(/const LOAD_TIMEOUT = 8000/.test(ggb), 'Yükleme için 8 sn zaman aşımı olmalı.');
+assert.ok(/BUILD_DELAYS = \[0, 300, 900, 2000\]/.test(ggb), 'Komutlar kademeli yeniden denenmeli.');
+assert.ok(/getObjectNumber\(\)/.test(ggb) && /api\.exists\(/.test(ggb), 'Nesne sayısı ve varlığı doğrulanmalı.');
+assert.ok(/çizimi oluşturamadı/.test(ggb), 'Boş tuval sessiz kalmamalı, durum satırına yazılmalı.');
+assert.ok(/fallback/.test(ggb) && /MATEMATIK_SAHNE2\.mount/.test(app),
+  'GeoGebra açılamazsa aynı sahne yerel SVG ile çizilmeli.');
+assert.ok(/math-ggb-credit/.test(app) && /ticari olmayan kullanım/.test(app), 'Atıf satırı sahnede görünmeli.');
+assert.ok(/showFullscreenButton: false/.test(ggb), 'GeoGebra tam ekran düğmesi kapalı olmalı.');
+assert.ok(/showToolBar: false/.test(ggb) && /showAlgebraInput: false/.test(ggb), 'Araç çubuğu ve cebir girişi kapalı olmalı.');
+assert.ok(/showMenuBar: false/.test(ggb) && /allowStyleBar: false/.test(ggb), 'Menü ve stil çubuğu kapalı olmalı.');
+assert.ok(/setPrefers/.test(ggb) && /localStorage/.test(ggb), 'GeoGebra açma/kapama tercihi saklanmalı.');
+assert.ok(/Yerel çizime geç/.test(app) && /GeoGebra ile aç/.test(app), 'Sahne içinde motor değiştirme düğmesi olmalı.');
+assert.ok(/is-ggb/.test(css), 'GeoGebra kutusu için ayrı yerleşim sınıfı tanımlı olmalı.');
+/* 3B uygulamasına perspektif komutu uygulanmaz: tuval boş kalıyordu. */
+const ggb3d = ggb.slice(ggb.indexOf("appName: '3d'") - 200, ggb.indexOf("appName: '3d'") + 2400);
+assert.ok(!/SetPerspective\("G"\)/.test(ggb3d) || /3B uygulamasında perspektif/.test(ggb),
+  '3B sahnede grafik perspektifi zorlanmamalı.');
+const appletCount = (ggb.match(/appName: '/g) || []).length;
+assert.equal(appletCount, 4, `GeoGebra yalnız dört sahnede kullanılmalı, bulunan: ${appletCount}`);
+['yansima', 'ortadikme', 'aciortay', 'prizma3b'].forEach((type) => {
+  assert.ok(new RegExp(`^    ${type}: \\{`, 'm').test(ggb), `${type} için GeoGebra appleti tanımlı olmalı.`);
+  assert.ok(SAHNE.types().includes(type), `${type} için yerel yedek sahne korunmalı.`);
+});
 
 // 3. Sürgü + sürükleme davranışı
 assert.ok(/data-scene-param/.test(scene), 'Sürgüler data-scene-param ile bağlanmalı.');
@@ -185,7 +213,10 @@ assert.ok(html.indexOf('matematik-kitap.js') < html.indexOf('matematik-etkinlikl
 const notices = read('THIRD-PARTY-NOTICES.md');
 const analysis = read('docs/MATEMATIK-KITAP-ANALIZI.md');
 assert.ok(/GeoGebra/i.test(notices), 'THIRD-PARTY-NOTICES.md GeoGebra notunu korumalı.');
+assert.ok(/ticari olmayan/i.test(notices) && /geogebra\.org/i.test(notices),
+  'Atıf notu ticari olmayan kullanım ve geogebra.org bağlantısını içermeli.');
 assert.ok(/yerel SVG/.test(analysis), 'Analiz dokümanı yerel sahne kararını anlatmalı.');
 
-console.log(`Matematik denetimi geçti: ${SAHNE.types().length} yerel sahne türü, ${FIG.types().length} şekil türü; `
-  + 'çevrimdışı çizim, sürgü + sürükleme, tek kolon mobil yerleşim ve GeoGebra bağımsızlığı doğru.');
+console.log(`Matematik denetimi geçti: ${SAHNE.types().length} yerel sahne türü, ${FIG.types().length} şekil türü, `
+  + '4 GeoGebra appleti; çevrimdışı çizim, sürgü + sürükleme, tek kolon mobil yerleşim ve '
+  + 'GeoGebra’nın isteğe bağlı katman + yerel yedek kuralı doğru.');

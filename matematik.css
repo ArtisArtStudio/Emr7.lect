@@ -157,6 +157,15 @@
 .math-scene-actions button{border:1px solid #d9d3ee;background:#fff;color:#3c2f6b;border-radius:10px;padding:7px 13px;font:inherit;font-size:12.5px;font-weight:750;cursor:pointer}
 .math-scene-actions button:hover{background:#f4f2fb;border-color:var(--math-accent)}
 .math-scene-tip{font-size:12px;color:var(--muted)}
+/* GeoGebra katmanı: yalnız dört sahnede, her zaman yerel yedeğiyle birlikte. */
+.math-scene-stage.is-ggb{place-items:stretch;min-height:340px;padding:6px}
+.math-scene-stage.is-ggb .math-ggb-canvas{width:100%;height:340px;border-radius:10px;overflow:hidden}
+.math-ggb-loading{display:grid;place-items:center;gap:6px;text-align:center;min-height:320px;color:var(--muted);font-size:13px;padding:0 16px}
+.math-ggb-loading span{font-size:11.5px;color:#7d8a9c}
+.math-scene-status{margin:8px 2px 0;font-size:12px;color:var(--muted);min-height:1em}
+.math-ggb-credit{margin:4px 2px 0;font-size:11.5px;color:#6b7a90}
+.math-ggb-credit[hidden],.math-scene-status[hidden]{display:none}
+.math-scene-actions button[hidden]{display:none}
 .math-note{margin:0 0 10px;font-size:13px;color:var(--muted)}
 .math-scene-kind{font-size:11px;font-weight:850;letter-spacing:.06em;text-transform:uppercase;color:var(--math-accent);background:var(--math-tint);border-radius:99px;padding:3px 9px}
 .math-scene-name{font-weight:700;min-width:0}

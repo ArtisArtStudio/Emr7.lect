@@ -129,8 +129,11 @@
     </div>
     <div class="math-scene-actions">
       <button type="button" id="${id}-reset">Başa al</button>
+      <button type="button" id="${id}-engine" hidden>Yerel çizime geç</button>
       <span class="math-scene-tip">Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.</span>
-    </div>`;
+    </div>
+    <p class="math-scene-status" id="${id}-status" role="status" aria-live="polite"></p>
+    <p class="math-ggb-credit" id="${id}-credit" hidden>GeoGebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</p>`;
   }
 
   function figureBlock(figure) {
@@ -316,9 +319,72 @@
     const stage = document.getElementById(`${entry.id}-stage`);
     const controls = document.getElementById(`${entry.id}-controls`);
     const reset = document.getElementById(`${entry.id}-reset`);
+    const engineButton = document.getElementById(`${entry.id}-engine`);
+    const statusLine = document.getElementById(`${entry.id}-status`);
+    const credit = document.getElementById(`${entry.id}-credit`);
     if (!stage || !window.MATEMATIK_SAHNE2) return;
-    const instance = window.MATEMATIK_SAHNE2.mount(stage, controls, entry.scene);
-    if (reset && instance) reset.addEventListener('click', () => instance.reset());
+    const scene = entry.scene;
+    const GG = window.MATEMATIK_GEOGEBRA;
+    const canGeo = Boolean(GG && GG.supports(scene));
+    let instance = null;
+
+    const say = (text) => {
+      if (statusLine) statusLine.textContent = text || '';
+    };
+    const showCredit = (visible) => {
+      if (credit) credit.hidden = !visible;
+    };
+
+    function mountLocal(note) {
+      stage.classList.remove('is-ggb');
+      showCredit(false);
+      instance = window.MATEMATIK_SAHNE2.mount(stage, controls, scene);
+      if (reset) reset.onclick = () => instance && instance.reset();
+      if (engineButton && canGeo) {
+        engineButton.hidden = false;
+        engineButton.textContent = 'GeoGebra ile aç';
+      }
+      say(note || (canGeo ? 'Yerel çizim açık.' : ''));
+    }
+
+    function mountGeo() {
+      stage.classList.add('is-ggb');
+      const made = GG.mount(stage, controls, scene, {
+        fallback: (reason) => mountLocal(reason || 'GeoGebra açılamadı; aynı sahne yerel çizimle sürüyor.'),
+        onStatus: say,
+      });
+      if (!made) {
+        mountLocal('GeoGebra bu sahne için kullanılamıyor; yerel çizim açık.');
+        if (engineButton) {
+          engineButton.hidden = false;
+          engineButton.textContent = 'GeoGebra ile dene';
+        }
+        return;
+      }
+      instance = made;
+      showCredit(true);
+      if (reset) reset.onclick = () => instance.reset();
+      if (engineButton) {
+        engineButton.hidden = false;
+        engineButton.textContent = 'Yerel çizime geç';
+      }
+    }
+
+    if (canGeo && GG.prefers()) mountGeo();
+    else mountLocal();
+
+    if (engineButton && canGeo) {
+      engineButton.addEventListener('click', () => {
+        const usingGeo = Boolean(instance && instance.engine === 'geogebra');
+        GG.setPrefers(!usingGeo);
+        if (usingGeo) {
+          if (instance && instance.destroy) instance.destroy();
+          mountLocal('Yerel çizim açık; GeoGebra bir sonraki açılışta kapalı kalacak.');
+        } else {
+          mountGeo();
+        }
+      });
+    }
   }
 
   function weekScore(week) {
