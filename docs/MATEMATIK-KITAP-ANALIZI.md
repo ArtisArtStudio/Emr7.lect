@@ -1138,3 +1138,34 @@ kademeli yeniden deneme, `getObjectNumber`/`exists` doğrulaması, yerel yedeğe
 satırı, tam ekranın kapalı olması, araç çubuğu/menü/cebir girişinin kapalı olması, motor
 değiştirme düğmesi ve tercih saklama, `is-ggb` yerleşimi, 3B'de perspektif zorlaması olmaması,
 ve applet sayısının **tam 4** olması.
+
+## 25. Koordinat hatası: “sayılar sapıtıyor, çentik yok, solda 3” (26 Ekim 2026)
+
+Kullanıcı geri bildirimi: rasyonel sayılar sahnesinde sayı üstünde kesir çizgisi yok, sayı çok
+yukarıda, solda alakasız bir “3”, ara çentikler görünmüyor. Kök neden tek bir yardımcıdaydı:
+
+| Belirti | Gerçek sebep |
+|---|---|
+| Etiketler (0,0)'a düşüyor, “solda 3” görünüyor | `num()` ekran metni için yazılmıştı: ondalığı **virgülle** (`126,5`), eksiği **U+2212** ile (`−3`) üretiyordu. SVG özniteliğinde ikisi de geçersiz; tarayıcı `x` değerini atıyor, metin sol üste yığılıyordu. |
+| “Sayı çok yukarıda”, “ara çentik yok” | Aynı hatanın yan etkisi: çentik ve kesir bloklarının koordinatları da `num()` ile yazıldığı için düşüyordu. |
+| Sürgü ile çizim farklı sayı | `pay > payda - 1` olduğunda sürgü 9/2 gösterirken çizim başka kesir çiziyordu. |
+
+Çözüm:
+
+- `coord()` yardımcısı eklendi: **ASCII eksi, nokta ondalık, sonlu sayı garantisi**. Kural:
+  **ekran metni `num()`, koordinat `coord()`**. `scripts/check-matematik.js` artık 24 sahnenin
+  ve 41 şeklin her sürgü uç değerinde tüm `x/y/cx/cy/r/x1/y1/x2/y2/width/height/points`
+  özniteliklerini `^-?\d+(\.\d+)?$` ile doğruluyor; virgüllü ya da U+2212'li koordinat denetimi
+  düşürüyor.
+- `kesir-dogru` yeniden yazıldı: eksen −4…4, ana çentik tam sayı (`#1b2f49`) + etiket, ara
+  çentikler `1/payda` (`#5f6f86`), işaret çentik hizasında, üstünde **çizgili kesir bloğu**
+  (pay / çizgi / payda, tam kısım solda), sıfır–işaret arası bant. Panel değeri söylemez;
+  yalnız “bir ara çentik = 1 ÷ payda” kuralını verir.
+- Sahneler `normalize(state)` kancasıyla kendi değişkenlerini düzeltiyor (`kesir-dogru`,
+  `kesir-serit`): sürgü ile çizim her zaman aynı sayıyı gösterir. `mount` ve başsız `render`
+  aynı `applyNormalize()` yardımcısını kullanır.
+- `yansima` sahnesi de tuval dışına taşan etiketler için yeniden yazıldı: pencere −5,5…4,5,
+  kenara yaklaşan etiket içe yaslanır, ayna sürüklenebilir (`k = −1…2`).
+- Çizim kuralı sıkılaştırıldı: `hacim` artık birimküp sayısını, `kesir-serit` ondalık/yüzde
+  karşılığını yazmıyor. Kitabın KATIL-UYGULA sahnelerinin sürgü aralıkları da
+  `check-matematik-content.js` içinde sahne motorunun sınırlarına karşı denetleniyor.

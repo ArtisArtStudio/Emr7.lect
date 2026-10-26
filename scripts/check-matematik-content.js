@@ -159,6 +159,30 @@ allScenes.forEach(({ week, scene }) => {
     assert.ok(param.label && param.label.length > 2, `Hafta ${week.id} sürgü etiketi eksik: ${param.name}`);
   });
 });
+// Kitabın kendi KATIL-UYGULA-KEŞFET sahneleri de sahne motorunun sınırlarına uymalı;
+// sürgü aralığı sahnenin dışına taşarsa çizim tuvalden çıkar ("sayılar sapıtıyor").
+const bookScenes = [];
+Object.keys(KITAP.weeks).forEach((key) => {
+  (KITAP.weeks[key].stages || []).forEach((stage) => {
+    if (stage.scene) bookScenes.push({ key, scene: stage.scene });
+  });
+});
+assert.ok(bookScenes.length >= 15, `Kitap akışında etkileşimli sahne az: ${bookScenes.length}`);
+bookScenes.forEach(({ key, scene }) => {
+  assert.ok(sahneTypes.has(scene.type), `${key} sahnesi bilinmeyen tür: ${scene.type}`);
+  const base = new Map(SAHNE.params(scene.type).map((param) => [param.name, param]));
+  const params = scene.params || [];
+  assert.ok(params.length >= 1, `${key} ${scene.type} sahnesinde oynanabilir parametre olmalı.`);
+  params.forEach((param) => {
+    const def = base.get(param.name);
+    assert.ok(def, `${key} ${scene.type} sahnesinde tanımsız parametre: ${param.name}`);
+    assert.ok(param.min >= def.min && param.max <= def.max,
+      `${key} ${scene.type} sürgü aralığı sahne sınırlarını aşıyor: ${param.name}`);
+    assert.ok(param.value >= param.min && param.value <= param.max,
+      `${key} ${scene.type} sürgü değeri aralık dışında: ${param.name}`);
+    assert.ok(!/\$/.test(param.label || ''), `${key} ${scene.type} sürgü etiketi dizgi işareti içermemeli.`);
+  });
+});
 const sceneTypeList = new Set(allScenes.map((item) => item.scene.type));
 assert.ok(sceneTypeList.size >= 16, `Sahne çeşitliliği az: ${sceneTypeList.size} farklı sahne.`);
 // Katıl-Uygula-Keşfet: her haftada sahne var ve sahne sahnenin sorularıyla aynı konuyu anlatıyor.

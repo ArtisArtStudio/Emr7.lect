@@ -295,7 +295,7 @@
               scene: {
                 type: 'kesir-dogru',
                 params: [
-                  { name: 'tam', label: 'Tam kısım', min: -3, max: 3, step: 1, value: 0 },
+                  { name: 'tam', label: 'Tam kısım', min: -3, max: 3, step: 1, value: -2 },
                   { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 3 },
                   { name: 'payda', label: 'Payda', min: 2, max: 8, step: 1, value: 5 },
                 ],
@@ -373,7 +373,7 @@
                 type: 'kesir-dogru',
                 params: [
                   { name: 'tam', label: 'Tam kısım', min: -3, max: 3, step: 1, value: 0 },
-                  { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 3 },
+                  { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 0 },
                   { name: 'payda', label: 'Payda', min: 2, max: 8, step: 1, value: 5 },
                 ],
               },
@@ -388,8 +388,8 @@
               scene: {
                 type: 'kesir-dogru',
                 params: [
-                  { name: 'tam', label: 'Tam kısım', min: -3, max: 3, step: 1, value: 0 },
-                  { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 1 },
+                  { name: 'tam', label: 'Tam kısım', min: -3, max: 3, step: 1, value: -1 },
+                  { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 3 },
                   { name: 'payda', label: 'Payda', min: 2, max: 8, step: 1, value: 4 },
                 ],
               },
@@ -1045,8 +1045,8 @@
           scene: {
             type: 'kesir-carpim',
             params: [
-              { name: 'n1', label: 'Sirke (litre)', min: 1, max: 4, step: 1, value: 2 },
-              { name: 'd1', label: '—', min: 2, max: 5, step: 1, value: 3 },
+              { name: 'n1', label: 'Sirke payı', min: 1, max: 4, step: 1, value: 2 },
+              { name: 'd1', label: 'Sirke paydası', min: 2, max: 5, step: 1, value: 3 },
               { name: 'n2', label: 'Şişe payı', min: 1, max: 4, step: 1, value: 3 },
               { name: 'd2', label: 'Şişe paydası', min: 2, max: 5, step: 1, value: 4 },
             ],
@@ -2402,7 +2402,7 @@
           ],
           scene: {
             type: 'yansima',
-            params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -3, max: 3, step: 1, value: 1 }],
+            params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -1, max: 2, step: 1, value: 1 }],
           },
         },
         {

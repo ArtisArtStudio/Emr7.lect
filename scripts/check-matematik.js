@@ -136,10 +136,21 @@ Object.keys(noResult).forEach((type) => {
 });
 // Payda kadar ara çentik: ana çentik tam sayı, aralar eş parça.
 const axisSvg = SAHNE.render('kesir-dogru', { tam: 0, pay: 3, payda: 5 });
-assert.ok((axisSvg.match(/<line[^>]*stroke="#8b97a8"/g) || []).length >= 30, 'Sayı doğrusunda ara çentikler çizilmeli.');
+assert.ok((axisSvg.match(/<line[^>]*stroke="#5f6f86"/g) || []).length >= 30, 'Sayı doğrusunda ara çentikler çizilmeli.');
 assert.ok(/ana çentik/i.test(sceneText('kesir-dogru')), 'Sayı doğrusu ana/ara çentik ayrımını anlatmalı.');
+// Kesir etiketi kesir çizgisiyle birlikte çizilir (çizgi görünmezse etiket "alakasız sayı" gibi durur).
+assert.ok(/stroke="#4a3d7a" stroke-width="2.6"/.test(axisSvg), 'Kesir etiketinde kesir çizgisi görünür kalınlıkta olmalı.');
+assert.ok(!/işaret [−-]?\d+,\d+ noktasında/.test(sceneText('kesir-dogru')), 'Sahne işaretin ondalık değerini yazmamalı.');
+// Sürgü ile çizim aynı sayıyı göstersin: pay paydadan büyük olamaz.
+assert.ok(/normalize\(state\)/.test(scene), 'kesir-dogru sürgü değerlerini kendi düzeltmeli.');
+const overflow = sceneText('kesir-dogru', { tam: 0, pay: 9, payda: 2 });
+assert.ok(!/\b9\b/.test(overflow), 'Pay paydadan büyükse sürgü değeri kırpılmalı (pay en çok payda-1).');
+assert.ok(/1 ÷ 2/.test(overflow), 'Ara çentik ölçüsü paydaya göre yazılmalı.');
+// Çizim cevap yazmaz: hacim birimküp sayısını, kesir şeridi ondalık/yüzdeyi söylemez.
+assert.ok(!/= \d+ birimküp/.test(SAHNE.render('hacim', { a: 3, b: 2, h: 2 })), 'Hacim sahnesi cevabı yazmamalı.');
+assert.ok(!/%\d/.test(SAHNE.render('kesir-serit', { d: 4, n: 3 })), 'Kesir şeridi yüzde karşılığını yazmamalı.');
 // Sürükleme yalnız ara çentiklere oturur.
-assert.ok(/clampValue\(raw, -3 \+ 1 \/ payda, 3, 1 \/ payda\)/.test(scene), 'Kesir işareti yalnız $1/payda$ adımlarına oturmalı.');
+assert.ok(/clampValue\(raw, min \+ 1 \/ payda, max - 1, 1 \/ payda\)/.test(scene), 'Kesir işareti yalnız $1/payda$ adımlarına oturmalı.');
 // Eksi işareti üç yere taşınabilir, değer yazılmaz.
 assert.ok(/Eksi işaretini taşı/.test(sceneText('kesir-isaret')), 'Eksi işareti sürüklenebilmeli.');
 assert.ok(!/değer/i.test(sceneText('kesir-isaret')) || !/=\s*\d/.test(sceneText('kesir-isaret')), 'Eksi işareti sahnesi değeri yazmamalı.');
@@ -167,6 +178,39 @@ FIG.types().forEach((type) => {
   assert.ok(/viewBox="0 0 340 190"/.test(svg), `${type} şekli 340×190 tuvaline oturmalı.`);
 });
 assert.equal(FIG.render('bilinmeyen-tur', {}), '', 'Bilinmeyen şekil boş dönmeli.');
+
+/* SVG koordinatları nokta ondalıklı olmalı: "126,5" ve tipografik eksi geçersizdir,
+   tarayıcı özniteliği atar ve nesne (0,0)'a düşer. Bu, "sayılar sapıtıyor" hatasının köküydü. */
+const PLAIN_ATTRS = /(?:^|\s)(x|y|cx|cy|r|x1|y1|x2|y2|width|height)="([^"]*)"/g;
+const POINTS_ATTR = /points="([^"]*)"/g;
+const numericOk = (value) => /^-?\d+(\.\d+)?$/.test(value);
+function assertCleanCoords(kind, svg) {
+  let match;
+  PLAIN_ATTRS.lastIndex = 0;
+  while ((match = PLAIN_ATTRS.exec(svg))) {
+    assert.ok(numericOk(match[2]), `${kind}: ${match[1]}="${match[2]}" geçersiz koordinat.`);
+  }
+  POINTS_ATTR.lastIndex = 0;
+  while ((match = POINTS_ATTR.exec(svg))) {
+    match[1].trim().split(/\s+/).forEach((pair) => {
+      const parts = pair.split(',');
+      assert.equal(parts.length, 2, `${kind}: "${pair}" nokta çifti bozuk.`);
+      parts.forEach((value) => assert.ok(numericOk(value), `${kind}: nokta değeri "${value}" geçersiz.`));
+    });
+  }
+}
+SAHNE.types().forEach((type) => {
+  const params = SAHNE.params(type);
+  const combos = [{}];
+  params.forEach((param) => {
+    combos.push({ [param.name]: param.min });
+    combos.push({ [param.name]: param.max });
+  });
+  combos.push(Object.fromEntries(params.map((param) => [param.name, param.min])));
+  combos.push(Object.fromEntries(params.map((param) => [param.name, param.max])));
+  combos.forEach((values) => assertCleanCoords(type, SAHNE.render(type, values)));
+});
+FIG.types().forEach((type) => assertCleanCoords(`şekil ${type}`, FIG.render(type, {})));
 FIG.types().forEach((type) => {
   const svg = FIG.render(type, {});
   assert.ok(/role="img"/.test(svg) && /aria-label="[^"]{6,}"/.test(svg), `${type} şekli erişilebilir etiket taşımalı.`);
