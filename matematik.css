@@ -89,19 +89,22 @@
 
 
 /* --- Dizgi (matematik yazımı) --- */
-.m{font-family:"Cambria Math","STIX Two Math","Latin Modern Math",Cambria,"Times New Roman",serif;font-size:1.02em;white-space:nowrap;line-height:1.15;color:#1b2f49;display:inline-block;vertical-align:-0.12em;padding:0 .06em}
-.m .m-frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em}
-.m .m-num{display:block;padding:0 .22em;line-height:1.05;border-bottom:1.2px solid currentColor}
-.m .m-den{display:block;padding:0 .22em;line-height:1.05}
-.m .m-sqrt{display:inline-flex;align-items:flex-start;vertical-align:middle;margin:0 .1em}
-.m .m-radical{font-size:1.18em;line-height:1;margin-right:-.06em}
-.m .m-radicand{display:inline-block;padding:.05em .16em 0;border-top:1.2px solid currentColor;line-height:1.12}
-.m .m-op{padding:0 .16em}
-.m .m-var{font-style:italic}
-.m .m-fn{font-style:normal;padding:0 .05em}
-.m .m-text{font-family:inherit;font-style:normal;padding:0 .1em}
+/* Dizgi: satır içi metinle aynı hizada kalır; sayılar yukarı kaymaz. */
+.m{font-family:inherit;font-size:1em;line-height:inherit;color:inherit;display:inline;white-space:nowrap;padding:0;vertical-align:baseline;font-variant-numeric:tabular-nums}
+.m .m-frac{display:inline-flex;flex-direction:column;vertical-align:-0.42em;text-align:center;margin:0 .12em;font-size:.94em;line-height:1.02}
+.m .m-num{display:block;padding:0 .18em;line-height:1.02;border-bottom:1.2px solid currentColor}
+.m .m-den{display:block;padding:0 .18em;line-height:1.02}
+.m .m-sqrt{display:inline-flex;align-items:flex-start;vertical-align:-0.1em;margin:0 .06em}
+.m .m-radical{font-size:1.14em;line-height:1;margin-right:-.05em}
+.m .m-radicand{display:inline-block;padding:.02em .12em 0;border-top:1.2px solid currentColor;line-height:1.1}
+.m .m-op{padding:0 .06em}
+.m .m-var{font-style:italic;font-family:"Cambria Math",Cambria,serif}
+.m .m-fn{font-style:normal;padding:0}
+.m .m-text{font-family:inherit;font-style:normal;padding:0}
 .m .m-overline{text-decoration:overline}
-.m sup,.m sub{font-size:.72em;line-height:0}
+.m sup,.m sub{font-size:.72em;line-height:1;position:relative;vertical-align:baseline}
+.m sup{top:-.42em}
+.m sub{bottom:-.22em}
 
 /* --- Çözümlü örnekler --- */
 .math-example{border:1px solid #ece9f8;background:#fbfaff;border-radius:14px;padding:14px 16px}

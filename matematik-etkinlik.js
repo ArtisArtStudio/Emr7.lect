@@ -15,13 +15,17 @@
 
   const SYSTEM_PROMPT = [
     'Sen 7. sınıf matematik öğretmenisin. Öğrenci, ders kitabındaki bir etkinlik sorusuna yazılı cevap verdi.',
-    'Görevin yalnızca öğrencinin açıklamasını ve sonucunu ölçütlerle karşılaştırmak.',
+    'Görevin yalnızca öğrencinin cevabını ve gerekçesini ölçütlerle karşılaştırmak.',
     'Doğru cevabı, doğru sayısal sonucu, çözümü veya cevap anahtarını ASLA yazma; sonucun ne olduğunu söyleme.',
     'Yanlış cevapta yalnızca “sonucu yeniden düşün” düzeyinde yol göster; doğrusunu söyleme.',
+    'Açıklama ölçüsü soruya göre değişir: karar sorularında (eşit mi, hangisi büyük, katılıyor musun) kısa karar + tek cümlelik gerekçe yeterlidir; hesap, örnek, tanım ya da karşılaştırma gerekçe sayılır.',
+    'Öğrenciden ASLA adlandırılmış bir kural, kuralın kanıtı ya da ekstra “neden bu kural geçerli” açıklaması isteme. Kalıp cümle kullanma; “hangi kuralı kullandığını ve neden geçerli olduğunu ekle” gibi hazır ifadeler yasak.',
+    'Bir gerekçe yeterliyse correct ver; daha fazlasını isteme. Eksik varsa yalnızca gerçekten eksik olan tek şeyi, öğrencinin kendi ifadesine bağlayarak iste.',
+    'Geri bildirim öğrencinin yazdığına gönderme yapsın (kendi sözcükleri ya da sayısıyla); her cevaba uyan genel tavsiye yazma.',
     'Yanıtın Türkçe, kısa (en çok 320 karakter) ve tek paragraf olsun.',
     'Yalnızca şu JSON biçimini döndür: {"state":"correct|partial|wrong","feedback":"...","missing":["eksik ölçüt"]}',
-    'state: açıklama ve sonuç birlikte doğruysa correct, kısmen doğruysa partial, yanlışsa wrong.',
-    'missing alanına en çok iki eksik ölçüt yaz.',
+    'state: cevap ve gerekçe birlikte yeterliyse correct, kısmen doğruysa partial, yanlışsa wrong.',
+    'missing alanına en çok iki eksik ölçüt yaz; eksik yoksa boş dizi bırak.',
   ].join('\n');
 
   const store = {
@@ -86,13 +90,21 @@
     return words.filter((word) => lower.includes(word.slice(0, Math.max(4, word.length - 2)))).length;
   }
 
+  /* Yerel yedek mesajlar: soru türüne göre, kural ezberi istemeyen tek cümlelik yönlendirme. */
+  const REASON_FEEDBACK = {
+    karar: 'Kararını yazdın. Şimdi neden böyle olduğunu bir örnek, hesap ya da tanımla tek cümlede göster.',
+    gerekce: 'Görüşünü yazdın. Nedenini bir örnek ya da hesapla tek cümlede destekle.',
+    islem: 'Sonucu yazdın. Hangi adımlarla bulduğunu tek cümlede ekle.',
+    sonuc: 'Sonucu yazdın. Onu nasıl bulduğunu tek cümleyle ekle.',
+  };
+
   /* Yerel kontrol: uzunluk + model cevaptaki sayıların ve kavramların varlığı. */
   function localVerdict(activity, entry) {
     const text = String(entry.text || '').trim();
     if (text.length < activity.minChars) {
       return {
         state: 'partial',
-        feedback: `Açıklaman ${text.length} karakter; en az ${activity.minChars} karakter gerekiyor. Sonucu ve kullandığın kuralı aynı paragrafta yaz.`,
+        feedback: `Açıklaman ${text.length} karakter; en az ${activity.minChars} karakter gerekiyor. Sonucu ve kısa gerekçeni aynı paragrafta yaz.`,
       };
     }
     const expected = numbersIn(activity.thinking);
@@ -115,7 +127,7 @@
     }
     return {
       state: 'partial',
-      feedback: 'Sonucu yazdın. Şimdi hangi kuralı kullandığını ve neden o kuralın geçerli olduğunu bir cümleyle ekle.',
+      feedback: REASON_FEEDBACK[activity.reason] || REASON_FEEDBACK.sonuc,
     };
   }
 
@@ -126,10 +138,12 @@
     const userPrompt = [
       `Bölüm: ${activity.section}`,
       `Soru: ${activity.prompt}`,
+      `Bu soruda beklenen açıklama: ${activity.reasonHint || 'Kısa bir gerekçe yeterli.'}`,
       `Öğretmenin model cevabı (öğrenciye gösterme): ${activity.thinking}`,
       `Öğrencinin cevabı: ${entry.text}`,
       `Ölçütler: ${activity.rubric.join('; ')}`,
-      'Öğrencinin cevabını model cevapla karşılaştır; yalnızca istenen JSON biçimini döndür.',
+      'Öğrencinin cevabını model cevapla karşılaştır. Gerekçe ölçüyü karşılıyorsa correct ver; eksik olan tek şeyi söyle.',
+      'Yalnızca istenen JSON biçimini döndür.',
     ].join('\n');
     const response = await fetch(GROQ_ENDPOINT, {
       method: 'POST',
@@ -154,7 +168,7 @@
     const state = ['correct', 'partial', 'wrong'].includes(parsed.state) ? parsed.state : 'partial';
     let feedback = String(parsed.feedback || '').replace(/[<>]/g, '').slice(0, 360);
     if (/(doğru (cevap|sonuç|seçenek)|cevap anahtar|sonuç \d)/i.test(feedback)) {
-      feedback = 'Açıklamanı ölçütlerle karşılaştırdım. Sonucu ve kullandığın kuralı birer cümleyle yeniden yaz.';
+      feedback = 'Cevabını ölçütlerle karşılaştırdım. Sonucu ve kısa gerekçeni kendi cümlelerinle bir kez daha yaz.';
     }
     if (Array.isArray(parsed.missing) && parsed.missing.length) {
       feedback += ` Eksik kalan: ${parsed.missing.slice(0, 2).map((item) => String(item).replace(/[<>]/g, '').slice(0, 90)).join('; ')}.`;
@@ -201,7 +215,7 @@
             <h4 class="activity-title">${escapeHTML(activity.title)}</h4>
           </div>
         </div>
-        <p class="activity-instruction">Cevabını yaz; açıklama zorunlu. Doğru cevap gösterilmez, geri bildirim yapay zekâ ile ölçütlere göre verilir.</p>
+        <p class="activity-instruction">Cevabını ve kısa gerekçeni yaz; açıklama zorunlu. Kural adı ezberi istenmez: bir örnek, hesap ya da tanım yeterlidir. Doğru cevap gösterilmez; geri bildirim yapay zekâ ile ölçütlere göre verilir.</p>
       </header>
       <div class="activity-meta">
         <span>Yazılı cevap + açıklama</span>
@@ -217,14 +231,13 @@
           </fieldset>
           ${sceneMarkup(activity)}
           <div class="math-etkinlik-write">
-            <label for="mathEtkinlikText-${escapeHTML(activity.id)}">Cevabın ve açıklaman (zorunlu): sonucu ve kullandığın kuralı birlikte yaz.</label>
+            <label for="mathEtkinlikText-${escapeHTML(activity.id)}">Cevabın ve kısa gerekçen (zorunlu): sonucu ve nedenini birlikte yaz.</label>
             <ul class="math-etkinlik-rubric">${rubric}</ul>
             <textarea id="mathEtkinlikText-${escapeHTML(activity.id)}" rows="4" maxlength="1200"
               data-math-etkinlik-text="${escapeHTML(activity.id)}"
-              placeholder="Sonucu ve gerekçeni kendi cümlelerinle yaz…">${escapeHTML(text)}</textarea>
+              placeholder="Sonucu ve nedenini kendi cümlelerinle yaz…">${escapeHTML(text)}</textarea>
             <div class="math-etkinlik-actions">
               <button type="button" class="btn check-button" data-math-etkinlik-check="${escapeHTML(activity.id)}">✦ Kontrol et</button>
-              <button type="button" class="btn ai-button" data-math-etkinlik-ai="${escapeHTML(activity.id)}">Yapay zekâ ile değerlendir</button>
               <span class="math-etkinlik-count" data-math-etkinlik-count="${escapeHTML(activity.id)}">${count}/${activity.minChars} karakter</span>
             </div>
             <p class="math-etkinlik-hint" data-math-etkinlik-hint="${escapeHTML(activity.id)}" hidden>İpucu: ${rich(activity.hint)}</p>
@@ -269,14 +282,15 @@
       });
     });
 
-    host.querySelectorAll('[data-math-etkinlik-check], [data-math-etkinlik-ai]').forEach((button) => {
+    /* Tek düğme: “Kontrol et” doğrudan yapay zekâ değerlendirmesini çalıştırır.
+       Anahtar yoksa ya da ağ kesilirse aynı düğme yerel ölçüt kontrolüne düşer. */
+    host.querySelectorAll('[data-math-etkinlik-check]').forEach((button) => {
       button.addEventListener('click', async () => {
-        const id = button.dataset.mathEtkinlikCheck || button.dataset.mathEtkinlikAi;
+        const id = button.dataset.mathEtkinlikCheck;
         const activity = activities.find((item) => item.id === id);
         if (!activity) return;
         const entry = entryFor(id);
         const hint = host.querySelector(`[data-math-etkinlik-hint="${id}"]`);
-        const wantAI = Boolean(button.dataset.mathEtkinlikAi);
         if (String(entry.text || '').trim().length < activity.minChars) {
           entry.state = '';
           entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakterlik bir cevap yazmadan değerlendirme başlamaz.`;
@@ -284,35 +298,32 @@
           return;
         }
         const previous = button.textContent;
-        if (wantAI) {
-          button.disabled = true;
-          button.textContent = 'Değerlendiriliyor…';
-        }
+        button.disabled = true;
+        button.textContent = 'Değerlendiriliyor…';
         try {
-          const result = wantAI ? await askAI(activity, entry) : localVerdict(activity, entry);
+          const result = await askAI(activity, entry);
           entry.state = result.state;
           entry.feedback = result.feedback;
-          entry.checkedAt = new Date().toISOString();
-          if (entry.state && entry.state !== 'correct' && hint) hint.hidden = false;
-          store.save();
-          paint(host, activity, entry);
         } catch (error) {
           const message = String(error?.message || error);
-          const friendly = error?.code === 'missing-key'
-            ? 'Yapay zekâ değerlendirmesi için sayfa başındaki “Ortak yapay zekâ ayarları” bölümüne Groq API anahtarını gir. Anahtar yokken yerel kontrol çalışır.'
-            : /failed to fetch|networkerror|load failed|cors/i.test(message)
-              ? 'Groq’a ulaşılamadı; internet bağlantısını kontrol edip yeniden dene. Cevabın kayıtlı.'
-              : `Değerlendirme tamamlanamadı: ${message}`;
-          entry.state = '';
-          entry.feedback = friendly;
-          store.save();
-          paint(host, activity, entry);
-        } finally {
-          if (wantAI) {
-            button.disabled = false;
-            button.textContent = previous;
+          if (error?.code === 'missing-key' || /failed to fetch|networkerror|load failed|cors/i.test(message)) {
+            const fallback = localVerdict(activity, entry);
+            entry.state = fallback.state;
+            entry.feedback = error?.code === 'missing-key'
+              ? `Yapay zekâ anahtarı girilmediği için cevabın yerel ölçütlerle kontrol edildi. ${fallback.feedback}`
+              : `Yapay zekâya ulaşılamadı; cevabın yerel ölçütlerle kontrol edildi. ${fallback.feedback}`;
+          } else {
+            entry.state = '';
+            entry.feedback = `Değerlendirme tamamlanamadı: ${message}`;
           }
+        } finally {
+          button.disabled = false;
+          button.textContent = previous;
         }
+        entry.checkedAt = new Date().toISOString();
+        if (entry.state && entry.state !== 'correct' && hint) hint.hidden = false;
+        store.save();
+        paint(host, activity, entry);
       });
     });
 

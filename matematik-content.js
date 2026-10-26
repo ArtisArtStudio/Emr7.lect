@@ -73,8 +73,8 @@
         'Negatif sayılarda mutlak büyüklük arttıkça sayı küçülür: $-8 < -2$.',
       ],
       terms: [
-        term('Tam sayı', 'Kesirli kısmı olmayan; sıfırı ve negatifleri de içeren sayılar kümesinin elemanı.', 'sayi-dogrusu', 'Sıcaklık, asansör katı, deniz seviyesi gibi durumlarda'),
-        term('Ters (zıt) sayı', 'Sayı doğrusunda sıfıra göre simetrik olan, toplamı sıfır eden iki sayıdan her biri.', 'sayi-dogrusu', 'Çıkarma işlemini toplamaya çevirirken'),
+        term('Tam sayı', 'Kesirli kısmı olmayan; sıfırı ve negatifleri de içeren sayılar kümesinin elemanı.', 'sayi-kumeleri', 'Sıcaklık, asansör katı, deniz seviyesi gibi durumlarda'),
+        term('Ters (zıt) sayı', 'Sayı doğrusunda sıfıra göre simetrik olan, toplamı sıfır eden iki sayıdan her biri.', 'ters-sayi', 'Çıkarma işlemini toplamaya çevirirken'),
         term('Sayı doğrusu', 'Sayıların büyüklük sırasına göre yerleştirildiği, sıfırın başlangıç kabul edildiği doğru.', 'sayi-dogrusu', 'Karşılaştırma ve sıralamada'),
       ],
       scenes: [
@@ -139,8 +139,8 @@
       ],
       terms: [
         term('Rasyonel sayı', 'İki tam sayının oranı biçiminde yazılabilen sayı; payda sıfırdan farklı olmalıdır.', 'pay-payda', 'Kesir, ondalık ve yüzde gösterimlerinde'),
-        term('Mutlak değer', 'Sayının sıfıra olan uzaklığı; $|a|$ biçiminde gösterilir ve negatif olamaz.', 'sayi-dogrusu', 'Uzaklık ve fark hesaplarında'),
-        term('Sadeleştirme', 'Pay ve paydayı aynı sıfırdan farklı sayıya bölerek kesri en basit biçime getirme.', 'pay-payda', 'Sonucu en sade biçimde yazarken'),
+        term('Mutlak değer', 'Sayının sıfıra olan uzaklığı; $|a|$ biçiminde gösterilir ve negatif olamaz.', 'mutlak-deger', 'Uzaklık ve fark hesaplarında'),
+        term('Sadeleştirme', 'Pay ve paydayı aynı sıfırdan farklı sayıya bölerek kesri en basit biçime getirme.', 'sadelestirme', 'Sonucu en sade biçimde yazarken'),
       ],
       scenes: [
         {
@@ -202,10 +202,10 @@
         'Negatif sayılarda büyüklük sırası tersine döner.',
       ],
       terms: [
-        term('Pay', 'Kesir çizgisinin **üstündeki** sayı. Bütünden kaç eş parça alındığını söyler.', 'pay-payda', '$\\frac{3}{4}$ kesrinde pay $3$’tür', { num: 3, den: 4, mark: 'num' }),
-        term('Payda', 'Kesir çizgisinin **altındaki** sayı. Bütünün kaç eş parçaya ayrıldığını söyler.', 'pay-payda', '$\\frac{3}{4}$ kesrinde payda $4$’tür', { num: 3, den: 4, mark: 'den' }),
+        term('Pay', 'Kesir çizgisinin **üstündeki** sayı. Bütünden kaç eş parça alındığını söyler.', 'kesir-serit', '$\\frac{3}{4}$ kesrinde pay $3$’tür', { total: 4, shaded: 3 }),
+        term('Payda', 'Kesir çizgisinin **altındaki** sayı. Bütünün kaç eş parçaya ayrıldığını söyler.', 'bolum-parca', '$\\frac{3}{4}$ kesrinde payda $4$’tür'),
         term('Kesir çizgisi', 'Pay ile paydayı ayıran yatay çizgi; aynı zamanda bölme anlamı taşır: $\\frac{3}{4} = 3 \\div 4$.', 'pay-payda', 'Kesri bölmeye çevirirken', { num: 3, den: 4, mark: 'line' }),
-        term('Devirli ondalık sayı', 'Ondalık açılımında bir basamak veya basamak grubu sonsuza kadar tekrar eden sayı.', null, '$\\frac{1}{3} = 0{,}\\overline{3}$ gibi'),
+        term('Devirli ondalık sayı', 'Ondalık açılımında bir basamak veya basamak grubu sonsuza kadar tekrar eden sayı.', 'devirli', '$\\frac{1}{3} = 0{,}\\overline{3}$ gibi'),
       ],
       scenes: [
         {
@@ -272,9 +272,9 @@
         'Sıfıra bölme tanımsızdır.',
       ],
       terms: [
-        term('Toplanan', 'Toplama işleminde bir araya getirilen sayılardan her biri.', 'sayi-dogrusu', 'Toplama ve çıkarma problemlerinde'),
-        term('İşaret kuralı', 'Çarpma ve bölmede sonucun işaretini belirleyen kural: aynı işaretler çarpımı pozitif yapar.', 'sayi-dogrusu', 'Çok adımlı işlemlerde'),
-        term('Ters eleman', 'Bir sayıyla toplandığında sıfır veren sayı; örneğin $-9$’un ters elemanı $+9$.', 'sayi-dogrusu', 'Çıkarmayı eklemeye çevirirken'),
+        term('Toplanan', 'Toplama işleminde bir araya getirilen sayılardan her biri.', 'toplama', 'Toplama ve çıkarma problemlerinde'),
+        term('İşaret kuralı', 'Çarpma ve bölmede sonucun işaretini belirleyen kural: aynı işaretler çarpımı pozitif yapar.', 'isaret-kurali', 'Çok adımlı işlemlerde'),
+        term('Ters eleman', 'Bir sayıyla toplandığında sıfır veren sayı; örneğin $-9$’un ters elemanı $+9$.', 'ters-sayi', 'Çıkarmayı eklemeye çevirirken'),
       ],
       scenes: [
         {
@@ -341,10 +341,10 @@
         'Çıkarmada eksilen ile çıkanın sırası sonucu değiştirir.',
       ],
       terms: [
-        term('Pay', 'Kesir çizgisinin üstündeki sayı; alınan parça sayısı.', 'pay-payda', 'Toplama–çıkarmada paylar işaretleriyle toplanır', { num: 3, den: 4, mark: 'num' }),
-        term('Payda', 'Kesir çizgisinin altındaki sayı; bütünün bölündüğü eş parça sayısı.', 'pay-payda', 'Toplama–çıkarmada payda eşitlenir, kendisi değişmez', { num: 3, den: 4, mark: 'den' }),
-        term('En küçük ortak kat (EKOK)', 'Verilen paydaların hepsine tam bölünebilen en küçük pozitif sayı.', 'kesir-serit', 'Payda eşitlerken'),
-        term('Tam sayılı kesir', 'Bir tam sayı ile bir basit kesrin birlikte yazıldığı gösterim.', null, '$2\\frac{1}{3}$ biçiminde'),
+        term('Pay', 'Kesir çizgisinin üstündeki sayı; alınan parça sayısı.', 'kesir-serit', 'Toplama–çıkarmada paylar işaretleriyle toplanır', { total: 4, shaded: 3 }),
+        term('Payda', 'Kesir çizgisinin altındaki sayı; bütünün bölündüğü eş parça sayısı.', 'bolum-parca', 'Toplama–çıkarmada payda eşitlenir, kendisi değişmez', { num: 3, den: 4, mark: 'den' }),
+        term('En küçük ortak kat (EKOK)', 'Verilen paydaların hepsine tam bölünebilen en küçük pozitif sayı.', 'ekok', 'Payda eşitlerken'),
+        term('Tam sayılı kesir', 'Bir tam sayı ile bir basit kesrin birlikte yazıldığı gösterim.', 'tam-sayili', '$2\\frac{1}{3}$ biçiminde'),
       ],
       scenes: [
         {
@@ -412,10 +412,10 @@
         'Kesir çizgisi pay ve payda için görünmez parantez işlevi görür.',
       ],
       terms: [
-        term('Pay', 'Kesir çizgisinin üstündeki sayı; çarpma ve bölmede pay ile işlem yapılır.', 'pay-payda', 'Çarpma ve bölmede', { num: 3, den: 4, mark: 'num' }),
-        term('Payda', 'Kesir çizgisinin altındaki sayı; çarpmada paydalar da çarpılır.', 'pay-payda', 'Çarpma ve bölmede', { num: 3, den: 4, mark: 'den' }),
+        term('Pay', 'Kesir çizgisinin üstündeki sayı; çarpma ve bölmede pay ile işlem yapılır.', 'kesir-serit', 'Çarpma ve bölmede', { total: 4, shaded: 3 }),
+        term('Payda', 'Kesir çizgisinin altındaki sayı; çarpmada paydalar da çarpılır.', 'bolum-parca', 'Çarpma ve bölmede', { num: 3, den: 4, mark: 'den' }),
         term('Ters kesir', 'Bir kesrin payı ile paydasının yer değiştirmesiyle elde edilen kesir; çarpımı $1$ eder.', 'kesir-carpim', 'Bölmeyi çarpmaya çevirirken'),
-        term('İşlem önceliği', 'Birden fazla işlem içeren ifadelerde önce parantez, sonra çarpma–bölme, en son toplama–çıkarma yapılır.', null, 'Çok adımlı sorularda'),
+        term('İşlem önceliği', 'Birden fazla işlem içeren ifadelerde önce parantez, sonra çarpma–bölme, en son toplama–çıkarma yapılır.', 'islem-onceligi', 'Çok adımlı sorularda'),
       ],
       scenes: [
         {
@@ -483,8 +483,8 @@
         'Şüpheli sonuçta büyüklük tahmini yap; tahminle uyuşmayan sonuç hatalıdır.',
       ],
       terms: [
-        term('Tanı çalışması', 'Hangi konuda eksik olduğunu bulmak için yapılan kısa, karışık soru seti.', 'kesir-serit', 'Sınav öncesi tekrar planında'),
-        term('Hata listesi', 'Yapılan hataların türü, doğru yöntemi ve örneğiyle yazıldığı kişisel liste.', 'pay-payda', 'Sınavdan önce son tekrarda'),
+        term('Tanı çalışması', 'Hangi konuda eksik olduğunu bulmak için yapılan kısa, karışık soru seti.', 'islem-onceligi', 'Sınav öncesi tekrar planında'),
+        term('Hata listesi', 'Yapılan hataların türü, doğru yöntemi ve örneğiyle yazıldığı kişisel liste.', 'sadelestirme', 'Sınavdan önce son tekrarda'),
         term('Süre yönetimi', 'Sınavda kolay soruları öne alıp zor sorulara yeterli zaman bırakma planı.', null, 'Sınav sırasında'),
       ],
       scenes: [
@@ -551,9 +551,9 @@
         'Küp, bütün yüzleri eş kare olan özel bir prizmadır.',
       ],
       terms: [
-        term('Ayrıt', 'İki yüzün kesiştiği doğru parçası. Prizmada $12$ ayrıt vardır.', 'prizma', 'Ayrıt, yüz ve köşe sayarken'),
-        term('Ön / yan / üst görünüm', 'Cisme önden, yandan ve üstten bakıldığında görülen iki boyutlu görüntü.', 'prizma', 'Görünüm sorularında'),
-        term('Eş küp', 'Kenar uzunluğu aynı olan, birim hacim olarak kullanılabilen küp.', 'hacim', 'Küplerle kurulan yapılarda'),
+        term('Ayrıt', 'İki yüzün kesiştiği doğru parçası. Prizmada $12$ ayrıt vardır.', 'ayrit', 'Ayrıt, yüz ve köşe sayarken'),
+        term('Ön / yan / üst görünüm', 'Cisme önden, yandan ve üstten bakıldığında görülen iki boyutlu görüntü.', 'gorunum', 'Görünüm sorularında'),
+        term('Eş küp', 'Kenar uzunluğu aynı olan, birim hacim olarak kullanılabilen küp.', 'birim-kup', 'Küplerle kurulan yapılarda'),
       ],
       scenes: [
         {
@@ -620,9 +620,9 @@
         'Tüm yüzleri eş kabul etmek en sık yapılan hatadır.',
       ],
       terms: [
-        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli; prizmada $6$ dikdörtgen.', 'prizma', 'Yüzey alanı hesabının öncesinde'),
-        term('Yüzey alanı', 'Cismin bütün yüzeylerinin alanları toplamı: $2\\left(ab+ac+bc\\right)$.', 'prizma', 'Kutu kaplama, boya, fayans sorularında'),
-        term('Kare birim', 'Kenarı bir birim olan karenin alanına dayanan alan ölçü birimi ($\\mathrm{cm}^2$).', null, 'Bütün alan sonuçlarında'),
+        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli; prizmada $6$ dikdörtgen.', 'acim-cizim', 'Yüzey alanı hesabının öncesinde'),
+        term('Yüzey alanı', 'Cismin bütün yüzeylerinin alanları toplamı: $2\\left(ab+ac+bc\\right)$.', 'yuzey-alani', 'Kutu kaplama, boya, fayans sorularında'),
+        term('Kare birim', 'Kenarı bir birim olan karenin alanına dayanan alan ölçü birimi ($\\mathrm{cm}^2$).', 'kare-birim', 'Bütün alan sonuçlarında'),
       ],
       scenes: [
         {
@@ -691,8 +691,8 @@
       ],
       terms: [
         term('Hacim', 'Bir cismin uzayda kapladığı yerin ölçüsü; $V = a\\cdot b\\cdot c$.', 'hacim', 'Depo, akvaryum, kutu sorularında'),
-        term('Birim küp', 'Kenar uzunluğu $1$ birim olan, hacim ölçmede kullanılan küp.', 'hacim', 'Katman mantığını kurarken'),
-        term('Kapasite', 'Bir kabın içine sığabilecek sıvı miktarı; litre ile ölçülür.', null, '$1\\ \\mathrm{dm}^3 = 1\\ \\mathrm{L}$ dönüşümünde'),
+        term('Birim küp', 'Kenar uzunluğu $1$ birim olan, hacim ölçmede kullanılan küp.', 'birim-kup', 'Katman mantığını kurarken'),
+        term('Kapasite', 'Bir kabın içine sığabilecek sıvı miktarı; litre ile ölçülür.', 'litre-kup', '$1\\ \\mathrm{dm}^3 = 1\\ \\mathrm{L}$ dönüşümünde'),
       ],
       scenes: [
         {
@@ -759,9 +759,9 @@
         'İşlemden önce bütün ölçüler aynı birime çevrilmelidir.',
       ],
       terms: [
-        term('Birim dönüşümü', 'Bir ölçüyü farklı bir birimle ifade etme; hacimde her adım $1000$ kattır.', 'hacim', '$\\mathrm{dm}^3 \\leftrightarrow \\mathrm{cm}^3$ çevrimlerinde'),
-        term('Desimetreküp', 'Kenarı $1$ desimetre olan küpün hacmi; $1$ litreye eşittir.', 'hacim', 'Kapasite–hacim ilişkisinde'),
-        term('Mililitre', 'Litrenin binde biri; $1\\ \\mathrm{cm}^3$ hacme eşittir.', null, 'İlaç ve içecek etiketlerinde'),
+        term('Birim dönüşümü', 'Bir ölçüyü farklı bir birimle ifade etme; hacimde her adım $1000$ kattır.', 'birim-merdiven', '$\\mathrm{dm}^3 \\leftrightarrow \\mathrm{cm}^3$ çevrimlerinde'),
+        term('Desimetreküp', 'Kenarı $1$ desimetre olan küpün hacmi; $1$ litreye eşittir.', 'litre-kup', 'Kapasite–hacim ilişkisinde'),
+        term('Mililitre', 'Litrenin binde biri; $1\\ \\mathrm{cm}^3$ hacme eşittir.', 'olcek-kap', 'İlaç ve içecek etiketlerinde'),
       ],
       scenes: [
         {
@@ -824,10 +824,10 @@
         'Yönlendirici sorular veriyi bozar; tarafsız soru kökleri kullanılır.',
       ],
       terms: [
-        term('Aritmetik ortalama', 'Verilerin toplamının veri sayısına bölümü; toplamı eşit paylaştırma anlamı taşır.', 'sutun-grafik', '“Tipik değer” sorulduğunda, uç değer yoksa'),
-        term('Ortanca (medyan)', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.', 'sutun-grafik', 'Uç değer varken tipik değeri anlatırken'),
-        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark: $x_{\\max} - x_{\\min}$.', 'sutun-grafik', 'Verinin yayılımını anlatırken'),
-        term('Kategorik veri', 'Gruplara veya sınıflara ayrılarak ifade edilen, sayılmayan veri.', null, '“En sevdiğin mevsim” gibi sorularda'),
+        term('Aritmetik ortalama', 'Verilerin toplamının veri sayısına bölümü; toplamı eşit paylaştırma anlamı taşır.', 'ortalama-ok', '“Tipik değer” sorulduğunda, uç değer yoksa'),
+        term('Ortanca (medyan)', 'Sıralanmış veride ortada kalan değer; çift sayıda veride ortadaki iki değerin ortalaması.', 'ortanca-ok', 'Uç değer varken tipik değeri anlatırken'),
+        term('Açıklık', 'En büyük değer ile en küçük değer arasındaki fark: $x_{\\max} - x_{\\min}$.', 'aciklik-ok', 'Verinin yayılımını anlatırken'),
+        term('Kategorik veri', 'Gruplara veya sınıflara ayrılarak ifade edilen, sayılmayan veri.', 'kategori', '“En sevdiğin mevsim” gibi sorularda'),
       ],
       scenes: [
         {
@@ -894,9 +894,9 @@
         'Dikey ekseni sıfırdan başlamayan grafikler yanıltıcıdır.',
       ],
       terms: [
-        term('Ortalama mutlak sapma', 'Her verinin ortalamadan mutlak uzaklığının ortalaması; verinin tutarlılığını gösterir.', 'sutun-grafik', 'İki grubu karşılaştırırken'),
-        term('Tepe değer', 'Veri kümesinde en çok tekrar eden değer.', null, 'Kategorik veride'),
-        term('Daire grafiği', 'Bir bütünün parçalarını merkez açılarla gösteren grafik; merkez açı $360^\\circ \\times$ (parça ÷ toplam).', 'sutun-grafik', 'Yüzdelerle verilen bütün–parça ilişkilerinde'),
+        term('Ortalama mutlak sapma', 'Her verinin ortalamadan mutlak uzaklığının ortalaması; verinin tutarlılığını gösterir.', 'sapma', 'İki grubu karşılaştırırken'),
+        term('Tepe değer', 'Veri kümesinde en çok tekrar eden değer.', 'tepe', 'Kategorik veride'),
+        term('Daire grafiği', 'Bir bütünün parçalarını merkez açılarla gösteren grafik; merkez açı $360^\\circ \\times$ (parça ÷ toplam).', 'daire-dilim', 'Yüzdelerle verilen bütün–parça ilişkilerinde'),
       ],
       scenes: [
         {
@@ -965,8 +965,8 @@
       ],
       terms: [
         term('Dönüşüm', 'Şeklin konumunu ya da yönünü değiştiren, biçimini koruyan işlem.', 'yansima', 'Yansıma, öteleme, döndürme'),
-        term('Simetri doğrusu', 'Şeklin katlandığında kendisiyle çakışmasını sağlayan doğru; ayna doğrusu.', 'yansima', 'Yansıma sorularında'),
-        term('Yönelim', 'Şeklin köşelerinin saat yönünde ya da tersine sıralanma özelliği.', null, 'Yansımada tersine döner'),
+        term('Simetri doğrusu', 'Şeklin katlandığında kendisiyle çakışmasını sağlayan doğru; ayna doğrusu.', 'simetri-dogrusu', 'Yansıma sorularında'),
+        term('Yönelim', 'Şeklin köşelerinin saat yönünde ya da tersine sıralanma özelliği.', 'yonelim', 'Yansımada tersine döner'),
       ],
       scenes: [
         {
@@ -1032,7 +1032,7 @@
       terms: [
         term('Orta dikme', 'Bir doğru parçasının orta noktasından geçen ve parçaya dik olan doğru.', 'ortadikme', 'İki noktaya eşit uzaklıkta yer ararken'),
         term('Açıortay', 'Bir açıyı iki eş açıya bölen ışın; üzerindeki noktalar kollara eşit uzaklıktadır.', 'aciortay', 'Üçgende iç merkezi bulurken'),
-        term('İnşa', 'Yalnız pergel ve cetvel kullanılarak yapılan geometrik çizim.', null, 'Ölçmeden çizim yaparken'),
+        term('İnşa', 'Yalnız pergel ve cetvel kullanılarak yapılan geometrik çizim.', 'insa', 'Ölçmeden çizim yaparken'),
       ],
       scenes: [
         {

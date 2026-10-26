@@ -755,3 +755,148 @@ ortalama mutlak sapma, daire grafiği).
 - jsdom: 15 hafta render edildi; her haftada 7 bölüm doğru sırada, 1–3 sahne, sürgü bandı ve
   11–17 açıklamalı soru var; hiçbir sahnede `NaN`/`undefined` yok; sürgü kaydırıldığında çıktı ve
   çizim değişiyor; 40 karakterden kısa açıklama “açıklama zorunlu” uyarısıyla reddediliyor.
+
+## 20. Hata ayıklama turu: sıfır, sahne çeşitliliği, dizgi ve yerleşim (26 Ekim 2026)
+
+Yayındaki sürüm için bildirilen on üç madde tek tek kapatıldı. Hiçbir yerde kitap metni
+kopyalanmadı; sorular kendi etkinliklerimize dönüştürüldü.
+
+### 20.1 Konu bölümü geri geldi
+
+`matematik.js` her haftanın başında **“Konu anlatımı”** kartını yeniden basıyor
+(`math-summary`): haftanın özeti + “bunu bilmeden olmaz” notu. Kart, etkinlik kartıyla aynı
+görsel dili kullanıyor ve haftanın bölüm zincirinin önüne geliyor.
+
+### 20.2 Birinci hafta: sıfırın anlamları ve doğal sayılar
+
+`matematik-kitap.js` içindeki 1. hafta yeniden yazıldı:
+
+- **BAŞLAYALIM** artık kitabın sorusunu değil kendi altı durumumuzu soruyor: kasadaki para,
+  hava sıcaklığı, deniz seviyesi, takvim yılı, sınav puanı, doğum anındaki yaş.
+- **ÖĞRENELİM** beş blok: *Doğal sayılar* (şekil `sayi-kumeleri`), *Tam sayılar ve yön*
+  (sahne `sayi-dogrusu`), *Sıfırın farklı anlamları*, *Sayı doğrusu ve sıralama*
+  (sahne `iki-sayi`), *Gerçek yaşamda okuma*.
+- Sıfır dört anlamıyla ayrı ayrı anlatılıyor: **yokluk**, **başlangıç noktası** (altında
+  anlamlı değer var), **seçilmiş başlangıç** (anlaşmayla belirlenmiş) ve **doğal başlangıcı
+  olan/olmayan gruplama**. Uzunluk, kütle, süre ve para gibi büyüklüklerin doğal başlangıcı
+  vardır; sıcaklık, deniz seviyesi ve takvim yılının yoktur.
+- **Doğal sayı** ile **sayma sayısı** ayrımı açıkça veriliyor: sıfır doğal sayıdır, sayma
+  sayısı değildir; $5 - 8$ işleminin doğal sayı sonucu olmadığı için negatif sayılara ihtiyaç
+  duyulur.
+- `\mathbb` komutu tamamen kaldırıldı; dizgi motoru bu komutu desteklemiyor ve öğrenci
+  metninde artık geçmiyor (denetim bunu zorunlu tutuyor).
+
+### 20.3 Her etkinlik kendi sahnesini kuruyor
+
+- Yeni sahne **`iki-sayi`**: iki sayıyı `a`, `b` olarak işaretler, sıralamayı ve sıfıra
+  uzaklıkları panelde yazar (−7 < −3 örneği sahnedeki iki noktayla birebir örtüşür).
+- Yeni sahne **`sifir-toplama`**: üç kartın toplamını tek doğruda adım adım yürütür; “toplayarak
+  sıfıra ulaşılır mı?” etkinliği artık kendi sahnesini kullanıyor (eskiden aynı sayı doğrusu
+  ikinci kez çiziliyordu).
+- Yeni sahne **`sicaklik`**: −120 °C, −60 °C ve +15 °C aynı doğruda işaretli; farklar ve
+  sıralama panelde canlı güncelleniyor. Böylece “soruda iki sayı var, sahnede biri işaretli”
+  durumu kalmadı.
+- Hafta içinde aynı sahne türü iki kez kullanılmıyor: 2, 5, 6, 9, 11, 14 ve 15. haftalarda
+  tekrar eden blok sahneleri kendi konusuna uygun **şekle** dönüştürüldü
+  (`sayi-dogrusu`, `ekok`, `bolum-parca`, `acim-cizim`, `birim-merdiven`, `simetri-dogrusu`,
+  `insa`). Denetim artık “aynı haftada aynı sahne iki kez” durumunu hata sayıyor.
+- Sayı doğrusu sahnelerinin varsayılan değerleri yanındaki metinle eşleşiyor: Deringöz
+  örneği −5/+5 oldu, işaret kuralı örneği (−7) + (−4) = −11 sahneye taşındı; denetim bu
+  eşleşmeyi zorunlu tutuyor.
+
+### 20.4 Tek “Kontrol et”, doğrudan yapay zekâ
+
+`matematik-etkinlik.js` içindeki ayrı “Yapay zekâ ile değerlendir” düğmesi kaldırıldı.
+Tek **“Kontrol et”** düğmesi önce `askAI(activity, entry)` çağırıyor; anahtar yoksa veya ağ
+hatası olursa `localVerdict` yedeğine düşüyor ve bunu öğrenciye açıkça söylüyor. Açıklama
+alanı zorunluluğu, ölçüt listesi ve “doğru sonucu yazma” yasağı aynen duruyor.
+
+### 20.5 Dizgi: matematik metinle aynı hizada
+
+`matematik.css` içinde `span.m` artık `display:inline`, `font-size:1em`,
+`vertical-align:baseline`, `padding:0`. `sup/sub` baseline'a alınıp `top:-.42em` /
+`bottom:-.22em` ile hizalandı; böylece üsler satırın üstüne kaçmıyor, ifade ile metin
+arasında boşluk oluşmuyor. `\frac` yığını `vertical-align:-.42em` ile taban çizgisine oturuyor.
+
+### 20.6 Terim görselleri ve sahne yerleşimi
+
+- `matematik-figure.js` 10 → **40 şekil türüne** çıktı; her haftanın üç terimi birbirinden
+  farklı görsel kullanıyor (hafta içi tekrar yok).
+- `matematik-sahne.js` **19 sahne türü**. `sayi-dogrusu` yeniden yazıldı: eksen y=150,
+  etiketler y=176, `a`/`−a` etiketleri y=84/112, panel (40, 214) satır 242/268/294, ipucu
+  y=344. Süs polygonlar kaldırıldı; noktalarla birlikte hareket eden artık üçgen yok.
+- `scripts/check-matematik-layout.js` eklendi: her sahneyi varsayılan ayarlarda, her sürgünün
+  uç değerlerinde ve tüm sürgülerin en küçük/en büyük hâlinde çizip **metin taşması ve etiket
+  çakışması** arıyor (19 sahne × ayarlar + 40 şekil = 190 çizim). Sonuç: temiz.
+
+### 20.7 Doğrulama
+
+- `node --check` (9 dosya), `git diff --check`: temiz.
+- Denetim betikleri: `check-static.py`, `check-secrets.py`, `check-matematik-content.js`,
+  `check-matematik.js`, `check-matematik-layout.js`, `check-science.js`,
+  `check-social-studies.js`, `check-qr-inventory.js`, `check-turkce-extras.js`,
+  `check-turkce-qr.js`, `check-tema2-practice.js`, `check-tema3-practice.js` — hepsi geçti.
+- `check-matematik-content.js` yeni kurallar: `\mathbb` yasağı, 1. haftada doğal sayı +
+  yokluk/başlangıç noktası, terim görsellerinin hafta içi tekilliği, etkinlikte tek düğme ve
+  `askAI`, konu anlatımı kartı, hafta içi sahne tekilliği, sayı doğrusu sahnesi ile metnin
+  sayı eşleşmesi.
+- jsdom: 15 hafta × 7 bölüm, sahne SVG'lerinde `NaN`/`undefined` yok, sürgüler çizimi ve
+  çıktıyı güncelliyor, kısa açıklama reddediliyor — “RENDER TEMİZ”.
+- Soru yoğunluğu korundu: **203 açıklamalı soru** (azaltma yok), 30 kısa kontrol sorusu,
+  48 terim şekli.
+
+## 21. Geri bildirim dili: “hangi kuralı kullandın” kalıbı kaldırıldı (26 Ekim 2026)
+
+Geri bildirim her soruda aynı şeyi istiyordu: “Sonucu yazdın. Şimdi hangi kuralı kullandığını ve
+neden o kuralın geçerli olduğunu bir cümleyle ekle.” Bu, kural adı olmayan sorularda anlamsız
+kalıyordu. Örnek: **“$0{,}999\ldots$ sayısı $1$’e eşit mi?”** sorusunda adlandırılacak bir kural
+yoktur; gerekçe ya hesaptır ($\frac{1}{3} = 0{,}333\ldots$, üçle çarpınca $0{,}999\ldots = 1$)
+ya da devirli ondalığı kesre çevirme işlemidir. Öğrenciden “kuralın neden geçerli olduğunu”
+yazmasını istemek bu soruda hiçbir şey öğretmiyordu.
+
+### 21.1 Soru türüne göre açıklama ölçüsü
+
+`matematik-etkinlikler.js` artık her etkinliğe bir gerekçe türü (`reason`) ve o türün beklediği
+açıklamanın ölçüsünü (`reasonHint`) ekliyor:
+
+| Tür | Hangi sorular | Beklenen açıklama |
+| --- | --- | --- |
+| `karar` | “eşit mi”, “hangisi büyük”, “katılıyor musun”, “doğru mu” | kısa karar + tek cümlelik gerekçe (hesap, örnek, tanım, karşılaştırma) |
+| `gerekce` | “neden, niçin, açıkla, tartış” | görüş + nedeni destekleyen örnek/hesap |
+| `islem` | “kaç, hesapla, bul, çiz” | işlem basamakları + sonuç (+ tek cümle gerekçe) |
+| `sonuc` | kalan sorular | sonuç + nasıl bulunduğu |
+
+Dağılım (203 etkinlik): 106 `islem`, 57 `sonuc`, 24 `karar`, 16 `gerekce`. Yani “kural + kuralın
+kanıtı” isteyen kalıp hiçbir soruda varsayılan değil.
+
+### 21.2 Yapay zekâ istemi
+
+- “Açıklama ölçüsü soruya göre değişir” kuralı isteme eklendi; karar sorularında kısa karar +
+  tek cümlelik gerekçenin **yeterli** olduğu, gerekçe olarak hesap/örnek/tanım/karşılaştırmanın
+  sayıldığı belirtiliyor.
+- “Öğrenciden ASLA adlandırılmış kural, kuralın kanıtı ya da ekstra ‘neden bu kural geçerli’
+  açıklaması isteme; kalıp cümle kullanma” yasağı eklendi.
+- Geri bildirim öğrencinin kendi sözüne/sayısına bağlanıyor; gerekçe yeterliyse `correct`
+  verilip daha fazlası istenmiyor; `missing` listesi eksik yoksa boş kalıyor.
+- İstem her etkinlikte “Bu soruda beklenen açıklama: …” satırıyla besleniyor.
+
+### 21.3 Yerel yedek ve arayüz
+
+- `localVerdict` artık sabit cümle yerine türe göre yazıyor: örneğin `karar` türünde
+  “Kararını yazdın. Şimdi neden böyle olduğunu bir örnek, hesap ya da tanımla tek cümlede
+  göster.” Kural sözcüğü geri bildirimlerden çıktı.
+- Kart etiketi “Cevabın ve kısa gerekçen (zorunlu)”, yönerge “Kural adı ezberi istenmez: bir
+  örnek, hesap ya da tanım yeterlidir.” oldu.
+- Bölüm ölçütleri sadeleşti: BAŞLAYALIM “kararını belirt + nedenini bir cümleyle yaz”,
+  DÜŞÜN-TARTIŞ-AÇIKLA “görüşünü belirt + bir örnek/hesapla destekle”, UYGULAYALIM “sonucu ve
+  gerekçeni belirt”, TEMA ÖLÇME “sonucu/kararı yaz + kısa gerekçe ekle”.
+- Ortak koç (`ai-grader.js`, Fen/Sosyal/Türkçe) de aynı yönde yumuşatıldı: yanıt doğru ve
+  gerekçesi yeterliyse ek genişletme istenmiyor, öğrenci yüreklendiriliyor; “hangi kuralı
+  kullandığını ekle” gibi hazır istekler yasaklandı.
+
+### 21.4 Doğrulama
+
+- `check-matematik-content.js` yeni kurallar: geri bildirim metinlerinde kural ezberi isteyen
+  kalıp yok, `REASON_FEEDBACK` var, her etkinlikte geçerli bir `reason` + kural adı istemeyen
+  `reasonHint`, ölçütlerde “hangi kuralı” ifadesi yok, karar soruları `karar` türünde.
+- 13 denetim betiği, `node --check`, `git diff --check`, jsdom render: temiz.

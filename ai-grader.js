@@ -15,7 +15,8 @@
     'guide alanında konu anlatımındaki bir başlığa, metindeki bir bölüme ya da öğrencinin kendi cümlesindeki bir sözcüğe işaret edebilirsin; kısa bir ipucu sözü vermek serbesttir.',
     'starter alanında öğrencinin dolduracağı yarım bir cümle kur; bu kalıp cevabın kendisini, sonucu, sayısal değeri veya doğru seçeneği içermemelidir.',
     'guide ve starter kısa ve somut olsun; birden çok adımı tek cümleye sığdırma, yalnızca en yararlı tek adımı seç.',
-    'Yanıt doğruysa guide alanında yanıtı güçlendirecek tek bir genişletme öner (örnek, karşı örnek, neden) ve öğrenciyi yazmaya devam etmesi için yüreklendir.',
+    'Yanıt doğru ve gerekçesi yeterliyse yeni bir açıklama ya da ek genişletme İSTEME; tek cümleyle neyin iyi olduğunu söyle ve öğrenciyi yüreklendir.',
+    'Kalıp cümle kullanma: “hangi kuralı kullandığını ve neden geçerli olduğunu ekle” gibi hazır istekler yasak. Kural adı yalnızca soru gerçekten bir kuralın uygulanmasını istiyorsa ve öğrenci onu atladıysa hatırlatılır.',
   ].join('\n'));
 
   function cleanText(value, limit) {

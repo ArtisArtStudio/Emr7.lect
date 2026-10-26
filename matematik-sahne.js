@@ -108,40 +108,187 @@
   /* ---------- sahneler ---------- */
 
   const SCENES = {
-    /* 1. Tam sayılar: sayı doğrusu + ters sayı */
+    /* 1. Tam sayılar: sayı doğrusu, ters sayı ve sıfıra uzaklık */
     'sayi-dogrusu': {
       params: [{ name: 'a', label: 'Sayı (a)', min: -7, max: 7, step: 1, value: 3 }],
       draw(state) {
-        const p = plotter([-8, 8, -2.2, 2.2], { x: 40, y: 120, w: W - 80, h: 150 });
-        const a = state.a;
-        const parts = [grid(p, { labels: true, ylabels: false })];
-        parts.push(line(p.px(-7.6), p.py(0), p.px(7.6), p.py(0), { width: 2 }));
-        parts.push(`<polygon points="${p.px(7.8)},${p.py(0)} ${p.px(7.35)},${p.py(0) - 6} ${p.px(7.35)},${p.py(0) + 6}" fill="#1b2f49"/>`);
-        for (let x = -7; x <= 7; x += 1) {
-          parts.push(line(p.px(x), p.py(0) - (x === 0 ? 10 : 6), p.px(x), p.py(0) + (x === 0 ? 10 : 6), { width: x === 0 ? 2.2 : 1.2 }));
-          parts.push(text(p.px(x), p.py(0) + 26, String(x), { size: 12, anchor: 'middle', weight: x === 0 ? 800 : 500, fill: x === 0 ? '#1b2f49' : '#6b7a90' }));
+        const a = Number(state.a) || 0;
+        const axisY = 150;
+        const left = 52;
+        const right = W - 52;
+        const px = (value) => left + ((value + 8) / 16) * (right - left);
+        const parts = [text(W / 2, 30, 'Sayı doğrusu: sıfır başlangıç noktasıdır', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
+        parts.push(`<polygon points="${num(right + 22)},${num(axisY)} ${num(right + 10)},${num(axisY - 5)} ${num(right + 10)},${num(axisY + 5)}" fill="#1b2f49"/>`);
+        for (let value = -8; value <= 8; value += 1) {
+          const zero = value === 0;
+          parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
+          parts.push(text(px(value), axisY + 26, String(value), { size: 12, anchor: 'middle', weight: zero ? 800 : 500, fill: zero ? '#1b2f49' : '#6b7a90' }));
         }
-        parts.push(note(40, 34, 'Sola gittikçe sayı küçülür, sağa gittikçe büyür.', { fill: '#5b6b80' }));
-        parts.push(circle(p.px(a), p.py(0), 7));
-        parts.push(text(p.px(a), p.py(0) - 16, `a = ${num(a)}`, { size: 13, anchor: 'middle', weight: 800, fill: '#5b46a8' }));
-        parts.push(circle(p.px(-a), p.py(0), 6, { fill: '#2f8a63' }));
-        parts.push(text(p.px(-a), p.py(0) - 16, `-a = ${num(-a)}`, { size: 12.5, anchor: 'middle', weight: 700, fill: '#2f8a63' }));
-        parts.push(arrow(p.px(0), p.py(-1.1), p.px(a), p.py(-1.1), { stroke: '#7056c9' }));
-        parts.push(arrow(p.px(0), p.py(-1.1), p.px(-a), p.py(-1.1), { stroke: '#2f8a63', dash: '3 3' }));
-        const relation = a === 0 ? 'a = 0: ne pozitif ne negatif.' : a > 0 ? `${num(a)} > 0 ve ${num(-a)} < 0.` : `${num(a)} < 0 ve ${num(-a)} > 0.`;
-        parts.push(note(360, p.py(0) + 78, relation, { fill: '#41506a' }));
-        parts.push(note(360, p.py(0) + 98, `Sıfıra uzaklık: |${num(a)}| = ${num(Math.abs(a))}`, { fill: '#41506a' }));
-        parts.push(note(40, H - 22, 'Pembe nokta sayıyı, yeşil nokta tersini gösterir; ikisinin toplamı sıfırdır.', { size: 12 }));
-        parts.push(`<g data-handle="a" style="cursor:ew-resize">${circle(p.px(a), p.py(0), 16, { fill: 'transparent', stroke: 'none' })}</g>`);
+        parts.push(text(left, axisY + 48, 'sola: küçülür', { size: 11.5, anchor: 'start', fill: '#b8791a' }));
+        parts.push(text(right, axisY + 48, 'sağa: büyür', { size: 11.5, anchor: 'end', fill: '#2f8a63' }));
+        parts.push(circle(px(0), axisY, 4.5, { fill: '#1b2f49', stroke: '#fff', width: 1.5 }));
+
+        const points = [{ value: a, label: `a = ${num(a)}`, color: '#5b46a8', y: 84 }];
+        if (a !== 0) points.push({ value: -a, label: `−a = ${num(-a)}`, color: '#2f8a63', y: 112 });
+        points.forEach((point) => {
+          parts.push(line(px(point.value), axisY - 9, px(point.value), point.y + 7, { stroke: point.color, width: 1.2, dash: '4 4' }));
+          parts.push(circle(px(point.value), axisY, 7, { fill: point.color }));
+          parts.push(text(px(point.value), point.y, point.label, { size: 13, anchor: 'middle', weight: 800, fill: point.color }));
+        });
+
+        parts.push(panel(40, 214, W - 80, 96));
+        const absA = Math.abs(a);
+        parts.push(text(58, 242, a === 0 ? 'a = 0: sıfıra uzaklık 0, işareti yok.' : `|a| = |${num(a)}| = ${num(absA)}  ·  |−a| = ${num(absA)}`, { size: 13.5, weight: 800, fill: '#33265f' }));
+        parts.push(text(58, 268, a > 0 ? 'a sıfırın sağında: a pozitif, −a negatif.' : a < 0 ? 'a sıfırın solunda: a negatif, −a pozitif.' : 'Sıfır ne pozitif ne negatiftir; başlangıç noktasıdır.', { size: 12.5, fill: '#41506a' }));
+        parts.push(text(58, 294, a === 0 ? 'Ters sayı yine sıfırdır.' : `a + (−a) = ${num(a)} + (${num(-a)}) = 0`, { size: 12.5, fill: '#2f8a63', weight: 700 }));
+        parts.push(text(W / 2, 344, 'Mor nokta sayıyı, yeşil nokta tersini gösterir. Noktayı sürükleyebilirsin.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
+        parts.push(`<g data-handle="a" style="cursor:ew-resize">${circle(px(a), axisY, 17, { fill: 'transparent', stroke: 'none' })}</g>`);
         return parts.join('');
       },
       drag(svg, event, box, state) {
-        const p = plotter([-8, 8, -2.2, 2.2], { x: 40, y: 120, w: W - 80, h: 150 });
+        const left = 52;
+        const right = W - 52;
         const local = localPoint(svg, event);
-        const value = Math.round(((local.x - p.box.x) / p.box.w) * 16 - 8);
+        const value = Math.round(((local.x - left) / (right - left)) * 16 - 8);
         state.a = Math.max(-7, Math.min(7, value));
       },
       handles: [{ name: 'a', label: 'a noktasını sürükle' }],
+    },
+
+    /* 1b. Sıcaklık: negatif ve pozitif değerlerin aynı doğruda okunması */
+    'sicaklik': {
+      params: [
+        { name: 't1', label: 'A gezegeni (°C)', min: -150, max: 0, step: 10, value: -120 },
+        { name: 't2', label: 'B gezegeni (°C)', min: -150, max: 0, step: 10, value: -60 },
+        { name: 't3', label: 'C gezegeni (°C)', min: 0, max: 50, step: 5, value: 15 },
+      ],
+      draw(state) {
+        const t1 = Number(state.t1);
+        const t2 = Number(state.t2);
+        const t3 = Number(state.t3);
+        const axisY = 168;
+        const left = 56;
+        const right = W - 56;
+        const px = (value) => left + ((value + 150) / 200) * (right - left);
+        const parts = [text(W / 2, 32, 'Üç gezegenin yüzey sıcaklığı aynı doğruda', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
+        for (let value = -150; value <= 50; value += 30) {
+          const zero = value === 0;
+          parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
+          parts.push(text(px(value), axisY + 24, String(value), { size: 11.5, anchor: 'middle', weight: zero ? 800 : 500, fill: zero ? '#1b2f49' : '#6b7a90' }));
+        }
+        parts.push(text(left, axisY + 44, 'sola: daha soğuk', { size: 11.5, anchor: 'start', fill: '#2c6fa8' }));
+        parts.push(text(right, axisY + 44, 'sağa: daha sıcak', { size: 11.5, anchor: 'end', fill: '#c03744' }));
+        [[t1, 'A', '#2c6fa8', 96], [t2, 'B', '#5b46a8', 122], [t3, 'C', '#c03744', 148]].forEach(([value, label, color, y]) => {
+          parts.push(line(px(value), y + 6, px(value), axisY - 7, { stroke: color, width: 1.2, dash: '4 4' }));
+          parts.push(circle(px(value), axisY, 7, { fill: color }));
+          parts.push(text(px(value), y, `${label}: ${num(value)} °C`, { size: 12.5, anchor: 'middle', weight: 800, fill: color }));
+        });
+        parts.push(panel(40, 216, W - 80, 96));
+        parts.push(text(58, 244, `A ile B arasındaki fark: ${num(Math.max(t1, t2))} − (${num(Math.min(t1, t2))}) = ${num(Math.abs(t1 - t2))} °C`, { size: 12.5, weight: 800, fill: '#33265f' }));
+        parts.push(text(58, 270, `C ile A arasındaki fark: ${num(t3)} − (${num(t1)}) = ${num(t3 - t1)} °C`, { size: 12.5, fill: '#41506a' }));
+        const order = [['A', t1], ['B', t2], ['C', t3]].sort((x, y) => x[1] - y[1]).map((item) => `${item[0]} (${num(item[1])})`).join(' < ');
+        parts.push(text(58, 296, `Küçükten büyüğe: ${order}`, { size: 12.5, fill: '#2f8a63', weight: 700 }));
+        parts.push(text(W / 2, 344, 'Sürgüleri kaydır: fark ve sıralama birlikte güncellenir.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
+        return parts.join('');
+      },
+    },
+
+    /* 1a. İki sayı: karşılaştırma ve uzaklık */
+    'iki-sayi': {
+      params: [
+        { name: 'a', label: '1. sayı (a)', min: -7, max: 7, step: 1, value: -7 },
+        { name: 'b', label: '2. sayı (b)', min: -7, max: 7, step: 1, value: -3 },
+      ],
+      draw(state) {
+        const a = Number(state.a) || 0;
+        const b = Number(state.b) || 0;
+        const axisY = 156;
+        const left = 52;
+        const right = W - 52;
+        const px = (value) => left + ((value + 8) / 16) * (right - left);
+        const parts = [text(W / 2, 34, 'İki sayı sayı doğrusunda', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
+        for (let value = -8; value <= 8; value += 1) {
+          const zero = value === 0;
+          parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
+          parts.push(text(px(value), axisY + 26, String(value), { size: 12, anchor: 'middle', weight: zero ? 800 : 500, fill: zero ? '#1b2f49' : '#6b7a90' }));
+        }
+        [[a, 'a', '#5b46a8', 96], [b, 'b', '#2f8a63', 122]].forEach(([value, label, color, y]) => {
+          parts.push(line(px(value), axisY - 8, px(value), y + 8, { stroke: color, width: 1.2, dash: '4 4' }));
+          parts.push(circle(px(value), axisY, 7, { fill: color }));
+          parts.push(text(px(value), y, `${label} = ${num(value)}`, { size: 13, anchor: 'middle', weight: 800, fill: color }));
+        });
+        const small = Math.min(a, b);
+        const big = Math.max(a, b);
+        const distance = Math.abs(b - a);
+        parts.push(panel(40, 214, W - 80, 92));
+        parts.push(text(58, 244, a === b ? 'İki sayı eşit: aynı noktadadırlar.' : `${num(small)} < ${num(big)}  ·  soldaki küçük, sağdaki büyük`, { size: 13.5, weight: 800, fill: '#33265f' }));
+        parts.push(text(58, 270, `İki sayı arasındaki uzaklık: |${num(b)} − (${num(a)})| = ${num(distance)} birim`, { size: 12.5, fill: '#41506a' }));
+        parts.push(text(58, 296, a < 0 && b > 0 ? 'Biri sıfırın solunda, diğeri sağında: işaretleri farklı.' : (a <= 0 && b <= 0 ? 'İkisi de sıfırın solunda: ikisi de negatif olabilir.' : 'İkisi de sıfırın sağında.'), { size: 12, fill: '#6b7a90' }));
+        parts.push(`<g data-handle="a" style="cursor:ew-resize">${circle(px(a), axisY, 17, { fill: 'transparent', stroke: 'none' })}</g>`);
+        return parts.join('');
+      },
+      drag(svg, event, box, state) {
+        const left = 52;
+        const right = W - 52;
+        const local = localPoint(svg, event);
+        const value = Math.round(((local.x - left) / (right - left)) * 16 - 8);
+        state.a = Math.max(-7, Math.min(7, value));
+      },
+      handles: [{ name: 'a', label: 'a noktasını sürükle' }],
+    },
+
+    /* 1b. Toplamalar sıfıra ulaşır mı? Adım adım toplama yolu */
+    'sifir-toplama': {
+      params: [
+        { name: 's1', label: '1. kart', min: -5, max: 5, step: 1, value: 3 },
+        { name: 's2', label: '2. kart', min: -5, max: 5, step: 1, value: -3 },
+        { name: 's3', label: '3. kart', min: -5, max: 5, step: 1, value: 2 },
+      ],
+      draw(state) {
+        const steps = [Number(state.s1) || 0, Number(state.s2) || 0, Number(state.s3) || 0];
+        const totals = steps.reduce((list, value) => list.concat(list[list.length - 1] + value), [0]);
+        const limit = Math.max(10, ...totals.map((value) => Math.abs(value)));
+        const from = -limit;
+        const to = limit;
+        const left = 48;
+        const right = W - 48;
+        const px = (value) => left + ((value - from) / (to - from)) * (right - left);
+        const axisY = 286;
+        const parts = [];
+        parts.push(text(W / 2, 32, 'Kartları toplayarak sıfıra ulaşabilir miyiz?', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' }));
+        // kartlar
+        steps.forEach((value, index) => {
+          const x = 150 + index * 120;
+          parts.push(rect(x, 62, 92, 54, { fill: value < 0 ? '#d7f0e3' : '#ded5fb', stroke: value < 0 ? '#2f8a63' : '#7056c9', width: 1.4, rx: 12 }));
+          parts.push(text(x + 46, 96, value > 0 ? `+${num(value)}` : num(value), { size: 17, anchor: 'middle', weight: 800, fill: value < 0 ? '#1f6b4c' : '#3c2f6b' }));
+          if (index < steps.length - 1) parts.push(text(x + 106, 96, '+', { size: 16, anchor: 'middle', weight: 700, fill: '#8b97a8' }));
+        });
+        // eksen
+        parts.push(line(left - 8, axisY, right + 8, axisY, { stroke: '#1b2f49', width: 2 }));
+        for (let value = from; value <= to; value += 1) {
+          const zero = value === 0;
+          parts.push(line(px(value), axisY - (zero ? 8 : 4), px(value), axisY + (zero ? 8 : 4), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2 : 1 }));
+          if ((to - from) <= 24 && value % 2 === 0) parts.push(text(px(value), axisY + 24, String(value), { size: 11, anchor: 'middle', fill: zero ? '#1b2f49' : '#6b7a90', weight: zero ? 800 : 500 }));
+        }
+        // toplama yolu: her adım eksenin üstünde yay şeklinde
+        totals.slice(0, -1).forEach((start, index) => {
+          const end = totals[index + 1];
+          const y = 214 - index * 12;
+          const x1 = px(start);
+          const x2 = px(end);
+          const midX = (x1 + x2) / 2;
+          parts.push(`<path d="M ${num(x1)} ${num(axisY - 8)} Q ${num(midX)} ${num(y - 26)} ${num(x2)} ${num(axisY - 8)}" fill="none" stroke="${end === 0 ? '#c03744' : '#7056c9'}" stroke-width="1.8" stroke-dasharray="5 4"/>`);
+          parts.push(text(midX, y + 6, `${end >= 0 ? '+' : '−'}${num(Math.abs(end - start))}`, { size: 12, anchor: 'middle', weight: 700, fill: end === 0 ? '#c03744' : '#5b46a8' }));
+          parts.push(circle(px(end), axisY, 4.5, { fill: end === 0 ? '#c03744' : '#5b46a8' }));
+        });
+        const total = totals[totals.length - 1];
+        parts.push(text(48, 336, `Toplam = ${num(total)}`, { size: 15, weight: 800, fill: total === 0 ? '#1f6b4c' : '#33265f' }));
+        parts.push(text(48, 360, total === 0 ? 'Zıt işaretli kartlar birbirini götürdü: sıfıra döndün.' : 'Toplam sıfır değil: sıfıra dönmek için ters işaretli kart gerekir.', { size: 12.5, fill: '#41506a' }));
+        return parts.join('');
+      },
     },
 
     /* 2. Mutlak değer */
@@ -157,10 +304,12 @@
           if (x % 3 === 0) parts.push(text(p.px(x), p.py(0) + 24, String(x), { size: 11, anchor: 'middle', fill: '#6b7a90' }));
         }
         parts.push(circle(p.px(a), p.py(0), 7));
-        parts.push(text(p.px(a), p.py(0) - 16, `a = ${num(a)}`, { size: 13, anchor: 'middle', weight: 800, fill: '#5b46a8' }));
+        parts.push(text(p.px(a), p.py(0) - 40, `a = ${num(a)}`, { size: 13, anchor: 'middle', weight: 800, fill: '#5b46a8' }));
         const mid = (p.px(a) + p.px(0)) / 2;
-        parts.push(line(p.px(a), p.py(-0.9), p.px(0), p.py(-0.9), { stroke: '#2f8a63', width: 2 }));
-        parts.push(text(mid, p.py(-0.9) - 8, `|a| = ${num(Math.abs(a))}`, { size: 13, anchor: 'middle', weight: 800, fill: '#2f8a63' }));
+        parts.push(line(p.px(a), p.py(-0.35), p.px(0), p.py(-0.35), { stroke: '#2f8a63', width: 2 }));
+        parts.push(line(p.px(a), p.py(-0.35) - 5, p.px(a), p.py(-0.35) + 5, { stroke: '#2f8a63', width: 1.4 }));
+        parts.push(line(p.px(0), p.py(-0.35) - 5, p.px(0), p.py(-0.35) + 5, { stroke: '#2f8a63', width: 1.4 }));
+        parts.push(text(mid, p.py(-0.35) - 12, `|a| = ${num(Math.abs(a))}`, { size: 13, anchor: 'middle', weight: 800, fill: '#2f8a63' }));
         parts.push(note(40, 40, 'Mutlak değer, sayının sıfıra olan uzaklığıdır. Uzaklık negatif olamaz.', { size: 13 }));
         parts.push(panel(40, H - 118, W - 80, 74));
         parts.push(note(58, H - 92, `a = ${num(a)} için |a| = ${num(Math.abs(a))}`, { size: 14, weight: 800, fill: '#33265f' }));
@@ -290,7 +439,7 @@
         }
         parts.push(text(left + (n2 * cw) / 2, top - 10, `${n2}/${d2}`, { size: 13, anchor: 'middle', weight: 800, fill: '#5b46a8' }));
         parts.push(text(left + size + 26, top + (n1 * ch) / 2 + 4, `${n1}/${d1}`, { size: 13, anchor: 'middle', weight: 800, fill: '#2f8a63' }));
-        parts.push(text(left + size / 2, top + size + 24, 'satır: birinci kesir · sütun: ikinci kesir', { size: 11.5, anchor: 'middle', fill: '#6b7a90' }));
+        parts.push(text(left + size / 2, top + size + 22, 'satır: birinci kesir · sütun: ikinci', { size: 11, anchor: 'middle', fill: '#6b7a90' }));
         parts.push(panel(380, 110, W - 420, 190));
         const product = (n1 * n2) / (d1 * d2);
         parts.push(text(400, 146, 'Çarpım', { size: 12, weight: 800, fill: '#6b7a90' }));
@@ -298,7 +447,7 @@
         parts.push(text(400, 222, `= ${n1 * n2}/${d1 * d2}`, { size: 17, weight: 800, fill: '#5b46a8' }));
         parts.push(text(400, 258, `= ${num(product)}`, { size: 15, fill: '#2f8a63' }));
         parts.push(note(400, 282, `${n1 * n2} kare boyandı`, { size: 12 }));
-        parts.push(note(40, H - 22, 'Çarpmada payda eşitlenmez: paylar çarpılır, paydalar çarpılır.', { size: 12 }));
+        parts.push(note(40, H - 18, 'Payda eşitlenmez: paylar ve paydalar ayrı çarpılır.', { size: 12 }));
         return parts.join('');
       },
     },
@@ -315,10 +464,11 @@
         const p = plotter([-12, 12, -3, 3], { x: 40, y: 80, w: W - 80, h: 120 });
         const parts = [grid(p, { ylabels: false })];
         parts.push(line(p.px(-11.5), p.py(0), p.px(11.5), p.py(0), { width: 2 }));
-        [[a, '#5b46a8', 'a'], [b, '#2f8a63', 'b'], [a + b, '#b8791a', 'a+b']].forEach(([value, color, label]) => {
+        [[a, '#5b46a8', 'a', 0], [b, '#2f8a63', 'b', 18], [a + b, '#b8791a', 'a+b', 36]].forEach(([value, color, label, lift]) => {
           const clamped = Math.max(-11, Math.min(11, value));
           parts.push(circle(p.px(clamped), p.py(0), 6.5, { fill: color }));
-          parts.push(text(p.px(clamped), p.py(0) - 14, `${label} = ${num(clamped)}`, { size: 11.5, anchor: 'middle', weight: 700, fill: color }));
+          parts.push(line(p.px(clamped), p.py(0) - 6, p.px(clamped), p.py(0) - 12 - lift, { stroke: color, width: 1, dash: '3 3' }));
+          parts.push(text(p.px(clamped), p.py(0) - 16 - lift, `${label} = ${num(clamped)}`, { size: 11.5, anchor: 'middle', weight: 700, fill: color }));
         });
         parts.push(panel(40, 224, W - 80, 130));
         parts.push(text(60, 258, `a + b = ${num(a)} + ${num(b)} = ${num(a + b)}`, { size: 17, weight: 800, fill: '#33265f' }));
@@ -358,7 +508,7 @@
         parts.push(polygon(front, { fill: '#c9bff2' }));
         parts.push(text(originX + w / 2, originY + 22, `genişlik = ${num(a)}`, { size: 12, anchor: 'middle', weight: 700 }));
         parts.push(text(originX + w + depth + 12, originY - hh / 2, `yükseklik = ${num(h)}`, { size: 12, fill: '#41506a' }));
-        parts.push(text(originX + w + depth * 0.7, originY - hh - depth * 0.35, `derinlik = ${num(b)}`, { size: 11.5, anchor: 'middle', fill: '#41506a' }));
+        parts.push(text(originX + w / 2 + depth * 0.5, originY - hh - depth * 0.7 - 8, `derinlik = ${num(b)}`, { size: 11, anchor: 'middle', fill: '#41506a' }));
         parts.push(panel(392, 46, 232, 132));
         parts.push(text(410, 76, 'Yüz · ayrıt · köşe', { size: 12.5, weight: 800, fill: '#33265f' }));
         parts.push(note(410, 100, '6 yüz · 12 ayrıt · 8 köşe', { size: 12.5 }));
@@ -396,10 +546,10 @@
         // yan yüzler
         parts.push(rect(x0 - hB, y0, hB, hH, { fill: '#d7ccf7' }));
         parts.push(rect(x0 + wA, y0, hB, hH, { fill: '#d7ccf7' }));
-        parts.push(text(x0 + wA / 2, y0 + hH / 2, `ön ${num(a)}×${num(h)}`, { size: 11.5, anchor: 'middle', fill: '#33265f' }));
+        parts.push(text(x0 + wA / 2, y0 + hH / 2, `ön ${num(a)}×${num(h)}`, { size: 10.5, anchor: 'middle', fill: '#33265f' }));
         parts.push(text(x0 + wA / 2, y0 + hH + hB / 2 + 4, `üst ${num(a)}×${num(b)}`, { size: 11.5, anchor: 'middle', fill: '#33265f' }));
         parts.push(text(x0 + wA / 2, y0 + 2 * hH + hB - 8, `alt ${num(a)}×${num(b)}`, { size: 11.5, anchor: 'middle', fill: '#33265f' }));
-        parts.push(text(x0 - hB / 2, y0 + hH / 2, `yan ${num(b)}×${num(h)}`, { size: 10.5, anchor: 'middle', fill: '#33265f' }));
+        parts.push(text(x0 - 4, y0 + hH / 2, `yan ${num(b)}×${num(h)}`, { size: 9.5, anchor: 'end', fill: '#33265f' }));
         parts.push(panel(404, 66, 214, 132));
         const surface = 2 * (a * b + a * h + b * h);
         parts.push(text(422, 94, 'Yüzey alanı', { size: 12.5, weight: 800, fill: '#33265f' }));
@@ -517,7 +667,7 @@
         }
         values.forEach((value, index) => {
           parts.push(circle(p.px(value), p.py(0), 6.5, { fill: ['#5b46a8', '#2f8a63', '#b8791a'][index] }));
-          parts.push(text(p.px(value), p.py(0) - 14 - (index % 2) * 14, String(value), { size: 11.5, anchor: 'middle', weight: 700 }));
+          parts.push(text(p.px(value), p.py(0) - 14 - index * 15, String(value), { size: 11.5, anchor: 'middle', weight: 700 }));
         });
         parts.push(line(p.px(mean), p.py(1.6), p.px(mean), p.py(0), { stroke: '#c03744', width: 2, dash: '5 4' }));
         parts.push(text(p.px(mean), p.py(1.85), `ortalama = ${num(mean)}`, { size: 12.5, anchor: 'middle', weight: 800, fill: '#c03744' }));
@@ -553,7 +703,7 @@
           parts.push(text(p.px(image[0]) + 8, p.py(image[1]) - 8, `${label}'`, { size: 12, weight: 800, fill: '#2f8a63' }));
           parts.push(line(p.px(point[0]), p.py(point[1]), p.px(image[0]), p.py(image[1]), { stroke: '#8a7fb5', width: 1, dash: '3 3' }));
         });
-        parts.push(note(46, H - 42, 'Her köşe aynaya dik taşınır: uzaklık eşit kalır, kenar uzunlukları korunur, yönelim ters döner.', { size: 12 }));
+        parts.push(note(46, H - 42, 'Her köşe aynaya dik taşınır: uzaklık ve uzunluk korunur, yönelim döner.', { size: 11.5 }));
         parts.push(note(46, H - 22, `A(${num(A[0])}, ${num(A[1])}) → A'(${num(mirror(A)[0])}, ${num(mirror(A)[1])})`, { size: 12.5, weight: 700, fill: '#33265f' }));
         return parts.join('');
       },
@@ -572,7 +722,7 @@
         { name: 'by', label: 'B noktası (y)', min: 1, max: 5, step: 1, value: 3 },
       ],
       draw(state) {
-        const p = plotter([-2, 9, -1, 8], { x: 46, y: 40, w: W - 96, h: H - 110 });
+        const p = plotter([-2, 9, -1, 8], { x: 46, y: 40, w: W - 96, h: H - 140 });
         const A = [state.ax, 1];
         const B = [5, state.by];
         const mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
@@ -581,7 +731,7 @@
         const length = Math.hypot(dx, dy) || 1;
         const normal = [-dy / length, dx / length];
         const far = 4.6;
-        const parts = [grid(p)];
+        const parts = [grid(p, { ylabels: false })];
         parts.push(line(p.px(A[0]), p.py(A[1]), p.px(B[0]), p.py(B[1]), { width: 2 }));
         parts.push(line(p.px(mid[0] - normal[0] * far), p.py(mid[1] - normal[1] * far), p.px(mid[0] + normal[0] * far), p.py(mid[1] + normal[1] * far), { stroke: '#c03744', width: 2, dash: '7 5' }));
         [[A, 'A'], [B, 'B']].forEach(([point, label]) => {
@@ -597,8 +747,8 @@
         parts.push(line(p.px(P[0]), p.py(P[1]), p.px(B[0]), p.py(B[1]), { stroke: '#2f8a63', width: 1.4, dash: '3 3' }));
         const dA = Math.hypot(P[0] - A[0], P[1] - A[1]);
         const dB = Math.hypot(P[0] - B[0], P[1] - B[1]);
-        parts.push(note(46, H - 44, 'Orta dikme, uçlara eşit uzaklıktaki noktaların yeridir.', { size: 12.5 }));
-        parts.push(note(46, H - 22, `|PA| = ${num(dA)}   ·   |PB| = ${num(dB)}   → eşit`, { size: 12.5, weight: 700, fill: '#2f8a63' }));
+        parts.push(note(46, H - 34, 'Orta dikme, uçlara eşit uzaklıktaki noktaların yeridir.', { size: 12 }));
+        parts.push(note(46, H - 14, `|PA| = ${num(dA)}   ·   |PB| = ${num(dB)}   → eşit`, { size: 12, weight: 700, fill: '#2f8a63' }));
         return parts.join('');
       },
     },
@@ -736,6 +886,18 @@
     return Object.keys(SCENES);
   }
 
+  /* Denetimler için: sahneyi DOM olmadan çizip SVG parçalarını döndürür. */
+  function render(type, values = {}) {
+    const scene = SCENES[type];
+    if (!scene) return '';
+    const state = {};
+    (scene.params || []).forEach((param) => {
+      const raw = values[param.name];
+      state[param.name] = Number(raw === undefined ? param.value : raw);
+    });
+    return scene.draw(state);
+  }
+
   /* Türün varsayılan sürgü tanımları (denetim ve belge için). */
   function params(type) {
     const scene = SCENES[type];
@@ -743,5 +905,5 @@
     return scene.params.map((param) => ({ ...param }));
   }
 
-  window.MATEMATIK_SAHNE2 = Object.freeze({ mount, types, params, width: W, height: H });
+  window.MATEMATIK_SAHNE2 = Object.freeze({ mount, types, params, render, width: W, height: H });
 })();

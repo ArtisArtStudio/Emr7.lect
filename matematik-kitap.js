@@ -52,23 +52,25 @@
         },
         {
           kind: 'start',
-          title: 'Her Sıfır (0) Aynı Başlangıcı mı Gösterir?',
+          title: 'Sıfırı nerede, hangi anlamda kullanıyoruz?',
           context: [
-            'Gözde Öğretmen, “Sıfırın olmadığı bir sayı sistemi şu an bize çok uzak gelebilir; oysa tarihte sıfır en son kullanılmaya başlayan rakamdır.” diyerek derse başlar ve günlük hayattan örnekler ister.',
-            'Öğrenciler şu örnekleri verir: telefonun şarjı $\\%0$, hava sıcaklığı $0\\,^{\\circ}\\mathrm{C}$, kart bakiyesi $0$ TL, deniz seviyesi $0$ m, maç skoru $0$–$0$.',
+            'Aşağıdaki altı durumu incele. Her birinde $0$ yazılıyor ama aynı şeyi anlatmıyor: kasadaki para, hava sıcaklığı, deniz seviyesi, takvim yılı, sınav puanı ve doğum anındaki yaş.',
           ],
           questions: [
-            q('Bu örneklerin hangilerinde sıfır “yokluk”, hangilerinde “başlangıç noktası” anlamındadır?',
-              'Yokluk: sayılan bir şey kalmadığında. Başlangıç: ölçmenin sıfırdan başladığı durumda.',
-              'Bakiye $0$ TL ve skor $0$–$0$ yokluk; deniz seviyesi ve $0\\,^{\\circ}\\mathrm{C}$ ise başlangıç noktasıdır. Telefon şarjı $\\%0$ yokluk sayılabilir.'),
-            q('Hangi büyüklüklerin doğal başlangıç noktası vardır?',
-              'Sıfırı “hiç yok” anlamında kullanabildiğin büyüklükleri düşün.',
-              'Uzunluk, kütle, alan, hacim ve zamanın doğal başlangıcı vardır (hiç yok = $0$). Sıcaklığın doğal bir başlangıcı yoktur; $0\\,^{\\circ}\\mathrm{C}$ “sıcaklık yok” demek değildir.'),
+            q('Bu altı durumdan hangilerinde $0$ “hiç yok, tükendi” anlamındadır?',
+              'Sayılan şey gerçekten bittiyse sıfır yokluktur.',
+              'Kasadaki para $0$ TL ve sınav puanı $0$ yokluktur: para kalmamıştır, puan alınmamıştır.'),
+            q('Hangilerinde $0$ yalnızca “ölçmeye buradan başlıyoruz” anlamındadır?',
+              'Sıfırın altında da o durumun anlamlı olup olmadığına bak.',
+              'Deniz seviyesi, hava sıcaklığı ve takvim yılı böyledir: $0$’ın altına inilebilir, yani $0$ “yokluk” değil, seçilmiş bir başlangıçtır.'),
+            q('Kendi çevrenden iki örnek yaz: birinde sıfır yokluk, diğerinde başlangıç noktası olsun. Gerekçesini de yaz.',
+              'Yokluk için sayılan bir şeyin bitmesi, başlangıç için ölçmenin sıfırdan başlaması gerekir.',
+              'Örnek: “Sürahide su $0$ L kaldı” yokluktur; “asansör zemin katı $0$” ise başlangıç noktasıdır.'),
           ],
         },
         {
           kind: 'learn',
-          title: 'Tam sayılar: yön, sıfır ve sayı doğrusu',
+          title: 'Doğal sayılar, tam sayılar ve sıfırın anlamları',
           checks: [
             q('$-7$ ile $+3$ arasında kaç tam sayı vardır?',
               'Sayı doğrusunda aradaki sayıları yaz.',
@@ -79,24 +81,49 @@
           ],
           blocks: [
             {
-              heading: 'Doğal sayılar neden yetmez?',
+              heading: 'Doğal sayılar',
               paragraphs: [
-                'Gerçek yaşamda bazı durumları yalnızca doğal sayılarla anlatamayız: deniz seviyesinin altı, borç, hava sıcaklığının sıfırın altına düşmesi. Bu durumlarda **yön** belirtmemiz gerekir.',
-                'ASELSAN’ın geliştirdiği otonom su altı aracı **Deringöz** deniz seviyesinin $8$ m altında çalışıyor, araştırma ekibi ise deniz yüzeyinin $10$ m üstünde. Deniz seviyesini $0$ kabul edersek Deringöz $-8$, ekip $+10$ ile gösterilir.',
-                'Bir sayının önüne konan **$+$** işareti sıfırın sağında, **$-$** işareti sıfırın solunda olduğunu söyler. Önünde işaret yazılmayan sayı pozitif kabul edilir.',
+                'Sayarken kullandığımız $0, 1, 2, 3, \\ldots$ sayılarına **doğal sayılar** denir. Sıfırdan başlayıp sonsuza kadar giden bu dizide hiçbir negatif sayı yoktur.',
+                'Sıfırı saymadan başlarsak $1, 2, 3, \\ldots$ elde edilir; bunlara **sayma sayıları** denir. Yani sıfır doğal sayıdır ama sayma sayısı değildir: saymaya bir nesneyle başlarız, “hiç nesne” durumunu ayrıca sıfırla yazarız.',
+                'Doğal sayılarla toplama ve çıkarma yapılırken bir sınır ortaya çıkar: $5 - 8$ işleminin doğal sayı sonucu yoktur. Soğukluk, borç ve derinlik gibi durumları yazabilmek için sıfırın soluna da sayı koymak gerekir.',
+              ],
+              figure: { type: 'sayi-kumeleri', options: {} },
+            },
+            {
+              heading: 'Tam sayılar ve yön',
+              paragraphs: [
+                'Doğal sayılara negatif sayıların eklenmesiyle **tam sayılar** elde edilir: $\\ldots, -3, -2, -1, 0, 1, 2, 3, \\ldots$. Pozitif tam sayılar, sıfır ve negatif tam sayılar bu kümenin parçalarıdır.',
+                'Bir sayının önüne konan **$+$** işareti sıfırın sağında, **$-$** işareti sıfırın solunda olduğunu söyler. Önünde işareti yazılmayan sayı pozitiftir; ancak sıfırın işareti yoktur.',
+                'ASELSAN’ın geliştirdiği otonom su altı aracı **Deringöz** deniz seviyesinin $5$ m altında çalışıyor, araştırma ekibi ise deniz yüzeyinin $5$ m üstünde. Deniz seviyesini $0$ kabul edersek Deringöz $-5$, ekip $+5$ ile gösterilir; iki değer de sahne doğrusunda işaretlidir.',
               ],
               scene: {
                 type: 'sayi-dogrusu',
-                params: [{ name: 'a', label: 'Sayı (a)', min: -7, max: 7, step: 1, value: 3 }],
+                params: [{ name: 'a', label: 'Sayı (a)', min: -7, max: 7, step: 1, value: -5 }],
               },
             },
             {
-              heading: 'Sıfırın yeri',
+              heading: 'Sıfırın farklı anlamları',
               paragraphs: [
-                'Sıfır ne pozitif ne negatif tam sayıdır; işareti yoktur. Sayı doğrusunda tam ortada, **başlangıç noktası** olarak durur.',
-                'Tam sayılar; pozitif tam sayılar, sıfır ve negatif tam sayıların birleşiminden oluşur: $\\ldots, -3, -2, -1, 0, 1, 2, 3, \\ldots$',
-                'Sayı doğrusunda sağa gidildikçe sayılar büyür, sola gidildikçe küçülür. Bu yüzden $-7 < -3$’tür: $-7$ daha soldadır.',
+                '**1. Yokluk anlamı.** Sayılan bir şey tamamen bittiyse sıfır yokluğu anlatır: kasada $0$ TL kaldı, sepette $0$ elma var, pil bitti ($\\%0$). Burada sıfırın altına inilemez; “eksi iki elma” diye bir şey yoktur.',
+                '**2. Başlangıç noktası anlamı.** Ölçmeye sıfırdan başlanıyorsa ve sıfırın altındaki değerler de anlamlıysa sıfır bir başlangıç noktasıdır: hava sıcaklığı $0\\,^{\\circ}\\mathrm{C}$ (altında $-5\\,^{\\circ}\\mathrm{C}$ olabilir), deniz seviyesi $0$ m (altında derinlik vardır), takvimde yıl $0$ (öncesi de vardır).',
+                '**3. Seçilmiş başlangıç.** Bazen sıfırı biz seçeriz: bir apartmanın zemin katı $0$, bir ülkenin başkenti “$0$ km” noktası, bir maçın başlangıç dakikası. Bu sıfır evrensel değil, anlaşmayla belirlenmiş bir başlangıçtır.',
+                '**Gruplama.** Doğal başlangıcı olan büyüklükler: uzunluk, kütle, alan, hacim, para miktarı, geçen süre. Doğal başlangıcı olmayan, sıfırı seçilmiş büyüklükler: sıcaklık (santigrat ölçeğinde), takvim yılı, deniz seviyesine göre yükseklik, bir yerleşimin başlangıç noktasına göre uzaklık.',
+                'Bu yüzden “$0$ derece” ile “$0$ TL” aynı şeyi anlatmaz: birincisinde hava soğuktur ama sıcaklık vardır, ikincisinde para gerçekten yoktur.',
               ],
+            },
+            {
+              heading: 'Sayı doğrusu ve sıralama',
+              paragraphs: [
+                'Sayı doğrusunda sıfır tam ortada, başlangıç noktası olarak durur. Sağa gidildikçe sayılar büyür, sola gidildikçe küçülür; bu yüzden $-7 < -3$’tür ve ikisi de sıfırın solundadır.',
+                'İki sayıyı karşılaştırırken yalnızca sıfıra uzaklıklarına bakmak yetmez: $-7$ sıfıra daha uzaktır ama daha küçüktür. Soldaki her zaman daha küçüktür.',
+              ],
+              scene: {
+                type: 'iki-sayi',
+                params: [
+                  { name: 'a', label: '1. sayı (a)', min: -7, max: 7, step: 1, value: -7 },
+                  { name: 'b', label: '2. sayı (b)', min: -7, max: 7, step: 1, value: -3 },
+                ],
+              },
             },
             {
               heading: 'Gerçek yaşamda okuma',
@@ -108,9 +135,11 @@
             },
           ],
           boxes: [
-            { title: 'Tam sayı', body: 'Pozitif tam sayılar, sıfır ve negatif tam sayıların birleşimidir. $\\mathbb{Z} = \\{\\ldots, -2, -1, 0, 1, 2, \\ldots\\}$' },
-            { title: 'İşaret', body: 'Sıfırın sağındaki sayılar pozitif ($+$), solundaki sayılar negatiftir ($-$). Sıfırın işareti yoktur.' },
-            { title: 'Sıralama', body: 'Sayı doğrusunda soldaki sayı küçük, sağdaki sayı büyüktür: $-9 < -4 < 0 < 4 < 12$.' },
+            { title: 'Doğal sayılar', body: 'Sayarken kullandığımız 0, 1, 2, 3, … sayıları. Sıfır doğal sayıdır ama sayma sayısı değildir.' },
+            { title: 'Tam sayılar', body: 'Pozitif tam sayılar, sıfır ve negatif tam sayıların birleşimi: …, −3, −2, −1, 0, 1, 2, 3, …' },
+            { title: 'Sıfırın iki anlamı', body: 'Yokluk: 0 TL, 0 elma (altına inilemez). Başlangıç noktası: 0 °C, deniz seviyesi 0 m (altına inilebilir).' },
+            { title: 'İşaret', body: 'Sıfırın sağındaki sayılar pozitif (+), solundaki sayılar negatiftir (−). Sıfırın işareti yoktur.' },
+            { title: 'Sıralama', body: 'Sayı doğrusunda soldaki sayı küçük, sağdaki sayı büyüktür: −9 < −4 < 0 < 4 < 12.' },
           ],
         },
         {
@@ -130,22 +159,29 @@
         },
         {
           kind: 'explore',
-          title: 'Toplayarak sıfıra ulaşmak her zaman mümkün mü?',
-          materials: 'Sayı doğrusu (aşağıdaki sahne), kalem, kâğıt',
+          title: 'Toplayarak sıfıra ulaşılır mı?',
+          materials: 'Aşağıdaki toplama sahnesi, kalem, kâğıt',
           intro: [
-            'Aykut, üzerinde $0, 1, 2, 3, 4$ yazan kartlarla bir oyun kuruyor: her turda istediği kartları seçip topluyor, istediği kadar toplama yapıyor.',
+            'Üç kart seçiyorsun; her kartta $-5$ ile $+5$ arasında bir sayı var. Kartları sırayla sayı doğrusunda yürüyerek topluyorsun. Sıfırda başlıyorsun.',
           ],
           steps: [
-            q('Yalnız bu kartlarla toplama yaparak sıfıra ulaşabilir misin? Neden?',
-              'Kartlarda negatif sayı var mı?',
-              'Hayır. Bu kartlarla yapılan her toplama pozitif sonuç verir; sıfıra ulaşmak için negatif sayılar gerekir.'),
-            q('Sıfıra ulaşabilmek için karta hangi sayıyı eklemelisin?',
-              'Bir sayı ile tersini toplarsan ne olur?',
-              'Her sayının ters işaretlisini eklemek gerekir: $3 + (-3) = 0$.'),
+            q('Sahnedeki üç kartla toplam kaç oluyor? Sayı doğrusunda hangi noktada duruyorsun?',
+              'Kartları sırayla ekle; her adımda kaldığın noktayı yaz.',
+              '$3 + (-3) + 2 = 2$; sayı doğrusunda $+2$ noktasında durulur.'),
+            q('Toplamı sıfır yapmak için üçüncü kartı kaç yapmalısın?',
+              'İlk iki kartın toplamı sıfırsa üçüncü kart da sıfır olmalı.',
+              'İlk iki kart $3 + (-3) = 0$ olduğu için üçüncü kart $0$ olmalı; yoksa toplam sıfırdan farklı olur.'),
+            q('Hiç negatif kart olmadan toplam sıfır olabilir mi? Neden?',
+              'Pozitif sayıların toplamı hangi işareti verir?',
+              'Olamaz; pozitif sayıların toplamı pozitiftir. Sıfıra ulaşmak için her pozitif karta karşılık ters işaretli bir kart gerekir.'),
           ],
           scene: {
-            type: 'sayi-dogrusu',
-            params: [{ name: 'a', label: 'Kartın değeri', min: -7, max: 7, step: 1, value: 3 }],
+            type: 'sifir-toplama',
+            params: [
+              { name: 's1', label: '1. kart', min: -5, max: 5, step: 1, value: 3 },
+              { name: 's2', label: '2. kart', min: -5, max: 5, step: 1, value: -3 },
+              { name: 's3', label: '3. kart', min: -5, max: 5, step: 1, value: 2 },
+            ],
           },
         },
         {
@@ -255,13 +291,7 @@
                 'Önce işaret belirlenir; sonra sayının hangi iki ardışık tam sayı arasında olduğu bulunur. Ardışık tam sayılar arası payda kadar eş parçaya ayrılır ve tam kısımdan başlanarak pay kadar ilerlenir.',
                 'Örnek: $-\\frac{13}{5}$. $-\\frac{13}{5} = -2\\frac{3}{5}$, yani $-3$ ile $-2$ arasında; aralık $5$ parçaya bölünür, $-2$’den $3$ parça sola gidilir.',
               ],
-              scene: {
-                type: 'kesir-serit',
-                params: [
-                  { name: 'd', label: 'Payda (kaç eş parça)', min: 2, max: 10, step: 1, value: 5 },
-                  { name: 'n', label: 'Pay (kaç parça)', min: 0, max: 10, step: 1, value: 3 },
-                ],
-              },
+              figure: { type: 'sayi-dogrusu', options: { from: -4, to: 1, mark: -3 } },
             },
             {
               heading: 'Mutlak değer: sıfıra uzaklık',
@@ -298,7 +328,7 @@
           title: 'Eksi işareti nereye yazılmalı?',
           materials: 'Hesap makinesi, kalem',
           intro: [
-            'İpek, $\\frac{-9}{3}$, $\\frac{9}{-3}$ ve $-\\frac{9}{3}$ yazımlarını görünce kafası karışıyor. Öğretmen bu üç ifadeyi tahtaya yazıp sınıfa soruyor.',
+            'Defterinde aynı sayının üç farklı yazımı var: $\\frac{-9}{3}$, $\\frac{9}{-3}$ ve $-\\frac{9}{3}$. Hangisinin doğru olduğunu düşünüyorsun?',
           ],
           steps: [
             q('Üç yazımın benzerliği ve farkı nedir?',
@@ -398,7 +428,7 @@
           kind: 'start',
           title: '0,999… sayısı 1’e eşit mi?',
           context: [
-            'İlknur Öğretmen sınıfa “$0{,}9999\\ldots$ devirli ondalık gösterimi $1$’e eşit midir?” diye soruyor. Sena “$1$’den küçüktür” diyor, Mete “$1$’e eşittir” diyor.',
+            'Bir tartışma sorusu: $0{,}9999\\ldots$ (dokuzlar sonsuza kadar devam ediyor) sayısı $1$’e eşit midir, yoksa $1$’den küçük müdür? İki arkadaşın farklı cevapları var.',
           ],
           questions: [
             q('Sen hangi görüşe katılıyorsun? Gerekçeni yaz.',
@@ -486,8 +516,12 @@
               '$15 - (-120) = 135\\,^{\\circ}\\mathrm{C}$.'),
           ],
           scene: {
-            type: 'sayi-dogrusu',
-            params: [{ name: 'a', label: 'Sıcaklık', min: -7, max: 7, step: 1, value: -4 }],
+            type: 'sicaklik',
+            params: [
+              { name: 't1', label: 'A gezegeni (°C)', min: -150, max: 0, step: 10, value: -120 },
+              { name: 't2', label: 'B gezegeni (°C)', min: -150, max: 0, step: 10, value: -60 },
+              { name: 't3', label: 'C gezegeni (°C)', min: 0, max: 50, step: 5, value: 15 },
+            ],
           },
         },
         {
@@ -552,7 +586,7 @@
           kind: 'start',
           title: 'İki bölümlü oyun',
           context: [
-            'Deniz Öğretmen, iki bölümden oluşan bir oyun oynatıyor. Doğru cevap puan kazandırıyor, yanlış cevap puan kaybettiriyor. Öğrencilerin bölüm puanları toplanarak oyun sonu puanı hesaplanıyor. Örnek puanlar: $(+7) + (+6) = +13$; $(-2) + (-4) = -6$; $(-5) + (-5) = -10$; $(+7) + (-4) = +3$.',
+            'İki bölümlü bir bilgi yarışmasında doğru cevap puan kazandırıyor, yanlış cevap puan kaybettiriyor. Bölüm puanları toplanarak oyun sonu puanı hesaplanıyor. Örnek durumlar: $(+7) + (+6) = +13$; $(-2) + (-4) = -6$; $(-5) + (-5) = -10$; $(+7) + (-4) = +3$.',
           ],
           questions: [
             q('$(+7) + (-4)$ işlemini sayı doğrusunda nasıl gösterirsin?',
@@ -588,8 +622,8 @@
               scene: {
                 type: 'isaret-kurali',
                 params: [
-                  { name: 'a', label: 'Birinci sayı', min: -6, max: 6, step: 1, value: -4 },
-                  { name: 'b', label: 'İkinci sayı', min: -6, max: 6, step: 1, value: 3 },
+                  { name: 'a', label: 'Birinci sayı', min: -9, max: 9, step: 1, value: -7 },
+                  { name: 'b', label: 'İkinci sayı', min: -9, max: 9, step: 1, value: -4 },
                 ],
               },
             },
@@ -751,13 +785,7 @@
                 'Örnek: $\\frac{3}{8} + \\frac{1}{6}$. EKOK $(8, 6) = 24$; $\\frac{9}{24} + \\frac{4}{24} = \\frac{13}{24}$.',
                 'Paydalar eşitken yalnızca paylar toplanır: $\\frac{2}{7} + \\frac{3}{7} = \\frac{5}{7}$.',
               ],
-              scene: {
-                type: 'kesir-toplam',
-                params: [
-                  { name: 'a', label: 'Birinci kesrin payı', min: 0, max: 2, step: 1, value: 1 },
-                  { name: 'c', label: 'İkinci kesrin payı', min: 0, max: 3, step: 1, value: 1 },
-                ],
-              },
+              figure: { type: 'ekok', options: {} },
             },
             {
               heading: 'Tam sayılı kesirler',
@@ -919,15 +947,7 @@
                 'Bölmede değişme özelliği yoktur: $\\frac{2}{3} \\div \\frac{4}{9} \\ne \\frac{4}{9} \\div \\frac{2}{3}$.',
                 'Gerçek yaşamda “kaç tane sığar” sorusu bölmedir: $6$ litre sirke $\\frac{1}{2}$ litrelik şişelere $6 \\div \\frac{1}{2} = 12$ şişeye dolar.',
               ],
-              scene: {
-                type: 'kesir-carpim',
-                params: [
-                  { name: 'n1', label: 'Birinci kesrin payı', min: 1, max: 4, step: 1, value: 2 },
-                  { name: 'd1', label: 'Birinci kesrin paydası', min: 2, max: 5, step: 1, value: 3 },
-                  { name: 'n2', label: 'İkinci kesrin payı', min: 1, max: 4, step: 1, value: 3 },
-                  { name: 'd2', label: 'İkinci kesrin paydası', min: 2, max: 5, step: 1, value: 4 },
-                ],
-              },
+              figure: { type: 'bolum-parca', options: {} },
             },
             {
               heading: 'Üslü ifadeler',
@@ -1401,14 +1421,7 @@
                 'Dikdörtgenler prizmasının açınımında $6$ dikdörtgen, kare prizmada $2$ kare ve $4$ dikdörtgen, küpte $6$ kare bulunur.',
                 'Her açınım kapalı cisim oluşturmaz: bazı çizimlerde yüzler üst üste biner veya boşluk kalır.',
               ],
-              scene: {
-                type: 'acim',
-                params: [
-                  { name: 'a', label: 'Genişlik', min: 1, max: 5, step: 1, value: 4 },
-                  { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 3 },
-                  { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 2 },
-                ],
-              },
+              figure: { type: 'acim-cizim', options: {} },
             },
             {
               heading: 'Yüzey alanı bağıntıları',
@@ -1718,10 +1731,7 @@
                 'Hacim ölçüleri her basamakta $1000$ ile çarpılır veya bölünür: $1\\ \\mathrm{m}^3 = 1000\\ \\mathrm{dm}^3$, $1\\ \\mathrm{dm}^3 = 1000\\ \\mathrm{cm}^3$, $1\\ \\mathrm{cm}^3 = 1000\\ \\mathrm{mm}^3$.',
                 'Sıvı ölçüleri: $1$ L $= 1000$ mL; $1$ cL $= 10$ mL; $1$ dL $= 100$ mL.',
               ],
-              scene: {
-                type: 'birim-donusum',
-                params: [{ name: 's', label: 'Ayrıt (dm)', min: 1, max: 6, step: 1, value: 2 }],
-              },
+              figure: { type: 'birim-merdiven', options: {} },
             },
             {
               heading: 'Hacim ve sıvı ölçüsü ilişkisi',
@@ -2264,10 +2274,7 @@
                 'Bir şeklin simetri doğrusunu bulmak için şeklin üzerine asetat kâğıdı koyup katlanır; iki parça üst üste geliyorsa katlama çizgisi simetri doğrusudur.',
                 'Simetri aynası, aynı yöntemin araçla yapılmış hâlidir: ayna şeklin yarısına yerleştirilir, aynadaki görüntü şekli tamamlıyorsa ayna doğrusu bir simetri doğrusudur.',
               ],
-              scene: {
-                type: 'yansima',
-                params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -3, max: 3, step: 1, value: 0 }],
-              },
+              figure: { type: 'simetri-dogrusu', options: {} },
             },
             {
               heading: 'Yansımanın özellikleri',
@@ -2436,13 +2443,7 @@
                 'Orta dikme üzerindeki her nokta, parçanın uç noktalarına eşit uzaklıktadır. Tersi de doğrudur: uçlara eşit uzaklıktaki her nokta orta dikme üzerindedir.',
                 'Pergel–cetvel inşası: pergel $A$ ve $B$ merkezli, yarıçapı $|AB|$’nin yarısından büyük eş yaylar çizilir; yayların kesiştiği iki noktayı birleştiren doğru orta dikmedir.',
               ],
-              scene: {
-                type: 'ortadikme',
-                params: [
-                  { name: 'ax', label: 'A noktası (x)', min: 0, max: 4, step: 1, value: 1 },
-                  { name: 'by', label: 'B noktası (y)', min: 1, max: 5, step: 1, value: 3 },
-                ],
-              },
+              figure: { type: 'insa', options: {} },
             },
             {
               heading: 'Açıortay',
