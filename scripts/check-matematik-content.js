@@ -442,7 +442,14 @@ assert.ok(/MATEMATIK_SAHNE2/.test(app), 'Uygulama yerel sahne motorunu kullanmal
 assert.ok(/MATEMATIK_GEOGEBRA/.test(app) && /MATEMATIK_SAHNE2/.test(app),
   'Uygulama sahneleri GeoGebra ile açmalı, yerel motor yedek kalmalı.');
 assert.ok(/if \(canGeo && GG\.prefers\(\)\) mountGeo\(\)/.test(app),
-  'GeoGebra birincil motor olmalı; yerel çizim yalnız yedek.');
+  'GeoGebra destekli sahnelerde applet açılmalı; yerel çizim yedek.');
+assert.ok(/MATEMATIK_GEOGEBRA\.supports\(scene\)/.test(app),
+  'GeoGebra yalnız desteklediği (3B) sahnelerde kullanılmalı.');
+/* Çözüm adımları ile etkinlik soruları karışmamalı: numara boş kalmaz. */
+assert.ok(/\.filter\(\(step\) => step && step\.title && step\.body\)/.test(app),
+  'Çözüm adımları yalnız başlık + gövde taşıyanlardan seçilmeli.');
+assert.ok(/item && item\.prompt/.test(read('matematik-etkinlikler.js')),
+  'KATIL-UYGULA adımları soru olarak etkinliğe dönüşmeli.');
 assert.ok(/matematik-sahne\.js/.test(html), 'index.html yerel sahne motorunu yüklemeli.');
 assert.ok(html.indexOf('matematik-sahne.js') < html.indexOf('matematik.js'),
   'Sahne motoru uygulamadan önce yüklenmeli.');

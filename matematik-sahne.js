@@ -76,8 +76,21 @@
 
   /* ---------- grafik koordinat sistemi ---------- */
 
-  function plotter(bounds, box = { x: 46, y: 34, w: W - 96, h: H - 96 }) {
-    const [xmin, xmax, ymin, ymax] = bounds;
+  /* options.equal: yatay ve düşey ölçek eşitlenir. Dik açı, eğik kenar ve çember
+     ancak bu durumda ekranda da doğru görünür (ör. orta dikme dik görünmeli). */
+  function plotter(bounds, box = { x: 46, y: 34, w: W - 96, h: H - 96 }, options = {}) {
+    let [xmin, xmax, ymin, ymax] = bounds;
+    if (options.equal) {
+      const cx = (xmin + xmax) / 2;
+      const cy = (ymin + ymax) / 2;
+      const scale = Math.min(box.w / (xmax - xmin), box.h / (ymax - ymin));
+      const halfW = box.w / (2 * scale);
+      const halfH = box.h / (2 * scale);
+      xmin = cx - halfW;
+      xmax = cx + halfW;
+      ymin = cy - halfH;
+      ymax = cy + halfH;
+    }
     const px = (x) => box.x + ((x - xmin) / (xmax - xmin)) * box.w;
     const py = (y) => box.y + box.h - ((y - ymin) / (ymax - ymin)) * box.h;
     return { px, py, box, xmin, xmax, ymin, ymax };
@@ -805,49 +818,58 @@
       },
     },
 
+    /* Açınım (yerel yedek): haç biçiminde gerçek açınım.
+         [üst]
+      [sol][ön][sağ][arka]
+         [alt]                                                          */
     'acim': {
       params: [
         { name: 'a', label: 'Genişlik', min: 1, max: 5, step: 1, value: 4 },
         { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 3 },
         { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 2 },
       ],
+      normalize(state) {
+        state.a = clampValue(state.a, 1, 5, 1);
+        state.b = clampValue(state.b, 1, 5, 1);
+        state.h = clampValue(state.h, 1, 5, 1);
+      },
       draw(state) {
         const a = state.a;
         const b = state.b;
         const h = state.h;
-        const unit = Math.max(12, Math.min(26, 540 / (2 * b + a), 280 / (2 * h + 2 * b)));
-        const parts = [];
-        parts.push(note(40, 34, 'Açınım: altı dikdörtgen. Karşılıklı yüzler eştir.', { size: 12.5 }));
-        // dikey gövde: ön (a×h), üst (a×b), arka (a×h), alt (a×b)
-        const totalWidth = (2 * b + a) * unit;
-        const x0 = (640 - totalWidth) / 2 + b * unit;
-        const y0 = 70;
+        /* Ölçek: 4 sütun (b + a + b + a) ve 3 satır (b + h + b) tuvale sığsın. */
+        const unit = Math.min(18, 300 / (2 * a + 2 * b), 190 / (2 * b + h));
         const wA = a * unit;
+        const wB = b * unit;
         const hH = h * unit;
         const hB = b * unit;
-        parts.push(rect(x0, y0, wA, hH, { fill: '#c9bff2' }));
-        parts.push(rect(x0, y0 + hH, wA, hB, { fill: '#ded5fb' }));
-        parts.push(rect(x0, y0 + hH + hB, wA, hH, { fill: '#e8e2fb' }));
-        parts.push(rect(x0, y0 + 2 * hH + hB, wA, hB, { fill: '#f3effe' }));
-        // yan yüzler
-        parts.push(rect(x0 - hB, y0, hB, hH, { fill: '#d7ccf7' }));
-        parts.push(rect(x0 + wA, y0, hB, hH, { fill: '#d7ccf7' }));
-        parts.push(text(x0 + wA / 2, y0 + hH / 2, `ön ${num(a)}×${num(h)}`, { size: 10.5, anchor: 'middle', fill: '#33265f' }));
-        parts.push(text(x0 + wA / 2, y0 + hH + hB / 2 + 4, `üst ${num(a)}×${num(b)}`, { size: 11.5, anchor: 'middle', fill: '#33265f' }));
-        parts.push(text(x0 + wA / 2, y0 + 2 * hH + hB - 8, `alt ${num(a)}×${num(b)}`, { size: 11.5, anchor: 'middle', fill: '#33265f' }));
-        parts.push(text(x0 - 4, y0 + hH / 2, `yan ${num(b)}×${num(h)}`, { size: 9.5, anchor: 'end', fill: '#33265f' }));
-        parts.push(panel(404, 66, 214, 132));
-        const surface = 2 * (a * b + a * h + b * h);
-        parts.push(text(422, 94, 'Yüzey alanı', { size: 12.5, weight: 800, fill: '#33265f' }));
-        parts.push(note(422, 118, '2·(a·b + a·h + b·h)', { size: 12 }));
-        parts.push(text(422, 148, '= ?', { size: 18, weight: 800, fill: '#5b46a8' }));
-        parts.push(note(422, 172, 'her yüz çiftinden iki tane', { size: 11.5 }));
+        const totalW = 2 * wA + 2 * wB;
+        const x0 = 40 + Math.max(0, (320 - totalW) / 2);
+        const yTop = 66;
+        const midY = yTop + hB;
+        const parts = [note(40, 34, 'Açınım: altı yüz tek düzlemde. Karşılıklı yüzler eştir.', { size: 12.5 })];
+        const faces = [
+          ['sol', x0, midY, wB, hH, '#d7ccf7'],
+          ['ön', x0 + wB, midY, wA, hH, '#c9bff2'],
+          ['sağ', x0 + wB + wA, midY, wB, hH, '#d7ccf7'],
+          ['arka', x0 + 2 * wB + wA, midY, wA, hH, '#e8e2fb'],
+          ['üst', x0 + wB, yTop, wA, hB, '#ded5fb'],
+          ['alt', x0 + wB, midY + hH, wA, hB, '#f3effe'],
+        ];
+        faces.forEach(([name, x, y, w, hh, fill]) => {
+          parts.push(rect(x, y, w, hh, { fill }));
+          parts.push(text(x + w / 2, y + hh / 2 + 4, name, { size: 10.5, anchor: 'middle', weight: 700, fill: '#33265f' }));
+        });
+        parts.push(text(x0 + wB + wA / 2, yTop + hB + hH + hB + 22, `${num(a)} × ${num(b)} taban · yükseklik ${num(h)}`, { size: 11.5, anchor: 'middle', weight: 700, fill: '#4a3d7a' }));
+        parts.push(panel(392, 66, 214, 116));
+        parts.push(text(410, 94, 'Yüzey alanı', { size: 12.5, weight: 800, fill: '#33265f' }));
+        parts.push(note(410, 118, '2·(a·b + a·h + b·h)', { size: 11.5 }));
+        parts.push(text(410, 144, '= ?', { size: 18, weight: 800, fill: '#5b46a8' }));
+        parts.push(note(410, 168, 'her yüz çiftinden iki tane', { size: 11 }));
         parts.push(note(40, H - 20, 'Kapaksız kutuda üst yüz hesaba katılmaz.', { size: 12 }));
         return parts.join('');
       },
     },
-
-    /* Cisimlerin üç yönden görünümü: ön · yan · üst. Sonuç yazılmaz. */
     'uc-gorunum': {
       params: [
         { name: 'a', label: 'Genişlik (ön görünüm)', min: 1, max: 4, step: 1, value: 3 },
@@ -892,84 +914,189 @@
         { name: 'b', label: 'Taban genişliği', min: 1, max: 4, step: 1, value: 2 },
         { name: 'h', label: 'Katman sayısı', min: 1, max: 4, step: 1, value: 2 },
       ],
+      normalize(state) {
+        state.a = clampValue(state.a, 1, 4, 1);
+        state.b = clampValue(state.b, 1, 4, 1);
+        state.h = clampValue(state.h, 1, 4, 1);
+      },
+      /* Birim küpler izometrik olarak arkadan öne çizilir: katmanlar üst üste binmez,
+         her küpün üst ve yan yüzü ayrı görünür. */
       draw(state) {
         const a = state.a;
         const b = state.b;
         const h = state.h;
-        const size = 42;
-        const parts = [];
-        parts.push(note(40, 34, 'Hacim = taban alanı × yükseklik; her katman taban alanı kadar birim küp taşır.', { size: 12.5 }));
-        for (let layer = 0; layer < h; layer += 1) {
-          for (let row = 0; row < b; row += 1) {
-            for (let col = 0; col < a; col += 1) {
-              const x = 80 + col * size + row * 16;
-              const y = 300 - layer * size - row * 16;
-              const fill = layer % 2 === 0 ? '#c9bff2' : '#ded5fb';
-              parts.push(polygon([[x, y], [x + size, y], [x + size + 10, y - 7], [x + 10, y - 7]], { fill: '#efeafd', width: 1 }));
-              parts.push(rect(x, y - size, size, size, { fill, stroke: '#4a3d7a', width: 1 }));
+        const u = Math.min(48, 300 / (a + b * 0.55), 200 / (h + b * 0.42));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const totalW = a * u + b * du;
+        const totalH = h * u + b * dv;
+        const x0 = 70 + Math.max(0, (296 - totalW) / 2);
+        const y0 = 98 + totalH;
+        const parts = [note(40, 34, 'Hacim = taban alanı × katman sayısı; her katman taban kadar küp taşır.', { size: 12.5 })];
+        for (let j = b - 1; j >= 0; j -= 1) {
+          for (let k = 0; k < h; k += 1) {
+            for (let i = 0; i < a; i += 1) {
+              const x = x0 + i * u + j * du;
+              const y = y0 - j * dv - k * u;
+              const front = k % 2 === 0 ? '#c9bff2' : '#ded5fb';
+              parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]], { fill: '#efeafd', stroke: '#4a3d7a', width: 1 }));
+              parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]], { fill: '#e4dcfa', stroke: '#4a3d7a', width: 1 }));
+              parts.push(rect(x, y - u, u, u, { fill: front, stroke: '#4a3d7a', width: 1 }));
             }
           }
         }
-        parts.push(panel(392, 70, 224, 104));
+        /* Katman sayısı ve taban ölçüleri yazıyla; sonuç öğrencide. */
+        parts.push(text(x0 + totalW / 2, y0 + 20, `taban ${num(a)} × ${num(b)} · katman ${num(h)}`, { size: 12, anchor: 'middle', weight: 700, fill: '#33265f' }));
+        parts.push(panel(392, 70, 224, 112));
         parts.push(text(410, 100, `Taban: ${num(a)} × ${num(b)} = ?`, { size: 12.5, weight: 700 }));
-        parts.push(text(410, 126, `Katman: ${num(h)}`, { size: 12.5, weight: 700 }));
-        parts.push(text(410, 156, 'Hacim = ?', { size: 14, weight: 800, fill: '#5b46a8' }));
-        parts.push(note(40, H - 20, 'Katman sayısı arttıkça hacim taban alanı kadar artar.', { size: 12 }));
+        parts.push(text(410, 128, `Her katman: ? birim küp`, { size: 12.5, weight: 700, fill: '#41506a' }));
+        parts.push(text(410, 156, 'Hacim = ? birimküp', { size: 14, weight: 800, fill: '#5b46a8' }));
+        parts.push(note(40, H - 20, 'Katman sayısı bir artarsa hacim taban alanı kadar artar.', { size: 12 }));
         return parts.join('');
       },
     },
-
     'birim-donusum': {
       params: [{ name: 's', label: 'Ayrıt (dm)', min: 1, max: 6, step: 1, value: 2 }],
+      normalize(state) {
+        state.s = clampValue(state.s, 1, 6, 1);
+      },
+      /* Ayrıtı s dm olan küp ve köşesinde 1 dm³'lük birim küp: litre ile dm³
+         eşitliği tek resimde görünür. Sonuçlar (?, ?) olarak öğrencide kalır. */
       draw(state) {
         const s = state.s;
-        const size = 40 + s * 22;
-        const parts = [];
-        parts.push(note(40, 34, 'Kenarı 1 dm olan küp 1 litre alır. Ayrıt iki katına çıkarsa hacim sekiz katına çıkar.', { size: 12.5 }));
-        const x = 70;
-        const y = 300;
-        const d = size * 0.42;
-        parts.push(polygon([[x, y - size], [x + size, y - size], [x + size + d, y - size - d * 0.6], [x + d, y - size - d * 0.6]], { fill: '#ded5fb' }));
-        parts.push(polygon([[x + size, y], [x + size + d, y - d * 0.6], [x + size + d, y - size - d * 0.6], [x + size, y - size]], { fill: '#f1ecfd' }));
-        parts.push(polygon([[x, y], [x + size, y], [x + size, y - size], [x, y - size]], { fill: '#c9bff2' }));
-        parts.push(text(x + size / 2, y + 20, `ayrıt = ${num(s)} dm`, { size: 12.5, anchor: 'middle', weight: 700 }));
-        parts.push(panel(348, 70, 268, 132));
-        parts.push(text(366, 100, `Hacim = ${num(s)}³ = ? dm³`, { size: 13.5, weight: 800, fill: '#33265f' }));
-        parts.push(text(366, 128, '= ? litre', { size: 14, weight: 800, fill: '#2f8a63' }));
-        parts.push(text(366, 156, '= ? cm³', { size: 12.5, fill: '#5b46a8' }));
-        parts.push(note(366, 182, '1 dm³ = 1 L = 1000 cm³', { size: 11.5 }));
+        const u = Math.min(52, 190 / s);
+        const du = u * 0.46;
+        const dv = u * 0.34;
+        const side = u * s;
+        const totalW = side + du;
+        const totalH = side + dv;
+        const x0 = 66 + Math.max(0, (290 - totalW) / 2);
+        const y0 = 96 + totalH;
+        const parts = [note(40, 34, 'Kenarı 1 dm olan küp 1 litre alır; 1 dm = 10 cm olduğu için 1 dm³ = 1000 cm³.', { size: 12 })];
+        /* Büyük küp: ön yüz + üst yüz + yan yüz, hepsi kapalı. */
+        parts.push(polygon([[x0, y0 - side], [x0 + side, y0 - side], [x0 + side + du, y0 - side - dv], [x0 + du, y0 - side - dv]], { fill: '#ded5fb', stroke: '#4a3d7a', width: 1.2 }));
+        parts.push(polygon([[x0 + side, y0], [x0 + side + du, y0 - dv], [x0 + side + du, y0 - side - dv], [x0 + side, y0 - side]], { fill: '#f1ecfd', stroke: '#4a3d7a', width: 1.2 }));
+        parts.push(rect(x0, y0 - side, side, side, { fill: '#efeafd', stroke: '#4a3d7a', width: 1.2 }));
+        /* Ön yüzde 10 × 10 cm ızgara: 1 dm = 10 cm. */
+        for (let i = 1; i < 10; i += 1) {
+          parts.push(line(x0 + (side / 10) * i, y0, x0 + (side / 10) * i, y0 - side, { stroke: '#d7cff2', width: 0.6 }));
+          parts.push(line(x0, y0 - (side / 10) * i, x0 + side, y0 - (side / 10) * i, { stroke: '#d7cff2', width: 0.6 }));
+        }
+        /* Birim küp: hacmin ölçü birimi (1 dm³). */
+        parts.push(polygon([[x0, y0 - u], [x0 + u, y0 - u], [x0 + u + du * (u / side), y0 - u - dv * (u / side)], [x0 + du * (u / side), y0 - u - dv * (u / side)]], { fill: '#ffe3a3', stroke: '#b8791a', width: 1.3 }));
+        parts.push(rect(x0, y0 - u, u, u, { fill: '#ffd983', stroke: '#b8791a', width: 1.4 }));
+        parts.push(text(x0 + u / 2, y0 - u / 2 + 4, '1 dm³', { size: 11, anchor: 'middle', weight: 800, fill: '#8a5a10' }));
+        parts.push(text(x0 + u / 2, y0 + 22, 'birim küp', { size: 11, anchor: 'middle', fill: '#8a5a10' }));
+        parts.push(text(x0 + side / 2, y0 + 44, `ayrıt = ${num(s)} dm = ${num(s * 10)} cm`, { size: 12, anchor: 'middle', weight: 700, fill: '#33265f' }));
+        parts.push(panel(392, 70, 224, 126));
+        parts.push(text(410, 100, `Hacim = ${num(s)}³ = ? dm³`, { size: 13, weight: 800, fill: '#33265f' }));
+        parts.push(text(410, 128, '= ? litre', { size: 13.5, weight: 800, fill: '#2f8a63' }));
+        parts.push(text(410, 156, '= ? cm³', { size: 12.5, fill: '#5b46a8' }));
+        parts.push(note(410, 182, '1 dm³ = 1 L = 1000 cm³', { size: 11.5 }));
+        parts.push(note(40, H - 20, 'Sarı küp ölçü birimidir: büyük küpün içinde kaç tane var?', { size: 12 }));
+        return parts.join('');
+      },
+    },
+    /* 12. hafta: ortanca ve açıklık — beş değer sıralanır, ortadaki işaretlenir. */
+    'sirala-ortanca': {
+      params: [
+        { name: 'v1', label: '1. veri', min: 0, max: 12, step: 1, value: 4 },
+        { name: 'v2', label: '2. veri', min: 0, max: 12, step: 1, value: 9 },
+        { name: 'v3', label: '3. veri', min: 0, max: 12, step: 1, value: 6 },
+        { name: 'v4', label: '4. veri', min: 0, max: 12, step: 1, value: 2 },
+        { name: 'v5', label: '5. veri', min: 0, max: 12, step: 1, value: 7 },
+      ],
+      normalize(state) {
+        ['v1', 'v2', 'v3', 'v4', 'v5'].forEach((name) => {
+          state[name] = clampValue(state[name], 0, 12, 1);
+        });
+      },
+      draw(state) {
+        const raw = [state.v1, state.v2, state.v3, state.v4, state.v5];
+        const sorted = raw.slice().sort((a, b) => a - b);
+        const median = sorted[2];
+        const min = sorted[0];
+        const max = sorted[4];
+        const left = 62;
+        const right = W - 62;
+        const axisY = 210;
+        const px = (value) => left + (value / 12) * (right - left);
+        const parts = [text(W / 2, 28, 'Veriler küçükten büyüğe sıralanır, ortadaki ortancadır', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        parts.push(rect(Math.min(px(min), px(max)), axisY - 12, Math.max(2, px(max) - px(min)), 24, { fill: '#efeafb', stroke: 'none', width: 0 }));
+        parts.push(line(left - 12, axisY, right + 12, axisY, { stroke: '#1b2f49', width: 2.2 }));
+        for (let value = 0; value <= 12; value += 1) {
+          parts.push(line(px(value), axisY - 7, px(value), axisY + 7, { stroke: '#5f6f86', width: 1.6 }));
+          if (value % 2 === 0) parts.push(text(px(value), axisY + 30, String(value), { size: 11.5, anchor: 'middle', fill: '#6b7a90' }));
+        }
+        /* Sıralanmış veriler: her nokta kaçıncı sırada olduğuyla yazılır. */
+        const seen = new Map();
+        sorted.forEach((value, index) => {
+          const count = seen.get(value) || 0;
+          seen.set(value, count + 1);
+          const y = axisY - 26 - count * 24;
+          parts.push(circle(px(value), axisY, 7, { fill: index === 2 ? '#c03744' : '#5b46a8' }));
+          parts.push(text(px(value), y, `${index + 1}. ${num(value)}`, { size: 11.5, anchor: 'middle', weight: index === 2 ? 800 : 600, fill: index === 2 ? '#c03744' : '#4a3d7a' }));
+        });
+        const stackTop = axisY - 26 - (sorted.filter((value) => value === median).length - 1) * 24;
+        parts.push(line(px(median), axisY - 8, px(median), stackTop - 16, { stroke: '#c03744', width: 1.6, dash: '5 4' }));
+        parts.push(text(px(median), stackTop - 24, 'ortanca', { size: 12.5, anchor: 'middle', weight: 800, fill: '#c03744' }));
+        /* Açıklık: en büyük ile en küçük arası. */
+        parts.push(line(px(min), axisY + 62, px(max), axisY + 62, { stroke: '#2f8a63', width: 2 }));
+        parts.push(line(px(min), axisY + 54, px(min), axisY + 70, { stroke: '#2f8a63', width: 2 }));
+        parts.push(line(px(max), axisY + 54, px(max), axisY + 70, { stroke: '#2f8a63', width: 2 }));
+        /* Uzun etiket: ölçü çubuğunun ortasına yaslanır, tuvalden taşmaz. */
+        const labelW = 'açıklık = en büyük − en küçük = ?'.length * 12 * 0.53;
+        const spanX = Math.min(right - labelW / 2 - 4, Math.max(left + labelW / 2 + 4, (px(min) + px(max)) / 2));
+        parts.push(text(spanX, axisY + 82, 'açıklık = en büyük − en küçük = ?', { size: 12, anchor: 'middle', weight: 700, fill: '#2f8a63' }));
+        parts.push(panel(40, 300, W - 80, 48));
+        parts.push(text(58, 322, `Beş veri var: sıralandığında ortadaki ${num(3)}. veridir.`, { size: 12.5, weight: 700, fill: '#33265f' }));
+        parts.push(text(58, 340, 'Ortanca, ortalama ve açıklığı sen yaz.', { size: 12, fill: '#41506a' }));
         return parts.join('');
       },
     },
 
-    /* 12-13. Veri */
     'veri-grafik': {
       params: [
         { name: 'a', label: '1. grup', min: 1, max: 8, step: 1, value: 5 },
         { name: 'b', label: '2. grup', min: 1, max: 8, step: 1, value: 3 },
         { name: 'c', label: '3. grup', min: 1, max: 8, step: 1, value: 6 },
+        { name: 'eksen', label: 'Eksen sıfırdan başlasın (1) / kırpılsın (0)', min: 0, max: 1, step: 1, value: 1 },
       ],
+      normalize(state) {
+        state.eksen = clampValue(state.eksen, 0, 1, 1);
+      },
+      /* Bu sahne grafiğin ölçeğini konu eder: eksen kırpılınca aynı veri
+         olduğundan çok farklı görünür. Değerler yazılmaz, öğrenci okur. */
       draw(state) {
         const values = [state.a, state.b, state.c];
         const names = ['1. grup', '2. grup', '3. grup'];
         const base = 300;
         const max = 8;
+        const cut = state.eksen === 0;
+        const floor = cut ? 2 : 0;
+        const span = max - floor;
         const parts = [];
-        parts.push(note(40, 34, 'Sütun yüksekliği sıklığı gösterir; dikey eksen sıfırdan başlar.', { size: 12.5 }));
-        for (let tick = 0; tick <= max; tick += 1) {
-          const y = base - (tick / max) * 200;
+        parts.push(note(40, 34, cut
+          ? 'Dikey eksen 0’dan değil 2’den başlıyor: sütunlar arasındaki fark olduğundan büyük görünür.'
+          : 'Dikey eksen sıfırdan başlıyor: sütun yüksekliği sıklığın kendisidir.', { size: 12 }));
+        for (let tick = floor; tick <= max; tick += 1) {
+          const y = base - ((tick - floor) / span) * 200;
           parts.push(line(90, y, 560, y, { stroke: tick === 0 ? '#1b2f49' : '#eef0f6', width: tick === 0 ? 1.8 : 1 }));
           parts.push(text(80, y + 4, String(tick), { size: 11, anchor: 'end', fill: '#6b7a90' }));
         }
+        if (cut) {
+          /* Kırpılmış eksen işareti: alt kısım atlandı. */
+          parts.push(line(86, base - 200, 86, base, { stroke: '#c03744', width: 1.6, dash: '5 4' }));
+          parts.push(text(96, base - 190, 'kesik eksen', { size: 10.5, fill: '#c03744' }));
+        }
         values.forEach((value, index) => {
-          const height = (value / max) * 200;
+          const height = (Math.max(value, floor) - floor) / span * 200;
           const x = 150 + index * 140;
           parts.push(rect(x, base - height, 70, height, { fill: index === 2 ? '#c9bff2' : '#ded5fb' }));
-          parts.push(text(x + 35, base - height - 8, String(value), { size: 13, anchor: 'middle', weight: 800 }));
+          parts.push(text(x + 35, base - height - 8, '?', { size: 13, anchor: 'middle', weight: 800 }));
           parts.push(text(x + 35, base + 20, names[index], { size: 11.5, anchor: 'middle', fill: '#41506a' }));
         });
-        const total = values.reduce((sum, value) => sum + value, 0);
-        parts.push(text(90, 344, 'Toplam ? · ortalama ? · açıklık ?', { size: 12.5, fill: '#41506a' }));
+        parts.push(text(90, 344, cut ? 'Bu grafik yanıltıcı mı? Neden?' : 'Toplam ? · ortalama ? · açıklık ?', { size: 12.5, fill: '#41506a' }));
         return parts.join('');
       },
     },
@@ -1057,7 +1184,8 @@
         { name: 'by', label: 'B noktası (y)', min: 1, max: 5, step: 1, value: 3 },
       ],
       draw(state) {
-        const p = plotter([-2, 9, -1, 8], { x: 46, y: 40, w: W - 96, h: H - 140 });
+        /* Eşit ölçek: A ile B yatay olmasa da orta dikme ekranda gerçekten dik görünür. */
+        const p = plotter([-2, 9, -1, 8], { x: 46, y: 40, w: W - 96, h: H - 140 }, { equal: true });
         const A = [state.ax, 1];
         const B = [5, state.by];
         const mid = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
@@ -1066,16 +1194,32 @@
         const length = Math.hypot(dx, dy) || 1;
         const normal = [-dy / length, dx / length];
         const far = 4.6;
-        const parts = [grid(p, { ylabels: false })];
+        const parts = [grid(p, { ylabels: false, labelEvery: 2 })];
         parts.push(line(p.px(A[0]), p.py(A[1]), p.px(B[0]), p.py(B[1]), { width: 2 }));
         parts.push(line(p.px(mid[0] - normal[0] * far), p.py(mid[1] - normal[1] * far), p.px(mid[0] + normal[0] * far), p.py(mid[1] + normal[1] * far), { stroke: '#c03744', width: 2, dash: '7 5' }));
         [[A, 'A'], [B, 'B']].forEach(([point, label]) => {
           parts.push(circle(p.px(point[0]), p.py(point[1]), 6, { fill: '#5b46a8' }));
           parts.push(text(p.px(point[0]) + 9, p.py(point[1]) - 9, label, { size: 12, weight: 800, fill: '#5b46a8' }));
         });
-        parts.push(circle(p.px(mid[0]), p.py(mid[1]), 5, { fill: '#c03744' }));
-        parts.push(text(p.px(mid[0]) + 9, p.py(mid[1]) + 16, 'M (orta nokta)', { size: 11, fill: '#c03744' }));
         const P = [mid[0] + normal[0] * 2.4, mid[1] + normal[1] * 2.4];
+        parts.push(circle(p.px(mid[0]), p.py(mid[1]), 5, { fill: '#c03744' }));
+        /* M etiketi: orta dikmeye 20 px dik kaydırılır, P'nin karşı tarafına düşer. */
+        const midSx = p.px(mid[0]);
+        const midSy = p.py(mid[1]);
+        const farSx = p.px(mid[0] + normal[0]);
+        const farSy = p.py(mid[1] + normal[1]);
+        let perpX = -(farSy - midSy);
+        let perpY = farSx - midSx;
+        const perpLen = Math.hypot(perpX, perpY) || 1;
+        perpX /= perpLen;
+        perpY /= perpLen;
+        const pSx = p.px(P[0]);
+        const pSy = p.py(P[1]);
+        if ((pSx - midSx) * perpX + (pSy - midSy) * perpY > 0) {
+          perpX = -perpX;
+          perpY = -perpY;
+        }
+        parts.push(text(midSx + perpX * 22, midSy + perpY * 22 + 4, 'M', { size: 12, anchor: 'middle', weight: 800, fill: '#c03744' }));
         parts.push(circle(p.px(P[0]), p.py(P[1]), 6, { fill: '#2f8a63' }));
         parts.push(text(p.px(P[0]) + 9, p.py(P[1]) - 8, 'P', { size: 12, weight: 800, fill: '#2f8a63' }));
         parts.push(line(p.px(P[0]), p.py(P[1]), p.px(A[0]), p.py(A[1]), { stroke: '#2f8a63', width: 1.4, dash: '3 3' }));

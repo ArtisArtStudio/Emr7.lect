@@ -181,25 +181,33 @@
     return frame(parts.join(''), `Dikdörtgenler prizması ${A} × ${B} × ${C}`);
   }
 
-  /* --- 5. Hacim: katmanlı birim küpler --- */
+  /* --- 5. Hacim: katmanlı birim küpler (arkadan öne, binmeyen izometri) --- */
   function volumeCubes(options = {}) {
-    const cols = options.cols || 3;
-    const rows = options.rows || 2;
-    const layers = options.layers || 2;
-    const size = Math.min(30, 190 / Math.max(cols + rows * 0.5, layers + rows * 0.4));
+    const cols = Math.max(1, Number(options.cols) || 3);
+    const rows = Math.max(1, Number(options.rows) || 2);
+    const layers = Math.max(1, Number(options.layers) || 2);
+    const u = Math.min(28, 210 / (cols + rows * 0.55), 118 / (layers + rows * 0.42));
+    const du = u * 0.5;
+    const dv = u * 0.36;
+    const totalW = cols * u + rows * du;
+    const totalH = layers * u + rows * dv;
+    const x0 = 24 + Math.max(0, (250 - totalW) / 2);
+    const y0 = 60 + totalH;
     const parts = [];
-    for (let layer = layers - 1; layer >= 0; layer -= 1) {
+    for (let layer = 0; layer < layers; layer += 1) {
       for (let row = rows - 1; row >= 0; row -= 1) {
         for (let col = 0; col < cols; col += 1) {
-          const x = 70 + col * size + row * size * 0.34;
-          const y = 150 - row * size * 0.26 - layer * size;
-          parts.push(poly([[x, y - size], [x + size, y - size], [x + size + size * 0.34, y - size - size * 0.26], [x + size * 0.34, y - size - size * 0.26]], { fill: '#efeafd', width: 0.9 }));
-          parts.push(rect(x, y - size, size, size, { fill: layer === 0 ? '#c9bff2' : '#ded5fb', width: 0.9 }));
+          const x = x0 + col * u + row * du;
+          const y = y0 - row * dv - layer * u;
+          const front = layer % 2 === 0 ? '#c9bff2' : '#ded5fb';
+          parts.push(poly([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]], { fill: '#efeafd', width: 0.8 }));
+          parts.push(poly([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]], { fill: '#e4dcfa', width: 0.8 }));
+          parts.push(rect(x, y - u, u, u, { fill: front, width: 0.8 }));
         }
       }
     }
     parts.push(txt(16, 24, `${cols} × ${rows} × ${layers} birim küp`, { size: 12, weight: 700, maxWidth: 200 }));
-    parts.push(txt(16, 176, `Hacim = ${cols * rows * layers} birimküp · her katman ${cols * rows} küp`, { size: 11, fill: ACCENT, maxWidth: 310 }));
+    parts.push(txt(16, 178, `Her katman ${cols * rows} küp; katman sayısı ${layers}.`, { size: 11, fill: ACCENT, maxWidth: 310 }));
     return frame(parts.join(''), 'Birim küplerle hacim');
   }
 
@@ -558,18 +566,21 @@
   function unitCube() {
     const parts = [txt(16, 24, 'Birim küp: her ayrıtı 1 birim', { size: 12, weight: 700, fill: ACCENT })];
     const x = 40;
-    const y = 150;
-    const s = 76;
-    const dx = 42;
+    const y = 154;
+    const s = 74;
+    const dx = 40;
     const dy = 26;
-    parts.push(poly([[x, y], [x + s, y], [x + s + dx, y - dy], [x + dx, y - dy]], { fill: '#ded5fb' }));
-    parts.push(poly([[x + s, y], [x + s + dx, y - dy], [x + s + dx, y - dy - s], [x + s, y - s]], { fill: '#f2eefe' }));
+    /* Üst yüz üst kenardan, yan yüz sağ kenardan yükselir: küp kapalı görünür. */
+    parts.push(poly([[x, y - s], [x + s, y - s], [x + s + dx, y - s - dy], [x + dx, y - s - dy]], { fill: '#ded5fb' }));
+    parts.push(poly([[x + s, y], [x + s + dx, y - dy], [x + s + dx, y - s - dy], [x + s, y - s]], { fill: '#f2eefe' }));
     parts.push(poly([[x, y], [x + s, y], [x + s, y - s], [x, y - s]], { fill: SOFT }));
-    parts.push(txt(x + s / 2, y + 20, '1 birim', { size: 11, anchor: 'middle', fill: MUTED }));
-    parts.push(txt(196, 92, 'Hacim = 1 birim³', { size: 11.5, weight: 800, fill: ACCENT }));
-    parts.push(txt(196, 116, '6 yüz · 12 ayrıt', { size: 10.5, fill: INK }));
-    parts.push(txt(196, 138, '8 köşe', { size: 10.5, fill: INK }));
-    parts.push(txt(196, 160, 'Hacim ölçmenin birimi.', { size: 10, fill: MUTED }));
+    parts.push(txt(x + s / 2, y + 17, '1 birim', { size: 10.5, anchor: 'middle', fill: MUTED }));
+    parts.push(txt(x + s / 2 + dx / 2, y - s - dy - 7, '1 birim', { size: 10.5, anchor: 'middle', fill: MUTED }));
+    parts.push(txt(196, 82, 'Hacim = 1 birim³', { size: 11.5, weight: 800, fill: ACCENT, maxWidth: 138 }));
+    parts.push(txt(196, 104, '6 yüz · 12 ayrıt', { size: 10.5, fill: INK, maxWidth: 138 }));
+    parts.push(txt(196, 124, '8 köşe', { size: 10.5, fill: INK, maxWidth: 138 }));
+    parts.push(txt(196, 146, 'Kenarı 1 birim', { size: 10.5, fill: MUTED, maxWidth: 138 }));
+    parts.push(txt(196, 164, 'hacim birimi.', { size: 10.5, fill: MUTED, maxWidth: 138 }));
     return frame(parts.join(''), 'Ayrıtları bir birim olan küp');
   }
 
@@ -632,15 +643,26 @@
   /* --- 29. Desimetreküp = litre --- */
   function litreCube() {
     const parts = [txt(16, 24, '1 dm³ = 1 litre', { size: 12, weight: 700, fill: GREEN })];
-    parts.push(rect(30, 46, 70, 70, { fill: '#d7f0e3', stroke: GREEN, width: 1.4 }));
-    parts.push(txt(65, 132, 'kenar 1 dm', { size: 10.5, anchor: 'middle', fill: MUTED }));
-    parts.push(txt(118, 84, '=', { size: 18, anchor: 'middle', weight: 800, fill: MUTED }));
-    parts.push(rect(150, 50, 56, 78, { fill: '#eefaf3', stroke: GREEN, width: 1.4, rx: 10 }));
-    parts.push(txt(178, 96, '1 L', { size: 14, anchor: 'middle', weight: 800, fill: GREEN }));
-    parts.push(txt(224, 70, '1 dm = 10 cm', { size: 10.5, fill: INK }));
-    parts.push(txt(224, 92, '1 dm³ = 1000 cm³', { size: 10.5, fill: INK }));
-    parts.push(txt(224, 114, '= 1000 mL', { size: 10.5, fill: INK }));
-    parts.push(txt(16, 168, '1 dm³ = 1 L; hacim ile kapasite eşleşir.', { size: 10.5, fill: MUTED }));
+    /* 1 dm = 10 cm; küpün bir yüzü 10 × 10 cm = 100 cm², hacim 1000 cm³. */
+    const x = 28;
+    const y = 150;
+    const s = 74;
+    const dx = 34;
+    const dy = 22;
+    parts.push(poly([[x, y - s], [x + s, y - s], [x + s + dx, y - s - dy], [x + dx, y - s - dy]], { fill: '#c9ecd9' }));
+    parts.push(poly([[x + s, y], [x + s + dx, y - dy], [x + s + dx, y - s - dy], [x + s, y - s]], { fill: '#e8f7ee' }));
+    parts.push(poly([[x, y], [x + s, y], [x + s, y - s], [x, y - s]], { fill: '#d7f0e3' }));
+    for (let i = 1; i < 10; i += 1) {
+      parts.push(line(x + (s / 10) * i, y, x + (s / 10) * i, y - s, { stroke: '#8fc7a8', width: 0.6 }));
+      parts.push(line(x, y - (s / 10) * i, x + s, y - (s / 10) * i, { stroke: '#8fc7a8', width: 0.6 }));
+    }
+    parts.push(txt(x + s / 2, y + 16, '10 cm', { size: 10.5, anchor: 'middle', fill: MUTED }));
+    parts.push(txt(x + s + dx + 6, y - s / 2, '10 cm', { size: 10.5, fill: MUTED }));
+    parts.push(txt(16, 184, '10 × 10 × 10 = 1000 cm³ = 1 dm³ = 1 L', { size: 10.5, weight: 700, fill: GREEN }));
+    parts.push(txt(196, 66, '1 L', { size: 15, weight: 800, fill: GREEN }));
+    parts.push(txt(196, 88, '1 dm³ = 1000 cm³', { size: 10.5, fill: INK }));
+    parts.push(txt(196, 110, '1 dm = 10 cm', { size: 10.5, fill: INK }));
+    parts.push(txt(196, 132, 'Yüz: 10 × 10 = 100 cm²', { size: 10.5, fill: INK }));
     return frame(parts.join(''), 'Desimetreküp ile litrenin eşitliği');
   }
 

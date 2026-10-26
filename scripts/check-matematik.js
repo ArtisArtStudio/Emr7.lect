@@ -53,7 +53,7 @@ SAHNE.types().forEach((type) => {
 assert.ok(!/geogebra/i.test(scene + figure + kitap), 'Yerel sahne, şekil ve kitap dosyaları GeoGebra çağırmamalı.');
 assert.ok(!fs.existsSync(path.join(root, 'matematik-yerel-sahne.js')), 'Eski yedek sahne dosyası geri gelmemeli.');
 
-// 2b. GeoGebra birincil motor: yirmi dört sahnenin hepsi, her zaman yerel yedekli
+// 2b. GeoGebra yalnız üç boyutlu cisimlerde; her zaman yerel yedekli
 const ggbPath = path.join(root, 'matematik-geogebra.js');
 assert.ok(fs.existsSync(ggbPath), 'GeoGebra köprüsü (matematik-geogebra.js) bulunmalı.');
 const ggb = read('matematik-geogebra.js');
@@ -77,23 +77,37 @@ assert.ok(/is-ggb/.test(css), 'GeoGebra kutusu için ayrı yerleşim sınıfı t
 const ggb3d = ggb.slice(ggb.indexOf("appName: '3d'") - 200, ggb.indexOf("appName: '3d'") + 2400);
 assert.ok(!/SetPerspective\("G"\)/.test(ggb3d) || /3B uygulamasında perspektif/.test(ggb),
   '3B sahnede grafik perspektifi zorlanmamalı.');
-/* Birincil motor GeoGebra: yirmi dört sahnenin hepsi applet olarak tanımlı,
-   yerel SVG motoru aynı yirmi dört sahneyi yedek olarak çizmeye devam ediyor. */
+/* GeoGebra yalnız 3B cisimlerde: prizma, hacim, birim küp, üç görünüm, açınım.
+   Diğer sahneler yerel SVG ile çizilir; her 3B sahnenin de yerel yedeği vardır. */
 load('matematik-geogebra.js');
 const GG = sandbox.window.MATEMATIK_GEOGEBRA;
 assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function',
   'MATEMATIK_GEOGEBRA köprüsü yüklenemedi.');
 const localTypes = SAHNE.types();
 const geoTypes = GG.types();
-assert.equal(geoTypes.length, localTypes.length,
-  `GeoGebra ve yerel motor aynı sayıda sahne tanımlamalı (${geoTypes.length} / ${localTypes.length}).`);
-localTypes.forEach((type) => {
-  assert.ok(geoTypes.includes(type), `${type} için GeoGebra appleti tanımlı olmalı.`);
+const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'acim'];
+assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
+  `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
+GEO_3D.forEach((type) => {
+  assert.ok(localTypes.includes(type), `${type} için yerel yedek sahne korunmalı.`);
   const local = SAHNE.params(type).map((param) => param.name);
   const geo = GG.params(type).map((param) => param.name);
   assert.deepEqual(geo, local, `${type} sürgüleri iki motorda aynı olmalı.`);
 });
+/* 2B sahneler GeoGebra'ya bağlanmamalı. */
+localTypes.filter((type) => !GEO_3D.includes(type)).forEach((type) => {
+  assert.ok(!geoTypes.includes(type), `${type} 2B sahnesi GeoGebra ile açılmamalı.`);
+});
 assert.ok(/\.is-ggb/.test(css) || /is-ggb/.test(css), 'GeoGebra kutusu için yerleşim sınıfı tanımlı olmalı.');
+/* Çerçeve: yükleme yazısı kaplama, tuval kareye yakın ve en az 300 px. */
+assert.ok(/\.math-ggb-loading\{position:absolute/.test(css), 'Yükleme yazısı kaplama olmalı; üstte şerit bırakmamalı.');
+assert.ok(/height:clamp\(300px/.test(css), 'GeoGebra tuvali en az 300 px yüksekliğinde olmalı.');
+assert.ok(/max-width:480px/.test(css), 'Tuval dar ve uzun olmamalı; genişlik sınırlı olmalı.');
+/* 3B görünüm düğmeleri ve açınım düğmesi. */
+assert.ok(/SetViewDirection/.test(ggb) && /data-ggb-view/.test(ggb), 'Ön/yan/üst görünüm düğmeleri olmalı.');
+assert.ok(/data-ggb-net/.test(ggb) && /Açınımı aç/.test(ggb), 'Açınım düğmesi ve dokunma ile katlama olmalı.');
+assert.ok(/math-ggb-ortho/.test(ggb) && /math-ggb-views/.test(ggb), 'Üç görünüm bölünmüş panelde gösterilmeli.');
+assert.ok(GG.hasSplit('uc-gorunum') && GG.hasNet('acim'), 'Bölünmüş görünüm ve açınım sahneleri tanımlı olmalı.');
 
 /* Sürgü yoklaması: her sahne için uç değerlerde üretilen GeoGebra komutları denetlenir.
    Nokta ondalığı, dengeli parantez, beyaz listedeki komutlar ve tanımlı nesne adları. */
@@ -105,7 +119,7 @@ const GEO_COMMANDS = new Set([
   'Element', 'SetColor',
   'abs', 'cos', 'sin', 'pi', 'Point',
 ]);
-localTypes.forEach((type) => {
+GEO_3D.forEach((type) => {
   const base = GG.params(type);
   const combos = [{}];
   base.forEach((param) => {
@@ -320,6 +334,6 @@ assert.ok(/ticari olmayan/i.test(notices) && /geogebra\.org/i.test(notices),
   'Atıf notu ticari olmayan kullanım ve geogebra.org bağlantısını içermeli.');
 assert.ok(/yerel SVG/.test(analysis), 'Analiz dokümanı yerel sahne kararını anlatmalı.');
 
-console.log(`Matematik denetimi geçti: ${GG.types().length} GeoGebra appleti (birincil motor), `
-  + `${SAHNE.types().length} yerel yedek sahne, ${FIG.types().length} şekil türü; sürgü koordinatları, `
+console.log(`Matematik denetimi geçti: ${GG.types().length} GeoGebra 3B appleti, `
+  + `${SAHNE.types().length} yerel sahne, ${FIG.types().length} şekil türü; sürgü koordinatları, `
   + 'sürükleme, tek kolon mobil yerleşim, GeoGebra komut geçerliliği ve yerel yedek kuralı doğru.');

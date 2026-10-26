@@ -14,10 +14,10 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-## GeoGebra (matematik alanı) — birincil çizim motoru
+## GeoGebra (matematik alanı) — yalnız üç boyutlu cisimler
 
-Matematik alanındaki yirmi dört etkileşimli sahnenin tamamı GeoGebra web uygulamasıyla
-açılır. Applet, GeoGebra'nın resmî yükleyicisiyle
+Matematik alanındaki üç boyutlu beş sahne (prizma, hacim, birim küp, üç görünüm, açınım)
+GeoGebra web uygulamasıyla açılır. Applet, GeoGebra'nın resmî yükleyicisiyle
 <https://www.geogebra.org/apps/deployggb.js> adresinden **yalnız o sahne ekranda
 göründüğünde** yüklenir; sayfa açılışında dış istek yapılmaz. Bu depoda yazılmış bağımsız
 SVG motoru (`matematik-sahne.js`, `matematik-figure.js`) silinmedi: ağ yoksa, CDN
