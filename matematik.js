@@ -166,10 +166,14 @@
     }).join('');
   }
 
+  /* Çözüm doğrudan görünmez: “Cevabı göster” açılınca basamaklar ve sonuç gelir. */
   function stepsMarkup(steps, result) {
     if (!Array.isArray(steps) || !steps.length) return '';
-    return `<ol class="math-example-steps">${steps.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>
-      ${result ? `<p class="math-example-answer"><span>Sonuç</span>${rich(result)}</p>` : ''}`;
+    return `<details class="math-solution">
+      <summary>Cevabı göster</summary>
+      <ol class="math-example-steps">${steps.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>
+      ${result ? `<p class="math-example-answer"><span>Sonuç</span>${rich(result)}</p>` : ''}
+    </details>`;
   }
 
   function stageCard(week, stage, index, scenes) {
@@ -179,7 +183,7 @@
     const questions = (window.MATEMATIK_ETKINLIKLER
       ? window.MATEMATIK_ETKINLIKLER.forStage(week.id, index) : []);
     const questionHost = questions.length
-      ? `<div class="math-etkinlik-list" id="mathQuestions-${week.id}-${index}"></div>`
+      ? `<div class="math-etkinlik-list math-activities" id="mathQuestions-${week.id}-${index}"></div>`
       : '';
     return `<section class="math-card math-stage-card" data-kind="${stage.kind}" aria-labelledby="mathStage-${week.id}-${index}">
       <h3 id="mathStage-${week.id}-${index}"><span class="math-step">${index + 1}</span><span class="math-scene-kind">${label}</span><span class="math-scene-name">${rich(stage.title || '')}</span></h3>
@@ -226,7 +230,7 @@
     return `<section class="math-card math-exam">
       <h3><span class="math-step">◆</span><span class="math-scene-kind">TEMA ÖLÇME</span><span class="math-scene-name">${rich(book.exam.title)}</span></h3>
       <p class="math-note">${rich(book.exam.note || '')}</p>
-      ${hasQuestions ? `<div class="math-etkinlik-list" id="mathExam-${week.id}"></div>` : ''}
+      ${hasQuestions ? `<div class="math-etkinlik-list math-activities" id="mathExam-${week.id}"></div>` : ''}
     </section>`;
   }
 

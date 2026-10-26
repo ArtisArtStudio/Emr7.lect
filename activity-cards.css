@@ -1,9 +1,9 @@
 /* Ortak etkinlik kartı görünümü.
    Tema 1 (1. hafta) etkinlik alanı bu görünümün ölçüsüdür. Tema 2, Tema 3, karekod
-   çalışmaları ve matematik etkinlikleri (#mathActivities) aynı kart, aynı başlık düzeni
+   çalışmaları ve matematik etkinlikleri (.math-activities) aynı kart, aynı başlık düzeni
    ve aynı düğme biçimini kullanır; böylece haftalar arasında biçim değişmez. */
 
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-card {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-card {
   position: relative;
   display: block;
   min-width: 0;
@@ -16,18 +16,18 @@
   color: #102238;
 }
 
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-top {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-top {
   padding: clamp(16px, 2.4vw, 24px);
   border-bottom: 1px solid #e5ecf6;
   background: linear-gradient(125deg, #eef4ff, #fff 82%);
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-heading-row {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-heading-row {
   display: flex;
   align-items: center;
   gap: 14px;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-title-copy { min-width: 0; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-icon {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-title-copy { min-width: 0; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-icon {
   display: grid;
   flex: 0 0 54px;
   place-items: center;
@@ -40,7 +40,7 @@
   font-size: 27px;
   line-height: 1;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-kicker {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-kicker {
   margin: 0 0 5px;
   color: #3f57b3;
   font-size: 11.5px;
@@ -49,27 +49,27 @@
   text-transform: uppercase;
   line-height: 1.4;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-title {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-title {
   margin: 0;
   color: #102238;
   font-size: clamp(17px, 2.4vw, 21px);
   line-height: 1.3;
   letter-spacing: -.02em;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-instruction {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-instruction {
   margin: 11px 0 0;
   color: #3d4b5c;
   font-size: 13.5px;
   line-height: 1.65;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-meta {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin: 0;
   padding: 14px clamp(14px, 2.4vw, 24px) 0;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-meta > span {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-meta > span {
   padding: 6px 11px;
   border: 1px solid #e2e8f2;
   border-radius: 99px;
@@ -78,20 +78,20 @@
   font-size: 12px;
   font-weight: 650;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-meta > span:first-child {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-meta > span:first-child {
   border-color: #d9def9;
   color: #4d59dd;
   background: #eff2ff;
 }
 
 /* Kaynak (video / dinleme / metin) bağlantısı: kartın üstünde, ikonlu tek satır. */
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .reader-links {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .reader-links {
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
   padding: 14px clamp(14px, 2.4vw, 24px) 0;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .source-link {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .source-link {
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -108,20 +108,20 @@
   line-height: 1.3;
   text-decoration: none;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .source-link:hover { background: #ffe4d5; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .source-link.pdf-source-link {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .source-link:hover { background: #ffe4d5; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .source-link.pdf-source-link {
   border-color: #9cb4d8;
   color: #1c3f70;
   background: #eef4ff;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .source-link.audio-source-link {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .source-link.audio-source-link {
   border-color: #8ab7ca;
   color: #174e66;
   background: #eaf8fc;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .qr-link-icon { flex: 0 0 auto; font-size: 20px; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .qr-link-title { min-width: 0; overflow-wrap: anywhere; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .qr-link-action {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .qr-link-icon { flex: 0 0 auto; font-size: 20px; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .qr-link-title { min-width: 0; overflow-wrap: anywhere; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .qr-link-action {
   flex: 0 0 auto;
   padding: 5px 9px;
   border-radius: 8px;
@@ -130,16 +130,16 @@
   font-size: 12px;
   white-space: nowrap;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .source-link.pdf-source-link .qr-link-action { background: #2b5090; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .source-link.audio-source-link .qr-link-action { background: #17637b; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .source-link.pdf-source-link .qr-link-action { background: #2b5090; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .source-link.audio-source-link .qr-link-action { background: #17637b; }
 
 /* Soru kartları: tema 1'deki soru kartıyla aynı çerçeve. */
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-list {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-list {
   display: grid;
   gap: 14px;
   padding: 16px clamp(12px, 2.4vw, 24px) 22px;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-card {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-card {
   margin: 0;
   padding: clamp(13px, 2.2vw, 18px);
   border: 1px solid #d9e1eb;
@@ -148,19 +148,19 @@
   background: #f8fafc;
   box-shadow: 0 5px 16px #253d640c;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-card[data-state="correct"] {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-card[data-state="correct"] {
   border-left-color: #26834d;
   background: #f1fbf4;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-card[data-state="partial"] {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-card[data-state="partial"] {
   border-left-color: #cf8a2a;
   background: #fffaf0;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-card[data-state="wrong"] {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-card[data-state="wrong"] {
   border-left-color: #b42318;
   background: #fdf3f2;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-card h5 {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-card h5 {
   margin: 0 0 9px;
   color: #2c3f57;
   font-size: 13.5px;
@@ -168,20 +168,20 @@
   letter-spacing: 0;
   text-transform: none;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .t2-body { display: grid; gap: 12px; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .t2-question {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .t2-body { display: grid; gap: 12px; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .t2-question {
   margin: 0;
   padding: 0;
   border: 0;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .t2-question legend {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .t2-question legend {
   margin-bottom: 8px;
   color: #16283e;
   font-size: 14px;
   font-weight: 650;
   line-height: 1.55;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-actions {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-actions {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -190,7 +190,7 @@
 }
 
 /* Düğmeler: her yerde aynı. Kontroller mavi, yapay zekâ değerlendirmesi açık mavi. */
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -207,22 +207,22 @@
   cursor: pointer;
   transition: background .15s ease, border-color .15s ease;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn:hover { border-color: #9bb2df; background: #f6f9ff; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn:disabled { opacity: .55; cursor: default; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn.check-button {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn:hover { border-color: #9bb2df; background: #f6f9ff; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn:disabled { opacity: .55; cursor: default; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn.check-button {
   border: 0;
   border-radius: 9px;
   background: #245cdb;
   color: #fff;
   box-shadow: 0 4px 10px #245cdb2a;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn.check-button:hover { background: #1b4dbd; color: #fff; }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn.ai-button {
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn.check-button:hover { background: #1b4dbd; color: #fff; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn.ai-button {
   border: 1px solid #cbd8ee;
   background: #eef4ff;
   color: #1f4bb0;
 }
-:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .btn.ai-button:hover { background: #e2ecff; }
+:is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .btn.ai-button:hover { background: #e2ecff; }
 
 /* Adım şeridi: tema 1'deki numaralı etkinlik şeridiyle aynı ölçü. */
 :is(#tema2Practice, #tema3Practice) .t2-track { gap: 6px; padding: 3px 1px 4px; }
@@ -237,11 +237,11 @@
 :is(#tema2Practice, #tema3Practice) .t2-card + .t2-controls { margin-top: 4px; }
 
 @media (max-width: 560px) {
-  :is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-icon { flex-basis: 46px; width: 46px; height: 46px; font-size: 23px; }
-  :is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .question-list { padding: 13px 12px 18px; }
+  :is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-icon { flex-basis: 46px; width: 46px; height: 46px; font-size: 23px; }
+  :is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .question-list { padding: 13px 12px 18px; }
 }
 @media print {
-  :is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, #mathActivities) .activity-card { break-inside: avoid; box-shadow: none; }
+  :is(#tema2Practice, #tema3Practice, #turkceQr, #socialQr, .math-activities) .activity-card { break-inside: avoid; box-shadow: none; }
 }
 
 /* Akış düğmeleri: tema 1'deki "Önceki / Sonraki etkinlik" ölçüsüyle aynı. */

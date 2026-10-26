@@ -10,9 +10,10 @@
   const esc = (value) => String(value == null ? '' : value)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+  /* Sayı yazımı: ondalık virgülle, eksi işareti tipografik (−) olarak. */
   const num = (value) => {
     const rounded = Math.round(Number(value) * 100) / 100;
-    return String(rounded).replace('.', ',');
+    return String(rounded).replace('.', ',').replace(/^-/, '−');
   };
 
   /* ---------- ortak çizim yardımcıları ---------- */
@@ -105,6 +106,59 @@
       </div>`).join('');
   }
 
+  /* ---------- sayı ekseni ve sürükleme yardımcıları ---------- */
+
+  /* Değeri sürgünün aralığına oturt: taşma ve adım kayması olmaz. */
+  function clampValue(value, min, max, step) {
+    const stepSize = step || 1;
+    const number = Number(value);
+    if (!Number.isFinite(number)) return min;
+    const snapped = Math.round((number - min) / stepSize) * stepSize + min;
+    const bounded = Math.max(min, Math.min(max, snapped));
+    return Math.round(bounded * 1000) / 1000;
+  }
+
+  /* Sayı doğrusu: çizim ile sürgü aynı aralığı kullanır (ölü bölge kalmaz). */
+  function numberAxis(options = {}) {
+    const min = options.min == null ? -7 : options.min;
+    const max = options.max == null ? 7 : options.max;
+    const axisY = options.axisY == null ? 150 : options.axisY;
+    const every = options.every || 1;
+    const left = 52;
+    const right = W - 52;
+    const px = (value) => left + ((value - min) / (max - min)) * (right - left);
+    const parts = [];
+    parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
+    parts.push(`<polygon points="${num(right + 22)},${num(axisY)} ${num(right + 10)},${num(axisY - 5)} ${num(right + 10)},${num(axisY + 5)}" fill="#1b2f49"/>`);
+    for (let value = min; value <= max; value += 1) {
+      const zero = value === 0;
+      parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
+      if (value % every === 0) {
+        parts.push(text(px(value), axisY + 26, num(value), { size: 12, anchor: 'middle', weight: zero ? 800 : 500, fill: zero ? '#1b2f49' : '#6b7a90' }));
+      }
+    }
+    return {
+      parts: parts.join(''),
+      px,
+      left,
+      right,
+      axisY,
+      min,
+      max,
+      /* Ekrandaki x konumunu adımına oturmuş sayıya çevirir. */
+      valueAt(x, low, high, step) {
+        const raw = min + ((x - left) / (right - left)) * (max - min);
+        return clampValue(raw, low == null ? min : low, high == null ? max : high, step || 1);
+      },
+    };
+  }
+
+  /* Sürüklenebilir nokta: görünmez büyük hedef alan + imleç + erişilebilir ad. */
+  function handle(name, x, y, label) {
+    return `<g data-handle="${esc(name)}" role="button" tabindex="0" aria-label="${esc(label)}" style="cursor:ew-resize">`
+      + `<circle cx="${num(x)}" cy="${num(y)}" r="18" fill="#1b2f49" fill-opacity="0" pointer-events="all"/></g>`;
+  }
+
   /* ---------- sahneler ---------- */
 
   const SCENES = {
@@ -112,29 +166,19 @@
     'sayi-dogrusu': {
       params: [{ name: 'a', label: 'Sayı (a)', min: -7, max: 7, step: 1, value: 3 }],
       draw(state) {
-        const a = Number(state.a) || 0;
-        const axisY = 150;
-        const left = 52;
-        const right = W - 52;
-        const px = (value) => left + ((value + 8) / 16) * (right - left);
+        const axis = numberAxis({ min: -7, max: 7, axisY: 150, every: 1 });
+        const a = clampValue(state.a, -7, 7, 1);
         const parts = [text(W / 2, 30, 'Sayı doğrusu: sıfır başlangıç noktasıdır', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
-        parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
-        parts.push(`<polygon points="${num(right + 22)},${num(axisY)} ${num(right + 10)},${num(axisY - 5)} ${num(right + 10)},${num(axisY + 5)}" fill="#1b2f49"/>`);
-        for (let value = -8; value <= 8; value += 1) {
-          const zero = value === 0;
-          parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
-          parts.push(text(px(value), axisY + 26, String(value), { size: 12, anchor: 'middle', weight: zero ? 800 : 500, fill: zero ? '#1b2f49' : '#6b7a90' }));
-        }
-        parts.push(text(left, axisY + 48, 'sola: küçülür', { size: 11.5, anchor: 'start', fill: '#b8791a' }));
-        parts.push(text(right, axisY + 48, 'sağa: büyür', { size: 11.5, anchor: 'end', fill: '#2f8a63' }));
-        parts.push(circle(px(0), axisY, 4.5, { fill: '#1b2f49', stroke: '#fff', width: 1.5 }));
+        parts.push(axis.parts);
+        parts.push(text(axis.left, axis.axisY + 48, 'sola: küçülür', { size: 11.5, anchor: 'start', fill: '#b8791a' }));
+        parts.push(text(axis.right, axis.axisY + 48, 'sağa: büyür', { size: 11.5, anchor: 'end', fill: '#2f8a63' }));
 
-        const points = [{ value: a, label: `a = ${num(a)}`, color: '#5b46a8', y: 84 }];
-        if (a !== 0) points.push({ value: -a, label: `−a = ${num(-a)}`, color: '#2f8a63', y: 112 });
+        const points = [{ value: a, label: `a = ${num(a)}`, color: '#5b46a8', y: 92 }];
+        if (a !== 0) points.push({ value: -a, label: `−a = ${num(-a)}`, color: '#2f8a63', y: 120 });
         points.forEach((point) => {
-          parts.push(line(px(point.value), axisY - 9, px(point.value), point.y + 7, { stroke: point.color, width: 1.2, dash: '4 4' }));
-          parts.push(circle(px(point.value), axisY, 7, { fill: point.color }));
-          parts.push(text(px(point.value), point.y, point.label, { size: 13, anchor: 'middle', weight: 800, fill: point.color }));
+          parts.push(line(axis.px(point.value), axis.axisY - 10, axis.px(point.value), point.y + 8, { stroke: point.color, width: 1.2, dash: '4 4' }));
+          parts.push(circle(axis.px(point.value), axis.axisY, 7, { fill: point.color }));
+          parts.push(text(axis.px(point.value), point.y, point.label, { size: 13, anchor: 'middle', weight: 800, fill: point.color }));
         });
 
         parts.push(panel(40, 214, W - 80, 96));
@@ -143,15 +187,12 @@
         parts.push(text(58, 268, a > 0 ? 'a sıfırın sağında: a pozitif, −a negatif.' : a < 0 ? 'a sıfırın solunda: a negatif, −a pozitif.' : 'Sıfır ne pozitif ne negatiftir; başlangıç noktasıdır.', { size: 12.5, fill: '#41506a' }));
         parts.push(text(58, 294, a === 0 ? 'Ters sayı yine sıfırdır.' : `a + (−a) = ${num(a)} + (${num(-a)}) = 0`, { size: 12.5, fill: '#2f8a63', weight: 700 }));
         parts.push(text(W / 2, 344, 'Mor nokta sayıyı, yeşil nokta tersini gösterir. Noktayı sürükleyebilirsin.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
-        parts.push(`<g data-handle="a" style="cursor:ew-resize">${circle(px(a), axisY, 17, { fill: 'transparent', stroke: 'none' })}</g>`);
+        parts.push(handle('a', axis.px(a), axis.axisY, 'a noktasını sürükle'));
         return parts.join('');
       },
-      drag(svg, event, box, state) {
-        const left = 52;
-        const right = W - 52;
-        const local = localPoint(svg, event);
-        const value = Math.round(((local.x - left) / (right - left)) * 16 - 8);
-        state.a = Math.max(-7, Math.min(7, value));
+      drag(svg, event, name, state) {
+        const axis = numberAxis({ min: -7, max: 7, axisY: 150 });
+        state.a = axis.valueAt(localPoint(svg, event).x, -7, 7, 1);
       },
       handles: [{ name: 'a', label: 'a noktasını sürükle' }],
     },
@@ -164,9 +205,9 @@
         { name: 't3', label: 'C gezegeni (°C)', min: 0, max: 50, step: 5, value: 15 },
       ],
       draw(state) {
-        const t1 = Number(state.t1);
-        const t2 = Number(state.t2);
-        const t3 = Number(state.t3);
+        const t1 = clampValue(state.t1, -150, 0, 10);
+        const t2 = clampValue(state.t2, -150, 0, 10);
+        const t3 = clampValue(state.t3, 0, 50, 5);
         const axisY = 168;
         const left = 56;
         const right = W - 56;
@@ -202,23 +243,15 @@
         { name: 'b', label: '2. sayı (b)', min: -7, max: 7, step: 1, value: -3 },
       ],
       draw(state) {
-        const a = Number(state.a) || 0;
-        const b = Number(state.b) || 0;
-        const axisY = 156;
-        const left = 52;
-        const right = W - 52;
-        const px = (value) => left + ((value + 8) / 16) * (right - left);
+        const a = clampValue(state.a, -7, 7, 1);
+        const b = clampValue(state.b, -7, 7, 1);
+        const axis = numberAxis({ min: -7, max: 7, axisY: 156, every: 1 });
         const parts = [text(W / 2, 34, 'İki sayı sayı doğrusunda', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
-        parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
-        for (let value = -8; value <= 8; value += 1) {
-          const zero = value === 0;
-          parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
-          parts.push(text(px(value), axisY + 26, String(value), { size: 12, anchor: 'middle', weight: zero ? 800 : 500, fill: zero ? '#1b2f49' : '#6b7a90' }));
-        }
-        [[a, 'a', '#5b46a8', 96], [b, 'b', '#2f8a63', 122]].forEach(([value, label, color, y]) => {
-          parts.push(line(px(value), axisY - 8, px(value), y + 8, { stroke: color, width: 1.2, dash: '4 4' }));
-          parts.push(circle(px(value), axisY, 7, { fill: color }));
-          parts.push(text(px(value), y, `${label} = ${num(value)}`, { size: 13, anchor: 'middle', weight: 800, fill: color }));
+        parts.push(axis.parts);
+        [[a, 'a', '#5b46a8', 96], [b, 'b', '#2f8a63', 124]].forEach(([value, label, color, y]) => {
+          parts.push(line(axis.px(value), axis.axisY - 9, axis.px(value), y + 8, { stroke: color, width: 1.2, dash: '4 4' }));
+          parts.push(circle(axis.px(value), axis.axisY, 7, { fill: color }));
+          parts.push(text(axis.px(value), y, `${label} = ${num(value)}`, { size: 13, anchor: 'middle', weight: 800, fill: color }));
         });
         const small = Math.min(a, b);
         const big = Math.max(a, b);
@@ -227,20 +260,19 @@
         parts.push(text(58, 244, a === b ? 'İki sayı eşit: aynı noktadadırlar.' : `${num(small)} < ${num(big)}  ·  soldaki küçük, sağdaki büyük`, { size: 13.5, weight: 800, fill: '#33265f' }));
         parts.push(text(58, 270, `İki sayı arasındaki uzaklık: |${num(b)} − (${num(a)})| = ${num(distance)} birim`, { size: 12.5, fill: '#41506a' }));
         parts.push(text(58, 296, a < 0 && b > 0 ? 'Biri sıfırın solunda, diğeri sağında: işaretleri farklı.' : (a <= 0 && b <= 0 ? 'İkisi de sıfırın solunda: ikisi de negatif olabilir.' : 'İkisi de sıfırın sağında.'), { size: 12, fill: '#6b7a90' }));
-        parts.push(`<g data-handle="a" style="cursor:ew-resize">${circle(px(a), axisY, 17, { fill: 'transparent', stroke: 'none' })}</g>`);
+        parts.push(handle('a', axis.px(a), axis.axisY, 'a noktasını sürükle'));
+        parts.push(handle('b', axis.px(b), axis.axisY, 'b noktasını sürükle'));
         return parts.join('');
       },
-      drag(svg, event, box, state) {
-        const left = 52;
-        const right = W - 52;
-        const local = localPoint(svg, event);
-        const value = Math.round(((local.x - left) / (right - left)) * 16 - 8);
-        state.a = Math.max(-7, Math.min(7, value));
+      drag(svg, event, name, state) {
+        const axis = numberAxis({ min: -7, max: 7, axisY: 156 });
+        const field = name === 'b' ? 'b' : 'a';
+        state[field] = axis.valueAt(localPoint(svg, event).x, -7, 7, 1);
       },
-      handles: [{ name: 'a', label: 'a noktasını sürükle' }],
+      handles: [{ name: 'a', label: 'a noktasını sürükle' }, { name: 'b', label: 'b noktasını sürükle' }],
     },
 
-    /* 1b. Toplamalar sıfıra ulaşır mı? Adım adım toplama yolu */
+    /* 1c. Toplamalar sıfıra ulaşır mı? Adım adım toplama yolu */
     'sifir-toplama': {
       params: [
         { name: 's1', label: '1. kart', min: -5, max: 5, step: 1, value: 3 },
@@ -248,45 +280,40 @@
         { name: 's3', label: '3. kart', min: -5, max: 5, step: 1, value: 2 },
       ],
       draw(state) {
-        const steps = [Number(state.s1) || 0, Number(state.s2) || 0, Number(state.s3) || 0];
-        const totals = steps.reduce((list, value) => list.concat(list[list.length - 1] + value), [0]);
-        const limit = Math.max(10, ...totals.map((value) => Math.abs(value)));
-        const from = -limit;
-        const to = limit;
-        const left = 48;
-        const right = W - 48;
-        const px = (value) => left + ((value - from) / (to - from)) * (right - left);
-        const axisY = 286;
-        const parts = [];
-        parts.push(text(W / 2, 32, 'Kartları toplayarak sıfıra ulaşabilir miyiz?', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' }));
-        // kartlar
-        steps.forEach((value, index) => {
-          const x = 150 + index * 120;
-          parts.push(rect(x, 62, 92, 54, { fill: value < 0 ? '#d7f0e3' : '#ded5fb', stroke: value < 0 ? '#2f8a63' : '#7056c9', width: 1.4, rx: 12 }));
-          parts.push(text(x + 46, 96, value > 0 ? `+${num(value)}` : num(value), { size: 17, anchor: 'middle', weight: 800, fill: value < 0 ? '#1f6b4c' : '#3c2f6b' }));
-          if (index < steps.length - 1) parts.push(text(x + 106, 96, '+', { size: 16, anchor: 'middle', weight: 700, fill: '#8b97a8' }));
+        const cards = [state.s1, state.s2, state.s3].map((value) => clampValue(value, -5, 5, 1));
+        const totals = cards.reduce((list, value) => list.concat(list[list.length - 1] + value), [0]);
+        const farthest = Math.max(...totals.map((value) => Math.abs(value)), 3);
+        const limit = Math.min(20, Math.ceil(farthest / 2) * 2 + 2);
+        const axis = numberAxis({ min: -limit, max: limit, axisY: 300, every: limit > 8 ? 2 : 1 });
+        const parts = [text(W / 2, 30, 'Kartları toplayarak sıfıra ulaşabilir miyiz?', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+
+        cards.forEach((value, index) => {
+          const x = 132 + index * 128;
+          parts.push(rect(x, 50, 88, 50, { fill: value < 0 ? '#d7f0e3' : '#ded5fb', stroke: value < 0 ? '#2f8a63' : '#7056c9', width: 1.4, rx: 12 }));
+          parts.push(text(x + 44, 82, value > 0 ? `+${num(value)}` : num(value), { size: 17, anchor: 'middle', weight: 800, fill: value < 0 ? '#1f6b4c' : '#3c2f6b' }));
+          if (index < cards.length - 1) parts.push(text(x + 108, 82, '+', { size: 16, anchor: 'middle', weight: 700, fill: '#8b97a8' }));
         });
-        // eksen
-        parts.push(line(left - 8, axisY, right + 8, axisY, { stroke: '#1b2f49', width: 2 }));
-        for (let value = from; value <= to; value += 1) {
-          const zero = value === 0;
-          parts.push(line(px(value), axisY - (zero ? 8 : 4), px(value), axisY + (zero ? 8 : 4), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2 : 1 }));
-          if ((to - from) <= 24 && value % 2 === 0) parts.push(text(px(value), axisY + 24, String(value), { size: 11, anchor: 'middle', fill: zero ? '#1b2f49' : '#6b7a90', weight: zero ? 800 : 500 }));
-        }
-        // toplama yolu: her adım eksenin üstünde yay şeklinde
-        totals.slice(0, -1).forEach((start, index) => {
-          const end = totals[index + 1];
-          const y = 214 - index * 12;
-          const x1 = px(start);
-          const x2 = px(end);
+
+        parts.push(axis.parts);
+
+        /* Her adım kendi şeridinde: yaylar üst üste binmez, etiket işaretlidir. */
+        cards.forEach((delta, index) => {
+          const from = totals[index];
+          const to = totals[index + 1];
+          const lane = 236 - index * 34;
+          const x1 = axis.px(from);
+          const x2 = axis.px(to);
+          const color = delta < 0 ? '#2f8a63' : delta > 0 ? '#5b46a8' : '#8b97a8';
           const midX = (x1 + x2) / 2;
-          parts.push(`<path d="M ${num(x1)} ${num(axisY - 8)} Q ${num(midX)} ${num(y - 26)} ${num(x2)} ${num(axisY - 8)}" fill="none" stroke="${end === 0 ? '#c03744' : '#7056c9'}" stroke-width="1.8" stroke-dasharray="5 4"/>`);
-          parts.push(text(midX, y + 6, `${end >= 0 ? '+' : '−'}${num(Math.abs(end - start))}`, { size: 12, anchor: 'middle', weight: 700, fill: end === 0 ? '#c03744' : '#5b46a8' }));
-          parts.push(circle(px(end), axisY, 4.5, { fill: end === 0 ? '#c03744' : '#5b46a8' }));
+          parts.push(`<path d="M ${num(x1)} ${num(axis.axisY - 10)} C ${num(x1)} ${num(lane)} ${num(x2)} ${num(lane)} ${num(x2)} ${num(axis.axisY - 10)}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="6 5"/>`);
+          parts.push(circle(x2, axis.axisY, 5, { fill: color }));
+          parts.push(text(midX, lane - 10, `${index + 1}. adım: ${delta >= 0 ? '+' : '−'}${num(Math.abs(delta))} → ${num(to)}`, { size: 12, anchor: 'middle', weight: 700, fill: color }));
         });
+        parts.push(circle(axis.px(0), axis.axisY, 6, { fill: '#1b2f49' }));
+
         const total = totals[totals.length - 1];
-        parts.push(text(48, 336, `Toplam = ${num(total)}`, { size: 15, weight: 800, fill: total === 0 ? '#1f6b4c' : '#33265f' }));
-        parts.push(text(48, 360, total === 0 ? 'Zıt işaretli kartlar birbirini götürdü: sıfıra döndün.' : 'Toplam sıfır değil: sıfıra dönmek için ters işaretli kart gerekir.', { size: 12.5, fill: '#41506a' }));
+        parts.push(text(48, 342, `Toplam = ${num(total)}`, { size: 15, weight: 800, fill: total === 0 ? '#1f6b4c' : '#33265f' }));
+        parts.push(text(186, 342, total === 0 ? 'Zıt işaretli kartlar birbirini götürdü: sıfıra döndün.' : 'Sıfıra dönmek için ters işaretli kart gerekir.', { size: 12.5, fill: '#41506a' }));
         return parts.join('');
       },
     },
@@ -809,7 +836,9 @@
     uid += 1;
     const scope = `s${uid}`;
     const state = {};
-    params.forEach((param) => { state[param.name] = Number(param.value); });
+    params.forEach((param) => {
+      state[param.name] = clampValue(param.value, param.min, param.max, param.step);
+    });
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -825,21 +854,37 @@
       } catch (error) {
         svg.innerHTML = `<text x="20" y="40" font-size="14" fill="#b42318">Sahne çizilemedi.</text>`;
       }
-      const handle = svg.querySelector('[data-handle]');
-      if (handle && scene.drag) {
-        handle.addEventListener('pointerdown', (downEvent) => {
-          downEvent.preventDefault();
-          const move = (moveEvent) => {
-            scene.drag(svg, moveEvent, null, state);
+      if (scene.drag) {
+        svg.querySelectorAll('[data-handle]').forEach((node) => {
+          node.addEventListener('pointerdown', (downEvent) => {
+            downEvent.preventDefault();
+            const name = node.getAttribute('data-handle');
+            const move = (moveEvent) => {
+              scene.drag(svg, moveEvent, name, state);
+              paint();
+              syncControls();
+            };
+            const up = () => {
+              window.removeEventListener('pointermove', move);
+              window.removeEventListener('pointerup', up);
+            };
+            window.addEventListener('pointermove', move);
+            window.addEventListener('pointerup', up);
+          });
+          /* Klavye: sol/sağ ok ile nokta adım adım kayar. */
+          node.addEventListener('keydown', (keyEvent) => {
+            const step = Math.abs(Number((params[0] || {}).step) || 1);
+            if (keyEvent.key !== 'ArrowLeft' && keyEvent.key !== 'ArrowRight') return;
+            keyEvent.preventDefault();
+            const plain = { clientX: 0, clientY: 0 };
+            const target = state[node.getAttribute('data-handle')];
+            const delta = keyEvent.key === 'ArrowRight' ? step : -step;
+            const next = clampValue(Number(target) + delta, params[0].min, params[0].max, params[0].step);
+            scene.dragBy ? scene.dragBy(node.getAttribute('data-handle'), state, next) : (state[node.getAttribute('data-handle')] = next);
             paint();
             syncControls();
-          };
-          const up = () => {
-            window.removeEventListener('pointermove', move);
-            window.removeEventListener('pointerup', up);
-          };
-          window.addEventListener('pointermove', move);
-          window.addEventListener('pointerup', up);
+            void plain;
+          });
         });
       }
     }
@@ -858,8 +903,10 @@
     if (controls) {
       controls.innerHTML = controlsMarkup(params, state, scope);
       controls.querySelectorAll('[data-scene-param]').forEach((input) => {
+        const param = params.find((item) => item.name === input.dataset.sceneParam);
         input.addEventListener('input', () => {
-          state[input.dataset.sceneParam] = Number(input.value);
+          if (!param) return;
+          state[param.name] = clampValue(input.value, param.min, param.max, param.step);
           paint();
           syncControls();
         });
@@ -870,7 +917,9 @@
     return {
       state,
       reset() {
-        params.forEach((param) => { state[param.name] = Number(param.value); });
+        params.forEach((param) => {
+      state[param.name] = clampValue(param.value, param.min, param.max, param.step);
+    });
         paint();
         syncControls();
       },

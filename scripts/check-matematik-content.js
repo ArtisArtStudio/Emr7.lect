@@ -361,6 +361,28 @@ const app = read('matematik.js');
 const html = read('index.html');
 const css = read('matematik.css');
 
+// Etkinlik kartı sade: uzun yönerge, ölçüt listesi ve tekrar eden açıklama olmamalı.
+assert.ok(!/activity-instruction/.test(etkinlikMotoru), 'Kartta uzun yönerge paragrafı olmamalı.');
+assert.ok(!/math-etkinlik-rubric/.test(etkinlikMotoru), 'Ölçüt listesi kartta tekrar edilmemeli.');
+assert.ok(!/math-etkinlik-instruction|activity-meta/.test(etkinlikMotoru), 'Kartta gereksiz meta satırı olmamalı.');
+assert.ok(/math-etkinlik-qtext/.test(etkinlikMotoru), 'Soru metni tek blokta olmalı (legend flex satır kırıyordu).');
+assert.ok(/placeholder="Sonucu ve gerekçeni yaz…"/.test(etkinlikMotoru), 'Yazma alanının yer tutucusu kısa olmalı.');
+assert.ok(!/<label for="mathEtkinlikText/.test(etkinlikMotoru), 'Yer tutucu varken ikinci açıklama etiketi olmamalı.');
+assert.ok(/aria-label="Cevabın ve kısa gerekçen"/.test(etkinlikMotoru), 'Yazma alanı erişilebilir ad taşımalı.');
+// Çözüm doğrudan görünmemeli, “Cevabı göster” ile açılmalı.
+assert.ok(/details class="math-solution"/.test(read('matematik.js')), 'Çözüm “Cevabı göster” paneli içinde olmalı.');
+assert.ok(/summary>Cevabı göster</.test(read('matematik.js')), 'Panelin düğmesi “Cevabı göster” olmalı.');
+assert.ok(!/details class="math-solution" open/.test(read('matematik.js')), 'Çözüm kapalı gelmeli.');
+assert.ok(/\.math-solution/.test(css), 'Çözüm paneli stili tanımlı olmalı.');
+// Terim şekillerinde yazı okunaklı olmalı (11 puntodan küçük etiket yok).
+FIG.types().forEach((type) => {
+  const svg = FIG.render(type, {});
+  const sizes = [...svg.matchAll(/font-size="([\d.]+)"/g)].map((match) => Number(match[1]));
+  const smallest = Math.min(...sizes);
+  assert.ok(smallest >= 10.9, `${type} şeklinde yazı çok küçük: ${smallest} punto.`);
+});
+assert.ok(/minmax\(300px,1fr\)/.test(css), 'Terim kartları yeterince geniş olmalı (görsel küçülmesin).');
+
 assert.ok(/id="mathWorkspace"/.test(html), 'index.html matematik çalışma alanını içermeli.');
 assert.ok(/id="mathWeekList"/.test(html), 'Hafta listesi kapsayıcısı bulunmalı.');
 assert.ok(/id="mathWeekContent"/.test(html), 'Hafta içeriği kapsayıcısı bulunmalı.');
@@ -400,11 +422,14 @@ assert.ok(/MATEMATIK_ETKINLIK/.test(app), 'Etkinlik modülü çağrılmalı.');
 const etkinlik = read('matematik-etkinlik.js');
 assert.ok(/EKR7|EMR7_AI_GRADER|api\/groq|api\.groq\.com/.test(etkinlik), 'Etkinlik değerlendirmesi ortak Groq ayarlarını kullanmalı.');
 assert.ok(/#apiKey|getElementById\('apiKey'\)/.test(etkinlik), 'Etkinlik değerlendirmesi ortak API anahtarını okumalı.');
-assert.ok(/doğru (cevap|seçenek|şık)/i.test(etkinlik) && /ASLA yazma|ASLA/.test(etkinlik), 'Yapay zekâ istemi cevabı sızdırmamalı.');
+assert.ok(/doğru (cevap|cevab|sonuç|seçenek|şık)/i.test(etkinlik) && /ASLA/.test(etkinlik),
+  'Yapay zekâ istemi cevabı sızdırmamalı.');
+assert.ok(/cevap anahtar/i.test(etkinlik), 'İstem cevap anahtarını yazmayı yasaklamalı.');
 assert.ok(/data-math-etkinlik-text/.test(read('matematik-etkinlik.js')) || /textarea/.test(read('matematik-etkinlik.js')), 'Etkinlikte açıklama alanı olmalı.');
 assert.ok(/figure|MATEMATIK_FIGURE/.test(app), 'Hafta içeriğinde şekiller kullanılmalı.');
 assert.ok(/\.math-term-card\{/.test(css) && /\.math-etkinlik-option\{/.test(css), 'Terim ve etkinlik stilleri tanımlı olmalı.');
-assert.ok(/#mathActivities/.test(read('activity-cards.css')), 'Etkinlik kartı görünümü matematik alanına da uygulanmalı.');
+assert.ok(/\.math-activities/.test(read('activity-cards.css')), 'Etkinlik kartı görünümü matematik alanına da uygulanmalı.');
+assert.ok(/math-etkinlik-list math-activities/.test(app), 'Etkinlik listesi ortak kart kapsamına girmeli.');
 assert.ok(/MATEMATIK_MATH/.test(app), 'Uygulama dizgi motorunu kullanmalı.');
 
 console.log(`Matematik içeriği geçti: 15 hafta, 4 tema, ${allScenes.length} etkileşimli sahne, `

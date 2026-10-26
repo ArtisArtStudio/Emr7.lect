@@ -820,7 +820,7 @@ arasında boşluk oluşmuyor. `\frac` yığını `vertical-align:-.42em` ile tab
 
 ### 20.6 Terim görselleri ve sahne yerleşimi
 
-- `matematik-figure.js` 10 → **40 şekil türüne** çıktı; her haftanın üç terimi birbirinden
+- `matematik-figure.js` 10 → **41 şekil türüne** çıktı (§22.6'da `kat-plani` eklendi); her haftanın üç terimi birbirinden
   farklı görsel kullanıyor (hafta içi tekrar yok).
 - `matematik-sahne.js` **19 sahne türü**. `sayi-dogrusu` yeniden yazıldı: eksen y=150,
   etiketler y=176, `a`/`−a` etiketleri y=84/112, panel (40, 214) satır 242/268/294, ipucu
@@ -900,3 +900,86 @@ kanıtı” isteyen kalıp hiçbir soruda varsayılan değil.
   kalıp yok, `REASON_FEEDBACK` var, her etkinlikte geçerli bir `reason` + kural adı istemeyen
   `reasonHint`, ölçütlerde “hangi kuralı” ifadesi yok, karar soruları `karar` türünde.
 - 13 denetim betiği, `node --check`, `git diff --check`, jsdom render: temiz.
+
+## 22. Kart sadeleştirmesi, sahne onarımı ve okunaklı şekiller (26 Ekim 2026)
+
+### 22.1 Soru metni neden satır satır dağılıyordu?
+
+`matematik.css` içinde `.math-etkinlik-question legend` bir **flex** kutusuydu. Flex kutusunda
+her metin düğümü ve her satır içi öğe ayrı bir flex öğesi olur; bu yüzden “Zemin kat $0$ kabul
+edilen…” cümlesindeki her `$0$`, `$2$`, `$1$` kendi satırına düşüyordu. Artık numara rozeti ile
+soru metni iki ayrı flex öğesi: metin tek bir `.math-etkinlik-qtext` bloğunda ve kendi içinde
+normal sarıyor. Denetim, legend'da üçüncü bir öğe veya doğrudan metin düğümü olmasını hata sayıyor.
+
+### 22.2 Sayı doğrusu: sürgü ile çizim aynı aralıkta
+
+- `numberAxis()` yardımcısı eklendi: eksen, çentikler ve **sürgü aralığı** aynı `min/max` ile
+  kuruluyor. Önceki sürüm ekseni −8…8, sürgüyü −7…7 çiziyordu; uçlarda nokta ile sürgü
+  birbirinden kopuyordu.
+- `clampValue()` ile her sahne değeri aralığa kırpılıp adımına oturtuluyor; `mount` başlangıç
+  değerlerini de normalize ediyor. Böylece ne sürgü ne sürükleme aralık dışına taşabiliyor.
+- `iki-sayi` sahnesinde artık **iki ayrı sürüklenebilir nokta** var (`a` ve `b`); b noktasını
+  sürüklemek a'yı oynatmıyor. Sürükleme, eksen dönüşümünün tersini (`valueAt`) kullanıyor;
+  klavye ile sol/sağ ok da noktayı adım adım kaydırıyor.
+- Sayı yazımı Türkçe dizgiye uyduruldu: ekside `−` (U+2212), ondalıkta virgül.
+
+### 22.3 “Toplayarak sıfıra ulaşılır mı?” sahnesi
+
+Eski çizim her adımı eksenin üstüne yay olarak koyuyordu; 3 → 0 ve 0 → 3 yayları üst üste
+biniyor, etikette işaret yanlış yazılıyordu (`end` işaretine bakılıyordu). Yeni çizim:
+
+- her adım **kendi şeridinde** (üstten alta 236 / 202 / 168) bir yay,
+- yay etiketi adımın **farkından** geliyor: `2. adım: −3 → 0`,
+- inen nokta renkli, sıfır noktası koyu, eksen aralığı toplamın büyüklüğüne göre (`±6 … ±18`).
+
+Böylece kesik çizgiler üst üste binmiyor ve hangi kartın hangi adım olduğu okunuyor.
+
+### 22.4 Etkinlik kartı: fazla metin kaldırıldı
+
+Karttan çıkarılanlar: uzun yönerge paragrafı (“Cevabını ve kısa gerekçeni yaz; açıklama
+zorunlu…”), `Yazılı cevap + açıklama · UYGULAYALIM · Yapay zekâ değerlendirmesi` rozet satırı,
+yazma alanının üstündeki ikinci açıklama etiketi ve ölçüt listesi (`- İşlem adımlarını sırayla
+yaz` …). Kart artık şu sırayı izliyor: **Etkinlik 2 / 3 → başlık → soru → (varsa şekil/sahne) →
+yazma alanı (kısa yer tutucu) → “Kontrol et” → geri bildirim**. Ölçütler yalnızca yapay zekâ
+isteminde kullanılıyor.
+
+### 22.5 “Cevabı göster”
+
+PROBLEM bölümünün çözüm basamakları ve sonuç satırı artık kapalı bir `<details>` panelinde:
+`Cevabı göster`. Öğrenci önce düşünüyor, isterse açıyor. Panel varsayılan olarak kapalı ve
+denetim bunu zorunlu tutuyor.
+
+### 22.6 Şekiller: yazı büyütüldü, GeoGebra gerekmedi
+
+- Terim kartları ızgarası `minmax(240px → 300px)` oldu; şekil `width:100%` ile kabı dolduruyor.
+  Bu tek başına ekrandaki yazıyı yaklaşık dörtte bir oranında büyüttü.
+- `txt()` taban puntosu ×1.12; `fitText` artık **11 puntonun altına inmiyor**, uzun etiketler
+  küçülmek yerine sadeleştirildi (11 uzun cümle kısaltıldı).
+- 40 → **41 şekil türü**: apartman katları için `kat-plani` eklendi (zemin 0, alt katlar
+  negatif). “Sığınak kaçıncı kattadır?” sorusu artık kat şemasıyla birlikte geliyor.
+- GeoGebra'ya dönülmedi: sahneler ve şekiller çevrimdışı SVG ile çiziliyor, dış servis ve
+  iframe yok. Pay/payda gibi eksen gerektirmeyen konularda statik şekil zaten yeterli;
+  eksen gereken yerlerde etkileşimli sahne kullanılıyor.
+
+### 22.7 Doğrulama
+
+- `check-matematik-layout.js`: 19 sahne × tüm sürgü uçları + 41 şekil = **191 çizim**, taşma ve
+  çakışma yok.
+- `check-matematik-content.js` yeni kurallar: legend'da tek metin bloğu, kartta uzun yönerge /
+  ölçüt listesi / meta satırı yok, kısa yer tutucu, erişilebilir ad, `Cevabı göster` paneli
+  kapalı, şekillerde ≥ 11 punto, terim ızgarası ≥ 300px.
+- `check-matematik.js` yeni kurallar: `clampValue`/`numberAxis` zorunlu, sürükleme eksenle aynı
+  dönüşümü kullanmalı, `iki-sayi` iki sürgü + iki tutamaç, adım etiketi farkın işaretini
+  göstermeli, aralık dışı değer en yakın sınıra oturmalı.
+- jsdom: 15 hafta × 7 bölüm, kart yapısı sade, sürgü değerleri aralık ve adım içinde, çözüm
+  panelleri kapalı → “RENDER TEMİZ”. Sürükleme testi: −7…7 aralığında uçlar dahil doğru; `b`
+  sürüklenince `a` değişmiyor.
+
+### 22.8 Kart kabuğu gerçekten ortak oldu
+
+Ortak kart görünümü (`activity-cards.css`) `#mathActivities` kimliğine bağlıydı; matematik
+alanında böyle bir kimlik hiç yoktu (etkinlikler `#mathQuestions-…` içinde). Bu yüzden matematik
+kartları ortak kabuğu almıyordu. Kapsam `.math-activities` sınıfına çevrildi, etkinlik listeleri
+bu sınıfı taşıyor. Ayrıca matematikte başlık bandı ve simge biraz küçültüldü
+(`#mathWeekContent .math-activities …`), böylece kart Türkçe/Fen/Sosyal ile aynı dili kullanıyor
+ama daha derli toplu duruyor.
