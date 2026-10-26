@@ -115,6 +115,15 @@
 .math-example-answer{margin:10px 0 0;padding:9px 12px;border-radius:11px;background:#eefaf3;border:1px solid #cfeadd;font-size:14px;font-weight:700;display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
 .math-example-answer span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#1f6b4c;font-weight:850}
 
+/* --- Çözüm: “Cevabı göster” açılır paneli --- */
+.math-solution{margin:12px 0 0;border:1px solid #ece9f8;border-radius:12px;background:#fbfaff;padding:0 14px}
+.math-solution>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 0;font-size:13.5px;font-weight:800;color:#4a3b86}
+.math-solution>summary::-webkit-details-marker{display:none}
+.math-solution>summary::before{content:"▸";font-size:12px;color:#7056c9}
+.math-solution[open]>summary::before{content:"▾"}
+.math-solution>summary:hover{color:#33265f}
+.math-solution[open]{padding-bottom:12px}
+
 /* --- Sahne çerçevesi: çizim üstte, sürgü bandı altta (tek motor, çevrimdışı SVG) --- */
 .math-scene-frame{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
 .math-scene-stage{flex:1 1 auto;min-height:0;padding:10px 12px 4px;background:linear-gradient(180deg,#fdfcff,#fff);display:grid;place-items:center}
@@ -149,23 +158,38 @@
 .math-etkinlik-scene-title{margin:0 0 8px;font-size:13px;font-weight:800;color:#2c3f57}
 
 /* --- Terim kartları: her terim kendi şekliyle --- */
-.math-terms{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.math-terms{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .math-term-card{border:1px solid #ece9f8;background:#fbfaff;border-radius:14px;padding:13px 14px;display:grid;gap:8px}
 .math-term-head h4{margin:0;font-size:14.5px;color:#33265f;letter-spacing:-.01em}
 .math-term-where{margin:3px 0 0;font-size:11.5px;color:#6b5f92}
 .math-term-def{margin:0;font-size:13.5px;line-height:1.6;color:#33415a}
-.math-term-figure{border-radius:10px;overflow:hidden;background:#fff;border:1px solid #efeaf9}
+.math-term-figure{border-radius:10px;overflow:hidden;background:#fff;border:1px solid #efeaf9;padding:6px}
+.math-term-figure svg{display:block;width:100%;height:auto}
 .math-figure{display:block;width:100%;height:auto}
 
 /* --- Şekilli sorular --- */
 .math-check-figure{margin:0 0 10px;border:1px solid #e7ecf5;border-radius:12px;background:#fff;padding:6px;max-width:340px}
 
 /* --- Etkinlikler (diğer derslerle aynı kart dili) --- */
+/* Ortak kart kabuğu matematikte daha derli toplu: başlık bandı ve simge küçültülür. */
+#mathWeekContent .math-activities .activity-top{padding:14px 16px;gap:0}
+#mathWeekContent .math-activities .activity-icon{flex:0 0 40px;width:40px;height:40px;border-radius:13px;font-size:20px}
+#mathWeekContent .math-activities .activity-kicker{font-size:10.5px;letter-spacing:.05em}
+#mathWeekContent .math-activities .activity-title{font-size:15px;margin:1px 0 0}
+#mathWeekContent .math-activities .question-list{padding:12px 14px 16px}
+#mathWeekContent .math-etkinlik-card>.activity-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+
 .math-activities .math-etkinlik-card{margin-top:6px}
 .math-etkinlik-question{margin:0;padding:0;border:0}
 .math-etkinlik-question legend{display:flex;gap:8px;align-items:flex-start;font-size:14.5px;font-weight:700;color:#16283e;line-height:1.55;margin-bottom:10px;padding:0}
+/* Soru metni tek blok: sayılar kendi satırına düşmez. */
+.math-etkinlik-qtext{flex:1 1 auto;min-width:0;display:block}
+.math-etkinlik-write{display:grid;gap:9px;margin-top:10px}
+.math-etkinlik-write textarea{width:100%;font:inherit;font-size:14px;line-height:1.55;border:1px solid #d9e2ec;border-radius:11px;padding:10px 12px;resize:vertical;background:#fff}
+.math-etkinlik-write textarea:focus{outline:2px solid var(--math-accent);outline-offset:1px}
 .math-etkinlik-no{display:inline-grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:8px;background:var(--math-tint);color:var(--math-accent);font-size:12px;font-weight:850}
-.math-etkinlik-figure{margin:0 0 10px;max-width:340px;border:1px solid #e7ecf5;border-radius:12px;padding:6px;background:#fff}
+.math-etkinlik-figure{margin:0 0 10px;width:100%;max-width:420px;border:1px solid #e7ecf5;border-radius:12px;padding:6px;background:#fff}
+.math-etkinlik-figure svg,.math-check-figure svg{display:block;width:100%;height:auto}
 .math-etkinlik-options{display:grid;gap:8px}
 .math-etkinlik-option{display:flex;gap:9px;align-items:flex-start;border:1px solid #d9e1eb;border-radius:11px;background:#fff;padding:10px 12px;font-size:14px;cursor:pointer;line-height:1.5}
 .math-etkinlik-option:hover{border-color:#9bb2df;background:#f7faff}

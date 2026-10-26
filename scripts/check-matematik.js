@@ -61,10 +61,28 @@ assert.ok(/pointerdown/.test(scene) && /pointermove/.test(scene), 'Sahne noktala
 assert.ok(/data-handle/.test(scene), 'Sürüklenebilir nokta işaretlenmeli.');
 assert.ok(/touch-action/.test(css), 'Dokunmatik sürükleme için touch-action tanımlı olmalı.');
 assert.ok(/aria-label/.test(scene), 'Sahne erişilebilir etiket taşımalı.');
+// Sürgü ve çizim aynı aralığı kullanmalı: değer kırpılır, adıma oturur, ölü bölge kalmaz.
+assert.ok(/function clampValue/.test(scene), 'Sahne değerleri aralığa ve adıma oturtulmalı.');
+assert.ok(/clampValue\(param\.value, param\.min, param\.max, param\.step\)/.test(scene), 'Sahne başlangıç değeri normalize edilmeli.');
+assert.ok(/function numberAxis/.test(scene), 'Sayı doğrusu tek yardımcıdan çizilmeli.');
+assert.ok(/valueAt\(/.test(scene), 'Sürükleme eksenle aynı dönüşümü kullanmalı.');
+assert.ok(/querySelectorAll\('\[data-handle\]'\)/.test(scene), 'Her sürüklenebilir nokta bağlanmalı.');
+['sayi-dogrusu', 'iki-sayi'].forEach((type) => {
+  assert.ok(/numberAxis\(\{ min: -7, max: 7/.test(scene), `${type} ekseni sürgü aralığıyla aynı olmalı.`);
+});
+assert.equal(SAHNE.params('iki-sayi').length, 2, 'İki sayı sahnesinde iki sürgü olmalı.');
+assert.ok(/data-handle="b"|handle\('b'/.test(scene), 'İki sayı sahnesinde b noktası da sürüklenebilmeli.');
+// Toplama yolu: her adım kendi şeridinde, işaret adım farkından gelir.
+assert.ok(/const lane = 236 - index \* 34/.test(scene), 'Toplama adımları ayrı şeritlerde çizilmeli.');
+assert.ok(/delta >= 0 \? '\+' : '−'/.test(scene), 'Adım etiketi farkın işaretini göstermeli.');
+/* Sahne değerleri kırpılır ve adıma oturur. */
+const odd = SAHNE.render('sayi-dogrusu', { a: 9.6 });
+assert.ok(/a = 7/.test(odd), 'Aralık dışı değer en yakın sınıra oturmalı.');
+
 
 // 4. Şekil motoru: tüm türler çizilir, bozuk değer üretmez
 assert.ok(FIG && typeof FIG.render === 'function', 'MATEMATIK_FIGURE.render bulunamadı.');
-assert.ok(FIG.types().length >= 40, `Şekil türü sayısı az: ${FIG.types().length}`);
+assert.ok(FIG.types().length >= 41, `Şekil türü sayısı az: ${FIG.types().length}`);
 FIG.types().forEach((type) => {
   const svg = FIG.render(type, {});
   assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>'), `${type} şekli geçerli SVG üretmeli.`);

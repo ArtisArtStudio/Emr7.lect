@@ -205,46 +205,36 @@
     const pill = `<span class="math-etkinlik-pill" data-state="${escapeHTML(state)}"${state ? '' : ' hidden'}>${
       state === 'correct' ? 'Açıklama yeterli' : state === 'partial' ? 'Geliştirilebilir' : state === 'wrong' ? 'Yeniden düşün' : ''
     }</span>`;
-    const rubric = activity.rubric.map((item) => `<li>${rich(item)}</li>`).join('');
     return `<article class="activity-card math-etkinlik-card" data-math-act="${escapeHTML(activity.id)}" data-state="${escapeHTML(state)}">
       <header class="activity-top">
         <div class="activity-heading-row">
           <span class="activity-icon" aria-hidden="true">✎</span>
           <div class="activity-title-copy">
-            <p class="activity-kicker">Etkinlik ${index + 1} / ${total} · ${escapeHTML(activity.section)}</p>
+            <p class="activity-kicker">Etkinlik ${index + 1} / ${total}</p>
             <h4 class="activity-title">${escapeHTML(activity.title)}</h4>
           </div>
         </div>
-        <p class="activity-instruction">Cevabını ve kısa gerekçeni yaz; açıklama zorunlu. Kural adı ezberi istenmez: bir örnek, hesap ya da tanım yeterlidir. Doğru cevap gösterilmez; geri bildirim yapay zekâ ile ölçütlere göre verilir.</p>
-      </header>
-      <div class="activity-meta">
-        <span>Yazılı cevap + açıklama</span>
-        <span>${escapeHTML(activity.section)}</span>
-        <span>Yapay zekâ değerlendirmesi</span>
         ${pill}
-      </div>
-      <div class="question-list">
-        <article class="question-card">
-          <fieldset class="math-etkinlik-question">
-            <legend><span class="math-etkinlik-no">${index + 1}</span>${rich(activity.prompt)}</legend>
-            ${figureMarkup(activity)}
-          </fieldset>
-          ${sceneMarkup(activity)}
-          <div class="math-etkinlik-write">
-            <label for="mathEtkinlikText-${escapeHTML(activity.id)}">Cevabın ve kısa gerekçen (zorunlu): sonucu ve nedenini birlikte yaz.</label>
-            <ul class="math-etkinlik-rubric">${rubric}</ul>
-            <textarea id="mathEtkinlikText-${escapeHTML(activity.id)}" rows="4" maxlength="1200"
-              data-math-etkinlik-text="${escapeHTML(activity.id)}"
-              placeholder="Sonucu ve nedenini kendi cümlelerinle yaz…">${escapeHTML(text)}</textarea>
-            <div class="math-etkinlik-actions">
-              <button type="button" class="btn check-button" data-math-etkinlik-check="${escapeHTML(activity.id)}">✦ Kontrol et</button>
-              <span class="math-etkinlik-count" data-math-etkinlik-count="${escapeHTML(activity.id)}">${count}/${activity.minChars} karakter</span>
-            </div>
-            <p class="math-etkinlik-hint" data-math-etkinlik-hint="${escapeHTML(activity.id)}" hidden>İpucu: ${rich(activity.hint)}</p>
-            <div class="math-etkinlik-feedback" data-state="${escapeHTML(state)}" aria-live="polite"${entry.feedback ? '' : ' hidden'}>${entry.feedback ? rich(entry.feedback) : ''}</div>
+      </header>
+      <article class="question-card">
+        <fieldset class="math-etkinlik-question">
+          <legend><span class="math-etkinlik-no">${index + 1}</span><span class="math-etkinlik-qtext">${rich(activity.prompt)}</span></legend>
+          ${figureMarkup(activity)}
+        </fieldset>
+        ${sceneMarkup(activity)}
+        <div class="math-etkinlik-write">
+          <textarea id="mathEtkinlikText-${escapeHTML(activity.id)}" rows="3" maxlength="1200"
+            aria-label="Cevabın ve kısa gerekçen"
+            data-math-etkinlik-text="${escapeHTML(activity.id)}"
+            placeholder="Sonucu ve gerekçeni yaz…">${escapeHTML(text)}</textarea>
+          <div class="math-etkinlik-actions">
+            <button type="button" class="btn check-button" data-math-etkinlik-check="${escapeHTML(activity.id)}">✦ Kontrol et</button>
+            <span class="math-etkinlik-count" data-math-etkinlik-count="${escapeHTML(activity.id)}">${count}/${activity.minChars}</span>
           </div>
-        </article>
-      </div>
+          <p class="math-etkinlik-hint" data-math-etkinlik-hint="${escapeHTML(activity.id)}" hidden>İpucu: ${rich(activity.hint)}</p>
+          <div class="math-etkinlik-feedback" data-state="${escapeHTML(state)}" aria-live="polite"${entry.feedback ? '' : ' hidden'}>${entry.feedback ? rich(entry.feedback) : ''}</div>
+        </div>
+      </article>
     </article>`;
   }
 
@@ -278,7 +268,7 @@
         store.save();
         const activity = activities.find((item) => item.id === id);
         const counter = host.querySelector(`[data-math-etkinlik-count="${id}"]`);
-        if (counter && activity) counter.textContent = `${area.value.trim().length}/${activity.minChars} karakter`;
+        if (counter && activity) counter.textContent = `${area.value.trim().length}/${activity.minChars}`;
       });
     });
 
@@ -293,7 +283,7 @@
         const hint = host.querySelector(`[data-math-etkinlik-hint="${id}"]`);
         if (String(entry.text || '').trim().length < activity.minChars) {
           entry.state = '';
-          entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakterlik bir cevap yazmadan değerlendirme başlamaz.`;
+          entry.feedback = `Açıklama zorunlu: en az ${activity.minChars} karakter yazmadan değerlendirme başlamaz.`;
           paint(host, activity, entry);
           return;
         }

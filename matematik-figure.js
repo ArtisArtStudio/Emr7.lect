@@ -18,18 +18,22 @@
   const esc = (value) => String(value == null ? '' : value)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-  /* Metni kutuya sığdırır: gerekirse punto küçülür, sonra kısaltılır. */
+  /* Metni kutuya sığdırır. Punto 11'in altına inmez: okunmayan küçük yazı yerine
+     metin kısalır. Şekillerdeki etiketler bu yüzden kısa tutulur. */
+  const MIN_POINT = 11;
   function fitText(value, maxWidth, size) {
     const text = String(value == null ? '' : value);
     let current = size;
-    while (current > 8 && text.length * current * 0.53 > maxWidth) current -= 0.5;
+    while (current > MIN_POINT && text.length * current * 0.53 > maxWidth) current -= 0.5;
+    current = Math.max(MIN_POINT, Math.round(current * 100) / 100);
     const maxChars = Math.floor(maxWidth / (current * 0.53));
     return { text: text.length > maxChars ? `${text.slice(0, Math.max(4, maxChars - 1))}…` : text, size: current };
   }
 
   function txt(x, y, value, options = {}) {
-    const size = options.size || 12;
-    const limit = options.maxWidth || 320;
+    /* Şekil yazısı taban olarak okunaklı: 10–11 punto yerine 12–13 punto. */
+    const size = (options.size || 12) * 1.12;
+    const limit = options.maxWidth || 322;
     const fitted = fitText(value, limit, size);
     const anchor = options.anchor || 'start';
     return `<text x="${x}" y="${y}" ${FONT} font-size="${fitted.size}" font-weight="${options.weight || 500}" fill="${options.fill || INK}" text-anchor="${anchor}">${esc(fitted.text)}</text>`;
@@ -97,7 +101,7 @@
       parts.push(txt(156, 88, 'KESİR ÇİZGİSİ', { weight: 800, fill: ACCENT, size: 12.5, maxWidth: 175 }));
       parts.push(txt(156, 104, 'bölme anlamı taşır', { size: 10.5, fill: MUTED }));
     }
-    parts.push(txt(156, 174, 'Kesir çizgisi “böl” demektir.', { size: 11, fill: GREEN }));
+    parts.push(txt(150, 174, 'Kesir çizgisi “böl” demek.', { size: 11, fill: GREEN, maxWidth: 176 }));
     return frame(parts.join(''), `Kesir ${num} bölü ${den}: pay ve payda etiketli`);
   }
 
@@ -142,7 +146,7 @@
     parts.push(txt(left + width, 34, 'sağa: büyür', { size: 11, fill: GREEN, anchor: 'end' }));
     parts.push(circle(px(mark), axisY, 5.5));
     parts.push(txt(px(mark), axisY - 14, String(mark), { size: 12, anchor: 'middle', weight: 800, fill: ACCENT }));
-    parts.push(txt(left, 158, 'Sıfır ne pozitif ne negatiftir: başlangıç noktasıdır.', { size: 11, maxWidth: 300 }));
+    parts.push(txt(left, 158, 'Sıfırın işareti yoktur; başlangıç noktasıdır.', { size: 11, maxWidth: 300 }));
     return frame(parts.join(''), 'Tam sayılar sayı doğrusunda');
   }
 
@@ -212,7 +216,7 @@
       txt(100, 164, 'şekil', { size: 10.5, fill: MUTED }),
       txt(246, 164, 'görüntü', { size: 10.5, fill: GREEN }),
       txt(150, 174, '', { size: 10 }),
-      txt(16, 186, 'Uzaklıklar eşit; kenar ve açılar korunur, yönelim ters döner.', { size: 10.5, maxWidth: 310 }),
+      txt(16, 186, 'Uzaklıklar eşit; yönelim ters döner.', { size: 10.5, maxWidth: 310 }),
     ];
     triangle.forEach(([x, y], index) => {
       parts.push(line(x, y, 2 * axisX - x, y, { stroke: '#a99ec9', width: 0.9, dash: '3 3' }));
@@ -240,8 +244,8 @@
       txt(A[0] - 14, A[1] + 4, 'A', { size: 11, weight: 700 }),
       txt(B[0] + 8, B[1] + 4, 'B', { size: 11, weight: 700 }),
       txt(mid[0] + 8, mid[1] + 14, 'M', { size: 11, weight: 700, fill: '#c03744' }),
-      txt(mid[0] + unit[0] * 74, mid[1] + unit[1] * 74 - 4, 'orta dikme', { size: 10.5, weight: 700, fill: '#c03744', maxWidth: 100 }),
-      txt(16, 184, 'Orta dikme üzerindeki her nokta A ve B’ye eşit uzaklıktadır.', { size: 10.5, maxWidth: 312 }),
+      txt(mid[0] + 8, mid[1] - 66, 'orta dikme', { size: 10.5, weight: 700, fill: '#c03744', maxWidth: 100 }),
+      txt(16, 184, 'Her nokta A ve B’ye eşit uzaklıkta.', { size: 10.5, maxWidth: 312 }),
     ];
     return frame(parts.join(''), 'AB doğru parçası ve orta dikmesi');
   }
@@ -272,7 +276,7 @@
       txt(M[0] + 6, M[1] + 4, 'açıortay', { size: 10.5, weight: 700, fill: '#c03744' }),
       txt(cx + (Math.min(88, r - 12) + 20) * Math.cos(half / 2), cy - (Math.min(88, r - 12) + 20) * Math.sin(half / 2) - 4, 'eş açı', { size: 10.5, fill: MUTED }),
       txt(cx + (Math.min(88, r - 12) + 20) * Math.cos(half + half / 2), cy - (Math.min(88, r - 12) + 20) * Math.sin(half + half / 2) - 4, 'eş açı', { size: 10.5, fill: MUTED }),
-      txt(16, 186, 'Açıortay açıyı iki eş açıya böler; kollara uzaklık eşittir.', { size: 10.5, maxWidth: 312 }),
+      txt(16, 186, 'Açıortay, açıyı iki eş açıya böler.', { size: 10.5, maxWidth: 312 }),
     ];
     return frame(parts.join(''), 'Bir açı ve açıortayı');
   }
@@ -298,7 +302,7 @@
       parts.push(txt(x + slot / 2, base - height - 5, String(value), { size: 10, anchor: 'middle', weight: 700 }));
       parts.push(txt(x + slot / 2, base + 15, String(names[index] || ''), { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: slot + 16 }));
     });
-    parts.push(txt(16, 184, 'Dikey eksen sıfırdan başlar; sütun yükseklikleri doğrudan karşılaştırılabilir.', { size: 10.5, maxWidth: 312 }));
+    parts.push(txt(16, 184, 'Eksen sıfırdan başlar; yükseklik doğrudan okunur.', { size: 10.5, maxWidth: 312 }));
     return frame(parts.join(''), 'Sütun grafiği: sıklıklar');
   }
 
@@ -381,7 +385,7 @@
     parts.push(line(px(-4), y + 33, px(-4), y + 43, { width: 1.4 }));
     parts.push(line(px(0), y + 33, px(0), y + 43, { width: 1.4 }));
     parts.push(txt((px(-4) + px(0)) / 2, y + 56, '|−4| = 4', { size: 12, anchor: 'middle', weight: 800, fill: GREEN }));
-    parts.push(txt(16, 172, 'Uzaklık negatif olamaz: |−4| = 4 ve |4| = 4. Sıfıra en yakın nokta 0’dır.', { size: 10.5, fill: MUTED }));
+    parts.push(txt(16, 172, 'Uzaklık negatif olamaz: |−4| = |4| = 4.', { size: 10.5, fill: MUTED }));
     return frame(parts.join(''), 'Sayı doğrusunda −4 sayısının sıfıra uzaklığı 4');
   }
 
@@ -394,7 +398,7 @@
     }
     parts.push(txt(24, 116, 'Parçalar eşit: her biri bütünün 1/4’ü.', { size: 11, fill: INK }));
     parts.push(txt(24, 140, 'Kaç eş parça olduğunu payda söyler.', { size: 11, fill: GREEN, weight: 700 }));
-    parts.push(txt(24, 166, 'Pay ise bu parçalardan kaçının alındığını söyler.', { size: 11, fill: MUTED }));
+    parts.push(txt(24, 166, 'Pay: alınan parça sayısı.', { size: 11, fill: MUTED }));
     return frame(parts.join(''), 'Bir bütünün dört eş parçaya ayrılması');
   }
 
@@ -407,7 +411,7 @@
       txt(24, 98, 'Kalan her adımda 1 olduğu için bölme bitmez.', { size: 11, fill: MUTED }),
       txt(24, 122, 'Tekrar eden basamak 3; devreden kısım 3.', { size: 11, fill: INK }),
       txt(24, 146, 'Devreden basamak üzerine çizgi konur: 0,3̅', { size: 11, weight: 700, fill: GOLD }),
-      txt(24, 170, '1/3 rasyoneldir: devirli ondalık da bir kesirdir.', { size: 11, fill: GREEN }),
+      txt(24, 170, 'Devirli ondalık da bir kesirdir.', { size: 11, fill: GREEN }),
     ];
     return frame(parts.join(''), 'Bir bölü üçün devirli ondalık gösterimi');
   }
@@ -463,7 +467,7 @@
     });
     parts.push(txt(232, 72, '(−4)·(−6) = 24', { size: 11, fill: INK }));
     parts.push(txt(232, 96, '(−4)·6 = −24', { size: 11, fill: INK }));
-    parts.push(txt(16, 172, 'Aynı işaretler çarpılırsa sonuç pozitif, zıt işaretler negatiftir.', { size: 10.5, fill: MUTED }));
+    parts.push(txt(16, 172, 'Aynı işaret → pozitif, zıt işaret → negatif.', { size: 10.5, fill: MUTED }));
     return frame(parts.join(''), 'İşaret kuralı tablosu');
   }
 
@@ -591,7 +595,7 @@
       txt(20, 86, 'a·b = 24   a·c = 18   b·c = 12', { size: 11.5, fill: INK }),
       rect(20, 98, 300, 30, { fill: '#fbfaff', stroke: '#ded8f5', rx: 8 }),
       txt(34, 118, 'A = 2 · (24 + 18 + 12) = 108 cm²', { size: 12, weight: 800, fill: GREEN }),
-      txt(20, 150, 'Karşılıklı yüzler eş olduğu için üç yüz ikişer kez sayılır.', { size: 10.5, fill: MUTED }),
+      txt(20, 150, 'Karşılıklı yüzler eş; her yüz iki kez sayılır.', { size: 10.5, fill: MUTED }),
       txt(20, 172, 'Birim cm²: alan iki boyutludur.', { size: 10.5, fill: MUTED }),
     ];
     return frame(parts.join(''), 'Dikdörtgenler prizmasının yüzey alanı hesabı');
@@ -636,7 +640,7 @@
     parts.push(txt(224, 70, '1 dm = 10 cm', { size: 10.5, fill: INK }));
     parts.push(txt(224, 92, '1 dm³ = 1000 cm³', { size: 10.5, fill: INK }));
     parts.push(txt(224, 114, '= 1000 mL', { size: 10.5, fill: INK }));
-    parts.push(txt(16, 168, 'Kapasite litreyle, hacim birimküple ölçülür; ikisi eşittir.', { size: 10.5, fill: MUTED }));
+    parts.push(txt(16, 168, '1 dm³ = 1 L; hacim ile kapasite eşleşir.', { size: 10.5, fill: MUTED }));
     return frame(parts.join(''), 'Desimetreküp ile litrenin eşitliği');
   }
 
@@ -688,7 +692,7 @@
       parts.push(txt(x + 24, 84, String(value), { size: 15, anchor: 'middle', weight: 800, fill: middle ? GREEN : INK }));
     });
     parts.push(txt(170, 122, '5 veri → 3. değer ortanca', { size: 11, anchor: 'middle', fill: INK }));
-    parts.push(txt(170, 146, 'Çift sayıda veride ortadaki iki değerin ortalaması alınır.', { size: 10.5, anchor: 'middle', fill: MUTED }));
+    parts.push(txt(170, 146, 'Çift sayıda: ortadaki iki değerin ortalaması.', { size: 10.5, anchor: 'middle', fill: MUTED }));
     parts.push(txt(16, 176, 'Ortanca uç değerlerden etkilenmez.', { size: 10.5, fill: GREEN }));
     return frame(parts.join(''), 'Üç, beş, yedi, dokuz ve on ikiden oluşan veride ortanca yedidir');
   }
@@ -718,7 +722,7 @@
       parts.push(rect(96, y, count * 16, 20, { fill: SOFT, stroke: ACCENT, width: 1 }));
       parts.push(txt(102 + count * 16, y + 15, String(count), { size: 10.5, weight: 700, fill: ACCENT }));
     });
-    parts.push(txt(16, 176, 'Grupların ortalaması alınmaz; en çok tekrar eden grup (tepe değer) kullanılır.', { size: 9.5, fill: MUTED }));
+    parts.push(txt(16, 176, 'Ortalama alınmaz; en çok tekrar eden grup seçilir.', { size: 9.5, fill: MUTED }));
     return frame(parts.join(''), 'Kategorik veride sıklık sayımı');
   }
 
@@ -778,6 +782,30 @@
     return frame(parts.join(''), 'Daire grafiğinde yüzde kırk dörtlük dilim');
   }
 
+  /* --- Apartman katları: zemin 0, alt katlar negatif --- */
+  function buildingFloors() {
+    const rows = [
+      ['+5', 'Boş daire', 'other'],
+      ['+4', 'Demir', 'other'],
+      ['+3', '', 'other'],
+      ['+2', 'Asya', 'other'],
+      ['+1', 'Elif', 'other'],
+      ['0', 'Zemin kat', 'zero'],
+      ['−1', 'Sığınak', 'under'],
+      ['−2', 'Otopark', 'under'],
+    ];
+    const parts = [txt(16, 18, 'Zemin kat 0; altındaki katlar negatif', { size: 10.5, weight: 700, fill: ACCENT })];
+    rows.forEach((row, index) => {
+      const y = 28 + index * 19;
+      const fill = row[2] === 'zero' ? '#ded5fb' : row[2] === 'under' ? '#e8f6ee' : '#fbfaff';
+      const stroke = row[2] === 'zero' ? ACCENT : row[2] === 'under' ? GREEN : '#d8d2ec';
+      parts.push(rect(58, y, 250, 18, { fill, stroke, width: 1.1 }));
+      parts.push(txt(48, y + 13, row[0], { size: 11, anchor: 'end', weight: 800, fill: row[2] === 'under' ? GREEN : row[2] === 'zero' ? ACCENT : INK }));
+      if (row[1]) parts.push(txt(68, y + 13, row[1], { size: 11, fill: row[2] === 'under' ? '#1f6b4c' : INK }));
+    });
+    return frame(parts.join(''), 'Zemin katı sıfır olan apartmanda katlar: otopark eksi ikide, sığınak eksi birde');
+  }
+
   /* --- 38. Simetri doğrusu --- */
   function symmetryAxis() {
     const parts = [txt(16, 24, 'Simetri doğrusu: katla, çakışıyor mu?', { size: 11.5, weight: 700, fill: ACCENT })];
@@ -786,7 +814,7 @@
     parts.push(poly([[170, 130], [230, 130], [230, 70], [194, 70], [194, 92], [170, 92]], { fill: '#e2d9fb', stroke: ACCENT }));
     parts.push(txt(64, 152, 'sol yarı', { size: 10, fill: MUTED }));
     parts.push(txt(204, 152, 'sağ yarı', { size: 10, fill: MUTED }));
-    parts.push(txt(16, 176, 'Katlandığında iki yarı üst üste geliyorsa doğru simetri doğrusudur.', { size: 9.5, fill: MUTED }));
+    parts.push(txt(16, 176, 'Katlanınca yarılar üst üste geliyorsa simetri doğrusu.', { size: 9.5, fill: MUTED }));
     return frame(parts.join(''), 'Bir şeklin simetri doğrusu boyunca iki eş yarısı');
   }
 
@@ -861,6 +889,7 @@
     tepe: modeFigure,
     'daire-dilim': pieChart,
     'simetri-dogrusu': symmetryAxis,
+    'kat-plani': buildingFloors,
     yonelim: orientation,
     insa: construction,
   };
