@@ -293,6 +293,28 @@ assert.ok(/data-math-etkinlik-check/.test(etkinlikMotoru), 'Etkinlikte “Kontro
 assert.ok(!/data-math-etkinlik-ai/.test(etkinlikMotoru), 'Ayrı “yapay zekâ ile değerlendir” düğmesi kaldırılmalı.');
 assert.ok(/await askAI\(activity, entry\)/.test(etkinlikMotoru), 'Kontrol et düğmesi yapay zekâ değerlendirmesini çağırmalı.');
 assert.ok(/localVerdict\(activity, entry\)/.test(etkinlikMotoru), 'Anahtar yokken yerel kontrole düşülmeli.');
+// Açıklama ölçüsü soruya göre değişmeli; kural ezberi isteyen kalıp geri gelmemeli.
+const feedbackLines = (etkinlikMotoru.match(/feedback[^\n]*/g) || []).filter((line) => !/[Aa]SLA|yasak/.test(line));
+assert.ok(feedbackLines.every((line) => !/kural/i.test(line)),
+  'Etkinlik geri bildirimi kural ezberi istememeli.');
+assert.ok(/REASON_FEEDBACK/.test(etkinlikMotoru), 'Gerekçe isteği soru türüne göre yazılmalı.');
+const reasonTypes = new Set(['karar', 'gerekce', 'islem', 'sonuc']);
+const everyActivity = [];
+for (let week = 1; week <= 15; week += 1) everyActivity.push(...ACT.forWeek(week));
+assert.ok(everyActivity.length >= 150, `Etkinlik sayısı az: ${everyActivity.length}`);
+everyActivity.forEach((activity) => {
+  assert.ok(reasonTypes.has(activity.reason), `${activity.id} için gerekçe türü tanımsız.`);
+  assert.ok(typeof activity.reasonHint === 'string' && activity.reasonHint.length > 20,
+    `${activity.id} için beklenen açıklama ölçüsü yazılmalı.`);
+  assert.ok(!/(hangi kural|kural[ıi]n[ıi] yaz|kural[ıi] kullan)/i.test(activity.reasonHint),
+    `${activity.id} açıklama ölçüsü kural adı istememeli.`);
+  assert.ok(activity.rubric.every((item) => !/hangi kuralı|kuralın neden/i.test(item)),
+    `${activity.id} ölçütü kural ezberi istememeli.`);
+});
+// Karar soruları (eşit mi, hangisi büyük, katılıyor musun) “karar” türünde olmalı.
+const decisionPrompt = everyActivity.find((activity) => /katılıyor|eşit mi|hangisi büyük/i.test(activity.prompt));
+assert.ok(decisionPrompt && decisionPrompt.reason === 'karar',
+  'Karar sorularında beklenen açıklama “karar + gerekçe” olmalı.');
 // Konu anlatımı kartı haftanın başında geri gelmeli.
 assert.ok(/Konu anlatımı/.test(read('matematik.js')) && /math-summary/.test(read('matematik.js')),
   'Hafta başında konu anlatımı kartı olmalı.');

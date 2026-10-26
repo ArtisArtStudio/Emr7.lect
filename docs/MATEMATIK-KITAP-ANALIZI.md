@@ -844,3 +844,59 @@ arasında boşluk oluşmuyor. `\frac` yığını `vertical-align:-.42em` ile tab
   çıktıyı güncelliyor, kısa açıklama reddediliyor — “RENDER TEMİZ”.
 - Soru yoğunluğu korundu: **203 açıklamalı soru** (azaltma yok), 30 kısa kontrol sorusu,
   48 terim şekli.
+
+## 21. Geri bildirim dili: “hangi kuralı kullandın” kalıbı kaldırıldı (26 Ekim 2026)
+
+Geri bildirim her soruda aynı şeyi istiyordu: “Sonucu yazdın. Şimdi hangi kuralı kullandığını ve
+neden o kuralın geçerli olduğunu bir cümleyle ekle.” Bu, kural adı olmayan sorularda anlamsız
+kalıyordu. Örnek: **“$0{,}999\ldots$ sayısı $1$’e eşit mi?”** sorusunda adlandırılacak bir kural
+yoktur; gerekçe ya hesaptır ($\frac{1}{3} = 0{,}333\ldots$, üçle çarpınca $0{,}999\ldots = 1$)
+ya da devirli ondalığı kesre çevirme işlemidir. Öğrenciden “kuralın neden geçerli olduğunu”
+yazmasını istemek bu soruda hiçbir şey öğretmiyordu.
+
+### 21.1 Soru türüne göre açıklama ölçüsü
+
+`matematik-etkinlikler.js` artık her etkinliğe bir gerekçe türü (`reason`) ve o türün beklediği
+açıklamanın ölçüsünü (`reasonHint`) ekliyor:
+
+| Tür | Hangi sorular | Beklenen açıklama |
+| --- | --- | --- |
+| `karar` | “eşit mi”, “hangisi büyük”, “katılıyor musun”, “doğru mu” | kısa karar + tek cümlelik gerekçe (hesap, örnek, tanım, karşılaştırma) |
+| `gerekce` | “neden, niçin, açıkla, tartış” | görüş + nedeni destekleyen örnek/hesap |
+| `islem` | “kaç, hesapla, bul, çiz” | işlem basamakları + sonuç (+ tek cümle gerekçe) |
+| `sonuc` | kalan sorular | sonuç + nasıl bulunduğu |
+
+Dağılım (203 etkinlik): 106 `islem`, 57 `sonuc`, 24 `karar`, 16 `gerekce`. Yani “kural + kuralın
+kanıtı” isteyen kalıp hiçbir soruda varsayılan değil.
+
+### 21.2 Yapay zekâ istemi
+
+- “Açıklama ölçüsü soruya göre değişir” kuralı isteme eklendi; karar sorularında kısa karar +
+  tek cümlelik gerekçenin **yeterli** olduğu, gerekçe olarak hesap/örnek/tanım/karşılaştırmanın
+  sayıldığı belirtiliyor.
+- “Öğrenciden ASLA adlandırılmış kural, kuralın kanıtı ya da ekstra ‘neden bu kural geçerli’
+  açıklaması isteme; kalıp cümle kullanma” yasağı eklendi.
+- Geri bildirim öğrencinin kendi sözüne/sayısına bağlanıyor; gerekçe yeterliyse `correct`
+  verilip daha fazlası istenmiyor; `missing` listesi eksik yoksa boş kalıyor.
+- İstem her etkinlikte “Bu soruda beklenen açıklama: …” satırıyla besleniyor.
+
+### 21.3 Yerel yedek ve arayüz
+
+- `localVerdict` artık sabit cümle yerine türe göre yazıyor: örneğin `karar` türünde
+  “Kararını yazdın. Şimdi neden böyle olduğunu bir örnek, hesap ya da tanımla tek cümlede
+  göster.” Kural sözcüğü geri bildirimlerden çıktı.
+- Kart etiketi “Cevabın ve kısa gerekçen (zorunlu)”, yönerge “Kural adı ezberi istenmez: bir
+  örnek, hesap ya da tanım yeterlidir.” oldu.
+- Bölüm ölçütleri sadeleşti: BAŞLAYALIM “kararını belirt + nedenini bir cümleyle yaz”,
+  DÜŞÜN-TARTIŞ-AÇIKLA “görüşünü belirt + bir örnek/hesapla destekle”, UYGULAYALIM “sonucu ve
+  gerekçeni belirt”, TEMA ÖLÇME “sonucu/kararı yaz + kısa gerekçe ekle”.
+- Ortak koç (`ai-grader.js`, Fen/Sosyal/Türkçe) de aynı yönde yumuşatıldı: yanıt doğru ve
+  gerekçesi yeterliyse ek genişletme istenmiyor, öğrenci yüreklendiriliyor; “hangi kuralı
+  kullandığını ekle” gibi hazır istekler yasaklandı.
+
+### 21.4 Doğrulama
+
+- `check-matematik-content.js` yeni kurallar: geri bildirim metinlerinde kural ezberi isteyen
+  kalıp yok, `REASON_FEEDBACK` var, her etkinlikte geçerli bir `reason` + kural adı istemeyen
+  `reasonHint`, ölçütlerde “hangi kuralı” ifadesi yok, karar soruları `karar` türünde.
+- 13 denetim betiği, `node --check`, `git diff --check`, jsdom render: temiz.

@@ -20,17 +20,36 @@
     exam: 'TEMA ÖLÇME',
   };
 
-  /* Açıklama ölçütleri bölüme göre yazılır; model cevabı asla sızdırmaz. */
+  /* Açıklama ölçütleri bölüme göre yazılır; model cevabı asla sızdırmaz.
+     Ölçütler “kural adı + kuralın neden geçerli olduğu” gibi ezber kalıplar istemez:
+     bir soru için tanım, hesap, örnek, karşılaştırma ya da karşı örnek yeterlidir. */
   const RUBRIC = {
-    warmup: ['Önceki bilgini hangi kavrama dayandırdığını yaz', 'Sonucu sayı ya da ifadeyle belirt'],
-    start: ['Soruyu kendi cümlelerinle yeniden ifade et', 'Sonucu yaz ve nasıl bulduğunu bir cümleyle açıkla'],
-    learn: ['Tanımı kendi cümlelerinle yaz', 'Sonucu işlemle birlikte göster'],
-    discuss: ['Düşünceni gerekçesiyle yaz', 'Karşıt görüşün neden yanlış olduğunu belirt'],
+    warmup: ['Bildiğin kavramı bir cümleyle hatırlat', 'Sonucu sayı ya da ifadeyle belirt'],
+    start: ['Soruyu yanıtla; kararını açıkça belirt', 'Kararının nedenini bir cümleyle yaz'],
+    learn: ['Tanımı ya da özelliği kendi cümlelerinle yaz', 'Sonucu işlemle birlikte göster'],
+    discuss: ['Görüşünü belirt', 'Gerekçeni bir örnek, hesap ya da karşılaştırmayla destekle'],
     explore: ['Gözlemini veya ölçümünü yaz', 'Sonucu sayı, tablo ya da çizimle destekle'],
-    practice: ['İşlem adımlarını sırayla yaz', 'Sonucu ve kullandığın kuralı birlikte belirt'],
+    practice: ['İşlem adımlarını sırayla yaz', 'Sonucu ve gerekçeni birlikte belirt'],
     problem: ['Hangi bilgilerin verildiğini yaz', 'Kullandığın bağıntıyı ve sonucu birlikte göster'],
-    exam: ['Sorunun ne istediğini yaz', 'Kuralı ve sonucu birlikte açıkla'],
+    exam: ['Sonucu ya da kararı yaz', 'Kısa bir gerekçe ekle'],
   };
+
+  /* Soru türüne göre beklenen açıklamanın ölçüsü. “Eşit mi?” gibi karar sorularında
+     öğrenciden kural adı beklenmez; bir örnek, hesap ya da tanım yeterlidir. */
+  const REASON = {
+    karar: 'Kısa bir karar ve tek cümlelik gerekçe yeterli. Gerekçe; hesap, örnek, tanım ya da karşılaştırma olabilir. Kural adı, kuralın gerekçelendirilmesi veya uzun açıklama beklenmez.',
+    gerekce: 'Düşünceyi belirtip nedenini bir örnek, hesap ya da karşılaştırmayla desteklemek yeterli. Ek kural açıklaması istenmez.',
+    islem: 'İşlem basamakları ve sonuç yeterli. Sonucun yanına tek cümlelik gerekçe eklenirse açıklama tamamdır.',
+    sonuc: 'Sonuç ve onu nasıl bulduğunu anlatan tek cümle yeterli.',
+  };
+
+  function reasonType(prompt) {
+    const text = String(prompt || '').toLocaleLowerCase('tr');
+    if (/eşit mi|eşit midir|büyük|küçük|hangisi|karşılaştır|doğru mu|yanlış mı|katılıyor|aynı mı|olabilir mi/.test(text)) return 'karar';
+    if (/neden|niçin|açıkla|gerekçe|yorumla|tartış|düşün/.test(text)) return 'gerekce';
+    if (/kaç|hesapla|bul|yaz|göster|çiz|ölç/.test(text)) return 'islem';
+    return 'sonuc';
+  }
 
   const clampText = (value) => String(value == null ? '' : value);
 
@@ -47,6 +66,7 @@
     const prompt = clampText(item.prompt);
     if (!prompt) return null;
     const section = kind || stage.kind;
+    const reason = reasonType(prompt);
     return {
       id: `m${weekId}-s${stageIndex}-${itemIndex}`,
       week: Number(weekId),
@@ -59,6 +79,8 @@
       hint: clampText(item.hint),
       thinking: clampText(item.thinking),
       rubric: (RUBRIC[section] || RUBRIC.learn).slice(),
+      reason,
+      reasonHint: REASON[reason],
       minChars: 40,
       scene: item.scene || stage.scene || null,
       figure: item.figure || null,
@@ -122,6 +144,7 @@
   }
 
   window.MATEMATIK_ETKINLIKLER = Object.freeze({
+    reasonType,
     forWeek,
     forStage,
     stageInfo,
