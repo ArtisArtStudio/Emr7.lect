@@ -40,6 +40,22 @@
 
   const wrap = (className, inner) => `<span class="${className}">${inner}</span>`;
 
+  const FRACTION_HEADS = ['\\frac{', '\\dfrac{', '\\tfrac{'];
+
+  /* "-\frac" yazımında eksiyi kesire bağlar: başlangıç konumunu söyler. */
+  function fractionHeadAt(source, index) {
+    return FRACTION_HEADS.find((head) => source.startsWith(head, index)) || '';
+  }
+
+  /* Kesir tek blok olarak çizilir. Önündeki eksi işareti kesirin İÇİNE alınır ve
+     kesir çizgisinin hizasında durur; böylece eksi alt/üst seviyeye kaymaz. */
+  function fraction(numerator, denominator, sign) {
+    const mark = sign ? `<span class="m-sign">${sign}</span>` : '';
+    return `<span class="m-frac${sign ? ' is-signed' : ''}">${mark}`
+      + `<span class="m-num">${renderExpression(numerator)}</span>`
+      + `<span class="m-den">${renderExpression(denominator)}</span></span>`;
+  }
+
   // Matematik parçasını HTML'e çevirir (özyinelemeli).
   function renderExpression(source) {
     let out = '';
@@ -68,8 +84,7 @@
         if (name === 'frac' || name === 'dfrac' || name === 'tfrac') {
           const first = readGroup(source, end);
           const second = readGroup(source, first.next);
-          out += `<span class="m-frac"><span class="m-num">${renderExpression(first.value)}</span>`
-            + `<span class="m-den">${renderExpression(second.value)}</span></span>`;
+          out += fraction(first.value, second.value, '');
           index = second.next;
           continue;
         }
@@ -153,6 +168,14 @@
       }
 
       if (char === '-') {
+        const head = fractionHeadAt(source, index + 1);
+        if (head) {
+          const first = readGroup(source, index + head.length);
+          const second = readGroup(source, first.next);
+          out += fraction(first.value, second.value, '−');
+          index = second.next;
+          continue;
+        }
         out += '<span class="m-op">−</span>';
         index += 1;
         continue;

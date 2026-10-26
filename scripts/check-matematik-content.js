@@ -161,6 +161,23 @@ allScenes.forEach(({ week, scene }) => {
 });
 const sceneTypeList = new Set(allScenes.map((item) => item.scene.type));
 assert.ok(sceneTypeList.size >= 16, `Sahne çeşitliliği az: ${sceneTypeList.size} farklı sahne.`);
+// Katıl-Uygula-Keşfet: her haftada sahne var ve sahne sahnenin sorularıyla aynı konuyu anlatıyor.
+const exploreStages = [];
+Object.keys(KITAP.weeks).forEach((key) => {
+  (KITAP.weeks[key].stages || []).forEach((stage) => {
+    if (stage.kind === 'explore') exploreStages.push({ week: key, stage });
+  });
+});
+assert.equal(exploreStages.length, 15, `On beş haftada katıl-uygula bölümü olmalı: ${exploreStages.length}`);
+exploreStages.forEach(({ week, stage }) => {
+  assert.ok(stage.scene && stage.scene.type, `h${week} katıl-uygula sahnesi eksik.`);
+  assert.ok(SAHNE.types().includes(stage.scene.type), `h${week} sahnesi tanınmıyor: ${stage.scene.type}`);
+  assert.ok((stage.steps || []).length >= 2, `h${week} katıl-uygula bölümünde en az iki adım olmalı.`);
+  (stage.steps || []).forEach((step, index) => {
+    assert.ok(step.prompt && step.hint, `h${week} katıl-uygula ${index + 1}. adımında soru veya ipucu eksik.`);
+  });
+  assert.ok((stage.intro || []).length >= 1, `h${week} katıl-uygula bölümünde giriş cümlesi olmalı.`);
+});
 
 // 4b. Etkinlikler: kitabın bölüm soruları, zorunlu açıklama + yapay zekâ değerlendirmesi
 const allActivities = content.weeks.flatMap((week) => ACT.forWeek(week.id).map((activity) => ({ week, activity })));

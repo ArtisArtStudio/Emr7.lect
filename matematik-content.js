@@ -557,13 +557,13 @@
       ],
       scenes: [
         {
-          type: 'prizma3b',
-          title: 'Prizmanın boyutları: yüz, ayrıt, hacim',
-          hint: 'Genişlik, derinlik ve yüksekliği değiştir; hacim ile yüzey alanı birlikte güncellenir.',
+          type: 'uc-gorunum',
+          title: 'Üç yönden görünüm: ön, yan, üst',
+          hint: 'Genişlik, derinlik ve yüksekliği değiştir; üç görünümdeki kare sayısı birlikte değişir.',
           params: [
-            { name: 'a', label: 'Genişlik', min: 1, max: 6, step: 1, value: 4 },
-            { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 2 },
-            { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 3 },
+            { name: 'a', label: 'Genişlik (ön görünüm)', min: 1, max: 4, step: 1, value: 3 },
+            { name: 'b', label: 'Derinlik (yan görünüm)', min: 1, max: 3, step: 1, value: 2 },
+            { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
           ],
         },
       ],

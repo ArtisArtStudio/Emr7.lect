@@ -30,7 +30,7 @@ assert.ok(SAHNE && typeof SAHNE.mount === 'function', 'MATEMATIK_SAHNE2.mount bu
 assert.ok(typeof SAHNE.types === 'function' && typeof SAHNE.params === 'function', 'Sahne motoru tür ve parametre listesi vermeli.');
 assert.equal(SAHNE.width, 640, 'Sahne tuvali 640 birim geniş olmalı.');
 assert.equal(SAHNE.height, 380, 'Sahne tuvali 380 birim yüksek olmalı.');
-assert.ok(SAHNE.types().length >= 18, `Sahne türü sayısı az: ${SAHNE.types().length}`);
+assert.ok(SAHNE.types().length >= 24, `Sahne türü sayısı az: ${SAHNE.types().length}`);
 SAHNE.types().forEach((type) => {
   const params = SAHNE.params(type);
   assert.ok(params.length >= 1, `${type} sahnesinde oynanabilir sürgü olmalı.`);
@@ -78,6 +78,55 @@ assert.ok(/delta >= 0 \? '\+' : '−'/.test(scene), 'Adım etiketi farkın işar
 /* Sahne değerleri kırpılır ve adıma oturur. */
 const odd = SAHNE.render('sayi-dogrusu', { a: 9.6 });
 assert.ok(/a = 7/.test(odd), 'Aralık dışı değer en yakın sınıra oturmalı.');
+
+/* Katıl-Uygula sahneleri: çizimde sonuç yazılmaz, cevap öğrencide kalır. */
+['kesir-dogru', 'kesir-isaret', 'kesir-toplam', 'kesir-carpim', 'kat-yerlestir', 'asansor-kat'].forEach((type) => {
+  assert.ok(SAHNE.types().includes(type), `${type} sahnesi bulunamadı.`);
+});
+const sceneText = (type, values) => (SAHNE.render(type, values || {}).match(/<text[^>]*>[^<]*<\/text>/g) || [])
+  .map((node) => node.replace(/<[^>]+>/g, '')).join(' | ');
+const noResult = {
+  'sifir-toplama': /Toplam = \?/,
+  'sicaklik': /Küçükten büyüğe: \?/,
+  'sayma-pullari': /Toplam = \( \+\d+ \) \+ \( −\d+ \) = \?/,
+  'isaret-kurali': /a · b = \([−-]?\d+\) · \([−-]?\d+\) = \?/,
+  'prizma3b': /Hacim = \d+·\d+·\d+ = \?/,
+  'acim': /= \?/,
+  'hacim': /Hacim = \?/,
+  'birim-donusum': /= \? dm³/,
+  'veri-grafik': /açıklık \?/,
+  'ortalama': /Ortanca: \? · Açıklık: \?/,
+  'yansima': /A'\(\?, \?\)/,
+  'kesir-isaret': /Değerini ve nedenini sen yaz/,
+  'uc-gorunum': /kaç kare\? Sen yaz/,
+  'kesir-toplam': /Payı sen yaz/,
+  'kesir-carpim': /Boyanan: \d+ × \d+ = \?/,
+};
+Object.keys(noResult).forEach((type) => {
+  const drawn = sceneText(type);
+  assert.ok(noResult[type].test(drawn), `${type} sahnesi sonucu öğrenciye bırakmıyor: ${drawn.slice(0, 120)}`);
+});
+// Payda kadar ara çentik: ana çentik tam sayı, aralar eş parça.
+const axisSvg = SAHNE.render('kesir-dogru', { tam: 0, pay: 3, payda: 5 });
+assert.ok((axisSvg.match(/<line[^>]*stroke="#8b97a8"/g) || []).length >= 30, 'Sayı doğrusunda ara çentikler çizilmeli.');
+assert.ok(/ana çentik/i.test(sceneText('kesir-dogru')), 'Sayı doğrusu ana/ara çentik ayrımını anlatmalı.');
+// Sürükleme yalnız ara çentiklere oturur.
+assert.ok(/clampValue\(raw, -3 \+ 1 \/ payda, 3, 1 \/ payda\)/.test(scene), 'Kesir işareti yalnız $1/payda$ adımlarına oturmalı.');
+// Eksi işareti üç yere taşınabilir, değer yazılmaz.
+assert.ok(/Eksi işaretini taşı/.test(sceneText('kesir-isaret')), 'Eksi işareti sürüklenebilmeli.');
+assert.ok(!/değer/i.test(sceneText('kesir-isaret')) || !/=\s*\d/.test(sceneText('kesir-isaret')), 'Eksi işareti sahnesi değeri yazmamalı.');
+// Kat sahneleri: sürükle-bırak, cevap yazılmaz.
+['kat-yerlestir', 'asansor-kat'].forEach((type) => {
+  assert.ok(SAHNE.params(type).some((param) => /kat/i.test(param.name)), `${type} kat sürgüsü taşımalı.`);
+  assert.ok(/sürükle/i.test(sceneText(type)), `${type} sürükleme yönergesi vermeli.`);
+});
+// Şerit toplama ve alan modeli: toplam/çarpım sonucu yazılmaz.
+assert.ok(/Payı sen yaz/.test(sceneText('kesir-toplam')), 'Kesir toplamı sonucu öğrenciye bırakmalı.');
+assert.ok(/=\s*\?/.test(sceneText('kesir-carpim')), 'Alan modeli çarpım sonucunu yazmamalı.');
+// Aşamalı çözüm: yol haritası + ilk iki basamak açık, kalanı kapalı.
+assert.ok(/math-solution-map/.test(app), 'Çözüm yol haritası basılmalı.');
+assert.ok(/<details class="math-solution">/.test(app), 'Son basamaklar kapalı olmalı.');
+assert.ok(/Cevabı göster/.test(app), 'Kapalı bölümün başlığı “Cevabı göster” olmalı.');
 
 
 // 4. Şekil motoru: tüm türler çizilir, bozuk değer üretmez

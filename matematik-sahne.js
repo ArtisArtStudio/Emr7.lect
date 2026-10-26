@@ -227,10 +227,10 @@
           parts.push(text(px(value), y, `${label}: ${num(value)} °C`, { size: 12.5, anchor: 'middle', weight: 800, fill: color }));
         });
         parts.push(panel(40, 216, W - 80, 96));
-        parts.push(text(58, 244, `A ile B arasındaki fark: ${num(Math.max(t1, t2))} − (${num(Math.min(t1, t2))}) = ${num(Math.abs(t1 - t2))} °C`, { size: 12.5, weight: 800, fill: '#33265f' }));
-        parts.push(text(58, 270, `C ile A arasındaki fark: ${num(t3)} − (${num(t1)}) = ${num(t3 - t1)} °C`, { size: 12.5, fill: '#41506a' }));
+        parts.push(text(58, 244, `A ile B arasındaki fark: ${num(Math.max(t1, t2))} − (${num(Math.min(t1, t2))}) = ?`, { size: 12.5, weight: 800, fill: '#33265f' }));
+        parts.push(text(58, 270, `C ile A arasındaki fark: ${num(t3)} − (${num(t1)}) = ?`, { size: 12.5, fill: '#41506a' }));
         const order = [['A', t1], ['B', t2], ['C', t3]].sort((x, y) => x[1] - y[1]).map((item) => `${item[0]} (${num(item[1])})`).join(' < ');
-        parts.push(text(58, 296, `Küçükten büyüğe: ${order}`, { size: 12.5, fill: '#2f8a63', weight: 700 }));
+        parts.push(text(58, 296, 'Küçükten büyüğe: ?', { size: 12.5, fill: '#2f8a63', weight: 700 }));
         parts.push(text(W / 2, 344, 'Sürgüleri kaydır: fark ve sıralama birlikte güncellenir.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
         return parts.join('');
       },
@@ -307,13 +307,13 @@
           const midX = (x1 + x2) / 2;
           parts.push(`<path d="M ${num(x1)} ${num(axis.axisY - 10)} C ${num(x1)} ${num(lane)} ${num(x2)} ${num(lane)} ${num(x2)} ${num(axis.axisY - 10)}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="6 5"/>`);
           parts.push(circle(x2, axis.axisY, 5, { fill: color }));
-          parts.push(text(midX, lane - 10, `${index + 1}. adım: ${delta >= 0 ? '+' : '−'}${num(Math.abs(delta))} → ${num(to)}`, { size: 12, anchor: 'middle', weight: 700, fill: color }));
+          parts.push(text(midX, lane - 10, `${index + 1}. kart: ${delta >= 0 ? '+' : '−'}${num(Math.abs(delta))}`, { size: 12, anchor: 'middle', weight: 700, fill: color }));
         });
         parts.push(circle(axis.px(0), axis.axisY, 6, { fill: '#1b2f49' }));
 
         const total = totals[totals.length - 1];
-        parts.push(text(48, 342, `Toplam = ${num(total)}`, { size: 15, weight: 800, fill: total === 0 ? '#1f6b4c' : '#33265f' }));
-        parts.push(text(186, 342, total === 0 ? 'Zıt işaretli kartlar birbirini götürdü: sıfıra döndün.' : 'Sıfıra dönmek için ters işaretli kart gerekir.', { size: 12.5, fill: '#41506a' }));
+        parts.push(text(48, 342, 'Toplam = ?', { size: 15, weight: 800, fill: '#33265f' }));
+        parts.push(text(186, 342, 'Kartları değiştir: son noktayı ve sıfıra dönüş koşulunu sen yaz.', { size: 12.5, fill: '#41506a' }));
         return parts.join('');
       },
     },
@@ -346,6 +346,173 @@
     },
 
     /* 3. Kesir şeridi: pay ve payda */
+    /* 2a. Rasyonel sayıyı sayı doğrusunda gösterme: ana çentikler tam sayı,
+       aralarındaki küçük çentikler payda kadar eş parça. Öğrenci işareti sürükler. */
+    /* Eksi işaretinin üç yeri: kesrin önü, pay, payda. Sonuç yazılmaz. */
+    'kesir-isaret': {
+      params: [
+        { name: 'pay', label: 'Pay', min: 1, max: 9, step: 1, value: 8 },
+        { name: 'payda', label: 'Payda', min: 2, max: 9, step: 1, value: 4 },
+        { name: 'yer', label: 'Eksi işaretinin yeri', min: 0, max: 2, step: 1, value: 0 },
+      ],
+      draw(state) {
+        const pay = clampValue(state.pay, 1, 9, 1);
+        const payda = clampValue(state.payda, 2, 9, 1);
+        const yer = clampValue(state.yer, 0, 2, 1);
+        const fx = 430;
+        const numY = 112;
+        const barY = 138;
+        const denY = 176;
+        const parts = [text(W / 2, 30, 'Eksi işaretini taşı: değeri değişir mi?', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        parts.push(rect(250, 66, 400, 148, { fill: '#fbfaff', stroke: '#ded8f2', width: 1.4, rx: 14 }));
+        parts.push(text(fx, numY + 8, String(pay), { size: 34, anchor: 'middle', weight: 800, fill: '#1b2f49' }));
+        parts.push(line(fx - 34, barY, fx + 34, barY, { stroke: '#1b2f49', width: 3 }));
+        parts.push(text(fx, denY + 8, String(payda), { size: 34, anchor: 'middle', weight: 800, fill: '#1b2f49' }));
+        const signX = yer === 0 ? fx - 74 : fx - 40;
+        const signY = yer === 0 ? barY + 10 : yer === 1 ? numY + 8 : denY + 8;
+        parts.push(text(signX, signY, '−', { size: yer === 0 ? 40 : 30, anchor: 'middle', weight: 800, fill: '#c03744' }));
+        const slots = [
+          { x: 150, label: 'kesrin önü' },
+          { x: 430, label: 'pay' },
+          { x: 560, label: 'payda' },
+        ];
+        slots.forEach((slot, index) => {
+          const active = index === yer;
+          parts.push(rect(slot.x - 66, 236, 132, 40, { fill: active ? '#efeafb' : '#ffffff', stroke: active ? '#5b46a8' : '#d8d2ec', width: active ? 2 : 1, rx: 10 }));
+          parts.push(text(slot.x, 261, slot.label, { size: 12.5, anchor: 'middle', weight: active ? 800 : 600, fill: active ? '#4a3d7a' : '#6b7a90' }));
+        });
+        parts.push(text(W / 2, 300, `Şu an işaret ${yer === 0 ? 'kesrin önünde' : yer === 1 ? 'payın yanında' : 'paydanın yanında'}.`, { size: 13, anchor: 'middle', weight: 700, fill: '#33265f' }));
+        parts.push(text(W / 2, 326, 'Üç yazım aynı sayıyı mı gösterir? Değerini ve nedenini sen yaz.', { size: 12.5, anchor: 'middle', fill: '#41506a' }));
+        parts.push(text(W / 2, 352, 'İşareti sürükle ya da sürgüyü kullan.', { size: 11.5, anchor: 'middle', fill: '#6b7a90' }));
+        parts.push(handle('yer', signX, signY - 12, 'Eksi işaretini taşı'));
+        return parts.join('');
+      },
+      drag(svg, event, name, state) {
+        const local = localPoint(svg, event);
+        const slot = Math.round((local.x - 150) / 205);
+        state.yer = clampValue(slot, 0, 2, 1);
+      },
+      handles: [{ name: 'yer', label: 'Eksi işaretini taşı' }],
+    },
+
+    'kesir-dogru': {
+      params: [
+        { name: 'tam', label: 'Tam kısım', min: -3, max: 3, step: 1, value: 0 },
+        { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 3 },
+        { name: 'payda', label: 'Payda', min: 2, max: 8, step: 1, value: 5 },
+      ],
+      draw(state) {
+        const payda = clampValue(state.payda, 2, 8, 1);
+        const pay = clampValue(state.pay, 0, payda - 1, 1);
+        const tam = clampValue(state.tam, -3, 3, 1);
+        const value = tam < 0 ? tam - pay / payda : tam + pay / payda;
+        const min = -4;
+        const max = 4;
+        const axisY = 210;
+        const left = 46;
+        const right = W - 46;
+        const px = (v) => left + ((v - min) / (max - min)) * (right - left);
+        const parts = [text(W / 2, 30, 'Ana çentikler tam sayı, araları payda kadar eş parça', { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' })];
+
+        /* şerit: tam sayılar arası payda kadar eş parça */
+        for (let whole = min; whole < max; whole += 1) {
+          const fill = whole === Math.floor(value) ? '#efeafb' : '#fbfaff';
+          parts.push(rect(px(whole) + 1, 96, px(whole + 1) - px(whole) - 2, 44, { fill, stroke: '#ded8f2', width: 1 }));
+        }
+
+        /* sayı doğrusu */
+        parts.push(line(left - 8, axisY, right + 8, axisY, { stroke: '#1b2f49', width: 2 }));
+        parts.push(`<polygon points="${num(right + 20)},${num(axisY)} ${num(right + 8)},${num(axisY - 5)} ${num(right + 8)},${num(axisY + 5)}" fill="#1b2f49"/>`);
+
+        for (let whole = min; whole <= max; whole += 1) {
+          parts.push(line(px(whole), axisY - 11, px(whole), axisY + 11, { stroke: '#1b2f49', width: 2 }));
+          parts.push(text(px(whole), axisY + 30, num(whole), { size: 12.5, anchor: 'middle', weight: 800, fill: '#1b2f49' }));
+        }
+        for (let step = 0; step < payda; step += 1) {
+          if (step === 0) continue;
+          for (let whole = min; whole < max; whole += 1) {
+            const x = left + ((whole + step / payda - min) / (max - min)) * (right - left);
+            parts.push(line(x, axisY - 6, x, axisY + 6, { stroke: '#8b97a8', width: 1 }));
+          }
+        }
+
+        /* işaret */
+        const x = px(value);
+        parts.push(line(x, 142, x, axisY - 12, { stroke: '#5b46a8', width: 1.4, dash: '4 4' }));
+        parts.push(circle(x, axisY, 7, { fill: '#5b46a8' }));
+        const labelY = 128;
+        const sign = tam < 0 ? '−' : '';
+        const wholeText = tam === 0 ? '' : `${Math.abs(tam)}`;
+        const startX = x - 22;
+        parts.push(text(startX, labelY, `${sign}${wholeText}`, { size: 17, anchor: 'end', weight: 800, fill: '#5b46a8' }));
+        parts.push(text(x + 4, labelY - 5, String(pay), { size: 14, anchor: 'start', weight: 800, fill: '#5b46a8' }));
+        parts.push(line(x + 2, labelY - 1, x + 22, labelY - 1, { stroke: '#5b46a8', width: 1.4 }));
+        parts.push(text(x + 4, labelY + 13, String(payda), { size: 14, anchor: 'start', weight: 800, fill: '#5b46a8' }));
+
+        parts.push(panel(40, 252, W - 80, 64));
+        parts.push(text(58, 280, `Parça boyu: 1 ÷ ${num(payda)}  ·  işaret ${num(value)} noktasında`, { size: 12.5, weight: 700, fill: '#33265f' }));
+        parts.push(text(58, 302, 'Oku: sıfırdan sola mı sağa mı? Kaç tam, kaç parça?', { size: 12, fill: '#41506a' }));
+        parts.push(text(W / 2, 344, 'İşareti sürükle: yalnız küçük çentiklere oturur.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
+        parts.push(handle('nokta', x, axisY, 'Rasyonel sayının işaretini sürükle'));
+        return parts.join('');
+      },
+      drag(svg, event, name, state) {
+        const min = -4;
+        const max = 4;
+        const left = 46;
+        const right = W - 46;
+        const payda = clampValue(state.payda, 2, 8, 1);
+        const raw = min + ((localPoint(svg, event).x - left) / (right - left)) * (max - min);
+        const snapped = clampValue(raw, -3 + 1 / payda, 3, 1 / payda);
+        const whole = snapped < 0 ? Math.ceil(snapped) : Math.floor(snapped);
+        const rest = Math.abs(snapped - whole);
+        state.tam = whole;
+        state.pay = Math.round(rest * payda);
+        if (state.pay >= payda) { state.tam = whole + 1; state.pay = 0; }
+      },
+      handles: [{ name: 'nokta', label: 'Rasyonel sayının işaretini sürükle' }],
+    },
+
+    /* 2b. Apartman katları: öğrenci sığınağı sürükleyerek yerleştirir; cevap yazılmaz. */
+    'kat-yerlestir': {
+      params: [{ name: 'kat', label: 'Sığınağın katı', min: -3, max: 4, step: 1, value: 1 }],
+      draw(state) {
+        const kat = clampValue(state.kat, -3, 4, 1);
+        const top = 4;
+        const bottom = -3;
+        const left = 210;
+        const width = 250;
+        const rowH = 27;
+        const topY = 62;
+        const yOf = (floor) => topY + (top - floor) * rowH;
+        const parts = [text(W / 2, 30, 'Sığınağı sürükle: hangi kata gelecek?', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        for (let floor = top; floor >= bottom; floor -= 1) {
+          const y = yOf(floor);
+          const zero = floor === 0;
+          parts.push(rect(left, y, width, rowH, { fill: zero ? '#ded5fb' : floor < 0 ? '#f3f7fb' : '#fbfaff', stroke: zero ? '#7056c9' : '#d8d2ec', width: 1 }));
+          parts.push(text(left - 12, y + 19, floor === 0 ? '0' : num(floor), { size: 13, anchor: 'end', weight: 800, fill: zero ? '#5b46a8' : '#1b2f49' }));
+          if (zero) parts.push(text(left + 12, y + 19, 'Zemin kat', { size: 12, fill: '#4a3d7a' }));
+          if (floor === -2) parts.push(text(left + 12, y + 19, 'Otopark (2 kat alt)', { size: 12, fill: '#2f8a63' }));
+        }
+        const chipY = yOf(kat);
+        parts.push(rect(left + width - 116, chipY + 3, 108, rowH - 6, { fill: '#fff3d6', stroke: '#b8791a', width: 1.4, rx: 8 }));
+        parts.push(text(left + width - 62, chipY + 19, 'Sığınak', { size: 12.5, anchor: 'middle', weight: 800, fill: '#8a5a10' }));
+        parts.push(text(46, 320, 'Otoparkın bir kat üstü hangi sayı? Sığınak kutusunu oraya bırak.', { size: 12, fill: '#41506a' }));
+        parts.push(text(46, 342, 'Sürüklerken kat numarası değişir; doğru katı bulunca yaz.', { size: 11.5, fill: '#6b7a90' }));
+        parts.push(handle('kat', left + width - 62, chipY + rowH / 2, 'Sığınağı kata sürükle'));
+        return parts.join('');
+      },
+      drag(svg, event, name, state) {
+        const top = 4;
+        const topY = 62;
+        const rowH = 27;
+        const local = localPoint(svg, event);
+        const floor = Math.round(top - (local.y - topY - rowH / 2) / rowH);
+        state.kat = clampValue(floor, -3, 4, 1);
+      },
+      handles: [{ name: 'kat', label: 'Sığınağı kata sürükle' }],
+    },
+
     'kesir-serit': {
       params: [
         { name: 'd', label: 'Payda (kaç eş parça)', min: 2, max: 10, step: 1, value: 4 },
@@ -382,62 +549,114 @@
         { name: 'n', label: 'Negatif pul (−)', min: 0, max: 6, step: 1, value: 6 },
       ],
       draw(state) {
-        const p = Math.max(0, state.p);
-        const n = Math.max(0, state.n);
-        const parts = [];
-        parts.push(note(40, 40, 'Bir (+) ve bir (−) pul birbirini götürür; kalan pullar toplamı verir.', { size: 13 }));
-        const drawTokens = (count, startY, color, symbol) => Array.from({ length: count }, (_, index) => {
-          const x = 70 + index * 62;
-          return circle(x, startY, 18, { fill: color })
-            + text(x, startY + 6, symbol, { size: 18, anchor: 'middle', weight: 800, fill: '#fff' });
-        }).join('');
-        parts.push(text(40, 90, `+${p}`, { size: 14, weight: 800, fill: '#2f8a63' }));
-        parts.push(drawTokens(p, 130, '#2f8a63', '+'));
-        parts.push(text(40, 190, `−${n}`, { size: 14, weight: 800, fill: '#c03744' }));
-        parts.push(drawTokens(n, 230, '#c03744', '−'));
+        const p = clampValue(state.p, 0, 6, 1);
+        const n = clampValue(state.n, 0, 6, 1);
         const pairs = Math.min(p, n);
-        parts.push(note(40, 286, `${pairs} çift birbirini götürür, ${Math.abs(p - n)} pul kalır.`, { size: 13 }));
-        parts.push(panel(40, 300, W - 80, 58));
-        const total = p - n;
-        parts.push(text(60, 336, `(+${p}) + (−${n}) = ${num(total)}`, { size: 20, weight: 800, fill: '#33265f' }));
+        const left = 74;
+        const gap = 58;
+        const parts = [note(40, 36, 'Kırmızı pul +1, mavi pul −1. Yan yana gelen kırmızı-mavi çift sıfır olur.', { size: 12.5 })];
+        const row = (count, y, color, symbol, matched) => Array.from({ length: count }, (_, index) => {
+          const x = left + index * gap;
+          const paired = index < matched;
+          return (paired ? circle(x, y, 24, { fill: 'none', stroke: '#b8791a', width: 1.6 }) : '')
+            + circle(x, y, 18, { fill: color })
+            + text(x, y + 6, symbol, { size: 18, anchor: 'middle', weight: 800, fill: '#fff' });
+        }).join('');
+        parts.push(text(40, 96, `+${p}`, { size: 14, weight: 800, fill: '#c03744' }));
+        parts.push(row(p, 132, '#c03744', '+', pairs));
+        parts.push(text(40, 200, `−${n}`, { size: 14, weight: 800, fill: '#2a5da8' }));
+        parts.push(row(n, 236, '#2a5da8', '−', pairs));
+        parts.push(note(40, 286, 'Altın çerçeveli pullar sıfır çiftidir. Kaç çift var, kalan kaç pul? Sen yaz.', { size: 12.5 }));
+        parts.push(panel(40, 302, W - 80, 56));
+        parts.push(text(60, 336, `Toplam = ( +${num(p)} ) + ( −${num(n)} ) = ?`, { size: 19, weight: 800, fill: '#33265f' }));
         return parts.join('');
       },
     },
 
-    /* 5. Kesirlerde toplama: payda eşitleme */
+    'asansor-kat': {
+      params: [{ name: 'kat', label: 'Asansörün katı', min: -3, max: 6, step: 1, value: 4 }],
+      draw(state) {
+        const kat = clampValue(state.kat, -3, 6, 1);
+        const top = 6;
+        const bottom = -3;
+        const left = 232;
+        const width = 214;
+        const rowH = 23;
+        const topY = 56;
+        const yOf = (floor) => topY + (top - floor) * rowH;
+        const parts = [text(W / 2, 28, 'Asansörü sürükle: hangi katta duruyor?', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        for (let floor = top; floor >= bottom; floor -= 1) {
+          const y = yOf(floor);
+          const zero = floor === 0;
+          parts.push(rect(left, y, width, rowH, { fill: zero ? '#ded5fb' : floor < 0 ? '#f3f7fb' : '#fbfaff', stroke: zero ? '#7056c9' : '#d8d2ec', width: 1 }));
+          parts.push(text(left - 12, y + 16, floor === 0 ? '0' : num(floor), { size: 12.5, anchor: 'end', weight: 800, fill: zero ? '#5b46a8' : '#1b2f49' }));
+          if (zero) parts.push(text(left + 12, y + 16, 'Zemin kat', { size: 11.5, fill: '#4a3d7a' }));
+          if (floor === -1) parts.push(text(left + 12, y + 16, 'Bodrum kat', { size: 11.5, fill: '#41506a' }));
+          if (floor === -2) parts.push(text(left + 12, y + 16, 'Otopark (2 kat alt)', { size: 11.5, fill: '#2f8a63' }));
+        }
+        const chipY = yOf(kat);
+        parts.push(rect(left + width - 104, chipY + 2, 96, rowH - 4, { fill: '#fff3d6', stroke: '#b8791a', width: 1.4, rx: 7 }));
+        parts.push(text(left + width - 56, chipY + 16, 'Asansör', { size: 12, anchor: 'middle', weight: 800, fill: '#8a5a10' }));
+        parts.push(text(44, 330, 'Asansör 4. kattan 3 kat inip 5 kat çıkıyor.', { size: 12.5, fill: '#41506a' }));
+        parts.push(text(44, 352, 'Kutuyu doğru kata bırak; kat numarası hemen görünür.', { size: 11.5, fill: '#6b7a90' }));
+        parts.push(handle('kat', left + width - 56, chipY + rowH / 2, 'Asansörü kata sürükle'));
+        return parts.join('');
+      },
+      drag(svg, event, name, state) {
+        const top = 6;
+        const topY = 56;
+        const rowH = 23;
+        const local = localPoint(svg, event);
+        const floor = Math.round(top - (local.y - topY - rowH / 2) / rowH);
+        state.kat = clampValue(floor, -3, 6, 1);
+      },
+      handles: [{ name: 'kat', label: 'Asansörü kata sürükle' }],
+    },
+
     'kesir-toplam': {
       params: [
-        { name: 'a', label: 'Birinci kesrin payı', min: 0, max: 2, step: 1, value: 1 },
-        { name: 'c', label: 'İkinci kesrin payı', min: 0, max: 3, step: 1, value: 1 },
+        { name: 'a', label: '1. kesirde boyanan parça (pay)', min: 0, max: 2, step: 1, value: 1 },
+        { name: 'c', label: '2. kesirde boyanan parça (pay)', min: 0, max: 3, step: 1, value: 1 },
       ],
       draw(state) {
-        const a = Math.max(0, Math.min(2, state.a));
-        const c = Math.max(0, Math.min(3, state.c));
-        const parts = [];
+        const a = clampValue(state.a, 0, 2, 1);
+        const c = clampValue(state.c, 0, 3, 1);
+        const left = 150;
+        const width = 380;
         const bar = (y, total, shaded, label, color) => {
-          const left = 150;
-          const width = 380;
           const cell = width / total;
-          const out = [text(40, y + 22, label, { size: 13, weight: 800, fill: color })];
+          const out = [text(40, y + 24, label, { size: 13, weight: 800, fill: color })];
           for (let index = 0; index < total; index += 1) {
-            out.push(rect(left + index * cell, y, cell, 38, { fill: index < shaded ? '#c9bff2' : '#fbfaff', stroke: '#4a3d7a', width: 1.2 }));
+            out.push(rect(left + index * cell, y, cell, 40, { fill: index < shaded ? '#c9bff2' : '#fbfaff', stroke: '#4a3d7a', width: 1.2 }));
           }
           return out.join('');
         };
-        parts.push(note(40, 36, 'Paydalar eşit değilken paylar toplanmaz: önce ortak paydaya getirilir.', { size: 13 }));
-        parts.push(bar(70, 2, a, `a/2 = ${a}/2`, '#33265f'));
-        parts.push(bar(140, 3, c, `c/3 = ${c}/3`, '#33265f'));
-        parts.push(bar(230, 6, a * 3 + c * 2, `toplam = ${a * 3 + c * 2}/6`, '#2f8a63'));
-        parts.push(text(150, 210, `a = ${a}  ·  c = ${c}`, { size: 12.5, fill: '#6b7a90' }));
-        parts.push(panel(40, 292, W - 80, 66));
-        const total = a * 3 + c * 2;
-        parts.push(text(60, 322, `${a}/2 + ${c}/3 = ${a * 3}/6 + ${c * 2}/6 = ${total}/6`, { size: 18, weight: 800, fill: '#33265f' }));
-        parts.push(note(60, 344, total === 6 ? 'Sonuç 1: iki kesir toplamı bir bütün etti.' : `${num(total / 6)} (yaklaşık)`, { size: 12.5 }));
+        const parts = [note(40, 36, 'Şeritlere dokunarak boya: paydalar eşit değilken paylar toplanmaz.', { size: 12.5 })];
+        parts.push(bar(74, 2, a, `1. şerit: ${a}/2`, '#33265f'));
+        parts.push(bar(160, 3, c, `2. şerit: ${c}/3`, '#33265f'));
+        parts.push(panel(40, 236, W - 80, 96));
+        parts.push(text(58, 266, 'İki şerit kaç eş parçaya bölünürse parçalar eşitlenir?', { size: 13, weight: 800, fill: '#33265f' }));
+        parts.push(text(58, 292, `1. şerit o parça sayısına bölünürse boyanan: 3 × ${num(a)} = ? parça`, { size: 12.5, fill: '#41506a' }));
+        parts.push(text(58, 316, `2. şerit o parça sayısına bölünürse boyanan: 2 × ${num(c)} = ? parça`, { size: 12.5, fill: '#41506a' }));
+        parts.push(text(W / 2, 352, 'Toplam kaç altıda bir? Payı sen yaz.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
+        parts.push(handle('bar1', left + width / 2, 94, '1. şeridi boya'));
+        parts.push(handle('bar2', left + width / 2, 180, '2. şeridi boya'));
         return parts.join('');
       },
+      drag(svg, event, name, state) {
+        const left = 150;
+        const width = 380;
+        const local = localPoint(svg, event);
+        const column = name === 'bar2' ? 3 : 2;
+        const cell = width / column;
+        const index = Math.ceil((local.x - left) / cell);
+        const value = clampValue(index, 0, column, 1);
+        if (name === 'bar2') state.c = value;
+        else state.a = value;
+      },
+      handles: [{ name: 'bar1', label: '1. şeridi boya' }, { name: 'bar2', label: '2. şeridi boya' }],
     },
 
-    /* 6. Kesirlerde çarpma: alan modeli */
     'kesir-carpim': {
       params: [
         { name: 'n1', label: 'Birinci kesrin payı', min: 1, max: 4, step: 1, value: 2 },
@@ -446,17 +665,16 @@
         { name: 'd2', label: 'İkinci kesrin paydası', min: 2, max: 5, step: 1, value: 4 },
       ],
       draw(state) {
-        const n1 = Math.min(state.n1, state.d1);
-        const n2 = Math.min(state.n2, state.d2);
-        const d1 = state.d1;
-        const d2 = state.d2;
-        const size = 260;
-        const left = 70;
-        const top = 70;
+        const d1 = clampValue(state.d1, 2, 5, 1);
+        const d2 = clampValue(state.d2, 2, 5, 1);
+        const n1 = clampValue(state.n1, 1, d1, 1);
+        const n2 = clampValue(state.n2, 1, d2, 1);
+        const size = 240;
+        const left = 74;
+        const top = 78;
         const cw = size / d2;
         const ch = size / d1;
-        const parts = [];
-        parts.push(note(40, 36, 'Alan modeli: bir kesir yatay, diğeri dikey bölünür; kesişen kareler çarpımı verir.', { size: 12.5 }));
+        const parts = [note(40, 36, 'Alan modeli: satır birinci kesri, sütun ikinci kesri gösterir.', { size: 12.5 })];
         parts.push(rect(left, top, size, size, { fill: '#fff', stroke: '#1b2f49', width: 1.8 }));
         for (let row = 0; row < d1; row += 1) {
           for (let col = 0; col < d2; col += 1) {
@@ -464,22 +682,31 @@
             parts.push(rect(left + col * cw, top + row * ch, cw, ch, { fill: inside ? '#c9bff2' : 'none', stroke: '#8a7fb5', width: 1 }));
           }
         }
-        parts.push(text(left + (n2 * cw) / 2, top - 10, `${n2}/${d2}`, { size: 13, anchor: 'middle', weight: 800, fill: '#5b46a8' }));
-        parts.push(text(left + size + 26, top + (n1 * ch) / 2 + 4, `${n1}/${d1}`, { size: 13, anchor: 'middle', weight: 800, fill: '#2f8a63' }));
-        parts.push(text(left + size / 2, top + size + 22, 'satır: birinci kesir · sütun: ikinci', { size: 11, anchor: 'middle', fill: '#6b7a90' }));
-        parts.push(panel(380, 110, W - 420, 190));
-        const product = (n1 * n2) / (d1 * d2);
-        parts.push(text(400, 146, 'Çarpım', { size: 12, weight: 800, fill: '#6b7a90' }));
-        parts.push(text(400, 186, `${n1}/${d1} × ${n2}/${d2}`, { size: 19, weight: 800, fill: '#33265f' }));
-        parts.push(text(400, 222, `= ${n1 * n2}/${d1 * d2}`, { size: 17, weight: 800, fill: '#5b46a8' }));
-        parts.push(text(400, 258, `= ${num(product)}`, { size: 15, fill: '#2f8a63' }));
-        parts.push(note(400, 282, `${n1 * n2} kare boyandı`, { size: 12 }));
+        parts.push(text(left + size / 2, top - 12, `${n2}/${d2} (sütun)`, { size: 12.5, anchor: 'middle', weight: 800, fill: '#5b46a8' }));
+        parts.push(text(left + size + 12, top + size / 2, `${n1}/${d1}`, { size: 12.5, anchor: 'middle', weight: 800, fill: '#2f8a63' }));
+        parts.push(panel(380, 110, W - 420, 150));
+        parts.push(text(400, 142, `${n1}/${d1} × ${n2}/${d2}`, { size: 19, weight: 800, fill: '#33265f' }));
+        parts.push(text(400, 176, `Kaç kare boyandı?`, { size: 12.5, fill: '#41506a' }));
+        const total = d1 * d2;
+        parts.push(text(400, 204, `Karelerin toplamı: ${num(total)}`, { size: 12.5, fill: '#41506a' }));
+        parts.push(text(400, 234, `Boyanan: ${n1} × ${n2} = ?`, { size: 13, weight: 800, fill: '#5b46a8' }));
         parts.push(note(40, H - 18, 'Payda eşitlenmez: paylar ve paydalar ayrı çarpılır.', { size: 12 }));
+        parts.push(handle('alan', left + size / 2, top + size / 2, 'Boyalı alanı sürükle'));
         return parts.join('');
       },
+      drag(svg, event, name, state) {
+        const left = 74;
+        const top = 78;
+        const size = 240;
+        const d1 = clampValue(state.d1, 2, 5, 1);
+        const d2 = clampValue(state.d2, 2, 5, 1);
+        const local = localPoint(svg, event);
+        state.n2 = clampValue(Math.ceil((local.x - left) / (size / d2)), 1, d2, 1);
+        state.n1 = clampValue(Math.ceil((local.y - top) / (size / d1)), 1, d1, 1);
+      },
+      handles: [{ name: 'alan', label: 'Boyalı alanı sürükle' }],
     },
 
-    /* 7. İşaret kuralı */
     'isaret-kurali': {
       params: [
         { name: 'a', label: 'Birinci sayı (a)', min: -6, max: 6, step: 1, value: -4 },
@@ -498,8 +725,8 @@
           parts.push(text(p.px(clamped), p.py(0) - 16 - lift, `${label} = ${num(clamped)}`, { size: 11.5, anchor: 'middle', weight: 700, fill: color }));
         });
         parts.push(panel(40, 224, W - 80, 130));
-        parts.push(text(60, 258, `a + b = ${num(a)} + ${num(b)} = ${num(a + b)}`, { size: 17, weight: 800, fill: '#33265f' }));
-        parts.push(text(60, 292, `a · b = ${num(a)} · ${num(b)} = ${num(a * b)}`, { size: 17, weight: 800, fill: '#33265f' }));
+        parts.push(text(60, 258, `a + b = (${num(a)}) + (${num(b)}) = ?`, { size: 17, weight: 800, fill: '#33265f' }));
+        parts.push(text(60, 292, `a · b = (${num(a)}) · (${num(b)}) = ?`, { size: 17, weight: 800, fill: '#33265f' }));
         const rule = a === 0 || b === 0 ? 'Sıfır çarpan varsa çarpım sıfırdır.'
           : (a > 0) === (b > 0) ? 'İki sayının işareti aynı: çarpım pozitif.'
             : 'İşaretler zıt: çarpım negatif.';
@@ -539,9 +766,9 @@
         parts.push(panel(392, 46, 232, 132));
         parts.push(text(410, 76, 'Yüz · ayrıt · köşe', { size: 12.5, weight: 800, fill: '#33265f' }));
         parts.push(note(410, 100, '6 yüz · 12 ayrıt · 8 köşe', { size: 12.5 }));
-        parts.push(note(410, 126, `Hacim = ${num(a)}·${num(b)}·${num(h)}`, { size: 12.5, fill: '#5b46a8' }));
+        parts.push(note(410, 126, `Hacim = ${num(a)}·${num(b)}·${num(h)} = ?`, { size: 12.5, fill: '#5b46a8' }));
         parts.push(note(410, 146, `= ${num(a * b * h)} birimküp`, { size: 12.5, fill: '#5b46a8' }));
-        parts.push(note(410, 170, `Yüzey = ${num(2 * (a * b + a * h + b * h))}`, { size: 12.5, fill: '#2f8a63' }));
+        parts.push(note(410, 170, 'Yüzey = 2·(a·b + a·h + b·h) = ?', { size: 12.5, fill: '#2f8a63' }));
         return parts.join('');
       },
     },
@@ -581,9 +808,48 @@
         const surface = 2 * (a * b + a * h + b * h);
         parts.push(text(422, 94, 'Yüzey alanı', { size: 12.5, weight: 800, fill: '#33265f' }));
         parts.push(note(422, 118, '2·(a·b + a·h + b·h)', { size: 12 }));
-        parts.push(text(422, 148, `= ${num(surface)}`, { size: 18, weight: 800, fill: '#5b46a8' }));
+        parts.push(text(422, 148, '= ?', { size: 18, weight: 800, fill: '#5b46a8' }));
         parts.push(note(422, 172, 'her yüz çiftinden iki tane', { size: 11.5 }));
         parts.push(note(40, H - 20, 'Kapaksız kutuda üst yüz hesaba katılmaz.', { size: 12 }));
+        return parts.join('');
+      },
+    },
+
+    /* Cisimlerin üç yönden görünümü: ön · yan · üst. Sonuç yazılmaz. */
+    'uc-gorunum': {
+      params: [
+        { name: 'a', label: 'Genişlik (ön görünüm)', min: 1, max: 4, step: 1, value: 3 },
+        { name: 'b', label: 'Derinlik (yan görünüm)', min: 1, max: 3, step: 1, value: 2 },
+        { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
+      ],
+      draw(state) {
+        const a = clampValue(state.a, 1, 4, 1);
+        const b = clampValue(state.b, 1, 3, 1);
+        const h = clampValue(state.h, 1, 3, 1);
+        const parts = [text(W / 2, 28, 'Aynı yapı üç yönden: ön · yan · üst', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        const views = [
+          { x: 62, cols: a, rows: h, label: `Ön · ${num(a)} × ${num(h)}`, fill: '#d7ccf7' },
+          { x: 262, cols: b, rows: h, label: `Yan · ${num(b)} × ${num(h)}`, fill: '#cfe4f7' },
+          { x: 462, cols: a, rows: b, label: `Üst · ${num(a)} × ${num(b)}`, fill: '#d5efdf' },
+        ];
+        views.forEach((view) => {
+          const size = Math.min(26, Math.floor(120 / Math.max(view.cols, view.rows)));
+          const width = view.cols * size;
+          const height = view.rows * size;
+          const x0 = view.x + (150 - width) / 2;
+          const y0 = 96;
+          parts.push(rect(view.x - 8, 64, 166, 196, { fill: '#fbfaff', stroke: '#ded8f2', width: 1.2, rx: 12 }));
+          parts.push(text(view.x + 75, 84, view.label, { size: 12, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          for (let row = 0; row < view.rows; row += 1) {
+            for (let col = 0; col < view.cols; col += 1) {
+              parts.push(rect(x0 + col * size, y0 + row * size, size - 1.5, size - 1.5, { fill: view.fill, stroke: '#7056c9', width: 0.8, rx: 3 }));
+            }
+          }
+          parts.push(text(view.x + 75, 240, 'kaç kare? Sen yaz.', { size: 11.5, anchor: 'middle', fill: '#41506a' }));
+        });
+        parts.push(text(W / 2, 292, 'Her görünüm eş karelerden oluşur; sayıları çarparak bulabilirsin.', { size: 12.5, anchor: 'middle', fill: '#33265f' }));
+        parts.push(text(W / 2, 320, 'Tek görünüm gizli küpleri göstermez; üçünü birlikte oku.', { size: 12, anchor: 'middle', fill: '#41506a' }));
+        parts.push(text(W / 2, 348, 'Sürgüleri değiştir: yapı büyüdükçe üç görünüm birlikte değişir.', { size: 11.5, anchor: 'middle', fill: '#6b7a90' }));
         return parts.join('');
       },
     },
@@ -613,9 +879,9 @@
           }
         }
         parts.push(panel(392, 70, 224, 104));
-        parts.push(text(410, 100, `Taban: ${num(a)} × ${num(b)} = ${num(a * b)}`, { size: 12.5, weight: 700 }));
+        parts.push(text(410, 100, `Taban: ${num(a)} × ${num(b)} = ?`, { size: 12.5, weight: 700 }));
         parts.push(text(410, 126, `Katman: ${num(h)}`, { size: 12.5, weight: 700 }));
-        parts.push(text(410, 156, `Hacim = ${num(a * b * h)}`, { size: 14, weight: 800, fill: '#5b46a8' }));
+        parts.push(text(410, 156, 'Hacim = ?', { size: 14, weight: 800, fill: '#5b46a8' }));
         parts.push(note(40, H - 20, 'Katman sayısı arttıkça hacim taban alanı kadar artar.', { size: 12 }));
         return parts.join('');
       },
@@ -636,9 +902,9 @@
         parts.push(polygon([[x, y], [x + size, y], [x + size, y - size], [x, y - size]], { fill: '#c9bff2' }));
         parts.push(text(x + size / 2, y + 20, `ayrıt = ${num(s)} dm`, { size: 12.5, anchor: 'middle', weight: 700 }));
         parts.push(panel(348, 70, 268, 132));
-        parts.push(text(366, 100, `Hacim = ${num(s)}³ = ${num(s ** 3)} dm³`, { size: 13.5, weight: 800, fill: '#33265f' }));
-        parts.push(text(366, 128, `= ${num(s ** 3)} litre`, { size: 14, weight: 800, fill: '#2f8a63' }));
-        parts.push(text(366, 156, `= ${num(s ** 3 * 1000)} cm³`, { size: 12.5, fill: '#5b46a8' }));
+        parts.push(text(366, 100, `Hacim = ${num(s)}³ = ? dm³`, { size: 13.5, weight: 800, fill: '#33265f' }));
+        parts.push(text(366, 128, '= ? litre', { size: 14, weight: 800, fill: '#2f8a63' }));
+        parts.push(text(366, 156, '= ? cm³', { size: 12.5, fill: '#5b46a8' }));
         parts.push(note(366, 182, '1 dm³ = 1 L = 1000 cm³', { size: 11.5 }));
         return parts.join('');
       },
@@ -671,7 +937,7 @@
           parts.push(text(x + 35, base + 20, names[index], { size: 11.5, anchor: 'middle', fill: '#41506a' }));
         });
         const total = values.reduce((sum, value) => sum + value, 0);
-        parts.push(text(90, 344, `Toplam ${total} · ortalama ${num(total / 3)} · en büyük ile en küçük farkı ${Math.max(...values) - Math.min(...values)}`, { size: 12.5, fill: '#41506a' }));
+        parts.push(text(90, 344, 'Toplam ? · ortalama ? · açıklık ?', { size: 12.5, fill: '#41506a' }));
         return parts.join('');
       },
     },
@@ -697,11 +963,11 @@
           parts.push(text(p.px(value), p.py(0) - 14 - index * 15, String(value), { size: 11.5, anchor: 'middle', weight: 700 }));
         });
         parts.push(line(p.px(mean), p.py(1.6), p.px(mean), p.py(0), { stroke: '#c03744', width: 2, dash: '5 4' }));
-        parts.push(text(p.px(mean), p.py(1.85), `ortalama = ${num(mean)}`, { size: 12.5, anchor: 'middle', weight: 800, fill: '#c03744' }));
+        parts.push(text(p.px(mean), p.py(1.85), 'ortalama = ?', { size: 12.5, anchor: 'middle', weight: 800, fill: '#c03744' }));
         const sorted = [...values].sort((x, y) => x - y);
         parts.push(panel(40, 250, W - 80, 100));
-        parts.push(text(60, 280, `Ortalama: (${values.join(' + ')}) ÷ 3 = ${num(mean)}`, { size: 13.5, weight: 700 }));
-        parts.push(text(60, 306, `Ortanca: ${sorted[1]} · Açıklık: ${sorted[2] - sorted[0]}`, { size: 13.5, weight: 700, fill: '#2f8a63' }));
+        parts.push(text(60, 280, `Ortalama: (${values.join(' + ')}) ÷ 3 = ?`, { size: 13.5, weight: 700 }));
+        parts.push(text(60, 306, 'Ortanca: ? · Açıklık: ?', { size: 13.5, weight: 700, fill: '#2f8a63' }));
         parts.push(note(60, 330, 'Uç değerler ortalamayı daha çok etkiler; ortanca daha dayanıklıdır.', { size: 12 }));
         return parts.join('');
       },
@@ -731,7 +997,7 @@
           parts.push(line(p.px(point[0]), p.py(point[1]), p.px(image[0]), p.py(image[1]), { stroke: '#8a7fb5', width: 1, dash: '3 3' }));
         });
         parts.push(note(46, H - 42, 'Her köşe aynaya dik taşınır: uzaklık ve uzunluk korunur, yönelim döner.', { size: 11.5 }));
-        parts.push(note(46, H - 22, `A(${num(A[0])}, ${num(A[1])}) → A'(${num(mirror(A)[0])}, ${num(mirror(A)[1])})`, { size: 12.5, weight: 700, fill: '#33265f' }));
+        parts.push(note(46, H - 22, `A(${num(A[0])}, ${num(A[1])}) → A'(?, ?)  ·  ayna x = ${num(k)}`, { size: 12.5, weight: 700, fill: '#33265f' }));
         return parts.join('');
       },
       drag(svg, event, box, state) {

@@ -166,14 +166,28 @@
     }).join('');
   }
 
-  /* Çözüm doğrudan görünmez: “Cevabı göster” açılınca basamaklar ve sonuç gelir. */
+  /* Çözüm aşama aşama açılır: önce yol haritası ve ilk iki basamak (Anla, Planla)
+     görünür; hesaplı basamaklar ve sonuç “Cevabı göster” ile açılır. */
   function stepsMarkup(steps, result) {
     if (!Array.isArray(steps) || !steps.length) return '';
-    return `<details class="math-solution">
+    const roadmap = steps.map((step, index) => `<li><span>${index + 1}</span>${rich(step.title)}</li>`).join('');
+    const visible = steps.slice(0, 2);
+    const hidden = steps.slice(2);
+    const openList = visible.length
+      ? `<ol class="math-example-steps">${visible.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>`
+      : '';
+    const rest = hidden.length || result
+      ? `<details class="math-solution">
       <summary>Cevabı göster</summary>
-      <ol class="math-example-steps">${steps.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>
+      ${hidden.length ? `<ol class="math-example-steps">${hidden.map((step) => `<li><strong>${rich(step.title)}:</strong> ${rich(step.body)}</li>`).join('')}</ol>` : ''}
       ${result ? `<p class="math-example-answer"><span>Sonuç</span>${rich(result)}</p>` : ''}
-    </details>`;
+    </details>`
+      : '';
+    return `<div class="math-solution-flow">
+      <ol class="math-solution-map" aria-label="Çözüm basamakları">${roadmap}</ol>
+      ${openList}
+      ${rest}
+    </div>`;
   }
 
   function stageCard(week, stage, index, scenes) {
