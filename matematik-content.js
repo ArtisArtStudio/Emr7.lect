@@ -831,13 +831,15 @@
       ],
       scenes: [
         {
-          type: 'veri-grafik',
-          title: 'Sütun grafiği: sıklıkları karşılaştır',
-          hint: 'Üç grubun sıklığını değiştir; toplam ve ortalama kendiliğinden güncellenir.',
+          type: 'sirala-ortanca',
+          title: 'Beş veriyi sırala: ortanca ve açıklık',
+          hint: 'Verileri değiştir; sıralama, ortadaki değer ve açıklık birlikte güncellenir.',
           params: [
-            { name: 'a', label: '1. grup', min: 1, max: 8, step: 1, value: 5 },
-            { name: 'b', label: '2. grup', min: 1, max: 8, step: 1, value: 3 },
-            { name: 'c', label: '3. grup', min: 1, max: 8, step: 1, value: 6 },
+            { name: 'v1', label: '1. veri', min: 0, max: 12, step: 1, value: 4 },
+            { name: 'v2', label: '2. veri', min: 0, max: 12, step: 1, value: 9 },
+            { name: 'v3', label: '3. veri', min: 0, max: 12, step: 1, value: 6 },
+            { name: 'v4', label: '4. veri', min: 0, max: 12, step: 1, value: 2 },
+            { name: 'v5', label: '5. veri', min: 0, max: 12, step: 1, value: 7 },
           ],
         },
       ],
@@ -900,13 +902,14 @@
       ],
       scenes: [
         {
-          type: 'ortalama',
-          title: 'Ortalama, ortanca ve açıklık',
-          hint: 'Değerleri değiştir; ortalama çizgisinin uç değerlere nasıl tepki verdiğini izle.',
+          type: 'veri-grafik',
+          title: 'Grafik ölçeği: eksen sıfırdan başlamazsa',
+          hint: 'Eksen sürgüsünü 0 yap: aynı veri, çok daha büyük farkmış gibi görünür.',
           params: [
-            { name: 'a', label: '1. değer', min: 1, max: 9, step: 1, value: 5 },
-            { name: 'b', label: '2. değer', min: 1, max: 9, step: 1, value: 7 },
-            { name: 'c', label: '3. değer', min: 1, max: 9, step: 1, value: 9 },
+            { name: 'a', label: '1. grup', min: 1, max: 8, step: 1, value: 5 },
+            { name: 'b', label: '2. grup', min: 1, max: 8, step: 1, value: 3 },
+            { name: 'c', label: '3. grup', min: 1, max: 8, step: 1, value: 6 },
+            { name: 'eksen', label: 'Eksen: 1 sıfırdan, 0 kırpılmış', min: 0, max: 1, step: 1, value: 0 },
           ],
         },
       ],

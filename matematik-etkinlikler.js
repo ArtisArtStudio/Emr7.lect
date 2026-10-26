@@ -102,6 +102,9 @@
     add(stage.questions, stage.kind);
     add(stage.items, stage.kind);
     add(stage.checks, 'learn');
+    /* KATIL-UYGULA-KEŞFET adımları soru biçimindedir (prompt/hint/thinking):
+       çözüm adımı gibi çizilirse numaralar boş kalıyordu. Bunlar etkinlik sorusudur. */
+    add((Array.isArray(stage.steps) ? stage.steps : []).filter((item) => item && item.prompt), stage.kind);
     return out;
   }
 

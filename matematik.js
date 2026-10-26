@@ -123,6 +123,11 @@
 
   function sceneFrame(scene, id) {
     if (!scene || !window.MATEMATIK_SAHNE2) return '';
+    /* GeoGebra yalnız üç boyutlu cisimlerde: diğer sahneler yerel çizim. */
+    const canGeo = Boolean(window.MATEMATIK_GEOGEBRA && window.MATEMATIK_GEOGEBRA.supports(scene));
+    const tip = canGeo
+      ? 'Cismi parmağınla döndür; alttaki düğmelerle ön, yan ve üst görünüme geç.'
+      : 'Sürgüler çizimin altında; bazı noktaları doğrudan sürükleyebilirsin.';
     return `<div class="math-scene-frame">
       <div class="math-scene-stage" id="${id}-stage"></div>
       <div class="math-scene-controls" id="${id}-controls"></div>
@@ -130,11 +135,10 @@
     <div class="math-scene-actions">
       <button type="button" id="${id}-reset">Başa al</button>
       <button type="button" id="${id}-engine" hidden>Yerel çizime geç</button>
-      <span class="math-scene-engine-note">Çizimler GeoGebra ile açılır; açılamazsa aynı sahne yerel çizimle sürer.</span>
-      <span class="math-scene-tip">Sürgüler çizimin altında; GeoGebra hazır olduğunda noktaları doğrudan sürükleyebilirsin.</span>
+      <span class="math-scene-tip">${tip}</span>
     </div>
     <p class="math-scene-status" id="${id}-status" role="status" aria-live="polite"></p>
-    <p class="math-ggb-credit" id="${id}-credit" hidden>GeoGebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</p>`;
+    ${canGeo ? `<p class="math-ggb-credit" id="${id}-credit" hidden>GeoGebra® — geogebra.org · ticari olmayan kullanım, atıf ile.</p>` : ''}`;
   }
 
   function figureBlock(figure) {
@@ -173,7 +177,11 @@
   /* Çözüm aşama aşama açılır: önce yol haritası ve ilk iki basamak (Anla, Planla)
      görünür; hesaplı basamaklar ve sonuç “Cevabı göster” ile açılır. */
   function stepsMarkup(steps, result) {
-    if (!Array.isArray(steps) || !steps.length) return '';
+    /* Yalnız çözüm adımları (başlık + gövde). KATIL-UYGULA adımları soru biçimindedir
+       ve etkinlik olarak çizilir; burada tekrar edilirse numaralar boş kalır. */
+    const list = (Array.isArray(steps) ? steps : []).filter((step) => step && step.title && step.body);
+    if (!list.length) return '';
+    steps = list;
     const roadmap = steps.map((step, index) => `<li><span>${index + 1}</span>${rich(step.title)}</li>`).join('');
     const visible = steps.slice(0, 2);
     const hidden = steps.slice(2);

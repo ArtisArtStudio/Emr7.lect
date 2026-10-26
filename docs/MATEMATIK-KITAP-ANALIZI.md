@@ -1239,3 +1239,65 @@ adı, `undefined/NaN` yok, `required` nesneleri tanımlı. Ek olarak jsdom + sah
 - **Açık risk**: gerçek applet yalnız kullanıcı cihazında doğrulanabilir (sandbox'tan
   geogebra.org'a çıkış yok). Bu yüzden her sahnede yerel yedek, görünür durum satırı ve
   “Yerel çizime geç” düğmesi var.
+
+## 27. Düzeltme turu: çözüm numaraları, 3B çerçeve ve iki görsel (26 Ekim 2026)
+
+Kullanıcı geri bildirimi beş başlıktaydı; hepsi tek tek ele alındı.
+
+### 27.1 “1, 2, 3 yazıyor, altında boş 1.: 2.: var”
+
+Kök neden: KATIL-UYGULA-KEŞFET adımları `steps` alanında ama **soru** biçiminde
+(`prompt/hint/thinking`) yazılmış. `stepsMarkup()` bunları çözüm adımı sanıp numaralı harita
+çiziyor, `title`/`body` bulamadığı için boş bırakıyordu. Düzeltme:
+
+- `stepsMarkup()` yalnız `title + body` taşıyan adımları çizer; başka biçimdeki adım çözüm
+  akışına hiç girmez (numara boş kalmaz).
+- `matematik-etkinlikler.js` KATIL adımlarını **etkinlik sorusu** olarak üretir: öğrenci yazar,
+  ipucu ve “Kontrol et” vardır. Bu yüzden bu adımlar artık kaybolmuyor.
+- Sonuç: açıklamalı soru sayısı 203 → **247** (44 KATIL sorusu geri kazanıldı).
+
+### 27.2 GeoGebra artık yalnız 3B cisimlerde
+
+Kullanıcı kararı: “geoGebrayı sadece cisimlerin farklı yönlerden görünümü için kullan”.
+GeoGebra **beş sahneyle** sınırlandı: `prizma3b`, `hacim`, `birim-donusum`, `uc-gorunum`,
+`acim`. Diğer yirmi sahne yerel SVG ile çizilir; bu beş sahnenin de yerel yedeği vardır.
+
+Çerçeve düzeltmeleri (eski hatalar):
+
+| Eski sorun | Yeni davranış |
+|---|---|
+| Üstte “GeoGebra hazırlanıyor” için koca boş şerit | Yükleme yazısı **kaplama**; applet gelince kaldırılır |
+| Uzun, ince pencere + aşırı yakınlaştırma | Tuval `clamp(300px,44vw,360px)`, genişlik en çok 480 px; cisim **orijine ortalanır** |
+| Görünümü değiştirme yolu yok | **Eğik · Ön · Yan · Üst** düğmeleri (`SetViewDirection`), parmakla döndürme |
+| Açınım statik | `acim` sahnesinde **“Açınımı aç / Kutuyu kapat”** düğmesi ve tuvale dokunma |
+| Üç görünüm tek resimde | `uc-gorunum` **bölünmüş**: solda döndürülebilir 3B cisim, sağda ön/yan/üst kareler; sürgü ikisini birlikte günceller |
+
+### 27.3 Hacim görselinde üst üste binme
+
+Yerel `hacim` sahnesi ve `hacim` terim şekli izometri ile yeniden yazıldı: küpler **arkadan öne**
+çizilir, her küpün üst ve yan yüzü ayrı görünür; eski çizimde arka sıra ön sıranın içine
+giriyordu. Sonuç yazılmaz (`= ?`).
+
+### 27.4 Birim küp ve desimetreküp görselleri
+
+- `birim-kup`: üst yüz artık üst kenardan, yan yüz sağ kenardan yükseliyor (kapalı küp).
+- `litre-kup`: 10 × 10 cm ızgaralı tek küp; `1 dm³ = 1 L = 1000 cm³` aynı resimde okunuyor.
+- `birim-donusum` sahnesi: ayrıtı *s* dm olan büyük küp + köşesinde 1 dm³’lük **sarı birim küp**
+  (GeoGebra’daki gibi), 10 × 10 ızgara ile “1 dm = 10 cm” ilişkisi.
+
+### 27.5 12 ve 13. hafta neredeyse aynıydı
+
+İki hafta da sütun grafiği gösteriyordu. Ayrıldı:
+
+- **12. hafta** (ortanca, açıklık): yeni `sirala-ortanca` sahnesi — beş veri sıralanır,
+  ortadaki işaretlenir, açıklık ölçü çubuğuyla gösterilir.
+- **13. hafta** (grafik türleri, yanıltıcı grafik): `veri-grafik` sahnesine **eksen sürgüsü**
+  eklendi. Sürgü 0 iken dikey eksen 2’den başlar ve aynı veri çok daha farklı görünür —
+  haftanın asıl kazanımı (grafik ölçeği) artık sahnede yaşanıyor.
+
+### 27.6 Orta dikme dik görünmüyordu
+
+Yerel `ortadikme` sahnesi eşit olmayan ölçekle çiziliyordu; A ile B yatay değilse kırmızı kesik
+çizgi ekranda dik görünmüyordu. `plotter(..., { equal: true })` eklendi: yatay ve düşey ölçek
+eşit, orta dikme gerçekten dik. `|PA| = |PB|` değerleri de artık ekranda görünen uzunlukla
+tutarlı.
