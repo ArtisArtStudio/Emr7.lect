@@ -16,6 +16,15 @@
     return String(rounded).replace('.', ',').replace(/^-/, '−');
   };
 
+  /* Ekran metni ile çizim sayısı ayrı yazılır: SVG özniteliğinde virgüllü ondalık
+     ve tipografik eksi geçersizdir; tarayıcı özniteliği atar ve nesne (0,0)'a düşer. */
+  const coord = (value) => {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return '0';
+    const rounded = Math.round(number * 100) / 100;
+    return String(rounded);
+  };
+
   /* ---------- ortak çizim yardımcıları ---------- */
 
   function text(x, y, value, options = {}) {
@@ -24,24 +33,24 @@
     const weight = options.weight || 500;
     const fill = options.fill || '#1b2f49';
     const quotes = options.plain ? '' : 'font-family="system-ui,-apple-system,Segoe UI,sans-serif"';
-    return `<text x="${num(x)}" y="${num(y)}" ${quotes} font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${esc(value)}</text>`;
+    return `<text x="${coord(x)}" y="${coord(y)}" ${quotes} font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${esc(value)}</text>`;
   }
 
   function line(x1, y1, x2, y2, options = {}) {
     const dash = options.dash ? ` stroke-dasharray="${options.dash}"` : '';
-    return `<line x1="${num(x1)}" y1="${num(y1)}" x2="${num(x2)}" y2="${num(y2)}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.6}"${dash} stroke-linecap="round"/>`;
+    return `<line x1="${coord(x1)}" y1="${coord(y1)}" x2="${coord(x2)}" y2="${coord(y2)}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.6}"${dash} stroke-linecap="round"/>`;
   }
 
   function rect(x, y, w, h, options = {}) {
-    return `<rect x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" fill="${options.fill || '#fff'}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.4}"${options.rx ? ` rx="${options.rx}"` : ''}/>`;
+    return `<rect x="${coord(x)}" y="${coord(y)}" width="${coord(w)}" height="${coord(h)}" fill="${options.fill || '#fff'}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.4}"${options.rx ? ` rx="${options.rx}"` : ''}/>`;
   }
 
   function circle(x, y, r, options = {}) {
-    return `<circle cx="${num(x)}" cy="${num(y)}" r="${r}" fill="${options.fill || '#7056c9'}" stroke="${options.stroke || '#fff'}" stroke-width="${options.width || 2}"/>`;
+    return `<circle cx="${coord(x)}" cy="${coord(y)}" r="${coord(r)}" fill="${options.fill || '#7056c9'}" stroke="${options.stroke || '#fff'}" stroke-width="${options.width || 2}"/>`;
   }
 
   function polygon(points, options = {}) {
-    const list = points.map(([x, y]) => `${num(x)},${num(y)}`).join(' ');
+    const list = points.map(([x, y]) => `${coord(x)},${coord(y)}`).join(' ');
     return `<polygon points="${list}" fill="${options.fill || 'none'}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.5}"${options.dash ? ` stroke-dasharray="${options.dash}"` : ''}/>`;
   }
 
@@ -54,7 +63,7 @@
     const bx = x2 - size * Math.cos(angle + 0.42);
     const by = y2 - size * Math.sin(angle + 0.42);
     return `${line(x1, y1, x2, y2, { stroke: color, width: 1.4, dash: options.dash || '4 4' })}`
-      + `<polygon points="${num(x2)},${num(y2)} ${num(ax)},${num(ay)} ${num(bx)},${num(by)}" fill="${color}"/>`;
+      + `<polygon points="${coord(x2)},${coord(y2)} ${coord(ax)},${coord(ay)} ${coord(bx)},${coord(by)}" fill="${color}"/>`;
   }
 
   function note(x, y, value, options = {}) {
@@ -129,7 +138,7 @@
     const px = (value) => left + ((value - min) / (max - min)) * (right - left);
     const parts = [];
     parts.push(line(left - 10, axisY, right + 10, axisY, { stroke: '#1b2f49', width: 2 }));
-    parts.push(`<polygon points="${num(right + 22)},${num(axisY)} ${num(right + 10)},${num(axisY - 5)} ${num(right + 10)},${num(axisY + 5)}" fill="#1b2f49"/>`);
+    parts.push(`<polygon points="${coord(right + 22)},${coord(axisY)} ${coord(right + 10)},${coord(axisY - 5)} ${coord(right + 10)},${coord(axisY + 5)}" fill="#1b2f49"/>`);
     for (let value = min; value <= max; value += 1) {
       const zero = value === 0;
       parts.push(line(px(value), axisY - (zero ? 9 : 5), px(value), axisY + (zero ? 9 : 5), { stroke: zero ? '#1b2f49' : '#8b97a8', width: zero ? 2.2 : 1.2 }));
@@ -156,7 +165,7 @@
   /* Sürüklenebilir nokta: görünmez büyük hedef alan + imleç + erişilebilir ad. */
   function handle(name, x, y, label) {
     return `<g data-handle="${esc(name)}" role="button" tabindex="0" aria-label="${esc(label)}" style="cursor:ew-resize">`
-      + `<circle cx="${num(x)}" cy="${num(y)}" r="18" fill="#1b2f49" fill-opacity="0" pointer-events="all"/></g>`;
+      + `<circle cx="${coord(x)}" cy="${coord(y)}" r="18" fill="#1b2f49" fill-opacity="0" pointer-events="all"/></g>`;
   }
 
   /* ---------- sahneler ---------- */
@@ -305,7 +314,7 @@
           const x2 = axis.px(to);
           const color = delta < 0 ? '#2f8a63' : delta > 0 ? '#5b46a8' : '#8b97a8';
           const midX = (x1 + x2) / 2;
-          parts.push(`<path d="M ${num(x1)} ${num(axis.axisY - 10)} C ${num(x1)} ${num(lane)} ${num(x2)} ${num(lane)} ${num(x2)} ${num(axis.axisY - 10)}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="6 5"/>`);
+          parts.push(`<path d="M ${coord(x1)} ${coord(axis.axisY - 10)} C ${coord(x1)} ${coord(lane)} ${coord(x2)} ${coord(lane)} ${coord(x2)} ${coord(axis.axisY - 10)}" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="6 5"/>`);
           parts.push(circle(x2, axis.axisY, 5, { fill: color }));
           parts.push(text(midX, lane - 10, `${index + 1}. kart: ${delta >= 0 ? '+' : '−'}${num(Math.abs(delta))}`, { size: 12, anchor: 'middle', weight: 700, fill: color }));
         });
@@ -401,69 +410,89 @@
         { name: 'pay', label: 'Pay', min: 0, max: 9, step: 1, value: 3 },
         { name: 'payda', label: 'Payda', min: 2, max: 8, step: 1, value: 5 },
       ],
+      /* Sürgü ile çizim aynı sayıyı göstersin: pay paydadan büyük olamaz. */
+      normalize(state) {
+        state.payda = clampValue(state.payda, 2, 8, 1);
+        state.tam = clampValue(state.tam, -3, 3, 1);
+        state.pay = clampValue(state.pay, 0, state.payda - 1, 1);
+      },
       draw(state) {
-        const payda = clampValue(state.payda, 2, 8, 1);
-        const pay = clampValue(state.pay, 0, payda - 1, 1);
-        const tam = clampValue(state.tam, -3, 3, 1);
-        const value = tam < 0 ? tam - pay / payda : tam + pay / payda;
+        const payda = state.payda;
+        const pay = state.pay;
+        const tam = state.tam;
+        const deger = tam < 0 ? tam - pay / payda : tam + pay / payda;
         const min = -4;
         const max = 4;
-        const axisY = 210;
-        const left = 46;
-        const right = W - 46;
+        const axisY = 232;
+        const left = 62;
+        const right = W - 62;
         const px = (v) => left + ((v - min) / (max - min)) * (right - left);
-        const parts = [text(W / 2, 30, 'Ana çentikler tam sayı, araları payda kadar eş parça', { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        const x = px(deger);
+        const x0 = px(0);
+        const parts = [text(W / 2, 28, 'Ana çentikler tam sayı, aralarında ara çentikler', { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' })];
 
-        /* şerit: tam sayılar arası payda kadar eş parça */
+        /* sıfırdan işarete kadar uzaklık bandı */
+        parts.push(rect(Math.min(x0, x), axisY - 13, Math.max(2, Math.abs(x - x0)), 26, { fill: '#efeafb', stroke: 'none', width: 0 }));
+
+        /* eksen */
+        parts.push(line(left - 14, axisY, right + 14, axisY, { stroke: '#1b2f49', width: 2.4 }));
+        parts.push(`<polygon points="${coord(right + 28)},${coord(axisY)} ${coord(right + 12)},${coord(axisY - 6)} ${coord(right + 12)},${coord(axisY + 6)}" fill="#1b2f49"/>`);
+
+        /* ara çentikler: her tam sayı arası payda kadar eş parça */
         for (let whole = min; whole < max; whole += 1) {
-          const fill = whole === Math.floor(value) ? '#efeafb' : '#fbfaff';
-          parts.push(rect(px(whole) + 1, 96, px(whole + 1) - px(whole) - 2, 44, { fill, stroke: '#ded8f2', width: 1 }));
-        }
-
-        /* sayı doğrusu */
-        parts.push(line(left - 8, axisY, right + 8, axisY, { stroke: '#1b2f49', width: 2 }));
-        parts.push(`<polygon points="${num(right + 20)},${num(axisY)} ${num(right + 8)},${num(axisY - 5)} ${num(right + 8)},${num(axisY + 5)}" fill="#1b2f49"/>`);
-
-        for (let whole = min; whole <= max; whole += 1) {
-          parts.push(line(px(whole), axisY - 11, px(whole), axisY + 11, { stroke: '#1b2f49', width: 2 }));
-          parts.push(text(px(whole), axisY + 30, num(whole), { size: 12.5, anchor: 'middle', weight: 800, fill: '#1b2f49' }));
-        }
-        for (let step = 0; step < payda; step += 1) {
-          if (step === 0) continue;
-          for (let whole = min; whole < max; whole += 1) {
-            const x = left + ((whole + step / payda - min) / (max - min)) * (right - left);
-            parts.push(line(x, axisY - 6, x, axisY + 6, { stroke: '#8b97a8', width: 1 }));
+          for (let step = 1; step < payda; step += 1) {
+            const tx = px(whole + step / payda);
+            parts.push(line(tx, axisY - 8, tx, axisY + 8, { stroke: '#5f6f86', width: 2 }));
           }
         }
 
-        /* işaret */
-        const x = px(value);
-        parts.push(line(x, 142, x, axisY - 12, { stroke: '#5b46a8', width: 1.4, dash: '4 4' }));
-        parts.push(circle(x, axisY, 7, { fill: '#5b46a8' }));
-        const labelY = 128;
-        const sign = tam < 0 ? '−' : '';
-        const wholeText = tam === 0 ? '' : `${Math.abs(tam)}`;
-        const startX = x - 22;
-        parts.push(text(startX, labelY, `${sign}${wholeText}`, { size: 17, anchor: 'end', weight: 800, fill: '#5b46a8' }));
-        parts.push(text(x + 4, labelY - 5, String(pay), { size: 14, anchor: 'start', weight: 800, fill: '#5b46a8' }));
-        parts.push(line(x + 2, labelY - 1, x + 22, labelY - 1, { stroke: '#5b46a8', width: 1.4 }));
-        parts.push(text(x + 4, labelY + 13, String(payda), { size: 14, anchor: 'start', weight: 800, fill: '#5b46a8' }));
+        /* ana çentikler: tam sayılar */
+        for (let whole = min; whole <= max; whole += 1) {
+          parts.push(line(px(whole), axisY - 13, px(whole), axisY + 13, { stroke: '#1b2f49', width: 2.6 }));
+          parts.push(text(px(whole), axisY + 34, num(whole), { size: 14, anchor: 'middle', weight: 800, fill: '#1b2f49' }));
+        }
 
-        parts.push(panel(40, 252, W - 80, 64));
-        parts.push(text(58, 280, `Parça boyu: 1 ÷ ${num(payda)}  ·  işaret ${num(value)} noktasında`, { size: 12.5, weight: 700, fill: '#33265f' }));
-        parts.push(text(58, 302, 'Oku: sıfırdan sola mı sağa mı? Kaç tam, kaç parça?', { size: 12, fill: '#41506a' }));
-        parts.push(text(W / 2, 344, 'İşareti sürükle: yalnız küçük çentiklere oturur.', { size: 12, anchor: 'middle', fill: '#6b7a90' }));
+        /* işaret ve hemen üstündeki etiket */
+        parts.push(line(x, axisY - 32, x, axisY - 9, { stroke: '#5b46a8', width: 1.6, dash: '4 4' }));
+        parts.push(circle(x, axisY, 9, { fill: '#5b46a8', stroke: '#fff', width: 2.4 }));
+
+        const wholeText = tam === 0 ? '' : `${tam < 0 ? '−' : ''}${Math.abs(tam)}`;
+        const showFraction = pay > 0;
+        const basamak = Math.max(String(pay).length, String(payda).length);
+        const barLen = Math.max(30, basamak * 12 + 14);
+        const wholeW = wholeText ? String(wholeText).length * 13 + 4 : 0;
+        const groupW = wholeW + (showFraction ? barLen + 8 : 0);
+        let groupLeft = x - groupW / 2;
+        groupLeft = Math.max(16, Math.min(groupLeft, W - 16 - groupW));
+        const barY = axisY - 62;
+        const fracX = groupLeft + wholeW;
+        if (wholeText) {
+          parts.push(text(fracX - 5, barY + 9, wholeText, { size: 24, anchor: 'end', weight: 800, fill: '#4a3d7a' }));
+        }
+        if (showFraction) {
+          parts.push(text(fracX + barLen / 2, barY - 8, String(pay), { size: 20, anchor: 'middle', weight: 800, fill: '#4a3d7a' }));
+          parts.push(line(fracX + 4, barY, fracX + barLen - 4, barY, { stroke: '#4a3d7a', width: 2.6 }));
+          parts.push(text(fracX + barLen / 2, barY + 24, String(payda), { size: 20, anchor: 'middle', weight: 800, fill: '#4a3d7a' }));
+        } else if (!wholeText) {
+          parts.push(text(x, barY + 9, '0', { size: 24, anchor: 'middle', weight: 800, fill: '#4a3d7a' }));
+        }
+
+        /* panel: değer yazılmaz, öğrenci okur */
+        parts.push(panel(40, 292, W - 80, 56));
+        parts.push(text(58, 316, `Bir ara çentik = 1 ÷ ${num(payda)} birim  ·  tam sayılar arası ${num(payda)} eş parça`, { size: 12.5, weight: 700, fill: '#33265f' }));
+        parts.push(text(58, 338, 'İşaret hangi iki tam sayı arasında? Kaç tam, kaç parça? Sen yaz.', { size: 12, fill: '#41506a' }));
+        parts.push(text(W / 2, 370, 'İşareti sürükle: yalnız ara çentiklere oturur.', { size: 11.5, anchor: 'middle', fill: '#6b7a90' }));
         parts.push(handle('nokta', x, axisY, 'Rasyonel sayının işaretini sürükle'));
         return parts.join('');
       },
       drag(svg, event, name, state) {
         const min = -4;
         const max = 4;
-        const left = 46;
-        const right = W - 46;
+        const left = 62;
+        const right = W - 62;
         const payda = clampValue(state.payda, 2, 8, 1);
         const raw = min + ((localPoint(svg, event).x - left) / (right - left)) * (max - min);
-        const snapped = clampValue(raw, -3 + 1 / payda, 3, 1 / payda);
+        const snapped = clampValue(raw, min + 1 / payda, max - 1, 1 / payda);
         const whole = snapped < 0 ? Math.ceil(snapped) : Math.floor(snapped);
         const rest = Math.abs(snapped - whole);
         state.tam = whole;
@@ -472,8 +501,6 @@
       },
       handles: [{ name: 'nokta', label: 'Rasyonel sayının işaretini sürükle' }],
     },
-
-    /* 2b. Apartman katları: öğrenci sığınağı sürükleyerek yerleştirir; cevap yazılmaz. */
     'kat-yerlestir': {
       params: [{ name: 'kat', label: 'Sığınağın katı', min: -3, max: 4, step: 1, value: 1 }],
       draw(state) {
@@ -518,6 +545,11 @@
         { name: 'd', label: 'Payda (kaç eş parça)', min: 2, max: 10, step: 1, value: 4 },
         { name: 'n', label: 'Pay (kaç parça boyandı)', min: 0, max: 10, step: 1, value: 3 },
       ],
+      /* Sürgü ile çizim aynı kesri göstersin: pay paydadan büyük olamaz. */
+      normalize(state) {
+        state.d = clampValue(state.d, 2, 10, 1);
+        state.n = clampValue(state.n, 0, state.d, 1);
+      },
       draw(state) {
         const d = Math.max(2, state.d);
         const n = Math.max(0, Math.min(state.n, d));
@@ -536,7 +568,7 @@
         parts.push(line(left, top + height + 16, left + width, top + height + 16, { stroke: '#1b2f49', width: 2 }));
         parts.push(text(left + width / 2, top + height + 34, `payda = ${d}  (bütün ${d} eş parça)`, { size: 13, anchor: 'middle', weight: 800, fill: '#2f8a63' }));
         parts.push(text(left, top + height + 70, `${n}/${d}`, { size: 26, weight: 800, fill: '#33265f' }));
-        parts.push(note(left + 120, top + height + 66, `= ${num(n / d)} (ondalık)  ·  = %${num((n / d) * 100)}`, { size: 13 }));
+        parts.push(note(left + 120, top + height + 66, 'Ondalık ve yüzde karşılığını sen yaz.', { size: 13 }));
         parts.push(note(40, H - 20, n === d ? 'Pay paydaya eşitse kesir 1’dir.' : n === 0 ? 'Pay sıfırsa kesir 0’dır.' : n > d / 2 ? 'Yarıdan fazlası boyanmış.' : 'Yarısından azı boyanmış.', { size: 12 }));
         return parts.join('');
       },
@@ -767,7 +799,7 @@
         parts.push(text(410, 76, 'Yüz · ayrıt · köşe', { size: 12.5, weight: 800, fill: '#33265f' }));
         parts.push(note(410, 100, '6 yüz · 12 ayrıt · 8 köşe', { size: 12.5 }));
         parts.push(note(410, 126, `Hacim = ${num(a)}·${num(b)}·${num(h)} = ?`, { size: 12.5, fill: '#5b46a8' }));
-        parts.push(note(410, 146, `= ${num(a * b * h)} birimküp`, { size: 12.5, fill: '#5b46a8' }));
+        parts.push(note(410, 146, 'birimküp sayısını sen bul', { size: 12, fill: '#5b46a8' }));
         parts.push(note(410, 170, 'Yüzey = 2·(a·b + a·h + b·h) = ?', { size: 12.5, fill: '#2f8a63' }));
         return parts.join('');
       },
@@ -975,40 +1007,50 @@
 
     /* 14. Yansıma */
     'yansima': {
-      params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -3, max: 3, step: 1, value: 0 }],
+      params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -1, max: 2, step: 1, value: 0 }],
       draw(state) {
         const k = state.k;
-        const p = plotter([-4, 8, -2, 6], { x: 46, y: 40, w: W - 96, h: H - 110 });
-        const A = [2, 1];
-        const B = [5, 1];
-        const C = [2, 3];
+        const WINDOW = [-5.5, 4.5, -0.5, 4.5];
+        const p = plotter(WINDOW, { x: 46, y: 40, w: W - 96, h: H - 120 });
+        const A = [1, 1];
+        const B = [2, 1];
+        const C = [1, 3];
         const mirror = (point) => [2 * k - point[0], point[1]];
+        /* Etiket tuvalin dışına çıkmasın: kenara yaklaşınca içe yaslanır. */
+        const label = (x, y, value, color, startAnchor) => {
+          const inside = x > 44 && x < W - 44;
+          const anchor = inside ? startAnchor : (x <= 44 ? 'start' : 'end');
+          const dx = anchor === 'end' ? -8 : 8;
+          return text(x + dx, y, value, { size: 12, weight: 800, fill: color, anchor });
+        };
         const parts = [grid(p)];
-        parts.push(line(p.px(k), p.py(-2), p.px(k), p.py(6), { stroke: '#c03744', width: 2, dash: '7 5' }));
-        parts.push(text(p.px(k) + 8, p.py(5.6), `ayna x = ${num(k)}`, { size: 12, weight: 800, fill: '#c03744' }));
+        parts.push(line(p.px(k), p.py(WINDOW[2]), p.px(k), p.py(WINDOW[3]), { stroke: '#c03744', width: 2, dash: '7 5' }));
+        parts.push(text(p.px(k) + 8, p.py(WINDOW[3]) + 16, `ayna x = ${num(k)}`, { size: 12, weight: 800, fill: '#c03744' }));
         parts.push(polygon([A, B, C].map(([x, y]) => [p.px(x), p.py(y)]), { fill: '#c9bff2' }));
         parts.push(polygon([mirror(A), mirror(B), mirror(C)].map(([x, y]) => [p.px(x), p.py(y)]), { fill: '#d7f0e3', stroke: '#2f8a63', dash: '5 4' }));
-        [['A', A], ['B', B], ['C', C]].forEach(([label, point]) => {
-          parts.push(circle(p.px(point[0]), p.py(point[1]), 5, { fill: '#5b46a8' }));
-          parts.push(text(p.px(point[0]) - 10, p.py(point[1]) - 8, label, { size: 12, weight: 800, fill: '#5b46a8' }));
+        [['A', A], ['B', B], ['C', C]].forEach(([name, point]) => {
           const image = mirror(point);
-          parts.push(circle(p.px(image[0]), p.py(image[1]), 5, { fill: '#2f8a63' }));
-          parts.push(text(p.px(image[0]) + 8, p.py(image[1]) - 8, `${label}'`, { size: 12, weight: 800, fill: '#2f8a63' }));
           parts.push(line(p.px(point[0]), p.py(point[1]), p.px(image[0]), p.py(image[1]), { stroke: '#8a7fb5', width: 1, dash: '3 3' }));
+          parts.push(circle(p.px(point[0]), p.py(point[1]), 5, { fill: '#5b46a8' }));
+          parts.push(label(p.px(point[0]), p.py(point[1]) - 8, name, '#5b46a8', 'end'));
+          parts.push(circle(p.px(image[0]), p.py(image[1]), 5, { fill: '#2f8a63' }));
+          parts.push(label(p.px(image[0]), p.py(image[1]) - 8, `${name}'`, '#2f8a63', 'start'));
         });
-        parts.push(note(46, H - 42, 'Her köşe aynaya dik taşınır: uzaklık ve uzunluk korunur, yönelim döner.', { size: 11.5 }));
-        parts.push(note(46, H - 22, `A(${num(A[0])}, ${num(A[1])}) → A'(?, ?)  ·  ayna x = ${num(k)}`, { size: 12.5, weight: 700, fill: '#33265f' }));
+        parts.push(note(46, H - 40, 'Her köşe aynaya dik taşınır: uzaklık ve uzunluk korunur, yönelim döner.', { size: 11.5 }));
+        parts.push(note(46, H - 20, `A(${num(A[0])}, ${num(A[1])}) → A'(?, ?)  ·  ayna x = ${num(k)}`, { size: 12.5, weight: 700, fill: '#33265f' }));
+        parts.push(handle('k', p.px(k), p.py(WINDOW[3]) + 16, 'ayna doğrusunu sürükle'));
         return parts.join('');
       },
-      drag(svg, event, box, state) {
-        const p = plotter([-4, 8, -2, 6], { x: 46, y: 40, w: W - 96, h: H - 110 });
+      drag(svg, event, name, state) {
+        const WINDOW = [-5.5, 4.5, -0.5, 4.5];
+        const p = plotter(WINDOW, { x: 46, y: 40, w: W - 96, h: H - 120 });
         const local = localPoint(svg, event);
-        state.k = Math.max(-3, Math.min(3, Math.round(((local.x - p.box.x) / p.box.w) * 12 - 4)));
+        const span = WINDOW[1] - WINDOW[0];
+        const raw = WINDOW[0] + ((local.x - p.box.x) / p.box.w) * span;
+        state.k = clampValue(raw, -1, 2, 1);
       },
       handles: [{ name: 'k', label: 'ayna doğrusunu sürükle' }],
     },
-
-    /* 15. Orta dikme */
     'ortadikme': {
       params: [
         { name: 'ax', label: 'A noktası (x)', min: 0, max: 4, step: 1, value: 1 },
@@ -1064,7 +1106,7 @@
           const [sx, sy] = [cx + radius * Math.cos(from), cy - radius * Math.sin(from)];
           const [ex, ey] = [cx + radius * Math.cos(to), cy - radius * Math.sin(to)];
           const large = Math.abs(to - from) > Math.PI ? 1 : 0;
-          return `<path d="M ${num(sx)} ${num(sy)} A ${radius} ${radius} 0 ${large} 0 ${num(ex)} ${num(ey)}" fill="none" stroke="#41506a" stroke-width="1.4"/>`;
+          return `<path d="M ${coord(sx)} ${coord(sy)} A ${coord(radius)} ${coord(radius)} 0 ${large} 0 ${coord(ex)} ${coord(ey)}" fill="none" stroke="#41506a" stroke-width="1.4"/>`;
         };
         const parts = [];
         parts.push(note(40, 34, 'Açıortay açıyı iki eş açıya böler.', { size: 12.5 }));
@@ -1095,6 +1137,17 @@
 
   /* ---------- bağlama ---------- */
 
+  /* normalize(state): sürgü aralığı sahnenin sınırlarına çekilir, sürgü ile çizim aynı sayıyı
+     gösterir. Bozuk bir sahne yüzünden çizim tamamen kaybolmasın diye hata yutulur. */
+  function applyNormalize(scene, state) {
+    if (!scene || typeof scene.normalize !== 'function') return;
+    try {
+      scene.normalize(state);
+    } catch (error) {
+      /* düzeltme yapılamazsa çizim olduğu gibi kalır */
+    }
+  }
+
   function mount(host, controls, spec) {
     if (!host || !spec || !SCENES[spec.type]) return null;
     const scene = SCENES[spec.type];
@@ -1114,7 +1167,13 @@
     host.innerHTML = '';
     host.appendChild(svg);
 
+    /* Sahne kendi değişkenlerini düzeltebilir; sürgü ile çizim aynı sayıyı gösterir. */
+    function normalize() {
+      applyNormalize(scene, state);
+    }
+
     function paint() {
+      normalize();
       try {
         svg.innerHTML = scene.draw(state);
       } catch (error) {
@@ -1210,6 +1269,7 @@
       const raw = values[param.name];
       state[param.name] = Number(raw === undefined ? param.value : raw);
     });
+    applyNormalize(scene, state);
     return scene.draw(state);
   }
 

@@ -973,7 +973,7 @@
           type: 'yansima',
           title: 'Yansıma: ayna doğrusu ve görüntü',
           hint: 'Ayna doğrusunu sürgüyle ya da sürükleyerek kaydır; uzaklıkların korunduğunu gör.',
-          params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -3, max: 3, step: 1, value: 0 }],
+          params: [{ name: 'k', label: 'Ayna doğrusu (x = k)', min: -1, max: 2, step: 1, value: 0 }],
         },
       ],
       checks: [
