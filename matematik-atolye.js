@@ -160,13 +160,19 @@
     </div>`;
   }
 
-  function bindGrids(root, item, expected, onSolved) {
+  /* Izgaralar seçili şekle göre saklanır: öğrenci şekli değiştirdiğinde
+     çizdikleri kaybolmaz, geri döndüğünde yerinde durur. */
+  function bindGrids(root, item, options) {
     const entry = store.item(item.id);
+    const views = options.views || Object.keys(options.expectedFor());
+    const keyFor = options.keyFor || ((view) => view);
+    const expectedFor = options.expectedFor;
+    const onSolved = options.onSolved;
     const states = {};
     const n = 8;
 
-    const readGrid = (key) => {
-      const raw = entry.grids[key] || [];
+    const readGrid = (storageKey) => {
+      const raw = entry.grids[storageKey] || [];
       const cells = [];
       for (let r = 0; r < n; r += 1) {
         cells.push(Array.from({ length: n }, (_, c) => Boolean(raw[r * n + c])));
@@ -174,12 +180,13 @@
       return cells;
     };
 
-    const paintCell = (key, index, value) => {
-      const raw = (entry.grids[key] || []).slice();
+    const paintCell = (view, index, value) => {
+      const storageKey = keyFor(view);
+      const raw = (entry.grids[storageKey] || []).slice();
       while (raw.length < n * n) raw.push(0);
       raw[index] = value ? 1 : 0;
-      entry.grids[key] = raw;
-      const button = root.querySelector(`[data-grid="${key}"][data-index="${index}"]`);
+      entry.grids[storageKey] = raw;
+      const button = root.querySelector(`[data-grid="${view}"][data-index="${index}"]`);
       if (button) {
         button.classList.toggle('is-on', Boolean(value));
         button.setAttribute('aria-pressed', String(Boolean(value)));
@@ -187,83 +194,102 @@
       store.save();
     };
 
-    Object.keys(expected).forEach((key) => {
-      const host = root.querySelector(`[data-grid-host="${key}"]`);
+    /* Konteyner kimliği görünüm adıdır; saklama anahtarı şekli de içerir. */
+    const hosts = {};
+    views.forEach((view) => {
+      const host = root.querySelector(`[data-grid-host="${view}"]`);
+      if (host) hosts[view] = host;
+    });
+
+    const paintView = (view) => {
+      const host = hosts[view];
       if (!host) return;
-      states[key] = readGrid(key);
-      states[key].forEach((row, r) => row.forEach((on, c) => {
-        if (!on) return;
+      states[view].forEach((row, r) => row.forEach((on, c) => {
         const button = host.querySelector(`[data-index="${r * n + c}"]`);
-        if (button) { button.classList.add('is-on'); button.setAttribute('aria-pressed', 'true'); }
+        if (!button) return;
+        button.classList.toggle('is-on', Boolean(on));
+        button.setAttribute('aria-pressed', String(Boolean(on)));
       }));
+    };
+
+    const loadView = (view) => {
+      states[view] = readGrid(keyFor(view));
+      paintView(view);
+      const note = root.querySelector(`[data-grid-note="${view}"]`);
+      if (note) { note.textContent = ''; note.dataset.state = ''; }
+    };
+
+    views.forEach((view) => {
+      const host = hosts[view];
+      if (!host) return;
+      loadView(view);
 
       let mode = null;
-      const apply = (index) => {
-        if (index == null) return;
-        const value = mode;
-        paintCell(key, index, value);
-        cellsOfState(key)[Math.floor(index / n)][index % n] = value;
+      const cellAt = (index) => states[view][Math.floor(index / n)][index % n];
+      const write = (index, value) => {
+        states[view][Math.floor(index / n)][index % n] = value;
+        paintCell(view, index, value);
       };
-      const cellsOfState = (k) => states[k];
-      const start = (event) => {
+      host.addEventListener('pointerdown', (event) => {
         const target = event.target.closest('.atolye-cell');
         if (!target) return;
         event.preventDefault();
         const index = Number(target.dataset.index);
-        mode = !states[key][Math.floor(index / n)][index % n];
-        apply(index);
-      };
-      host.addEventListener('pointerdown', start);
+        mode = !cellAt(index);
+        write(index, mode);
+      });
       host.addEventListener('pointerover', (event) => {
         if (mode == null) return;
         const target = event.target.closest('.atolye-cell');
         if (!target) return;
-        apply(Number(target.dataset.index));
+        write(Number(target.dataset.index), mode);
       });
       window.addEventListener('pointerup', () => { mode = null; });
       host.addEventListener('pointerleave', () => { mode = null; });
 
-      const clear = root.querySelector(`[data-grid-clear="${key}"]`);
+      const clear = root.querySelector(`[data-grid-clear="${view}"]`);
       if (clear) {
         clear.addEventListener('click', () => {
-          for (let index = 0; index < n * n; index += 1) {
-            paintCell(key, index, false);
-            states[key][Math.floor(index / n)][index % n] = false;
-          }
-          root.querySelector(`[data-grid-note="${key}"]`).textContent = '';
+          for (let index = 0; index < n * n; index += 1) write(index, false);
+          const note = root.querySelector(`[data-grid-note="${view}"]`);
+          if (note) { note.textContent = ''; note.dataset.state = ''; }
         });
       }
 
-      const check = root.querySelector(`[data-grid-check="${key}"]`);
+      const check = root.querySelector(`[data-grid-check="${view}"]`);
       if (check) {
         check.addEventListener('click', () => {
-          const note = root.querySelector(`[data-grid-note="${key}"]`);
-          const drawn = normalize(states[key]);
-          const target = normalize(expected[key]);
-          const label = VIEW_LABEL[key] || key;
+          const note = root.querySelector(`[data-grid-note="${view}"]`);
+          const target = expectedFor()[view];
+          const drawn = normalize(states[view]);
+          const expectedText = normalize(target);
+          const label = VIEW_LABEL[view] || view;
           if (!drawn) {
             note.textContent = `${label} görünümü için hiç kare boyamadın.`;
             note.dataset.state = 'wrong';
             return;
           }
-          if (drawn === target) {
+          if (drawn === expectedText) {
             note.textContent = `${label} görünümü doğru.`;
             note.dataset.state = 'correct';
-            if (!entry.solved.includes(item.id)) entry.solved.push(item.id);
-            store.save();
             if (onSolved) onSolved();
             return;
           }
-          if (drawn === normalize(mirror(expected[key]))) {
+          if (drawn === normalize(mirror(target))) {
             note.textContent = `Kareler doğru ama ayna gibi: ${label} görünümünde sağ–sol yer değiştirmiş. Ters yönden bak.`;
             note.dataset.state = 'wrong';
             return;
           }
-          note.textContent = `Kare sayısı ya da dizilişi tutmuyor. Cismi bir kez daha incele, dolu sütunları say.`;
+          note.textContent = 'Kare sayısı ya da dizilişi tutmuyor. Cismi bir kez daha incele, dolu sütunları say.';
           note.dataset.state = 'wrong';
         });
       }
     });
+
+    return {
+      /* Şekil değişince çağrılır: her görünüm kendi kaydından yeniden yüklenir. */
+      refresh() { views.forEach(loadView); },
+    };
   }
 
   /* ---------------- Yapay zekâ kontrolü ---------------- */
@@ -507,21 +533,38 @@
   }
 
   function bindCizim(root, item) {
-    const entry = store.item(item.id);
-    const heights = SAHNE.yapiOfSet(item.set || 1, item.sekil || 4);
-    const viewsMap = cellsOf(heights);
-    const expected = {};
-    (item.views || ['on', 'arka', 'ust']).forEach((view) => { expected[view] = viewsMap[view]; });
-
-    mountScene(root.querySelector(`[data-scene-stage="${item.id}"]`), root.querySelector(`[data-scene-controls="${item.id}"]`), item.scene, null);
-
-    bindGrids(root, item, expected, () => {
-      const feedback = root.querySelector(`[data-cizim-feedback="${item.id}"]`);
-      if (feedback) {
-        feedback.dataset.state = 'correct';
-        feedback.textContent = 'Bir görünüm tamam. Öteki görünümleri de çiz.';
-      }
+    const views = item.views || ['on', 'arka', 'ust'];
+    const setNo = item.set || 1;
+    let shape = item.sekil || 1;
+    const grid = bindGrids(root, item, {
+      views,
+      expectedFor: () => cellsOf(SAHNE.yapiOfSet(setNo, shape)),
+      keyFor: (view) => `s${setNo}-${shape}-${view}`,
+      onSolved: () => {
+        const feedback = root.querySelector(`[data-cizim-feedback="${item.id}"]`);
+        if (feedback) {
+          feedback.dataset.state = 'correct';
+          feedback.textContent = 'Bir görünüm tamam. Öteki görünümleri de çiz.';
+        }
+      },
     });
+
+    mountScene(
+      root.querySelector(`[data-scene-stage="${item.id}"]`),
+      root.querySelector(`[data-scene-controls="${item.id}"]`),
+      item.scene,
+      (state) => {
+        const next = Number(state.sekil) || 1;
+        if (next === shape) return;
+        shape = next;
+        grid.refresh();
+        const feedback = root.querySelector(`[data-cizim-feedback="${item.id}"]`);
+        if (feedback) {
+          feedback.dataset.state = '';
+          feedback.textContent = `Şekil ${shape} seçildi: bu şeklin çizimleri ayrı tutuluyor.`;
+        }
+      },
+    );
   }
 
   /* ---------------- Görev 5: en az küp + çizim + kilitli 3B ---------------- */
@@ -561,9 +604,9 @@
     const feedback = root.querySelector(`[data-enaz-feedback="${item.id}"]`);
     const heights = item.yapi || [[3, 1, 2], [1, 2, 0]];
     const viewsMap = cellsOf(heights);
-    const expected = {};
-    (Array.isArray(item.grids) ? item.grids : ['arka', 'sol', 'alt']).forEach((view) => { expected[view] = viewsMap[view]; });
+    const wantViews = Array.isArray(item.grids) ? item.grids : ['arka', 'sol', 'alt'];
 
+    /* Görünüm grubu sürgüsü yok: verilen görünümler sabit, ızgaralar da sabit kalır. */
     mountScene(root.querySelector(`[data-scene-stage="${item.id}"]`), null, item.scene, null);
 
     const input = root.querySelector(`[data-enaz-value="${item.id}"]`);
@@ -594,7 +637,13 @@
       });
     }
 
-    if (Object.keys(expected).length) bindGrids(root, item, expected, null);
+    if (wantViews.length) {
+      bindGrids(root, item, {
+        views: wantViews,
+        expectedFor: () => viewsMap,
+        keyFor: (view) => view,
+      });
+    }
 
     const unlock = root.querySelector(`[data-enaz-unlock="${item.id}"]`);
     if (unlock) {

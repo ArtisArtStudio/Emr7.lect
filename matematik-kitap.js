@@ -1523,10 +1523,10 @@
               intro: 'Dört katlı yapıdaki küpler numaralanmış. Aşağıdaki dört cümleyi okuyup doğru ya da yanlış işaretle.',
               scene: { type: 'numarali-yapi', params: [{ name: 'kati', label: 'Kat sayısı', min: 4, max: 4, step: 1, value: 4 }] },
               statements: [
-                { text: '3 numaralı küpü 6 numaralı küpün üstüne alırsan üstten görünüm değişmez.', answer: 'D' },
-                { text: '1 numaralı küp çıkarılırsa önden görünüm değişmez.', answer: 'D' },
+                { text: '3 numaralı küpü 5 numaralı küpün üstüne alırsan üstten görünüm değişmez.', answer: 'D' },
+                { text: '2 numaralı küp çıkarılırsa önden görünüm değişmez.', answer: 'D' },
                 { text: '5 numaralı küp çıkarılırsa üstten görünüm değişmez.', answer: 'Y' },
-                { text: '6 ve 7 numaralı küpler çıkarılırsa sağdan görünüm değişir.', answer: 'Y' },
+                { text: '6 numaralı küp çıkarılırsa önden görünüm değişir.', answer: 'Y' },
               ],
             },
             {

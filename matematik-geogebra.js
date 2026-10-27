@@ -431,6 +431,7 @@
     'kup-dondur': {
       label: 'Küp yapısı (döndürülebilir 3B)',
       views: true,
+      clean: true,
       params: [
         { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
       ],
@@ -764,6 +765,46 @@
     });
   }
 
+  /* Sade 3B görünüm: cisim dışında hiçbir şey görünmez.
+     - Küp komutlarının ürettiği köşe noktaları (A, B, C…) gizlenir.
+     - İstenmeyen etiketler kapatılır, çizgi kalınlığı tek kalem inceliğinde kalır.
+     - z = 0 düzlemindeki yatay zemin ve eksenler kapatılır. */
+  function quietScene(box) {
+    const api = box && box.api;
+    if (!api) return;
+    const labeled = box.labeled || new Set();
+    let names = [];
+    try {
+      names = typeof api.getAllObjectNames === 'function' ? api.getAllObjectNames() : [];
+    } catch (error) {
+      names = [];
+    }
+    names.forEach((name) => {
+      let type = '';
+      try {
+        type = typeof api.getObjectType === 'function' ? api.getObjectType(name) : '';
+      } catch (error) {
+        type = '';
+      }
+      if (type === 'point') {
+        try { api.setVisible(name, false); } catch (error) { /* yok say */ }
+        return;
+      }
+      if (!labeled.has(name)) {
+        try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
+      }
+      try { api.setLineThickness(name, 1); } catch (error) { /* yok say */ }
+    });
+    /* Yatay zemin düzlemi ve eksenler: cismin altında gri bir levha görünmesin. */
+    ['xOyPlane', 'xOzPlane', 'yOzPlane'].forEach((plane) => {
+      try { api.setVisible(plane, false); } catch (error) { /* yok say */ }
+      try { api.evalCommand(`SetVisibleInView(${plane}, 1, false)`); } catch (error) { /* yok say */ }
+    });
+    ['ShowAxes(false)', 'ShowGrid(false)'].forEach((command) => {
+      try { api.evalCommand(command); } catch (error) { /* yok say */ }
+    });
+  }
+
   function applyLabels(box) {
     if (!box || !box.api || typeof box.api.setLabelVisible !== 'function') return;
     box.names.forEach((name) => {
@@ -850,6 +891,7 @@
       applyLabels(box);
       /* Nokta/etiket kalabalığı ve eksenler kapatılır: cisim öne çıkar. */
       if (typeof box.polish === 'function') box.polish();
+      if (conf.clean) quietScene(box);
     }
 
     function build(attempt) {

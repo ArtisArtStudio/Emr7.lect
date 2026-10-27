@@ -141,6 +141,8 @@
 
   /* Görünüm sorularında kullanılan karmaşık yapılar: satır = derinlik (arka→ön),
      sütun = genişlik (sol→sağ). Boşluklar (0) siluette basamak oluşturur. */
+  const VIEW_TITLES = { on: 'ön', arka: 'arka', sag: 'sağ', sol: 'sol', ust: 'üst', alt: 'alt' };
+
   const YAPI_SET1 = [
     [[3, 2, 1], [2, 1, 1], [1, 1, 1]],
     [[2, 2, 1], [1, 1, 1], [1, 1, 1]],
@@ -193,36 +195,29 @@
     return current;
   }
 
-  /* Beş yönün görünümü. Ön/arka ve sağ/sol birbirinin aynasıdır (katı yapıda). */
+  /* Altı yönün görünümü. Arkadan bakış önden bakışın, soldan bakış sağdan bakışın
+     aynasıdır; alttan bakış da üstten bakışın yatay aynasıdır (dikey/yatay simetri). */
   function besGorunum(heights) {
     const depth = heights.length;
     const width = heights[0].length;
     const top = Math.max(1, ...heights.flat());
     const front = [];
-    const back = [];
     const right = [];
-    const left = [];
     for (let level = top; level >= 1; level -= 1) {
       front.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
-      back.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
       right.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => (value || 0) >= level)));
-      left.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => (value || 0) >= level)));
     }
+    const mirrorRows = (cells) => cells.map((row) => row.slice().reverse());
+    const topCells = heights.slice().reverse().map((row) => row.map((value) => (value || 0) > 0));
+    const bottomCells = topCells.slice().reverse();
     return [
-      { key: 'on', title: 'ön' },
-      { key: 'arka', title: 'arka' },
-      { key: 'sag', title: 'sağ' },
-      { key: 'sol', title: 'sol' },
-      { key: 'ust', title: 'üst' },
-      { key: 'alt', title: 'alt' },
-    ].map((panel) => ({
-      ...panel,
-      cells: panel.key === 'on' ? front
-        : panel.key === 'arka' ? back
-          : panel.key === 'sag' ? right
-            : panel.key === 'sol' ? left
-              : heights.slice().reverse().map((row) => row.map((value) => (value || 0) > 0)),
-    }));
+      { key: 'on', cells: front },
+      { key: 'arka', cells: mirrorRows(front) },
+      { key: 'sag', cells: right },
+      { key: 'sol', cells: mirrorRows(right) },
+      { key: 'ust', cells: topCells },
+      { key: 'alt', cells: bottomCells },
+    ].map((panel) => ({ ...panel, title: VIEW_TITLES[panel.key] || panel.key }));
   }
 
   /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
@@ -289,11 +284,12 @@
   }
 
   /* 3B çizime numara yerleştirme: yüz seçilir, küpün görünen yüzüne yazılır. */
-  function drawIsoLabels(heights, area, labels) {
+  function drawIsoLabels(heights, area, labels, maxU) {
     const depth = heights.length;
     const width = heights[0].length;
     const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
-    const u = Math.max(8, Math.min(46, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
+    const cap = Math.max(8, Number(maxU) || 46);
+    const u = Math.max(8, Math.min(cap, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
     const du = u * 0.5;
     const dv = u * 0.36;
     const totalW = width * u + depth * du;
@@ -309,15 +305,18 @@
     }).join('');
   }
 
-  const NUMARALI_YAPI = [[1, 1], [4, 1]];
+  /* Numaralı yapı: dört katlı kule ön sırada olduğu için her küp görünür;
+     numaralar görünen yüzün ortasına yazılır, arada boşluk kalmaz. */
+  const NUMARALI_YAPI = [[4, 1, 1], [0, 1, 1]];
   const NUMARALI_ETIKET = [
-    { j: 1, i: 0, level: 0, no: 1, face: 'front' },
-    { j: 1, i: 0, level: 1, no: 2, face: 'front' },
-    { j: 1, i: 0, level: 2, no: 3, face: 'front' },
-    { j: 1, i: 0, level: 3, no: 4, face: 'front' },
-    { j: 0, i: 0, level: 0, no: 5, face: 'front' },
-    { j: 0, i: 1, level: 0, no: 6, face: 'front' },
+    { j: 0, i: 0, level: 0, no: 1, face: 'front' },
+    { j: 0, i: 0, level: 1, no: 2, face: 'front' },
+    { j: 0, i: 0, level: 2, no: 3, face: 'front' },
+    { j: 0, i: 0, level: 3, no: 4, face: 'front' },
+    { j: 0, i: 1, level: 0, no: 5, face: 'front' },
+    { j: 0, i: 2, level: 0, no: 6, face: 'front' },
     { j: 1, i: 1, level: 0, no: 7, face: 'top' },
+    { j: 1, i: 2, level: 0, no: 8, face: 'top' },
   ];
 
   /* Eşleştirme sorusunun dört yapısı. */
@@ -340,7 +339,7 @@
       { title: 'ön', cells: [[0, 1, 0], [1, 1, 1]] },
     ],
     [
-      { title: 'alt', cells: [[1, 1, 1], [1, 0, 1]] },
+      { title: 'alt', cells: [[1, 0, 1], [1, 1, 1]] },
       { title: 'arka', cells: [[0, 0, 1], [1, 1, 1]] },
     ],
   ];
@@ -1535,9 +1534,10 @@
         state.kati = 4;
       },
       draw() {
+        const area = { x: 90, y: 46, width: 460, height: 306 };
         const parts = [note(22, 30, 'Dört katlı yapıdaki her küp numaralanmıştır.', { size: 12 })];
-        parts.push(drawIso(NUMARALI_YAPI, { x: 176, y: 52, width: 300, height: 300 }));
-        parts.push(drawIsoLabels(NUMARALI_YAPI, { x: 176, y: 52, width: 300, height: 300 }, NUMARALI_ETIKET));
+        parts.push(drawIso(NUMARALI_YAPI, area, 64));
+        parts.push(drawIsoLabels(NUMARALI_YAPI, area, NUMARALI_ETIKET, 64));
         return parts.join('');
       },
     },
