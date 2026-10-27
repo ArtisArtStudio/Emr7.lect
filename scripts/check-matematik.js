@@ -85,7 +85,7 @@ assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function
   'MATEMATIK_GEOGEBRA köprüsü yüklenemedi.');
 const localTypes = SAHNE.types();
 const geoTypes = GG.types();
-const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'acim'];
+const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'duzensiz-yigin', 'acim'];
 assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
   `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
 GEO_3D.forEach((type) => {
@@ -108,6 +108,21 @@ assert.ok(/SetViewDirection/.test(ggb) && /data-ggb-view/.test(ggb), 'Ön/yan/ü
 assert.ok(/data-ggb-net/.test(ggb) && /Açınımı aç/.test(ggb), 'Açınım düğmesi ve dokunma ile katlama olmalı.');
 assert.ok(/math-ggb-ortho/.test(ggb) && /math-ggb-views/.test(ggb), 'Üç görünüm bölünmüş panelde gösterilmeli.');
 assert.ok(GG.hasSplit('uc-gorunum') && GG.hasNet('acim'), 'Bölünmüş görünüm ve açınım sahneleri tanımlı olmalı.');
+assert.ok(GG.hasSplit('duzensiz-yigin'), 'Düzensiz yığın da bölünmüş görünümle açılmalı (ön · yan · üst).');
+
+/* Birim küpler tek tek görünmeli: hacim sahneleri her küpü ayrı nesne olarak kurar. */
+['hacim', 'bilesik-hacim', 'duzensiz-yigin'].forEach((type) => {
+  const commands = GG.script(type, {});
+  const cubes = commands.filter((command) => /=\s*Cube\(/.test(command));
+  assert.ok(cubes.length >= 4, `${type}: birim küpler ayrı ayrı kurulmalı (${cubes.length} küp).`);
+  assert.ok(cubes.every((command) => /Vector\(\(0, 0, 1\)\)/.test(command)),
+    `${type}: küpler z eksenine oturmalı, ızgara kaymamalı.`);
+});
+/* Düzensiz yığının izdüşümleri gerçek siluet olmalı: boş kare bulunmalı. */
+assert.ok(/stackViewPanels/.test(ggb) && /stackHeights/.test(ggb),
+  'Düzensiz yığın görünümleri yükseklik tablosundan üretilmeli.');
+assert.ok(/ortho\(values\)/.test(ggb) || /conf\.ortho/.test(ggb),
+  'Bölünmüş panel appletin kendi izdüşümünü kullanmalı.');
 
 /* Sürgü yoklaması: her sahne için uç değerlerde üretilen GeoGebra komutları denetlenir.
    Nokta ondalığı, dengeli parantez, beyaz listedeki komutlar ve tanımlı nesne adları. */

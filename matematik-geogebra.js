@@ -1,8 +1,8 @@
 /* Matematik: GeoGebra köprüsü — yalnız üç boyutlu cisimler.
  *
- * Kural (26 Ekim 2026, 2. sürüm): GeoGebra **sadece 3B cisimlerde** kullanılır:
- *   prizma3b · hacim · birim-donusum · uc-gorunum · acim
- * Diğer on dokuz sahne yerel SVG ile çizilir (GeoGebra kaldırıldı). Gerekçe: 2B sahnelerde
+ * Kural (27 Ekim 2026, 3. sürüm): GeoGebra **sadece 3B cisimlerde** kullanılır:
+ *   prizma3b · hacim · birim-donusum · uc-gorunum · acim · bilesik-hacim · duzensiz-yigin
+ * Diğer sahneler yerel SVG ile çizilir. Gerekçe: 2B sahnelerde
  * yerel çizim daha hızlı, çevrimdışı ve cevap sızdırmıyor; GeoGebra'nın pencere/ölçek
  * davranışı 2B'de ek yük getiriyordu.
  *
@@ -15,8 +15,11 @@
  *   cismi parmağıyla döndürebilir.
  * - `acim` sahnesinde “Katla / Aç” düğmesi ve tuvale dokunma, kapalı kutu ile düz açınım
  *   arasında geçirir.
- * - `uc-gorunum` sahnesi **bölünmüş** çalışır: solda döndürülebilir 3B cisim, sağda
- *    ön/yan/üst dik izdüşümleri (kareler) aynı sürgülerle eşzamanlı güncellenir.
+ * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
+ *   3B cisim, sağda ön/yan/üst dik izdüşümleri aynı sürgülerle eşzamanlı güncellenir.
+ *   Düzensiz yığında izdüşümler gerçek siluettir (boşluklar ve basamaklar görünür).
+ * - Hacim sahnelerinde **her birim küp ayrı nesnedir**: prizma tek blok olarak değil,
+ *   sayılabilir küpler toplamı olarak çizilir (`hacim`, `bilesik-hacim`, `duzensiz-yigin`).
  *
  * Yedek: ağ yoksa, CDN engelliyse ya da nesneler kurulamazsa aynı sahne yerel SVG ile çizilir.
  * Ticari olmayan kullanım; atıf sahnede ve THIRD-PARTY-NOTICES.md içinde.
@@ -85,6 +88,9 @@
     white: [255, 255, 255],
   };
 
+  /* Birim küplerin dönüşümlü renkleri: komşu küpler birbirine karışmaz. */
+  const CUBE_COLORS = [[201, 191, 242], [215, 240, 227], [207, 228, 247], [233, 224, 246]];
+
   const VIEWS = {
     egik: 'Vector((1.6, -2.4, 1.3))',
     on: 'Vector((0, -1, 0))',
@@ -140,6 +146,12 @@
       cube(name, x, y, z, edge) {
         box.mark(name, false);
         run(`${name} = Cube(${P(x, y, z)}, ${P(x + edge, y, z)})`);
+      },
+      /* Yön verilmiş küp: kenarı z ekseni boyunca ilerler, böylece birim küpler
+         taban düzlemine dik ve birbirine bitişik oturur (ızgara kaymaz). */
+      cubeUp(name, x, y, z, edge) {
+        box.mark(name, false);
+        run(`${name} = Cube(${P(x, y, z)}, ${P(x + edge, y, z)}, Vector((0, 0, 1)))`);
       },
       slider(name, min, max, step) {
         run(`${name} = Slider(${f(min)}, ${f(max)}, ${f(step)})`);
@@ -216,7 +228,7 @@
         { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 2 },
         { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 3 },
       ],
-      required: ['taban', 'ust', 'y1', 'y2', 'y3', 'y4'],
+      required: ['taban', 'ust', 'y1', 'y2', 'y3', 'y4', 'birim'],
       build(b, v) {
         const a = Number(v.a);
         const b0 = Number(v.b);
@@ -231,6 +243,10 @@
         b.segment('y2', x0 + a, y0, z0, x0 + a, y0, z0 + h);
         b.segment('y3', x0 + a, y0 + b0, z0, x0 + a, y0 + b0, z0 + h);
         b.segment('y4', x0, y0 + b0, z0, x0, y0 + b0, z0 + h);
+        /* Ölçek küpü: prizmanın köşesinde duran tek birim küp. */
+        b.cubeUp('birim', x0, y0, z0, 1);
+        b.color('birim', COLOR.amber);
+        b.fill('birim', 0.9);
         b.color('taban', COLOR.purple);
         b.color('ust', [168, 155, 226]);
         ['y1', 'y2', 'y3', 'y4'].forEach((name) => b.color(name, COLOR.purple));
@@ -258,24 +274,25 @@
         const z0 = -h / 2;
         b.polygon3('taban', [[x0, y0, z0], [x0 + a, y0, z0], [x0 + a, y0 + b0, z0], [x0, y0 + b0, z0]]);
         b.polygon3('ust', [[x0, y0, z0 + h], [x0 + a, y0, z0 + h], [x0 + a, y0 + b0, z0 + h], [x0, y0 + b0, z0 + h]]);
-        /* Katman sınırları: her katman taban alanı kadar birim küp taşır. */
-        if (h > 1) {
-          for (let k = 1; k < h; k += 1) {
-            const z = z0 + k;
-            b.polygon3(`katman${k}`, [[x0, y0, z], [x0 + a, y0, z], [x0 + a, y0 + b0, z], [x0, y0 + b0, z]]);
-            b.color(`katman${k}`, COLOR.gray);
-            b.fill(`katman${k}`, 0.12);
-          }
-        }
-        /* Hacim birimi: köşede tek birim küp. */
-        b.cube('birim', x0, y0, z0, 1);
-        b.color('birim', COLOR.amber);
-        b.fill('birim', 0.9);
         b.color('taban', COLOR.purple);
         b.color('ust', [168, 155, 226]);
-        b.fill('taban', 0.45);
-        b.fill('ust', 0.45);
-        b.text('etiket', 'Taban a·b birim kare; katman sayısı h.', x0, y0 + b0 + 0.7, z0);
+        b.fill('taban', 0.28);
+        b.fill('ust', 0.18);
+        /* Her birim küp ayrı bir nesne: öğrenci tek tek sayar, katmanı görür.
+           Renkler komşu küpleri ayırır; ilk küp (birim) sarı kalır. */
+        let count = 0;
+        for (let level = 0; level < h; level += 1) {
+          for (let j = 0; j < b0; j += 1) {
+            for (let i = 0; i < a; i += 1) {
+              count += 1;
+              const name = count === 1 ? 'birim' : `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, count === 1 ? COLOR.amber : CUBE_COLORS[(i + j + level) % CUBE_COLORS.length]);
+              b.fill(name, 0.92);
+            }
+          }
+        }
+        b.text('etiket', 'Her katman a·b birim küp; kaç katman var?', x0, y0 + b0 + 0.7, z0);
       },
     },
 
@@ -326,6 +343,104 @@
         ['y1', 'y2', 'y3', 'y4'].forEach((name) => b.color(name, COLOR.purple));
         b.fill('taban', 0.5);
         b.fill('ust', 0.5);
+      },
+    },
+
+    /* Bileşik (L) cisim: bütün bloktan bir köşe prizması kesilmiş gibi düşünülür.
+       Cisim birim küplerden kurulur; hacim = kalan küplerin sayısı. */
+    'bilesik-hacim': {
+      label: 'Bileşik cisim (3B)',
+      views: true,
+      params: [
+        { name: 'a', label: 'Genişlik', min: 3, max: 4, step: 1, value: 4 },
+        { name: 'b', label: 'Derinlik', min: 2, max: 4, step: 1, value: 3 },
+        { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
+        { name: 'k', label: 'Kesilen parça', min: 1, max: 2, step: 1, value: 2 },
+      ],
+      required: ['taban', 'ust', 'kesik', 'birim'],
+      build(b, v) {
+        const a = Number(v.a);
+        const b0 = Number(v.b);
+        const h = Number(v.h);
+        const k = Math.max(1, Math.min(Number(v.k), a - 1));
+        const x0 = -a / 2;
+        const y0 = -b0 / 2;
+        const z0 = -h / 2;
+        const solid = (i, j) => !(i >= a - k && j >= 1);
+        const at = (i, j) => [x0 + i, y0 + j];
+        /* Taban ve üst: L biçimli çevre. */
+        const outline = [
+          at(0, 0), at(a, 0), at(a, 1), at(a - k, 1), at(a - k, b0), at(0, b0),
+        ];
+        b.polygon3('taban', outline.map(([x, y]) => [x, y, z0]));
+        b.polygon3('ust', outline.map(([x, y]) => [x, y, z0 + h]));
+        /* Kesilen parçanın yeri: zeminde boş kalan dikdörtgen. */
+        b.polygon3('kesik', [
+          [x0 + a - k, y0 + 1, z0], [x0 + a, y0 + 1, z0], [x0 + a, y0 + b0, z0], [x0 + a - k, y0 + b0, z0],
+        ]);
+        let count = 0;
+        for (let level = 0; level < h; level += 1) {
+          for (let j = 0; j < b0; j += 1) {
+            for (let i = 0; i < a; i += 1) {
+              if (!solid(i, j)) continue;
+              count += 1;
+              const name = count === 1 ? 'birim' : `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, count === 1 ? COLOR.amber : CUBE_COLORS[(i + j + level) % CUBE_COLORS.length]);
+              b.fill(name, 0.92);
+            }
+          }
+        }
+        b.color('taban', COLOR.purple);
+        b.color('ust', COLOR.purple);
+        b.color('kesik', COLOR.gray);
+        b.fill('taban', 0.16);
+        b.fill('ust', 0.1);
+        b.fill('kesik', 0.22);
+        b.text('etiket', 'Bütün blok ile kesilen parça: hacim iki prizma gibi düşünülür.', x0, y0 + b0 + 0.7, z0);
+      },
+    },
+
+    /* Düzensiz küp yığını: sütun yükseklikleri desene göre değişir; ön, yan ve üst
+       görünümler bu yüzden düz dikdörtgen değil, basamaklı siluetlerdir. */
+    'duzensiz-yigin': {
+      label: 'Düzensiz yığın (3B)',
+      views: true,
+      split: true,
+      params: [
+        { name: 'desen', label: 'Yapı', min: 1, max: 4, step: 1, value: 1 },
+        { name: 'h', label: 'En yüksek sütun', min: 1, max: 3, step: 1, value: 3 },
+      ],
+      ortho(values) {
+        return stackViewPanels(stackHeights(values));
+      },
+      required: ['taban', 'k1'],
+      build(b, v) {
+        const heights = stackHeights(v);
+        const depth = heights.length;
+        const width = heights[0].length;
+        const top = Math.max(1, ...heights.flat());
+        const x0 = -width / 2;
+        const y0 = -depth / 2;
+        const z0 = -top / 2;
+        b.polygon3('taban', [
+          [x0, y0, z0], [x0 + width, y0, z0], [x0 + width, y0 + depth, z0], [x0, y0 + depth, z0],
+        ]);
+        b.color('taban', COLOR.purple);
+        b.fill('taban', 0.14);
+        let count = 0;
+        heights.forEach((row, j) => {
+          row.forEach((height, i) => {
+            for (let level = 0; level < height; level += 1) {
+              count += 1;
+              const name = `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, CUBE_COLORS[(i + j + level) % CUBE_COLORS.length]);
+              b.fill(name, 0.92);
+            }
+          });
+        });
+        b.text('etiket', 'Her sütunun yüksekliği farklı: görünümleri tek tek oku.', x0, y0 + depth + 0.7, z0);
       },
     },
 
@@ -386,34 +501,95 @@
     },
   };
 
-  /* ---------- küçük dik izdüşüm panelleri (uc-gorunum) ---------- */
+  /* ---------- düzensiz yığın: desen, yükseklik ve gerçek izdüşümler ---------- */
 
-  function orthographicSvg(values) {
-    const a = Number(values.a) || 1;
-    const b = Number(values.b) || 1;
-    const h = Number(values.h) || 1;
-    const panels = [
-      { key: 'on', title: 'Ön', cols: a, rows: h, fill: '#d7ccf7' },
-      { key: 'yan', title: 'Yan', cols: b, rows: h, fill: '#cfe4f7' },
-      { key: 'ust', title: 'Üst', cols: a, rows: b, fill: '#d5efdf' },
+  /* Desenler 3 × 3 taban üzerinde tanımlıdır; satır 0 en öndeki sıradır.
+     0 = boş kare. Seçilen en yüksek sütun değeri bütün yükseklikleri sınırlar. */
+  const STACK_PATTERNS = {
+    1: [[3, 2, 1], [2, 1, 1], [1, 1, 0]],
+    2: [[1, 1, 1], [1, 3, 1], [0, 1, 0]],
+    3: [[2, 2, 2], [0, 0, 2], [0, 0, 2]],
+    4: [[2, 0, 2], [1, 0, 1], [1, 1, 1]],
+  };
+
+  function clampInt(value, min, max) {
+    const number = Math.round(Number(value));
+    if (!Number.isFinite(number)) return min;
+    return Math.max(min, Math.min(max, number));
+  }
+
+  function stackHeights(values) {
+    const source = values || {};
+    const key = clampInt(source.desen === undefined ? 1 : source.desen, 1, 4);
+    const cap = clampInt(source.h === undefined ? 3 : source.h, 1, 3);
+    const pattern = STACK_PATTERNS[key] || STACK_PATTERNS[1];
+    return pattern.map((row) => row.map((value) => Math.min(value, cap)));
+  }
+
+  /* Ön görünüm: her sütunda en yüksek küp silueti görünür.
+     Yan görünüm: derinlik boyunca her sıranın en yüksek küpü.
+     Üst görünüm: dolu kareler (yüksekliği 0 olan hücre boş kalır). */
+  function stackViewPanels(heights) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat());
+    const front = [];
+    for (let level = top; level >= 1; level -= 1) {
+      const line = [];
+      for (let i = 0; i < width; i += 1) line.push(heights.some((row) => row[i] >= level));
+      front.push(line);
+    }
+    const side = [];
+    for (let level = top; level >= 1; level -= 1) {
+      const line = [];
+      for (let j = 0; j < depth; j += 1) line.push(heights[j].some((value) => value >= level));
+      side.push(line);
+    }
+    const plan = heights.map((row) => row.map((value) => value > 0));
+    return [
+      { key: 'on', title: 'Ön', cells: front, fill: '#d7ccf7' },
+      { key: 'yan', title: 'Yan', cells: side, fill: '#cfe4f7' },
+      { key: 'ust', title: 'Üst', cells: plan, fill: '#d5efdf' },
     ];
-    const cell = 22;
-    const pad = 12;
+  }
+
+  /* Düzgün prizmada üç görünüm de dolu dikdörtgendir. */
+  function prismViewPanels(values) {
+    const a = clampInt(values && values.a === undefined ? 1 : values.a, 1, 6);
+    const b = clampInt(values && values.b === undefined ? 1 : values.b, 1, 5);
+    const h = clampInt(values && values.h === undefined ? 1 : values.h, 1, 5);
+    const full = (cols, rows) => Array.from({ length: rows }, () => Array.from({ length: cols }, () => true));
+    return [
+      { key: 'on', title: 'Ön', cells: full(a, h), fill: '#d7ccf7' },
+      { key: 'yan', title: 'Yan', cells: full(b, h), fill: '#cfe4f7' },
+      { key: 'ust', title: 'Üst', cells: full(a, b), fill: '#d5efdf' },
+    ];
+  }
+
+  /* ---------- küçük dik izdüşüm panelleri (bölünmüş görünüm) ---------- */
+
+  function orthographicSvg(values, conf) {
+    const panels = conf && typeof conf.ortho === 'function'
+      ? conf.ortho(values)
+      : prismViewPanels(values);
+    const cell = 18;
     const width = 3 * 96;
-    const height = 108;
+    const height = 132;
     const parts = [`<svg viewBox="0 0 ${width} ${height}" class="math-ggb-ortho" aria-hidden="true">`];
     panels.forEach((panel, index) => {
-      const x0 = index * 96 + pad;
-      const w = panel.cols * cell;
-      const hh = panel.rows * cell;
-      parts.push(`<rect x="${index * 96 + 4}" y="4" width="88" height="100" rx="10" fill="#fbfaff" stroke="#ded8f2"/>`);
-      parts.push(`<text x="${index * 96 + 48}" y="22" text-anchor="middle" font-size="11" font-weight="800" fill="#33265f">${panel.title}</text>`);
-      for (let row = 0; row < panel.rows; row += 1) {
-        for (let col = 0; col < panel.cols; col += 1) {
-          parts.push(`<rect x="${x0 + col * cell}" y="${32 + row * cell}" width="${cell - 1.5}" height="${cell - 1.5}" rx="3" fill="${panel.fill}" stroke="#7056c9" stroke-width="0.8"/>`);
+      const cells = Array.isArray(panel.cells) ? panel.cells : [];
+      const rows = cells.length;
+      const cols = rows ? cells[0].length : 0;
+      const x0 = index * 96 + (96 - cols * cell) / 2;
+      parts.push(`<rect x="${index * 96 + 4}" y="4" width="88" height="124" rx="10" fill="#fbfaff" stroke="#ded8f2"/>`);
+      parts.push(`<text x="${index * 96 + 48}" y="21" text-anchor="middle" font-size="11" font-weight="800" fill="#33265f">${panel.title}</text>`);
+      for (let row = 0; row < rows; row += 1) {
+        for (let col = 0; col < cols; col += 1) {
+          const filled = Boolean(cells[row][col]);
+          parts.push(`<rect x="${x0 + col * cell}" y="${28 + row * cell}" width="${cell - 1.5}" height="${cell - 1.5}" rx="3" fill="${filled ? panel.fill : '#ffffff'}" stroke="${filled ? '#7056c9' : '#e6e1f6'}" stroke-width="${filled ? 0.9 : 0.7}"/>`);
         }
       }
-      parts.push(`<text x="${index * 96 + 48}" y="${34 + Math.max(hh, 0) + 12}" text-anchor="middle" font-size="9.5" fill="#6b7a90">${panel.cols} × ${panel.rows} kare?</text>`);
+      parts.push(`<text x="${index * 96 + 48}" y="${32 + rows * cell + 10}" text-anchor="middle" font-size="9.5" fill="#6b7a90">${cols} × ${rows} · kaç kare?</text>`);
     });
     parts.push('</svg>');
     return parts.join('');
@@ -549,7 +725,7 @@
     const viewsHost = host.querySelector('.math-ggb-views');
     const bar = host.querySelector('.math-ggb-bar');
     renderControls(controls, params, values, scope);
-    if (viewsHost) viewsHost.innerHTML = orthographicSvg(values);
+    if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
     status('GeoGebra hazırlanıyor…');
 
     function hideLoading() {
@@ -636,7 +812,7 @@
         values[param.name] = Number(input.value);
         if (out) out.textContent = String(values[param.name]);
       });
-      if (viewsHost) viewsHost.innerHTML = orthographicSvg(values);
+      if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
       if (!api) return;
       params.forEach((param) => {
         try {
@@ -764,7 +940,7 @@
         params.forEach((param) => { values[param.name] = param.value; });
         mode = conf.net ? 'kapali' : '';
         renderControls(controls, params, values, scope);
-        if (viewsHost) viewsHost.innerHTML = orthographicSvg(values);
+        if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
         const net = bar ? bar.querySelector('[data-ggb-net]') : null;
         if (net) net.textContent = 'Açınımı aç';
         if (api) {

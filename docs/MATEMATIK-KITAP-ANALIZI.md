@@ -1301,3 +1301,57 @@ Yerel `ortadikme` sahnesi eşit olmayan ölçekle çiziliyordu; A ile B yatay de
 çizgi ekranda dik görünmüyordu. `plotter(..., { equal: true })` eklendi: yatay ve düşey ölçek
 eşit, orta dikme gerçekten dik. `|PA| = |PB|` değerleri de artık ekranda görünen uzunlukla
 tutarlı.
+
+---
+
+## 28. Düzeltme turu — GeoGebra kaynak eşlemesi, birim küpler, düzensiz görünümler (27 Ekim 2026)
+
+### 28.1 GeoGebra kaynakları okundu
+
+`https://www.geogebra.org/math/volume`, `/math/solids`, `/math/symmetry` sayfalarındaki konu
+başlıkları bizim haftalarımıza eşlendi; ayrıntı `docs/GEOGEBRA-KONU-ESLEMESI.md` içinde.
+Öne çıkanlar: *Composing Prisms by Stacking Cubes*, *Calculating Volume with Invisible Cubes*,
+*Calculating the Volume of Composite Solids*, *Unfolding Prisms*, *Visualizing Lines of Symmetry*.
+
+### 28.2 Birim küpler artık tek tek görünüyor
+
+- `hacim` (GeoGebra ve yerel): prizma tek blok değil, **her birim küp ayrı nesne** olarak çizilir;
+  GeoGebra'da `Cube(A, B, Vector((0,0,1)))` ile z eksenine oturtulur (ızgara kaymaz). Yerel sahnede
+  ön sıradaki küpler numaralanır: öğrenci tek tek sayar.
+- `prizma3b`: köşeye ölçek için sarı birim küp eklendi (ölçü birimi görünür).
+- Yeni `bilesik-hacim`: bütün bloktan kesilen köşe prizması; hacim = bütün − kesilen, küpler sayılabilir.
+
+### 28.3 Düzensiz cisimlerin ön · yan · üst görünümü GeoGebra'da
+
+Yeni `duzensiz-yigin` sahnesi (bölünmüş GeoGebra): 3 × 3 tabanda dört farklı yükseklik deseni,
+"en yüksek sütun" sürgüsü. Sağdaki ön/yan/üst panelleri **yükseklik tablosundan** üretilir:
+her sütunun en yüksek küpü silueti verir, boş hücreler beyaz kalır. Düzgün prizmada üç görünüm
+dolu dikdörtgendir; düzensiz yığında basamaklıdır — asıl kazanım budur.
+
+### 28.4 "Geometrik nicelikler" bilgi kutularına kendi etkinliği
+
+h8, h9, h10 ve h11'de her bilgi kutusu artık **kendi bloğuna, kendi görseline ve en az bir
+kontrol sorusuna** sahip; aynı haftada aynı sahne iki kez kullanılmıyor:
+
+| Hafta | Kutular | Görseller |
+|---|---|---|
+| h8 | Prizma · Görünüm eşleşmesi · Gizli küp | `prizma3b` · `uc-gorunum` · `duzensiz-yigin` (keşfet: `hacim`) |
+| h9 | Prizma yüzey alanı · Küp · Kare prizma | `acim-cizim` · `birim-kup` · `prizma` (keşfet: `acim`) |
+| h10 | Hacim · Birim · Katman | `hacim` · `birim-kup` · `katman` (keşfet: `bilesik-hacim`) |
+| h11 | Geçiş · Eşlik · Düzgün olmayan cisim | `birim-merdiven` · `litre-kup` · `duzensiz-yigin` |
+
+"En–boy–yükseklik sürgüsü + aynı prizma" tekrarı kaldırıldı. Bu kural denetimle korunuyor:
+`scripts/check-matematik-content.js` 4e/4f bölümleri (kutu → blok → görsel eşleşmesi, görsel
+çeşitliliği, kontrol sorusu sayısı, birim küp ve düzensiz görünüm koşulları).
+
+### 28.5 Simetri: Lines of Symmetry eşlemesi
+
+Yeni yerel `simetri-dogru` sahnesi: ayna doğrusu 15° adımlarla döner, görüntü kesikli çizilir.
+Kare, dikdörtgen, eşkenar üçgen ve düzgün beşgende örtüşen açılar simetri doğrularını verir.
+2B olduğu için GeoGebra kullanılmadı (kural: GeoGebra yalnız 3B).
+
+### 28.6 Denetim
+
+`check-matematik.js` "7 GeoGebra 3B appleti, 28 yerel sahne, 42 şekil türü"; `check-matematik-content.js`
+"258 açıklamalı soru"; `check-matematik-layout.js` "28 sahne türü (227 çizim) ve 42 şekil türü;
+metinler tuval içinde, etiketler çakışmıyor."

@@ -16,7 +16,8 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 ## GeoGebra (matematik alanı) — yalnız üç boyutlu cisimler
 
-Matematik alanındaki üç boyutlu beş sahne (prizma, hacim, birim küp, üç görünüm, açınım)
+Matematik alanındaki üç boyutlu yedi sahne (prizma, hacim, birim küp, üç görünüm, açınım,
+bileşik cisim, düzensiz yığın)
 GeoGebra web uygulamasıyla açılır. Applet, GeoGebra'nın resmî yükleyicisiyle
 <https://www.geogebra.org/apps/deployggb.js> adresinden **yalnız o sahne ekranda
 göründüğünde** yüklenir; sayfa açılışında dış istek yapılmaz. Bu depoda yazılmış bağımsız

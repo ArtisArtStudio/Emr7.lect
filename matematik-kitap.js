@@ -1296,13 +1296,19 @@
             q('Önden $4$ kare genişlik görünen yapıda en az kaç sütun vardır?',
               'Her görünen kare bir sütunun tepesidir.',
               'En az $4$ sütun.'),
+            q('Sahnede ön görünüm $4 \\times 3$, yan görünüm $2 \\times 3$ ise üst görünüm kaç kare olur?',
+              'Üst görünüm genişlik ile derinliği çarpar.',
+              '$4 \\cdot 2 = 8$ kare.'),
+            q('Düzensiz yığında ön görünümdeki boş kare neyi anlatır?',
+              'Boş kare, o sütunda hiç küp olmadığını gösterir.',
+              'O sütunda küp yoktur; görünümün o yeri boş kalır.'),
           ],
           blocks: [
             {
-              heading: 'Üç görünüm',
+              heading: 'Prizma: yüz, ayrıt, köşe',
               paragraphs: [
-                'Bir cisme önden bakıldığında **ön görünüm**, yandan bakıldığında **yan görünüm**, üstten bakıldığında **üst görünüm** elde edilir.',
-                'Ön görünüm genişlik ve yükseklik, yan görünüm derinlik ve yükseklik, üst görünüm genişlik ve derinlik bilgisini verir.',
+                'Dikdörtgenler prizmasında $6$ yüz, $12$ ayrıt, $8$ köşe vardır. Her yüzün $4$ ayrıtı vardır ve her ayrıt iki yüze ait olduğu için $6 \\cdot 4 \\div 2 = 12$ ayrıt bulunur.',
+                'Küp, bütün yüzleri eş kare olan özel bir dikdörtgenler prizmasıdır. Sahnede köşede duran sarı blok bir birim küptür: hacmin ölçü birimi.',
               ],
               scene: {
                 type: 'prizma3b',
@@ -1314,18 +1320,33 @@
               },
             },
             {
-              heading: 'Prizmanın elemanları',
+              heading: 'Görünüm eşleşmesi: hangi ölçü nerede?',
               paragraphs: [
-                'Dikdörtgenler prizmasında $6$ yüz, $12$ ayrıt, $8$ köşe vardır. Her yüzün $4$ ayrıtı vardır ve her ayrıt iki yüze ait olduğu için $6 \\cdot 4 \\div 2 = 12$ ayrıt bulunur.',
-                'Küp, bütün yüzleri eş kare olan özel bir dikdörtgenler prizmasıdır.',
+                'Bir cisme önden bakıldığında **ön görünüm**, yandan bakıldığında **yan görünüm**, üstten bakıldığında **üst görünüm** elde edilir.',
+                'Ön görünüm genişlik ve yükseklik, yan görünüm derinlik ve yükseklik, üst görünüm genişlik ve derinlik bilgisini verir. Sahnede üç görünüm sağda, cisim solda; sürgüyü değiştir, üçü birlikte yenilenir.',
               ],
+              scene: {
+                type: 'uc-gorunum',
+                params: [
+                  { name: 'a', label: 'Genişlik (ön görünüm)', min: 1, max: 4, step: 1, value: 3 },
+                  { name: 'b', label: 'Derinlik (yan görünüm)', min: 1, max: 3, step: 1, value: 2 },
+                  { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
+                ],
+              },
             },
             {
-              heading: 'Gizli küpler',
+              heading: 'Gizli küp: üç görünüm birlikte',
               paragraphs: [
                 'Eş küplerle yapılmış bir yapıda önden görünen kare sayısı en yüksek sütunu verir, toplam küp sayısını vermez.',
-                'Üstten görünüm tabandaki küp sayısını gösterir; arkada kalan küpler üstten görünür ama önden bakışta gizlenebilir. En az ve en çok küp sayısı soruları üç görünüm birlikte okunarak çözülür.',
+                'Düzensiz yığında sütunlar farklı yüksekliktedir: ön, yan ve üst görünümler düz dikdörtgen değil, basamaklı birer siluet olur. Sahnede yapıyı ve deseni değiştir; üç görünümdeki dolu kareleri say.',
               ],
+              scene: {
+                type: 'duzensiz-yigin',
+                params: [
+                  { name: 'desen', label: 'Yapı', min: 1, max: 4, step: 1, value: 1 },
+                  { name: 'h', label: 'En yüksek sütun', min: 1, max: 3, step: 1, value: 3 },
+                ],
+              },
             },
           ],
           boxes: [
@@ -1348,21 +1369,24 @@
         },
         {
           kind: 'explore',
-          title: 'Küplerle yapı oluştur',
-          materials: 'Aşağıdaki katman sahnesi, eş küpler, kareli kâğıt',
+          title: 'Numaralı küpler: üç görünümü say',
+          materials: 'Aşağıdaki küp sahnesi, eş küpler, kareli kâğıt',
           intro: [
-            'Elindeki eş küplerle önce tabanı kur, sonra katman ekle. Sahne tabanı ve katmanları birlikte gösteriyor.',
+            'Sahnedeki yapı tek tek birim küplerden kuruludur; ön sıradaki her küp numaralıdır. Sürgüleri değiştir, numaraları ve görünümleri birlikte oku.',
           ],
           steps: [
-            q('Sahnedeki yapının tabanı $3 \\times 2$. Bir katman kaç küp taşır?',
-              'Taban satır ve sütun sayısını çarp.',
-              'Bir katman $3 \\cdot 2 = 6$ küp taşır.'),
-            q('Katman sayısını $2$’den $4$’e çıkarırsan küp sayısı kaç artar?',
-              'Eklenen her katman taban alanı kadar küp getirir.',
-              'İki katman eklenir: $2 \\cdot 6 = 12$ küp artar.'),
-            q('Katman sayısı ile hacim arasındaki ilişkiyi bir cümleyle yaz.',
-              'Hacmi taban alanı ve yükseklikle düşün.',
-              'Hacim, taban alanı ile katman sayısının çarpımıdır: $V = (3 \\cdot 2) \\cdot 4 = 24$ birimküp.'),
+            q('Taban $3 \\times 2$ iken ön görünümde kaç kare görünür?',
+              'Ön görünüm genişlik ile yüksekliği çarpar; ön sırada kaç numara var?',
+              'Ön görünüm $3 \\cdot 2 = 6$ kare; ilk katmanda $3$ numara görünür.'),
+            q('Üstten bakıldığında kaç kare sayılır?',
+              'Üst görünüm genişlik ile derinliği verir.',
+              'Üst görünüm $3 \\cdot 2 = 6$ kare; katman sayısı üst görünümü değiştirmez.'),
+            q('Ön görünümdeki kare sayısı ile numaraların toplamı neden farklı?',
+              'Numaralar yalnız ön sırayı sayar; arkadaki küpler önden gizlenir.',
+              'Ön görünüm yalnız en öndeki silueti gösterir; gizli küpler numaralanmaz ama hacme katılır.'),
+            q('Katman sayısını $1$ artırınca numara sayısı kaç artar?',
+              'Her yeni katman taban alanı kadar küp getirir.',
+              'Taban $a \\cdot b$ ise numara sayısı $a$ kadar artar; toplam küp sayısı $a \\cdot b$ artar.'),
           ],
           scene: {
             type: 'hacim',
@@ -1383,19 +1407,9 @@
             q('Ayrıtları $4$, $3$ ve $2$ birim olan dikdörtgenler prizmasının kaç yüzü, kaç ayrıtı, kaç köşesi vardır?',
               'Yüz, ayrıt ve köşe sayısı ölçüden bağımsızdır.',
               '$6$ yüz, $12$ ayrıt, $8$ köşe.'),
-            Object.assign(q('Önden görünümü $3 \\times 2$, üstten görünümü $3 \\times 1$ olan yapı en az kaç küple kurulur?',
-            'Üstten görünüm tabanı, önden görünüm yüksekliği verir. Sahnede üç görünümü birlikte oku.',
+            q('Önden görünümü $3 \\times 2$, üstten görünümü $3 \\times 1$ olan yapı en az kaç küple kurulur?',
+              'Üstten görünüm tabanı, önden görünüm yüksekliği verir.',
               'Taban $3 \\cdot 1 = 3$ küp; ikinci kat için $3$ küp daha: en az $6$.'),
-            {
-              scene: {
-                type: 'uc-gorunum',
-                params: [
-                  { name: 'a', label: 'Genişlik (ön görünüm)', min: 1, max: 4, step: 1, value: 3 },
-                  { name: 'b', label: 'Derinlik (yan görünüm)', min: 1, max: 3, step: 1, value: 1 },
-                  { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
-                ],
-              },
-            }),
             q('Bir prizmanın ön görünümü kare, yan görünümü dikdörtgen ise cisim hangi prizma olabilir?',
               'Ön görünüm genişlik-yükseklik, yan görünüm derinlik-yükseklik verir.',
               'Kare prizma (taban kare, yükseklik farklı).'),
@@ -1466,32 +1480,35 @@
             q('Kare prizmada taban ayrıtı $3$, yükseklik $4$ cm ise yüzey alanı kaç cm²’dir?',
               '$2a^2 + 4ab$.',
               '$18 + 48 = 66\\ \\mathrm{cm}^2$.'),
+            q('Açınımı katladığında iki yüz üst üste biniyorsa bu çizim neden açınım sayılmaz?',
+              'Açınımda her yüz ayrı bir parça olmalı.',
+              'Bir yüz karşılıksız kalır ve cisim kapanmaz; açınımda altı ayrı yüz olmalıdır.'),
           ],
           blocks: [
             {
-              heading: 'Açınım',
+              heading: 'Prizma yüzey alanı: üç çift yüz',
               paragraphs: [
                 'Bir cismin yüzeylerinin düzleme açılmış hâline **açınım** denir. Açınımda her parça bir yüze karşılık gelir.',
-                'Dikdörtgenler prizmasının açınımında $6$ dikdörtgen, kare prizmada $2$ kare ve $4$ dikdörtgen, küpte $6$ kare bulunur.',
+                'Dikdörtgenler prizmasının açınımında $6$ dikdörtgen vardır; karşılıklı yüzler eş olduğu için üç farklı alan ikişer kez sayılır: $A = 2 \\cdot (a \\cdot b + a \\cdot c + b \\cdot c)$.',
                 'Her açınım kapalı cisim oluşturmaz: bazı çizimlerde yüzler üst üste biner veya boşluk kalır.',
               ],
               figure: { type: 'acim-cizim', options: {} },
             },
             {
-              heading: 'Yüzey alanı bağıntıları',
+              heading: 'Küp: altı eş kare',
               paragraphs: [
-                'Dikdörtgenler prizması: $A = 2 \\cdot (a \\cdot b + a \\cdot c + b \\cdot c)$',
-                'Kare prizma (taban ayrıtı $a$, yükseklik $b$): $A = 2a^2 + 4ab$',
-                'Küp (ayrıt $a$): $A = 6a^2$',
+                'Küpte altı yüz de eş karedir; bir yüzün alanı $a^2$ olduğu için $A = 6a^2$.',
+                'Ters yönde: yüzey alanı verilen küpün ayrıtı, önce bir yüzün alanı bulunup karekök alınarak bulunur. $150 \\div 6 = 25$, $\\sqrt{25} = 5$ cm.',
               ],
-              figure: { type: 'prizma', options: { a: 4, b: 3, c: 2 } },
+              figure: { type: 'birim-kup', options: {} },
             },
             {
-              heading: 'Ters problemler',
+              heading: 'Kare prizma: iki kare, dört dikdörtgen',
               paragraphs: [
-                'Yüzey alanı verilen bir küpün ayrıtı, önce bir yüzün alanı bulunup karekök alınarak bulunur: $150 \\div 6 = 25$, $\\sqrt{25} = 5$ cm.',
+                'Tabanı kare olan prizmada iki taban $a^2$, dört yan yüz $a \\cdot b$ alanındadır: $A = 2a^2 + 4ab$.',
                 'Kare prizmada taban ayrıtı ve yükseklik verilip yüzey alanı; ya da yüzey alanı verilip yükseklik istenebilir.',
               ],
+              figure: { type: 'prizma', options: { a: 3, b: 3, c: 5 } },
             },
           ],
           boxes: [
@@ -1617,21 +1634,16 @@
             q('Ayrıtı $4$ cm olan küpün hacmi kaç cm³’tür?',
               'Hacim bağıntısında üç ayrıt da eşittir.',
               '$64\\ \\mathrm{cm}^3$.'),
+            q('Bir prizmanın hacmi $36\\ \\mathrm{cm}^3$, taban alanı $12\\ \\mathrm{cm}^2$ ise kaç katman vardır?',
+              'Hacmi taban alanına böl; her katman taban alanı kadar hacim taşır.',
+              '$36 \\div 12 = 3$ katman.'),
           ],
           blocks: [
             {
-              heading: 'Hacmi eş nesnelerle yorumlama',
+              heading: 'Hacim: taban alanı × yükseklik',
               paragraphs: [
                 'Bir cismin hacmi, içine kaç eş birim sığdığı ile ölçülür. Aynı büyüklükteki eş küplerle doldurulduğunda sayılan küp sayısı hacmi verir.',
-                'Bir prizma boşluksuz olarak $a \\cdot b \\cdot c$ tane birim küp alıyorsa hacmi $a \\cdot b \\cdot c$ birimküptür.',
-              ],
-            },
-            {
-              heading: 'Hacim bağıntısı',
-              paragraphs: [
-                'Dikdörtgenler prizmasının hacmi taban alanı ile yüksekliğin çarpımıdır: $V = a \\cdot b \\cdot c$.',
-                'Kare prizmada $V = a^2 \\cdot h$, küpte $V = a^3$ olur.',
-                'Katman düşüncesi: her katmanda $a \\cdot b$ küp vardır; $c$ kat varsa toplam $a \\cdot b \\cdot c$ küp.',
+                'Dikdörtgenler prizmasında $V = a \\cdot b \\cdot c$; kare prizmada $V = a^2 \\cdot h$, küpte $V = a^3$. Sahnede her birim küp ayrı ayrı çizilir, ön sıradakiler numaralanır.',
               ],
               scene: {
                 type: 'hacim',
@@ -1643,12 +1655,20 @@
               },
             },
             {
-              heading: 'Hacim–yüzey alanı ayrımı',
+              heading: 'Birim: birimküp mü birimkare mi?',
               paragraphs: [
-                'Hacim “içine ne kadar sığar”, yüzey alanı “dışını kaplamak için ne kadar gerekir” sorusunun cevabıdır. Birimleri farklıdır: $\\mathrm{cm}^3$ ve $\\mathrm{cm}^2$.',
-                'Ayrıtı $3$ cm olan küpün hacmi $27\\ \\mathrm{cm}^3$, yüzey alanı $54\\ \\mathrm{cm}^2$’dir.',
+                'Hacim **birimküp** ile ölçülür ($\\mathrm{cm}^3$, $\\mathrm{dm}^3$, $\\mathrm{m}^3$); yüzey alanı **birimkare** ile ($\\mathrm{cm}^2$).',
+                'Hacim “içine ne kadar sığar”, yüzey alanı “dışını kaplamak için ne kadar gerekir” sorusunun cevabıdır. Ayrıtı $3$ cm olan küpün hacmi $27\\ \\mathrm{cm}^3$, yüzey alanı $54\\ \\mathrm{cm}^2$’dir.',
               ],
-              figure: { type: 'prizma', options: { a: 5, b: 3, c: 2 } },
+              figure: { type: 'birim-kup', options: {} },
+            },
+            {
+              heading: 'Katman: her katman taban kadar',
+              paragraphs: [
+                'Her katmanda $a \\cdot b$ küp vardır; $c$ kat varsa toplam $a \\cdot b \\cdot c$ küp olur.',
+                'Katman sayısı bir artınca hacim taban alanı kadar artar; taban değişmezse katman sayısı ile hacim doğru orantılıdır.',
+              ],
+              figure: { type: 'katman', options: { cols: 3, rows: 2, layers: 3 } },
             },
           ],
           boxes: [
@@ -1674,23 +1694,32 @@
         },
         {
           kind: 'explore',
-          title: '18 eş küple kaç prizma?',
-          materials: '18 eş küp, kareli kâğıt',
-          intro: ['$18$ eş küpün tamamını kullanarak dikdörtgenler prizması oluştur.'],
+          title: 'Bileşik cisim: kesilen parçayı çıkar',
+          materials: 'Aşağıdaki bileşik cisim sahnesi, eş küpler, kareli kâğıt',
+          intro: [
+            'Sahnedeki cisim, büyük bir bloktan köşedeki parçanın kesilmesiyle oluşuyor. Cismi iki prizmaya ayırıp hacmini bul.',
+          ],
           steps: [
-            q('Kaç farklı prizma elde edebilirsin?',
-              '$18$’in çarpan üçlülerini ara.',
-              '$1 \\times 1 \\times 18$, $1 \\times 2 \\times 9$, $1 \\times 3 \\times 6$, $2 \\times 3 \\times 3$: dört farklı prizma.'),
-            q('Hangi prizmanın yüzey alanı en küçüktür?',
-              'En “küp gibi” olan prizma en küçük yüzey alanını verir.',
-              '$2 \\times 3 \\times 3$ prizması: $2 \\cdot (6 + 6 + 9) = 42$ birimkare.'),
+            q('Bütün blok kesilmeden önce kaç birimküp olurdu?',
+              'Bütün blok $a \\cdot b \\cdot h$.',
+              'Genişlik, derinlik ve yükseklik çarpılır.'),
+            q('Kesilen parça kaç birimküp?',
+              'Kesilen parça da bir prizma: $k \\cdot (b-1) \\cdot h$.',
+              'Kesik genişliği, kesik derinliği ve yükseklik çarpılır.'),
+            q('Bileşik cismin hacmini bulmak için hangi işlemi yaparsın?',
+              'Kesilen parça hacme eklenir mi, çıkarılır mı?',
+              'Bütün bloğun hacminden kesilen parçanın hacmi çıkarılır; küpleri tek tek sayarak da doğrulanır.'),
+            q('Kesik genişliğini büyütünce hacim nasıl değişir?',
+              'Kesilen parça büyürse kalan küp sayısı ne olur?',
+              'Kesilen parça büyüdüğü için kalan hacim azalır.'),
           ],
           scene: {
-            type: 'prizma3b',
+            type: 'bilesik-hacim',
             params: [
-              { name: 'a', label: 'Genişlik', min: 1, max: 6, step: 1, value: 2 },
-              { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 3 },
-              { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 3 },
+              { name: 'a', label: 'Genişlik', min: 3, max: 4, step: 1, value: 4 },
+              { name: 'b', label: 'Derinlik', min: 2, max: 4, step: 1, value: 3 },
+              { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
+              { name: 'k', label: 'Kesilen parça', min: 1, max: 2, step: 1, value: 2 },
             ],
           },
         },
@@ -1701,6 +1730,19 @@
             'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
           ],
           questions: [
+            Object.assign(q('$18$ eş küpün tamamını kullanarak kaç farklı prizma kurulur?',
+              '$18$’in çarpan üçlülerini ara; sahnede bir tanesini kur.',
+              '$1 \\times 1 \\times 18$, $1 \\times 2 \\times 9$, $1 \\times 3 \\times 6$, $2 \\times 3 \\times 3$: dört farklı prizma.'),
+            {
+              scene: {
+                type: 'prizma3b',
+                params: [
+                  { name: 'a', label: 'Genişlik', min: 1, max: 6, step: 1, value: 2 },
+                  { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 3 },
+                  { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 3 },
+                ],
+              },
+            }),
             q('Ayrıtları $8$, $5$ ve $4$ cm olan prizmanın hacmini bul.',
               '$V = a \\cdot b \\cdot c$.',
               '$160\\ \\mathrm{cm}^3$.'),
@@ -1777,10 +1819,13 @@
             q('$450$ mL kaç cm³’tür?',
               '$1$ mL $= 1\\ \\mathrm{cm}^3$.',
               '$450\\ \\mathrm{cm}^3$.'),
+            q('Bir yığının sütun yükseklikleri soldan sağa $3$, $1$, $2$ ise önden görünümü nasıldır?',
+              'Her sütun kendi yüksekliğinde görünür.',
+              'Basamaklı bir siluet: solda $3$, ortada $1$, sağda $2$ kare yüksekliğinde.'),
           ],
           blocks: [
             {
-              heading: 'Birimler arası geçiş',
+              heading: 'Geçiş: birimler arasında',
               paragraphs: [
                 'Hacim ölçüleri her basamakta $1000$ ile çarpılır veya bölünür: $1\\ \\mathrm{m}^3 = 1000\\ \\mathrm{dm}^3$, $1\\ \\mathrm{dm}^3 = 1000\\ \\mathrm{cm}^3$, $1\\ \\mathrm{cm}^3 = 1000\\ \\mathrm{mm}^3$.',
                 'Sıvı ölçüleri: $1$ L $= 1000$ mL; $1$ cL $= 10$ mL; $1$ dL $= 100$ mL.',
@@ -1788,19 +1833,26 @@
               figure: { type: 'birim-merdiven', options: {} },
             },
             {
-              heading: 'Hacim ve sıvı ölçüsü ilişkisi',
+              heading: 'Eşlik: 1 dm³ = 1 L',
               paragraphs: [
                 '$1\\ \\mathrm{dm}^3 = 1$ L, $1\\ \\mathrm{cm}^3 = 1$ mL, $1\\ \\mathrm{m}^3 = 1000$ L.',
-                'Bu yüzden bir akvaryumun hacmini dm$^3$ olarak bulursan aynı zamanda litre cinsinden kapasitesini bulmuş olursun: $5 \\cdot 4 \\cdot 3 = 60\\ \\mathrm{dm}^3 = 60$ L.',
+                'Bir akvaryumun hacmini dm$^3$ olarak bulursan aynı zamanda litre cinsinden kapasitesini bulmuş olursun: $5 \\cdot 4 \\cdot 3 = 60\\ \\mathrm{dm}^3 = 60$ L.',
               ],
+              figure: { type: 'litre-kup', options: {} },
             },
             {
-              heading: 'Düzgün olmayan cisimlerin hacmi',
+              heading: 'Düzgün olmayan cisim: parçalara ayır',
               paragraphs: [
-                'Dereceli kaba su konur, cisim batırılır; yükselen su miktarı cismin hacmidir.',
-                'Örneğin su seviyesi $120$ mL’den $145$ mL’ye çıktıysa taşın hacmi $25$ mL $= 25\\ \\mathrm{cm}^3$’tür.',
+                'Dereceli kaba su konur, cisim batırılır; yükselen su miktarı cismin hacmidir. Örneğin su seviyesi $120$ mL’den $145$ mL’ye çıktıysa taşın hacmi $25$ mL $= 25\\ \\mathrm{cm}^3$’tür.',
+                'Düzgün olmayan katı cisimlerde hacim, cismi prizmalara ayırıp küpleri sayarak da bulunur. Sahnede sütunların yüksekliği eşit değildir; her sütundaki küp sayısı ayrı ayrı toplanır.',
               ],
-              figure: { type: 'hacim', options: { cols: 3, rows: 2, layers: 2 } },
+              scene: {
+                type: 'duzensiz-yigin',
+                params: [
+                  { name: 'desen', label: 'Yapı', min: 1, max: 4, step: 1, value: 3 },
+                  { name: 'h', label: 'En yüksek sütun', min: 1, max: 3, step: 1, value: 2 },
+                ],
+              },
             },
           ],
           boxes: [
@@ -2337,6 +2389,12 @@
             q('Karenin kaç simetri doğrusu vardır?',
               'İki kenar ortası, iki köşegen.',
               '$4$.'),
+            q('Düzgün beşgenin kaç simetri doğrusu vardır?',
+              'Her köşeden geçen bir doğru dene; karşı kenarı ortalıyor mu?',
+              '$5$ simetri doğrusu vardır.'),
+            q('Dikdörtgenin köşegeni neden simetri doğrusu değildir?',
+              'Köşegene göre katlandığında kenarlar üst üste gelir mi?',
+              'Köşegen boyunca katlanınca kısa ve uzun kenarlar çakışmaz; görüntü şeklin üstüne oturmaz.'),
           ],
           blocks: [
             {
@@ -2362,6 +2420,20 @@
                 'Çoğu şekilde simetri doğrusu görünmez; şekil tamamlanmamış ya da motif tekrarıyla oluşmuş olabilir.',
                 'Halı ve kilim motiflerinde tekrar eden desenler, eksik parçayı tamamlayarak gizli simetri doğrularını ortaya çıkarır.',
               ],
+            },
+            {
+              heading: 'Koordinat ve simetri doğrusu sayısı',
+              paragraphs: [
+                'Bir şeklin simetri doğrusu sayısı, şekli kendine eşleyen ayna doğrularının sayısıdır: karede $4$, dikdörtgende $2$, eşkenar üçgende $3$, düzgün beşgende $5$.',
+                'Sahnede ayna doğrusunu $15°$ adımlarla çevir. Görüntü şeklin üstüne oturduğunda o açı bir simetri doğrusudur; şekli değiştirip doğru sayısını yeniden bul.',
+              ],
+              scene: {
+                type: 'simetri-dogru',
+                params: [
+                  { name: 'sekiz', label: 'Şekil', min: 1, max: 4, step: 1, value: 1 },
+                  { name: 'aci', label: 'Ayna doğrusu (derece)', min: 0, max: 180, step: 15, value: 0 },
+                ],
+              },
             },
           ],
           boxes: [

@@ -397,6 +397,49 @@ assert.ok(SAHNE.types().includes('iki-sayi'), 'İki noktayı birlikte gösteren 
 assert.ok(SAHNE.types().includes('sicaklik'), 'Negatif ve pozitif sıcaklıkları birlikte okuyan sahne bulunmalı.');
 assert.ok(SAHNE.types().includes('sifir-toplama'), 'Toplayarak sıfıra ulaşma sahnesi bulunmalı.');
 
+// 4e. Geometrik nicelikler: her bilgi kutusu kendi bloğu, görseli ve sorusuyla eşleşmeli.
+// Aynı sahnenin hafta içinde ikinci kez kullanılması yasak (yukarıda); burada kutuların
+// sahnesiz kalmaması ve görsel türlerinin çeşitlenmesi aranır.
+const GEOMETRY_BOX_WEEKS = [8, 9, 10, 11];
+GEOMETRY_BOX_WEEKS.forEach((id) => {
+  const learn = KITAP.weeks[id].stages[2];
+  assert.ok(Array.isArray(learn.boxes) && learn.boxes.length >= 3,
+    `Hafta ${id} bilgi kutuları eksik.`);
+  const kinds = new Set();
+  learn.boxes.forEach((box) => {
+    const block = (learn.blocks || []).find((item) => String(item.heading || '').startsWith(box.title));
+    assert.ok(block, `Hafta ${id} “${box.title}” bilgi kutusunun kendi bloğu yok.`);
+    const spec = block.scene || block.figure;
+    assert.ok(spec && spec.type, `Hafta ${id} “${box.title}” bloğunda sahne ya da şekil yok.`);
+    kinds.add(`${block.scene ? 'scene' : 'figure'}:${spec.type}`);
+  });
+  assert.ok(kinds.size >= 3, `Hafta ${id} bilgi kutularında görsel çeşitliliği az: ${[...kinds].join(', ')}`);
+  assert.ok((learn.checks || []).length >= learn.boxes.length,
+    `Hafta ${id} her bilgi kutusuna en az bir kontrol sorusu düşmeli.`);
+});
+
+// 4f. Birim küpler tek tek sayılabilmeli ve düzensiz görünüm GeoGebra sahnesinde olmalı.
+const sahneSource = read('matematik-sahne.js');
+assert.ok(/stackHeights/.test(sahneSource) && /viewPanels/.test(sahneSource),
+  'Düzensiz yığın görünümleri yükseklik tablosundan üretilmeli.');
+assert.ok(/\b0, 0, 0\b|\], \[0, 0, 0\]|0\]\]/.test(sahneSource) || /STACK_PATTERNS/.test(sahneSource),
+  'Düzensiz yığın desenleri boşluk (0) içermeli.');
+const stackUses = [];
+Object.keys(KITAP.weeks).forEach((key) => {
+  (KITAP.weeks[key].stages || []).forEach((stage) => {
+    if (stage.scene) stackUses.push({ key, type: stage.scene.type, where: stage.title });
+    (stage.blocks || []).forEach((block) => {
+      if (block.scene) stackUses.push({ key, type: block.scene.type, where: block.heading });
+    });
+  });
+});
+assert.ok(stackUses.some((item) => item.type === 'duzensiz-yigin' && Number(item.key) === 8),
+  'Görünüm haftasında düzensiz küp yığını sahnesi olmalı.');
+assert.ok(stackUses.some((item) => item.type === 'bilesik-hacim'),
+  'Bileşik cisim sahnesi hacim haftalarında kullanılmalı.');
+assert.ok(/numaralanır|Numaralar/.test(sahneSource),
+  'Birim küpler numaralanmalı; hacim tek blok olarak gösterilmemeli.');
+
 // 5. Uygulama tarafı
 const app = read('matematik.js');
 const html = read('index.html');

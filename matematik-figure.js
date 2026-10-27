@@ -878,6 +878,7 @@
     'sayi-dogrusu': numberLine,
     prizma: prism,
     hacim: volumeCubes,
+    katman: volumeCubes,
     yansima: reflection,
     ortadikme: bisector,
     aciortay: angleBisector,
