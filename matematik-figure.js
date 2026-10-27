@@ -194,8 +194,11 @@
       txt(x0 + w / 2, y0 + 18, `${A} br`, { size: 10.5, anchor: 'middle', fill: MUTED }),
       txt(x0 + w + dx + 6, y0 - h / 2 + 4, `${B} br`, { size: 10.5, fill: MUTED, maxWidth: 60 }),
       txt(x0 + w / 2 + dx, y0 - h - dy - 8, `${C} br`, { size: 10.5, anchor: 'middle', fill: MUTED }),
-      txt(16, 24, `Hacim ${A * B * C} br³ · Yüzey ${2 * (A * B + A * C + B * C)} br²`, { size: 11, weight: 700, maxWidth: 300 }),
+      /* Çizimde cevap yazılmaz: hacim/yüzey alanı sonucu şekle basılmaz.
+         Yalnız ayrıt ölçüleri ve isteğe bağlı kısa açıklama görünür. */
+      txt(16, 24, options.title || `Dikdörtgenler prizması · ayrıtlar ${A}, ${B}, ${C} br`, { size: 11, weight: 700, maxWidth: 312 }),
     ];
+    if (options.note) parts.push(txt(16, 184, options.note, { size: 9.5, fill: MUTED, maxWidth: 312 }));
     return frame(parts.join(''), `Dikdörtgenler prizması ${A} × ${B} × ${C}`);
   }
 
