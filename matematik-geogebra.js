@@ -1,8 +1,8 @@
 /* Matematik: GeoGebra köprüsü — yalnız üç boyutlu cisimler.
  *
- * Kural (26 Ekim 2026, 2. sürüm): GeoGebra **sadece 3B cisimlerde** kullanılır:
- *   prizma3b · hacim · birim-donusum · uc-gorunum · acim
- * Diğer on dokuz sahne yerel SVG ile çizilir (GeoGebra kaldırıldı). Gerekçe: 2B sahnelerde
+ * Kural (27 Ekim 2026, 3. sürüm): GeoGebra **sadece 3B cisimlerde** kullanılır:
+ *   prizma3b · hacim · birim-donusum · uc-gorunum · acim · bilesik-hacim · duzensiz-yigin
+ * Diğer sahneler yerel SVG ile çizilir. Gerekçe: 2B sahnelerde
  * yerel çizim daha hızlı, çevrimdışı ve cevap sızdırmıyor; GeoGebra'nın pencere/ölçek
  * davranışı 2B'de ek yük getiriyordu.
  *
@@ -11,12 +11,17 @@
  *   üstte boş şerit bırakmaz.
  * - Tuval **kare**ye yakın ölçülür (en az 300×300); dar/uzun ince pencere oluşmaz.
  * - Cisim **orijine ortalanır**; böylece yakınlaştırma/uzaklaştırma cismi kırpmaz.
- * - Görünüm düğmeleri (Eğik · Ön · Yan · Üst) `SetViewDirection` ile çalışır; öğrenci
- *   cismi parmağıyla döndürebilir.
+ * - Görünüm düğmeleri (Eğik · Ön · Arka · Sağ · Sol · Alt · Üst) `SetViewDirection` ile
+ *   çalışır; varsayılan bakış yukarıdan eğiktir, öğrenci cismi parmağıyla döndürebilir.
+ * - `kup-dondur` düz (flat) gölgeli çizilir: her küpün her yüzü ayrı poligon ve ayrı ton,
+ *   dolgu tam; köşe noktaları/etiketler ve zemin düzlemi gizlenir.
  * - `acim` sahnesinde “Katla / Aç” düğmesi ve tuvale dokunma, kapalı kutu ile düz açınım
  *   arasında geçirir.
- * - `uc-gorunum` sahnesi **bölünmüş** çalışır: solda döndürülebilir 3B cisim, sağda
- *    ön/yan/üst dik izdüşümleri (kareler) aynı sürgülerle eşzamanlı güncellenir.
+ * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
+ *   3B cisim, sağda ön/yan/üst dik izdüşümleri aynı sürgülerle eşzamanlı güncellenir.
+ *   Düzensiz yığında izdüşümler gerçek siluettir (boşluklar ve basamaklar görünür).
+ * - Hacim sahnelerinde **her birim küp ayrı nesnedir**: prizma tek blok olarak değil,
+ *   sayılabilir küpler toplamı olarak çizilir (`hacim`, `bilesik-hacim`, `duzensiz-yigin`).
  *
  * Yedek: ağ yoksa, CDN engelliyse ya da nesneler kurulamazsa aynı sahne yerel SVG ile çizilir.
  * Ticari olmayan kullanım; atıf sahnede ve THIRD-PARTY-NOTICES.md içinde.
@@ -85,19 +90,74 @@
     white: [255, 255, 255],
   };
 
-  const VIEWS = {
-    egik: 'Vector((1.6, -2.4, 1.3))',
-    on: 'Vector((0, -1, 0))',
-    yan: 'Vector((1, 0, 0))',
-    ust: 'Vector((0, 0, 1))',
+  /* Yüz renkleri: ön, yan ve üst yüz birbirinden ayrılsın diye üç ayrı ton.
+     (Bkz. referans GeoGebra materyali: katı cisim tek renk değil, yüzleri ayrı okunur.) */
+  const FACE_COLORS = {
+    front: [72, 129, 176],
+    back: [150, 176, 200],
+    side: [95, 78, 168],
+    top: [120, 160, 210],
+    bottom: [176, 170, 196],
   };
+
+  /* Birim küplerin dönüşümlü renkleri: komşu küpler birbirine karışmaz.
+     Kat yükseldikçe ton değişir; üst katman maviye yaklaşır (üst yüz okunur). */
+  const LEVEL_COLORS = [
+    [[186, 176, 232], [206, 198, 240]],
+    [[176, 214, 196], [199, 232, 214]],
+    [[172, 203, 235], [199, 221, 244]],
+    [[199, 186, 232], [221, 210, 243]],
+  ];
+  const cubeTint = (i, j, level) => {
+    const band = LEVEL_COLORS[level % LEVEL_COLORS.length];
+    return band[(i + j) % band.length];
+  };
+
+  /* Bakış yönleri. “Üst” tam dik (0,0,1) verilmez: dünya yukarı vektörüyle
+     çakışınca GeoGebra döndürme eksenini bulamayıp donuyordu; küçük eğim
+     görüntüyü bozmaz, donmayı önler. */
+  /* GeoGebra `SetViewDirection(Vector(v))` komutu gözü **-v** yönüne koyar
+     (kaynak: CmdSetViewDirection → setRotAnimation(-v); b açısı gözün yükselişidir).
+     Bu yüzden v, bakışın yönüdür: göz yukarıdaysa v aşağıyı gösterir.
+     Eğik bakış yukarıdan ve önden gelir; cisim alttan görünmez. */
+  const VIEWS = {
+    egik: 'Vector((-1.1, 1.7, -2.1))',
+    on: 'Vector((0.001, 1, 0.002))',
+    arka: 'Vector((-0.001, -1, 0.002))',
+    sag: 'Vector((-1, 0.001, 0.002))',
+    sol: 'Vector((1, 0.001, 0.002))',
+    alt: 'Vector((0.04, -0.05, 1))',
+    ust: 'Vector((0.04, -0.05, -1))',
+    yan: 'Vector((-1, 0.001, 0.002))',
+  };
+
+  /* Yüz renkleri: düğmelerin doğru yönü göstermesi bu renklerden okunur. */
+  const FACE_LEGEND = [
+    ['üst', '#d62d20'], ['alt', '#262626'], ['sol', '#2e7d32'],
+    ['sağ', '#f2c200'], ['ön', '#7030a0'], ['arka', '#ef8fae'],
+  ];
 
   const VIEW_LABELS = [
     ['egik', 'Eğik'],
     ['on', 'Ön'],
-    ['yan', 'Yan'],
+    ['arka', 'Arka'],
+    ['sag', 'Sağ'],
+    ['sol', 'Sol'],
+    ['alt', 'Alt'],
     ['ust', 'Üst'],
   ];
+
+  /* Düz (flat) gölgeleme: her yüz tek renk, dolgu tam; küpün altı yüzü altı ayrı renk.
+     Renkler sabittir: üst kırmızı, alt siyah, sol yeşil, sağ sarı, ön mor, arka pembe.
+     Böylece cisim döndürüldükçe hangi yüzün göründüğü renkten okunur. */
+  const FLAT_FACES = {
+    top: [214, 45, 32],
+    bottom: [38, 38, 38],
+    left: [46, 125, 50],
+    right: [242, 194, 0],
+    front: [112, 48, 160],
+    back: [239, 143, 174],
+  };
 
   /* ---------- ortak çizim kapısı ---------- */
 
@@ -141,6 +201,12 @@
         box.mark(name, false);
         run(`${name} = Cube(${P(x, y, z)}, ${P(x + edge, y, z)})`);
       },
+      /* Yön verilmiş küp: kenarı z ekseni boyunca ilerler, böylece birim küpler
+         taban düzlemine dik ve birbirine bitişik oturur (ızgara kaymaz). */
+      cubeUp(name, x, y, z, edge) {
+        box.mark(name, false);
+        run(`${name} = Cube(${P(x, y, z)}, ${P(x + edge, y, z)}, Vector((0, 0, 1)))`);
+      },
       slider(name, min, max, step) {
         run(`${name} = Slider(${f(min)}, ${f(max)}, ${f(step)})`);
       },
@@ -165,6 +231,53 @@
       },
       hide(name) {
         run(`SetVisibleInView(${name}, 1, false)`);
+      },
+      /* Dikdörtgen prizmanın altı yüzü ayrı nesne: ön/yan/üst farklı renkte.
+         Kenar çizgileri koyu; yüz dolgusu yarı saydam ki birim küpler görünsün. */
+      faces(x0, y0, z0, dx, dy, dz) {
+        const list = [
+          ['on', [[x0, y0, z0], [x0 + dx, y0, z0], [x0 + dx, y0, z0 + dz], [x0, y0, z0 + dz]], FACE_COLORS.front, 0.5],
+          ['arka', [[x0, y0 + dy, z0], [x0 + dx, y0 + dy, z0], [x0 + dx, y0 + dy, z0 + dz], [x0, y0 + dy, z0 + dz]], FACE_COLORS.back, 0.38],
+          ['sol', [[x0, y0, z0], [x0, y0 + dy, z0], [x0, y0 + dy, z0 + dz], [x0, y0, z0 + dz]], FACE_COLORS.side, 0.46],
+          ['sag', [[x0 + dx, y0, z0], [x0 + dx, y0 + dy, z0], [x0 + dx, y0 + dy, z0 + dz], [x0 + dx, y0, z0 + dz]], FACE_COLORS.side, 0.46],
+          ['taban', [[x0, y0, z0], [x0 + dx, y0, z0], [x0 + dx, y0 + dy, z0], [x0, y0 + dy, z0]], FACE_COLORS.bottom, 0.42],
+          ['ust', [[x0, y0, z0 + dz], [x0 + dx, y0, z0 + dz], [x0 + dx, y0 + dy, z0 + dz], [x0, y0 + dy, z0 + dz]], FACE_COLORS.top, 0.42],
+        ];
+        list.forEach(([name, points, color, opacity]) => {
+          box.polygon3(name, points);
+          box.color(name, color);
+          box.fill(name, opacity);
+        });
+      },
+      /* Düz küp: her yüz ayrı poligon, dolgu tam (saydamlık yok), komşuya bakan
+         iç yüzler hiç çizilmez (z-çakışması ve titreme olmaz). */
+      flatCube(prefix, x, y, z, faces) {
+        const corners = {
+          bottom: [[x, y, z], [x + 1, y, z], [x + 1, y + 1, z], [x, y + 1, z]],
+          top: [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+          front: [[x, y, z], [x + 1, y, z], [x + 1, y, z + 1], [x, y, z + 1]],
+          back: [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+          left: [[x, y, z], [x, y + 1, z], [x, y + 1, z + 1], [x, y, z + 1]],
+          right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
+        };
+        const suffix = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
+        faces.forEach((face) => {
+          const name = `${prefix}${suffix[face]}`;
+          box.polygon3(name, corners[face]);
+          box.color(name, FLAT_FACES[face]);
+          box.fill(name, 1);
+          box.thickness(name, 1);
+        });
+      },
+      /* Nokta işaretleri küçültülür, etiketler kapatılır: sahnede cisim görünür,
+         işaret kalabalığı değil. Eksenler ve ızgara da kapanır. */
+      polish() {
+        names.slice().forEach((name) => {
+          if (!labeled.has(name)) run(`SetLabelVisible(${name}, false)`);
+          run(`SetPointSize(${name}, 1)`);
+        });
+        run('ShowAxes(false)');
+        run('ShowGrid(false)');
       },
       caption(name, text, mode) {
         labeled.add(name);
@@ -216,7 +329,7 @@
         { name: 'b', label: 'Derinlik', min: 1, max: 5, step: 1, value: 2 },
         { name: 'h', label: 'Yükseklik', min: 1, max: 5, step: 1, value: 3 },
       ],
-      required: ['taban', 'ust', 'y1', 'y2', 'y3', 'y4'],
+      required: ['taban', 'ust', 'on', 'arka', 'sol', 'sag', 'birim'],
       build(b, v) {
         const a = Number(v.a);
         const b0 = Number(v.b);
@@ -225,18 +338,11 @@
         const x0 = -a / 2;
         const y0 = -b0 / 2;
         const z0 = -h / 2;
-        b.polygon3('taban', [[x0, y0, z0], [x0 + a, y0, z0], [x0 + a, y0 + b0, z0], [x0, y0 + b0, z0]]);
-        b.polygon3('ust', [[x0, y0, z0 + h], [x0 + a, y0, z0 + h], [x0 + a, y0 + b0, z0 + h], [x0, y0 + b0, z0 + h]]);
-        b.segment('y1', x0, y0, z0, x0, y0, z0 + h);
-        b.segment('y2', x0 + a, y0, z0, x0 + a, y0, z0 + h);
-        b.segment('y3', x0 + a, y0 + b0, z0, x0 + a, y0 + b0, z0 + h);
-        b.segment('y4', x0, y0 + b0, z0, x0, y0 + b0, z0 + h);
-        b.color('taban', COLOR.purple);
-        b.color('ust', [168, 155, 226]);
-        ['y1', 'y2', 'y3', 'y4'].forEach((name) => b.color(name, COLOR.purple));
-        b.fill('taban', 0.75);
-        b.fill('ust', 0.75);
-        b.text('etiket', 'Genişlik · derinlik · yükseklik: üç ayrıt, üç soru.', x0, y0 + b0 + 0.6, z0);
+        b.faces(x0, y0, z0, a, b0, h);
+        /* Ölçek küpü: prizmanın köşesinde duran tek birim küp. */
+        b.cubeUp('birim', x0, y0, z0, 1);
+        b.color('birim', COLOR.amber);
+        b.fill('birim', 0.9);
       },
     },
 
@@ -258,24 +364,24 @@
         const z0 = -h / 2;
         b.polygon3('taban', [[x0, y0, z0], [x0 + a, y0, z0], [x0 + a, y0 + b0, z0], [x0, y0 + b0, z0]]);
         b.polygon3('ust', [[x0, y0, z0 + h], [x0 + a, y0, z0 + h], [x0 + a, y0 + b0, z0 + h], [x0, y0 + b0, z0 + h]]);
-        /* Katman sınırları: her katman taban alanı kadar birim küp taşır. */
-        if (h > 1) {
-          for (let k = 1; k < h; k += 1) {
-            const z = z0 + k;
-            b.polygon3(`katman${k}`, [[x0, y0, z], [x0 + a, y0, z], [x0 + a, y0 + b0, z], [x0, y0 + b0, z]]);
-            b.color(`katman${k}`, COLOR.gray);
-            b.fill(`katman${k}`, 0.12);
+        b.color('taban', FACE_COLORS.bottom);
+        b.color('ust', FACE_COLORS.top);
+        b.fill('taban', 0.35);
+        b.fill('ust', 0.3);
+        /* Her birim küp ayrı bir nesne: öğrenci tek tek sayar, katmanı görür.
+           Renkler komşu küpleri ayırır; ilk küp (birim) sarı kalır. */
+        let count = 0;
+        for (let level = 0; level < h; level += 1) {
+          for (let j = 0; j < b0; j += 1) {
+            for (let i = 0; i < a; i += 1) {
+              count += 1;
+              const name = count === 1 ? 'birim' : `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, count === 1 ? COLOR.amber : cubeTint(i, j, level));
+              b.fill(name, 0.92);
+            }
           }
         }
-        /* Hacim birimi: köşede tek birim küp. */
-        b.cube('birim', x0, y0, z0, 1);
-        b.color('birim', COLOR.amber);
-        b.fill('birim', 0.9);
-        b.color('taban', COLOR.purple);
-        b.color('ust', [168, 155, 226]);
-        b.fill('taban', 0.45);
-        b.fill('ust', 0.45);
-        b.text('etiket', 'Taban a·b birim kare; katman sayısı h.', x0, y0 + b0 + 0.7, z0);
       },
     },
 
@@ -283,18 +389,16 @@
       label: 'Birim küp (3B)',
       views: true,
       params: [{ name: 's', label: 'Ayrıt (dm)', min: 1, max: 6, step: 1, value: 2 }],
-      required: ['kup', 'birim'],
+      required: ['on', 'arka', 'sol', 'sag', 'taban', 'ust', 'birim'],
       build(b, v) {
         const s = Number(v.s);
         const half = s / 2;
-        /* Ayrıtı s dm olan küp; içinde 1 dm³'lük birim küp köşede durur. */
-        b.cube('kup', -half, -half, -half, s);
+        /* Ayrıtı s dm olan küp; içinde 1 dm³'lük birim küp köşede durur.
+           Yüzler ayrı renkte; ayrıt ölçüsü yazı olarak sahnede durur. */
+        b.faces(-half, -half, -half, s, s, s);
         b.cube('birim', -half, -half, -half, 1);
-        b.color('kup', COLOR.purple);
-        b.fill('kup', 0.35);
         b.color('birim', COLOR.amber);
-        b.fill('birim', 0.9);
-        b.text('etiket', 'Birim küp 1 dm³ = 1 L', -half, -half + s + 0.5, -half);
+        b.fill('birim', 0.85);
       },
     },
 
@@ -307,7 +411,7 @@
         { name: 'b', label: 'Derinlik (yan görünüm)', min: 1, max: 3, step: 1, value: 2 },
         { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
       ],
-      required: ['taban', 'ust', 'y1', 'y2', 'y3', 'y4'],
+      required: ['taban', 'ust', 'on', 'arka', 'sol', 'sag'],
       build(b, v) {
         const a = Number(v.a);
         const b0 = Number(v.b);
@@ -315,17 +419,147 @@
         const x0 = -a / 2;
         const y0 = -b0 / 2;
         const z0 = -h / 2;
-        b.polygon3('taban', [[x0, y0, z0], [x0 + a, y0, z0], [x0 + a, y0 + b0, z0], [x0, y0 + b0, z0]]);
-        b.polygon3('ust', [[x0, y0, z0 + h], [x0 + a, y0, z0 + h], [x0 + a, y0 + b0, z0 + h], [x0, y0 + b0, z0 + h]]);
-        b.segment('y1', x0, y0, z0, x0, y0, z0 + h);
-        b.segment('y2', x0 + a, y0, z0, x0 + a, y0, z0 + h);
-        b.segment('y3', x0 + a, y0 + b0, z0, x0 + a, y0 + b0, z0 + h);
-        b.segment('y4', x0, y0 + b0, z0, x0, y0 + b0, z0 + h);
-        b.color('taban', COLOR.purple);
-        b.color('ust', [168, 155, 226]);
-        ['y1', 'y2', 'y3', 'y4'].forEach((name) => b.color(name, COLOR.purple));
-        b.fill('taban', 0.5);
-        b.fill('ust', 0.5);
+        b.faces(x0, y0, z0, a, b0, h);
+      },
+    },
+
+    /* Bileşik (L) cisim: bütün bloktan bir köşe prizması kesilmiş gibi düşünülür.
+       Cisim birim küplerden kurulur; hacim = kalan küplerin sayısı. */
+    'bilesik-hacim': {
+      label: 'Bileşik cisim (3B)',
+      views: true,
+      params: [
+        { name: 'a', label: 'Genişlik', min: 3, max: 4, step: 1, value: 4 },
+        { name: 'b', label: 'Derinlik', min: 2, max: 4, step: 1, value: 3 },
+        { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
+        { name: 'k', label: 'Kesilen parça', min: 1, max: 2, step: 1, value: 2 },
+      ],
+      required: ['taban', 'ust', 'kesik', 'birim'],
+      build(b, v) {
+        const a = Number(v.a);
+        const b0 = Number(v.b);
+        const h = Number(v.h);
+        const k = Math.max(1, Math.min(Number(v.k), a - 1));
+        const x0 = -a / 2;
+        const y0 = -b0 / 2;
+        const z0 = -h / 2;
+        const solid = (i, j) => !(i >= a - k && j >= 1);
+        const at = (i, j) => [x0 + i, y0 + j];
+        /* Taban ve üst: L biçimli çevre. */
+        const outline = [
+          at(0, 0), at(a, 0), at(a, 1), at(a - k, 1), at(a - k, b0), at(0, b0),
+        ];
+        b.polygon3('taban', outline.map(([x, y]) => [x, y, z0]));
+        b.polygon3('ust', outline.map(([x, y]) => [x, y, z0 + h]));
+        /* Kesilen parçanın yeri: zeminde boş kalan dikdörtgen. */
+        b.polygon3('kesik', [
+          [x0 + a - k, y0 + 1, z0], [x0 + a, y0 + 1, z0], [x0 + a, y0 + b0, z0], [x0 + a - k, y0 + b0, z0],
+        ]);
+        let count = 0;
+        for (let level = 0; level < h; level += 1) {
+          for (let j = 0; j < b0; j += 1) {
+            for (let i = 0; i < a; i += 1) {
+              if (!solid(i, j)) continue;
+              count += 1;
+              const name = count === 1 ? 'birim' : `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, count === 1 ? COLOR.amber : cubeTint(i, j, level));
+              b.fill(name, 0.92);
+            }
+          }
+        }
+        b.color('taban', FACE_COLORS.bottom);
+        b.color('ust', FACE_COLORS.top);
+        b.color('kesik', COLOR.gray);
+        b.fill('taban', 0.16);
+        b.fill('ust', 0.1);
+        b.fill('kesik', 0.22);
+      },
+    },
+
+    /* Döndürülebilir eş küp yapısı: yalnız 3B görünüm, görünüm düğmeleri ve
+       serbest döndürme. Küpler tek tek nesnedir; öğrenci yapıyı her yönden inceler. */
+    'kup-dondur': {
+      label: 'Küp yapısı (döndürülebilir 3B)',
+      views: true,
+      clean: true,
+      legend: true,
+      params: [
+        { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      required: ['cap'],
+      build(b, v) {
+        const heights = rotateShape(Number(v.sekil));
+        const depth = heights.length;
+        const width = heights[0].length;
+        const top = Math.max(1, ...heights.flat());
+        /* Cisim üç eksende de orijine ortalanır: kadrajda ortada durur. */
+        const x0 = -width / 2;
+        const y0 = -depth / 2;
+        const z0 = -top / 2;
+        /* Doğrulama çapası: gizlenen tek nokta. Küp yüzleri komşuluğa göre
+           oluştuğu için sabit isim garanti değil; bu nokta her zaman vardır. */
+        b.point('cap', 0, 0, z0);
+        const solid = (j, i, level) => j >= 0 && j < depth && i >= 0 && i < width
+          && (heights[j][i] || 0) > level;
+        let count = 0;
+        heights.forEach((row, j) => {
+          row.forEach((height, i) => {
+            for (let level = 0; level < height; level += 1) {
+              count += 1;
+              const faces = [];
+              if (level === height - 1) faces.push('top');
+              if (level === 0) faces.push('bottom');
+              if (!solid(j - 1, i, level)) faces.push('front');
+              if (!solid(j + 1, i, level)) faces.push('back');
+              if (!solid(j, i - 1, level)) faces.push('left');
+              if (!solid(j, i + 1, level)) faces.push('right');
+              b.flatCube(`k${count}`, x0 + i, y0 + j, z0 + level, faces);
+            }
+          });
+        });
+      },
+    },
+
+    /* Düzensiz küp yığını: sütun yükseklikleri desene göre değişir; ön, yan ve üst
+       görünümler bu yüzden düz dikdörtgen değil, basamaklı siluetlerdir. */
+    'duzensiz-yigin': {
+      label: 'Düzensiz yığın (3B)',
+      views: true,
+      split: true,
+      params: [
+        { name: 'desen', label: 'Yapı', min: 1, max: 4, step: 1, value: 1 },
+        { name: 'h', label: 'En yüksek sütun', min: 1, max: 3, step: 1, value: 3 },
+      ],
+      ortho(values) {
+        return stackViewPanels(stackHeights(values));
+      },
+      required: ['taban', 'k1'],
+      build(b, v) {
+        const heights = stackHeights(v);
+        const depth = heights.length;
+        const width = heights[0].length;
+        const top = Math.max(1, ...heights.flat());
+        const x0 = -width / 2;
+        const y0 = -depth / 2;
+        const z0 = -top / 2;
+        b.polygon3('taban', [
+          [x0, y0, z0], [x0 + width, y0, z0], [x0 + width, y0 + depth, z0], [x0, y0 + depth, z0],
+        ]);
+        b.color('taban', FACE_COLORS.bottom);
+        b.fill('taban', 0.35);
+        let count = 0;
+        heights.forEach((row, j) => {
+          row.forEach((height, i) => {
+            for (let level = 0; level < height; level += 1) {
+              count += 1;
+              const name = `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, cubeTint(i, j, level));
+              b.fill(name, 0.92);
+            }
+          });
+        });
       },
     },
 
@@ -360,7 +594,6 @@
             b.color(name, color);
             b.fill(name, 0.7);
           });
-          b.text('etiket', 'Açık hâl: altı yüz tek düzlemde.', 0, h + b0, 0);
         } else {
           /* Kapalı kutu: altı yüz. */
           const x0 = -a / 2;
@@ -380,40 +613,100 @@
             b.color(name, [168, 155, 226]);
             b.fill(name, 0.5);
           });
-          b.text('etiket', 'Kapalı kutu: altı yüz. Dokun: açınım açılsın.', 0, 0, z0 + h + 0.6);
         }
       },
     },
   };
 
-  /* ---------- küçük dik izdüşüm panelleri (uc-gorunum) ---------- */
+  /* ---------- düzensiz yığın: desen, yükseklik ve gerçek izdüşümler ---------- */
 
-  function orthographicSvg(values) {
-    const a = Number(values.a) || 1;
-    const b = Number(values.b) || 1;
-    const h = Number(values.h) || 1;
-    const panels = [
-      { key: 'on', title: 'Ön', cols: a, rows: h, fill: '#d7ccf7' },
-      { key: 'yan', title: 'Yan', cols: b, rows: h, fill: '#cfe4f7' },
-      { key: 'ust', title: 'Üst', cols: a, rows: b, fill: '#d5efdf' },
+  /* Desenler 3 × 3 taban üzerinde tanımlıdır; satır 0 en öndeki sıradır.
+     0 = boş kare. Seçilen en yüksek sütun değeri bütün yükseklikleri sınırlar. */
+  const STACK_PATTERNS = {
+    1: [[3, 2, 1], [2, 1, 1], [1, 1, 0]],
+    2: [[1, 1, 1], [1, 3, 1], [0, 1, 0]],
+    3: [[2, 2, 2], [0, 0, 2], [0, 0, 2]],
+    4: [[2, 0, 2], [1, 0, 1], [1, 1, 1]],
+  };
+
+  function clampInt(value, min, max) {
+    const number = Math.round(Number(value));
+    if (!Number.isFinite(number)) return min;
+    return Math.max(min, Math.min(max, number));
+  }
+
+  function stackHeights(values) {
+    const source = values || {};
+    const key = clampInt(source.desen === undefined ? 1 : source.desen, 1, 4);
+    const cap = clampInt(source.h === undefined ? 3 : source.h, 1, 3);
+    const pattern = STACK_PATTERNS[key] || STACK_PATTERNS[1];
+    return pattern.map((row) => row.map((value) => Math.min(value, cap)));
+  }
+
+  /* Ön görünüm: her sütunda en yüksek küp silueti görünür.
+     Yan görünüm: derinlik boyunca her sıranın en yüksek küpü.
+     Üst görünüm: dolu kareler (yüksekliği 0 olan hücre boş kalır). */
+  function stackViewPanels(heights) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat());
+    const front = [];
+    for (let level = top; level >= 1; level -= 1) {
+      const line = [];
+      for (let i = 0; i < width; i += 1) line.push(heights.some((row) => row[i] >= level));
+      front.push(line);
+    }
+    const side = [];
+    for (let level = top; level >= 1; level -= 1) {
+      const line = [];
+      for (let j = 0; j < depth; j += 1) line.push(heights[j].some((value) => value >= level));
+      side.push(line);
+    }
+    const plan = heights.map((row) => row.map((value) => value > 0));
+    return [
+      { key: 'on', title: 'Ön', cells: front, fill: '#d7ccf7' },
+      { key: 'yan', title: 'Yan', cells: side, fill: '#cfe4f7' },
+      { key: 'ust', title: 'Üst', cells: plan, fill: '#d5efdf' },
     ];
-    const cell = 22;
-    const pad = 12;
+  }
+
+  /* Düzgün prizmada üç görünüm de dolu dikdörtgendir. */
+  function prismViewPanels(values) {
+    const a = clampInt(values && values.a === undefined ? 1 : values.a, 1, 6);
+    const b = clampInt(values && values.b === undefined ? 1 : values.b, 1, 5);
+    const h = clampInt(values && values.h === undefined ? 1 : values.h, 1, 5);
+    const full = (cols, rows) => Array.from({ length: rows }, () => Array.from({ length: cols }, () => true));
+    return [
+      { key: 'on', title: 'Ön', cells: full(a, h), fill: '#d7ccf7' },
+      { key: 'yan', title: 'Yan', cells: full(b, h), fill: '#cfe4f7' },
+      { key: 'ust', title: 'Üst', cells: full(a, b), fill: '#d5efdf' },
+    ];
+  }
+
+  /* ---------- küçük dik izdüşüm panelleri (bölünmüş görünüm) ---------- */
+
+  function orthographicSvg(values, conf) {
+    const panels = conf && typeof conf.ortho === 'function'
+      ? conf.ortho(values)
+      : prismViewPanels(values);
+    const cell = 18;
     const width = 3 * 96;
-    const height = 108;
+    const height = 132;
     const parts = [`<svg viewBox="0 0 ${width} ${height}" class="math-ggb-ortho" aria-hidden="true">`];
     panels.forEach((panel, index) => {
-      const x0 = index * 96 + pad;
-      const w = panel.cols * cell;
-      const hh = panel.rows * cell;
-      parts.push(`<rect x="${index * 96 + 4}" y="4" width="88" height="100" rx="10" fill="#fbfaff" stroke="#ded8f2"/>`);
-      parts.push(`<text x="${index * 96 + 48}" y="22" text-anchor="middle" font-size="11" font-weight="800" fill="#33265f">${panel.title}</text>`);
-      for (let row = 0; row < panel.rows; row += 1) {
-        for (let col = 0; col < panel.cols; col += 1) {
-          parts.push(`<rect x="${x0 + col * cell}" y="${32 + row * cell}" width="${cell - 1.5}" height="${cell - 1.5}" rx="3" fill="${panel.fill}" stroke="#7056c9" stroke-width="0.8"/>`);
+      const cells = Array.isArray(panel.cells) ? panel.cells : [];
+      const rows = cells.length;
+      const cols = rows ? cells[0].length : 0;
+      const x0 = index * 96 + (96 - cols * cell) / 2;
+      parts.push(`<rect x="${index * 96 + 4}" y="4" width="88" height="124" rx="10" fill="#fbfaff" stroke="#ded8f2"/>`);
+      parts.push(`<text x="${index * 96 + 48}" y="21" text-anchor="middle" font-size="11" font-weight="800" fill="#33265f">${panel.title}</text>`);
+      for (let row = 0; row < rows; row += 1) {
+        for (let col = 0; col < cols; col += 1) {
+          const filled = Boolean(cells[row][col]);
+          parts.push(`<rect x="${x0 + col * cell}" y="${28 + row * cell}" width="${cell - 1.5}" height="${cell - 1.5}" rx="3" fill="${filled ? panel.fill : '#ffffff'}" stroke="${filled ? '#7056c9' : '#e6e1f6'}" stroke-width="${filled ? 0.9 : 0.7}"/>`);
         }
       }
-      parts.push(`<text x="${index * 96 + 48}" y="${34 + Math.max(hh, 0) + 12}" text-anchor="middle" font-size="9.5" fill="#6b7a90">${panel.cols} × ${panel.rows} kare?</text>`);
+      parts.push(`<text x="${index * 96 + 48}" y="${32 + rows * cell + 10}" text-anchor="middle" font-size="9.5" fill="#6b7a90">${cols} × ${rows} · kaç kare?</text>`);
     });
     parts.push('</svg>');
     return parts.join('');
@@ -468,6 +761,15 @@
     return APPLETS[type] || null;
   }
 
+  /* Döndürülebilir yapı verisi yerel sahne motorundan gelir; iki yerde veri tutulmaz. */
+  function rotateShape(index) {
+    const source = window.MATEMATIK_SAHNE2;
+    if (source && typeof source.yapiOfSet === 'function') {
+      return source.yapiOfSet(3, Number(index) || 1);
+    }
+    return [[3, 1, 1], [2, 2, 1], [1, 1, 1]];
+  }
+
   function supports(scene) {
     return Boolean(scene && APPLETS[scene.type]);
   }
@@ -498,6 +800,67 @@
       });
     }
     return found.params.map((param) => ({ ...param }));
+  }
+
+  /* Applet çerçevesini sadeleştirir: cebir paneli, araç çubuğu ve giriş alanı
+     kapatılır; yalnız 3B görünüm kalır. API sürümüne göre sessizce atlanır. */
+  function stripChrome(target) {
+    const attempts = [
+      () => target.setPerspective && target.setPerspective('T'),
+      () => target.setPerspective && target.setPerspective('-A'),
+      () => target.evalCommand && target.evalCommand('SetPerspective("T")'),
+      () => target.evalCommand && target.evalCommand('SetPerspective("-A")'),
+      () => target.setAxesVisible && target.setAxesVisible(false, false, false),
+      () => target.setGridVisible && target.setGridVisible(false),
+    ];
+    attempts.forEach((attempt) => {
+      try {
+        attempt();
+      } catch (error) {
+        /* sürüm desteklemiyorsa görünüm olduğu gibi kalır */
+      }
+    });
+  }
+
+  /* Sade 3B görünüm: cisim dışında hiçbir şey görünmez.
+     - Küp komutlarının ürettiği köşe noktaları (A, B, C…) gizlenir.
+     - İstenmeyen etiketler kapatılır, çizgi kalınlığı tek kalem inceliğinde kalır.
+     - z = 0 düzlemindeki yatay zemin ve eksenler kapatılır. */
+  function quietScene(box) {
+    const api = box && box.api;
+    if (!api) return;
+    const labeled = box.labeled || new Set();
+    let names = [];
+    try {
+      names = typeof api.getAllObjectNames === 'function' ? api.getAllObjectNames() : [];
+    } catch (error) {
+      names = [];
+    }
+    names.forEach((name) => {
+      let type = '';
+      try {
+        type = typeof api.getObjectType === 'function' ? api.getObjectType(name) : '';
+      } catch (error) {
+        type = '';
+      }
+      if (type === 'point') {
+        try { api.setVisible(name, false); } catch (error) { /* yok say */ }
+        return;
+      }
+      if (!labeled.has(name)) {
+        try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
+      }
+      try { api.setLineThickness(name, 1); } catch (error) { /* yok say */ }
+    });
+    /* Yatay zemin düzlemi ve eksenler: cismin altında gri bir levha görünmesin.
+       3B görünümün numarası -1'dir; 1 verilirse düzlem görünür kalır. */
+    ['xOyPlane', 'xOzPlane', 'yOzPlane', 'xAxis', 'yAxis', 'zAxis'].forEach((name) => {
+      try { api.setVisible(name, false); } catch (error) { /* yok say */ }
+      try { api.evalCommand(`SetVisibleInView(${name}, -1, false)`); } catch (error) { /* yok say */ }
+    });
+    ['ShowAxes(false)', 'ShowGrid(false)'].forEach((command) => {
+      try { api.evalCommand(command); } catch (error) { /* yok say */ }
+    });
   }
 
   function applyLabels(box) {
@@ -540,16 +903,17 @@
       <div class="math-ggb-loading">GeoGebra hazırlanıyor… <span>Üç boyutlu cisim yükleniyor.</span></div>
       ${conf.split ? '<div class="math-ggb-views" aria-hidden="true"></div>' : ''}
       <div class="math-ggb-bar">
-        ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}">${label}</button>`).join('')}
+        ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}"${key === 'egik' ? ' class="is-active"' : ''}>${label}</button>`).join('')}
         ${conf.net ? '<button type="button" data-ggb-net="1">Açınımı aç</button>' : ''}
       </div>
+      ${conf.legend ? `<p class="math-ggb-legend">${FACE_LEGEND.map(([label, color]) => `<span><i style="background:${color}"></i>${label}</span>`).join('')}</p>` : ''}
     </div>`;
     const canvas = host.querySelector('.math-ggb-canvas');
     const loading = host.querySelector('.math-ggb-loading');
     const viewsHost = host.querySelector('.math-ggb-views');
     const bar = host.querySelector('.math-ggb-bar');
     renderControls(controls, params, values, scope);
-    if (viewsHost) viewsHost.innerHTML = orthographicSvg(values);
+    if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
     status('GeoGebra hazırlanıyor…');
 
     function hideLoading() {
@@ -584,6 +948,9 @@
       box = builder(api);
       conf.build(box, values, mode);
       applyLabels(box);
+      /* Nokta/etiket kalabalığı ve eksenler kapatılır: cisim öne çıkar. */
+      if (typeof box.polish === 'function') box.polish();
+      if (conf.clean) quietScene(box);
     }
 
     function build(attempt) {
@@ -592,7 +959,7 @@
       buildTimer = window.setTimeout(() => {
         if (done || destroyed) return;
         try {
-          if (typeof api.setAxesVisible === 'function') api.setAxesVisible(true, true, true);
+          if (typeof api.setAxesVisible === 'function') api.setAxesVisible(false, false, false);
           if (typeof api.setGridVisible === 'function') api.setGridVisible(false);
           rebuild();
           box.view('egik');
@@ -601,6 +968,8 @@
         }
         if (verify()) {
           done = true;
+          /* Varsayılan bakış: yukarıdan eğik. Öğrenci isterse döndürür. */
+          if (box) box.view('egik');
           hideLoading();
           if (observer) observer.disconnect();
           const count = typeof api.getObjectNumber === 'function' ? api.getObjectNumber() : conf.required.length;
@@ -636,7 +1005,7 @@
         values[param.name] = Number(input.value);
         if (out) out.textContent = String(values[param.name]);
       });
-      if (viewsHost) viewsHost.innerHTML = orthographicSvg(values);
+      if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
       if (!api) return;
       params.forEach((param) => {
         try {
@@ -722,23 +1091,37 @@
         errorDialogsActive: false,
         showLogging: false,
         borderColor: '#ded8f2',
+        perspective: 'T',
         appletOnLoad(nextApi) {
           api = nextApi;
           if (destroyed) return;
+          /* Yalnız 3B görünüm kalsın: soldaki cebir/nesne paneli (points, sliders
+             listesi) kalabalık yapıyordu; referans materyalde de yalnız cisim var. */
+          stripChrome(api);
           build(0);
           if (typeof window.ResizeObserver === 'function') {
             let debounce = null;
+            let lastSize = `${width}x${height}`;
             observer = new window.ResizeObserver(() => {
               if (debounce) window.clearTimeout(debounce);
               debounce = window.setTimeout(() => {
                 if (!api || destroyed || typeof api.setSize !== 'function') return;
                 const w = Math.max(300, Math.round(canvas.clientWidth || width));
                 const h = Math.max(300, Math.round(canvas.clientHeight || height));
+                /* Ölçü değişmediyse yeniden boyutlandırma yok: setSize kutuyu
+                   büyütüp yeniden tetikleyerek sonsuz döngü (donma) yapmasın. */
+                const size = `${w}x${h}`;
+                if (size === lastSize) return;
+                lastSize = size;
+                observer.disconnect();
                 try {
                   api.setSize(w, h);
                 } catch (error) {
                   /* ölçü değişimi başarısızsa mevcut boyut kalır */
                 }
+                window.setTimeout(() => {
+                  if (!destroyed && observer) observer.observe(canvas);
+                }, 300);
               }, 250);
             });
             observer.observe(canvas);
@@ -748,6 +1131,12 @@
       try {
         const applet = new GGBApplet(appletParams, true);
         applet.inject(canvas.id);
+        /* Bekçi: applet hiç açılmazsa ekran “hazırlanıyor” yazısında kilitli
+           kalmasın; süre dolunca durum yazılır ve yerel çizim gösterilir. */
+        window.setTimeout(() => {
+          if (destroyed || done || api) return;
+          fail('GeoGebra açılmadı; yerel çizim gösteriliyor.');
+        }, LOAD_TIMEOUT + 6000);
       } catch (error) {
         fail('GeoGebra başlatılamadı; yerel çizim gösteriliyor.');
       }
@@ -760,11 +1149,28 @@
       engine: 'geogebra',
       state: values,
       mode: () => mode,
+      /* Dışarıdan (şekil düğmeleri) değer değiştirme: sürgüyle aynı yolu kullanır. */
+      set(name, value) {
+        if (!(name in values)) return;
+        values[name] = Number(value);
+        const input = controls ? controls.querySelector(`[data-scene-param="${name}"]`) : null;
+        const out = controls ? controls.querySelector(`#scene-out-${scope}-${name}`) : null;
+        if (input) input.value = String(values[name]);
+        if (out) out.textContent = String(values[name]);
+        if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
+        if (!api) return;
+        try {
+          api.setValue(name, values[name]);
+        } catch (error) {
+          /* nesne henüz yoksa sessiz geç */
+        }
+        rebuild();
+      },
       reset() {
         params.forEach((param) => { values[param.name] = param.value; });
         mode = conf.net ? 'kapali' : '';
         renderControls(controls, params, values, scope);
-        if (viewsHost) viewsHost.innerHTML = orthographicSvg(values);
+        if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
         const net = bar ? bar.querySelector('[data-ggb-net]') : null;
         if (net) net.textContent = 'Açınımı aç';
         if (api) {
@@ -810,6 +1216,7 @@
     if (typeof conf.normalize === 'function') conf.normalize(state);
     const box = builder(fake);
     conf.build(box, state, mode || (conf.net ? 'kapali' : ''));
+    if (typeof box.polish === 'function') box.polish();
     return commands;
   }
 

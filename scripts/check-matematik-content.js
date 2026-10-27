@@ -229,8 +229,20 @@ allActivities.forEach(({ week, activity }) => {
     assert.ok(!/ders kitab[ıi]/i.test(text), `${activity.id} kitap atfı içeriyor.`);
     assert.ok(!/\d+\s*\/\s*\d+/.test(text), `${activity.id} düz metin kesir içeriyor.`);
   });
+  /* Her soru görselle gelir: 8. haftadan sonra şekilsiz ve sahnesiz soru kalmaz.
+     (Şekil, sorudaki sayıları birebir gösterir; sahne ayrı bir etkileşimdir.) */
+  if (Number(week.id) >= 8) {
+    assert.ok(activity.figure || activity.scene,
+      `${activity.id} sorusunda ne şekil ne sahne var; her soruya görsel gerekir.`);
+  }
   if (activity.figure) {
     assert.ok(FIG.types().includes(activity.figure.type), `${activity.id} bilinmeyen şekil: ${activity.figure.type}`);
+    /* Dizi seçenekleri tırnak içinde metin olarak yazılmamalı: şekil sessizce
+       varsayılan veriye düşer (veri-nokta 4, 6, 8, 2 gösteriyordu). */
+    Object.entries(activity.figure.options || {}).forEach(([key, value]) => {
+      assert.ok(!(typeof value === 'string' && value.trim().startsWith('[')),
+        `${activity.id} şeklinde ${key} dizi olarak yazılmalı, metin değil.`);
+    });
     assert.ok(FIG.render(activity.figure.type, activity.figure.options || {}).includes('<svg'),
       `${activity.id} şekli çizilemedi.`);
   }
@@ -250,6 +262,24 @@ content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
     || stage.figure
     || (stage.blocks || []).some((block) => block.scene || block.figure));
   assert.ok(withVisual.length >= 2, `Hafta ${week.id} geometri haftası ama sahne/şekil yok.`);
+});
+
+/* Görsel tekrarı yasak: aynı haftada iki soru birebir aynı şekli kullanamaz.
+   (Kullanıcı geri bildirimi: “sürekli görsel tekrarı yapmışsın”.) Henüz yeniden
+   yazılmamış haftalar listede; hafta yeniden yazıldıkça listeden çıkarılır. */
+const REPEAT_ALLOWED = new Set([9, 10, 11, 12, 13, 14, 15]);
+content.weeks.forEach((week) => {
+  const seen = new Map();
+  ACT.forWeek(week.id).forEach((activity) => {
+    if (!activity.figure) return;
+    const key = `${activity.figure.type}:${JSON.stringify(activity.figure.options || {})}`;
+    if (seen.has(key)) {
+      assert.ok(REPEAT_ALLOWED.has(Number(week.id)),
+        `Hafta ${week.id}: “${seen.get(key)}” ile “${activity.id}” aynı görseli kullanıyor.`);
+    } else {
+      seen.set(key, activity.id);
+    }
+  });
 });
 
 // 4c. Kitabın bölüm zinciri: her hafta aynı sırayı izlemeli
@@ -396,6 +426,52 @@ Object.values(KITAP.weeks).forEach((book) => {
 assert.ok(SAHNE.types().includes('iki-sayi'), 'İki noktayı birlikte gösteren sahne bulunmalı.');
 assert.ok(SAHNE.types().includes('sicaklik'), 'Negatif ve pozitif sıcaklıkları birlikte okuyan sahne bulunmalı.');
 assert.ok(SAHNE.types().includes('sifir-toplama'), 'Toplayarak sıfıra ulaşma sahnesi bulunmalı.');
+
+// 4e. Geometrik nicelikler: her bilgi kutusu kendi bloğu, görseli ve sorusuyla eşleşmeli.
+// Aynı sahnenin hafta içinde ikinci kez kullanılması yasak (yukarıda); burada kutuların
+// sahnesiz kalmaması ve görsel türlerinin çeşitlenmesi aranır.
+const GEOMETRY_BOX_WEEKS = [8, 9, 10, 11];
+GEOMETRY_BOX_WEEKS.forEach((id) => {
+  const learn = KITAP.weeks[id].stages[2];
+  assert.ok(Array.isArray(learn.boxes) && learn.boxes.length >= 3,
+    `Hafta ${id} bilgi kutuları eksik.`);
+  const kinds = new Set();
+  learn.boxes.forEach((box) => {
+    const block = (learn.blocks || []).find((item) => String(item.heading || '').startsWith(box.title));
+    assert.ok(block, `Hafta ${id} “${box.title}” bilgi kutusunun kendi bloğu yok.`);
+    const spec = block.scene || block.figure;
+    assert.ok(spec && spec.type, `Hafta ${id} “${box.title}” bloğunda sahne ya da şekil yok.`);
+    kinds.add(`${block.scene ? 'scene' : 'figure'}:${spec.type}`);
+  });
+  assert.ok(kinds.size >= 3, `Hafta ${id} bilgi kutularında görsel çeşitliliği az: ${[...kinds].join(', ')}`);
+  assert.ok((learn.checks || []).length >= learn.boxes.length,
+    `Hafta ${id} her bilgi kutusuna en az bir kontrol sorusu düşmeli.`);
+});
+
+// 4f. Birim küpler tek tek sayılabilmeli ve düzensiz görünüm GeoGebra sahnesinde olmalı.
+const sahneSource = read('matematik-sahne.js');
+assert.ok(/stackHeights/.test(sahneSource) && /viewPanels/.test(sahneSource),
+  'Düzensiz yığın görünümleri yükseklik tablosundan üretilmeli.');
+assert.ok(/\b0, 0, 0\b|\], \[0, 0, 0\]|0\]\]/.test(sahneSource) || /STACK_PATTERNS/.test(sahneSource),
+  'Düzensiz yığın desenleri boşluk (0) içermeli.');
+const stackUses = [];
+Object.keys(KITAP.weeks).forEach((key) => {
+  (KITAP.weeks[key].stages || []).forEach((stage) => {
+    if (stage.scene) stackUses.push({ key, type: stage.scene.type, where: stage.title });
+    (stage.blocks || []).forEach((block) => {
+      if (block.scene) stackUses.push({ key, type: block.scene.type, where: block.heading });
+    });
+  });
+});
+/* Görünüm haftası: cisim sürgülerle değişmeli (yerel `gorunum-kur`).
+   Eski GeoGebra `duzensiz-yigin` appleti soldaki parametre paneli yüzünden
+   sade görünmediği için sahneden çıkarıldı; yerine sade yerel sahne geldi. */
+assert.ok(stackUses.some((item) => item.type === 'gorunum-kur' && Number(item.key) === 8),
+  'Görünüm haftasında sürgülerle değişen 3B görünüm sahnesi (gorunum-kur) olmalı.');
+assert.ok(stackUses.some((item) => item.type === 'bilesik-hacim'),
+  'Bileşik cisim sahnesi hacim haftalarında kullanılmalı.');
+assert.ok(/numaralanır|Numaralar/.test(sahneSource),
+  'Birim küpler numaralanmalı; hacim tek blok olarak gösterilmemeli.');
 
 // 5. Uygulama tarafı
 const app = read('matematik.js');

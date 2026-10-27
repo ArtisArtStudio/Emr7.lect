@@ -85,7 +85,8 @@ assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function
   'MATEMATIK_GEOGEBRA köprüsü yüklenemedi.');
 const localTypes = SAHNE.types();
 const geoTypes = GG.types();
-const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'acim'];
+/* kup-dondur: eş küp yapısı serbest döndürülerek incelenir (görünüm sorusu). */
+const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim'];
 assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
   `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
 GEO_3D.forEach((type) => {
@@ -108,12 +109,51 @@ assert.ok(/SetViewDirection/.test(ggb) && /data-ggb-view/.test(ggb), 'Ön/yan/ü
 assert.ok(/data-ggb-net/.test(ggb) && /Açınımı aç/.test(ggb), 'Açınım düğmesi ve dokunma ile katlama olmalı.');
 assert.ok(/math-ggb-ortho/.test(ggb) && /math-ggb-views/.test(ggb), 'Üç görünüm bölünmüş panelde gösterilmeli.');
 assert.ok(GG.hasSplit('uc-gorunum') && GG.hasNet('acim'), 'Bölünmüş görünüm ve açınım sahneleri tanımlı olmalı.');
+assert.ok(GG.hasSplit('duzensiz-yigin'), 'Düzensiz yığın da bölünmüş görünümle açılmalı (ön · yan · üst).');
+
+/* Birim küpler tek tek görünmeli: hacim sahneleri her küpü ayrı nesne olarak kurar. */
+['hacim', 'bilesik-hacim', 'duzensiz-yigin'].forEach((type) => {
+  const commands = GG.script(type, {});
+  const cubes = commands.filter((command) => /=\s*Cube\(/.test(command));
+  assert.ok(cubes.length >= 4, `${type}: birim küpler ayrı ayrı kurulmalı (${cubes.length} küp).`);
+  assert.ok(cubes.every((command) => /Vector\(\(0, 0, 1\)\)/.test(command)),
+    `${type}: küpler z eksenine oturmalı, ızgara kaymamalı.`);
+});
+/* Düzensiz yığının izdüşümleri gerçek siluet olmalı: boş kare bulunmalı. */
+/* GeoGebra çerçevesi sade olmalı: soldaki cebir/parametre paneli kapatılır. */
+assert.ok(/function stripChrome/.test(ggb), 'GeoGebra çerçevesi sadeleştirilmeli (stripChrome).');
+assert.ok(/perspective: 'T'/.test(ggb), 'Applet 3B görünümle açılmalı (perspective: T).');
+assert.ok(/setPerspective\('-A'\)/.test(ggb), 'Soldaki cebir paneli kapatılmalı.');
+
+/* Ön, yan ve üst yüzler ayrı tonlarda: tek renkli blok kabul edilmez. */
+const frontColor = /front: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
+const sideColor = /side: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
+const topColor = /top: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
+assert.ok(frontColor && sideColor && topColor, 'Yüz renkleri (ön/yan/üst) tanımlı olmalı.');
+assert.notDeepEqual(frontColor.slice(1), sideColor.slice(1), 'Ön ve yan yüz aynı renkte olmamalı.');
+assert.notDeepEqual(sideColor.slice(1), topColor.slice(1), 'Yan ve üst yüz aynı renkte olmamalı.');
+assert.ok(/faces\(/.test(ggb), 'Prizma yüzleri ayrı ayrı çizilmeli (faces).');
+/* Tam dik “üst” bakış GeoGebra’yı donduruyordu; yön küçük eğimli olmalı.
+   Ayrıca SetViewDirection(Vector(v)) gözü -v yönüne koyar: üst bakış için v aşağıyı
+   göstermeli (-1), alt bakış için yukarıyı (+1). Alt/üst karışmasın. */
+assert.ok(/ust: 'Vector\(\(0\.\d+, -0\.\d+, -1\)\)'/.test(ggb),
+  'Üst görünümde bakış vektörü aşağıyı göstermeli (göz yukarıda).');
+assert.ok(/alt: 'Vector\(\(0\.\d+, -0\.\d+, 1\)\)'/.test(ggb),
+  'Alt görünümde bakış vektörü yukarıyı göstermeli (göz aşağıda).');
+assert.ok(/egik: 'Vector\(\(-[\d.]+, [\d.]+, -[\d.]+\)\)'/.test(ggb),
+  'Eğik bakış yukarıdan olmalı (bakış vektörünün z değeri negatif).');
+
+assert.ok(/stackViewPanels/.test(ggb) && /stackHeights/.test(ggb),
+  'Düzensiz yığın görünümleri yükseklik tablosundan üretilmeli.');
+assert.ok(/ortho\(values\)/.test(ggb) || /conf\.ortho/.test(ggb),
+  'Bölünmüş panel appletin kendi izdüşümünü kullanmalı.');
 
 /* Sürgü yoklaması: her sahne için uç değerlerde üretilen GeoGebra komutları denetlenir.
    Nokta ondalığı, dengeli parantez, beyaz listedeki komutlar ve tanımlı nesne adları. */
 const GEO_COMMANDS = new Set([
   'Slider', 'SetValue', 'SetVisibleInView', 'SetCaption', 'SetLabelMode', 'SetFixed',
   'SetLineThickness', 'SetLineStyle', 'SetPointSize', 'SetFilling', 'Delete', 'Text',
+  'SetLabelVisible', 'ShowAxes', 'ShowGrid', 'SetViewDirection', 'SetColor',
   'Segment', 'Polygon', 'Circle', 'Vector', 'BarChart', 'Sequence', 'Cube', 'If',
   'Ray', 'Line', 'Reflect', 'Midpoint', 'PerpendicularBisector', 'AngleBisector', 'Min',
   'Element', 'SetColor',
@@ -152,6 +192,12 @@ GEO_3D.forEach((type) => {
     GG.required(type).forEach((label) => {
       assert.ok(defined.has(label), `${where}: zorunlu nesne tanımlanmadı → ${label}`);
     });
+    /* Görsel kalite: eksen ve ızgara kapalı, nokta işaretleri küçük ve etiketsiz,
+       yüzler tek renk değil (ön/yan/üst ayrı ton). */
+    assert.ok(commands.includes('ShowAxes(false)'), `${where}: eksen kapatılmalı.`);
+    assert.ok(commands.includes('ShowGrid(false)'), `${where}: ızgara kapatılmalı.`);
+    assert.ok(commands.some((command) => /^SetPointSize\(/.test(command)), `${where}: nokta boyutu ayarlanmalı.`);
+    assert.ok(commands.some((command) => /^SetLabelVisible\(/.test(command)), `${where}: nesne etiketleri kapatılmalı.`);
   });
 });
 

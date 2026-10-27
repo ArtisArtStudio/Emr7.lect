@@ -222,6 +222,8 @@
       ${stage.scene ? sceneFrame(stage.scene, sceneId) : ''}
       ${stage.figure ? figureBlock(stage.figure) : ''}
       ${stepsMarkup(stage.steps, stage.result)}
+      ${Array.isArray(stage.atolye) && stage.atolye.length
+        ? `<div class="math-atolye" id="mathAtolye-${week.id}-${index}"></div>` : ''}
       ${questionHost}
     </section>`;
   }
@@ -410,6 +412,11 @@
     const engine = window.MATEMATIK_ETKINLIK;
     if (!source || !engine) return;
     (bookOf(week.id).stages || []).forEach((stage, index) => {
+      const stageSpec = bookOf(week.id).stages[index];
+      const atolyeHost = document.getElementById(`mathAtolye-${week.id}-${index}`);
+      if (atolyeHost && stageSpec && Array.isArray(stageSpec.atolye) && window.MATEMATIK_ATOLYE) {
+        try { window.MATEMATIK_ATOLYE.mount(atolyeHost, stageSpec.atolye); } catch (error) { atolyeHost.innerHTML = ''; }
+      }
       const host = document.getElementById(`mathQuestions-${week.id}-${index}`);
       const items = source.forStage(week.id, index);
       if (!host || !items.length) return;

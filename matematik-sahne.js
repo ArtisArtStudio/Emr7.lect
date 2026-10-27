@@ -128,6 +128,317 @@
       </div>`).join('');
   }
 
+  /* ---------- düzensiz yığın ve simetri yardımcıları ---------- */
+
+  /* Desenler 3 × 3 taban üzerinde tanımlıdır; satır 0 en öndeki sıradır.
+     0 = boş kare. Seçilen en yüksek sütun değeri bütün yükseklikleri sınırlar. */
+  const STACK_PATTERNS = {
+    1: [[3, 2, 1], [2, 1, 1], [1, 1, 0]],
+    2: [[1, 1, 1], [1, 3, 1], [0, 1, 0]],
+    3: [[2, 2, 2], [0, 0, 2], [0, 0, 2]],
+    4: [[2, 0, 2], [1, 0, 1], [1, 1, 1]],
+  };
+
+  /* Görünüm sorularında kullanılan karmaşık yapılar: satır = derinlik (öne en yakın
+     satır ilk sırada), sütun = genişlik (sol→sağ). Boşluklar (0) siluette basamak oluşturur. */
+  const VIEW_TITLES = { on: 'ön', arka: 'arka', sag: 'sağ', sol: 'sol', ust: 'üst', alt: 'alt' };
+
+  /* Yüz renkleri her yerde aynı: üst kırmızı, alt siyah, sol yeşil, sağ sarı,
+     ön mor, arka pembe. Öğrenci rengi yöne bağlayarak görünümleri okur. */
+  const FACE_RGB = {
+    ust: '#d62d20',
+    alt: '#262626',
+    sol: '#2e7d32',
+    sag: '#f2c200',
+    on: '#7030a0',
+    arka: '#ef8fae',
+  };
+
+  const YAPI_SET1 = [
+    [[3, 2, 1], [2, 1, 1], [1, 1, 1]],
+    [[2, 2, 1], [1, 1, 1], [1, 1, 1]],
+    [[1, 2, 3], [1, 2, 2], [1, 1, 1]],
+    [[3, 3, 1], [2, 1, 1]],
+    [[2, 1, 1], [3, 2, 1], [1, 1, 1]],
+  ];
+  const YAPI_SET2 = [
+    [[2, 3, 2], [1, 2, 1], [2, 1, 2]],
+    [[1, 1, 1], [2, 2, 2], [1, 2, 1]],
+    [[3, 1, 3], [1, 1, 1]],
+    [[2, 1, 2, 1], [1, 2, 1, 2]],
+    [[2, 2, 1], [3, 1, 1], [1, 2, 1]],
+  ];
+  /* Döndürülebilir sahnede kullanılan yapılar: ilk iki gruptan farklı,
+     dört kata kadar çıkan, basamaklı ve boşluklu yapılar. */
+  const YAPI_SET3 = [
+    [[4, 1, 1], [2, 2, 1], [1, 1, 1]],
+    [[2, 1, 2], [3, 2, 1], [1, 1, 2]],
+    [[1, 3, 1], [2, 1, 2]],
+    [[3, 2, 1, 1], [1, 1, 2, 1]],
+    [[2, 3], [1, 1], [2, 1], [1, 1]],
+  ];
+
+  function setOf(group) {
+    const no = Number(group);
+    if (no === 3) return YAPI_SET3;
+    return no === 2 ? YAPI_SET2 : YAPI_SET1;
+  }
+
+  function yapiOf(state) {
+    const set = setOf(state.set);
+    const index = clampValue(state.sekil, 1, set.length, 1) - 1;
+    return set[index] || set[0];
+  }
+
+  /* Yapıyı çeyrek tur döndürmek: satır ve sütunlar yer değiştirir. */
+  function dondur(heights, quarter) {
+    let current = heights.map((row) => row.slice());
+    const turns = ((Number(quarter) || 0) % 4 + 4) % 4;
+    for (let turn = 0; turn < turns; turn += 1) {
+      const depth = current.length;
+      const width = current[0].length;
+      const next = Array.from({ length: width }, () => Array.from({ length: depth }, () => 0));
+      for (let j = 0; j < depth; j += 1) {
+        for (let i = 0; i < width; i += 1) next[i][depth - 1 - j] = current[j][i];
+      }
+      current = next;
+    }
+    return current;
+  }
+
+  /* Altı yönün görünümü. Arkadan bakış önden bakışın, soldan bakış sağdan bakışın
+     aynasıdır; alttan bakış da üstten bakışın yatay aynasıdır (dikey/yatay simetri). */
+  function besGorunum(heights) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat());
+    const front = [];
+    const right = [];
+    for (let level = top; level >= 1; level -= 1) {
+      front.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
+      right.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => (value || 0) >= level)));
+    }
+    const mirrorRows = (cells) => cells.map((row) => row.slice().reverse());
+    const topCells = heights.slice().reverse().map((row) => row.map((value) => (value || 0) > 0));
+    const bottomCells = topCells.slice().reverse();
+    return [
+      { key: 'on', cells: front },
+      { key: 'arka', cells: mirrorRows(front) },
+      { key: 'sag', cells: right },
+      { key: 'sol', cells: mirrorRows(right) },
+      { key: 'ust', cells: topCells },
+      { key: 'alt', cells: bottomCells },
+    ].map((panel) => ({ ...panel, title: VIEW_TITLES[panel.key] || panel.key }));
+  }
+
+  /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
+     Küpler tek tek çizilir; sayı yazılmaz. */
+  /* İzometrik çizimin geometrisi: küp ölçüsü, taban çizgisi ve gerçek sınır kutusu.
+     Sınır kutusu gerçekten çizilen küplerden hesaplanır; böylece cisim tuvalde
+     yatay ve dikey olarak tam ortalanır (boş yüksek sütun payı sayılmaz). */
+  function isoGeometry(heights, area, maxU) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+    const cap = Math.max(8, Number(maxU) || 46);
+    const u = Math.max(8, Math.min(cap, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
+    const du = u * 0.5;
+    const dv = u * 0.36;
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    heights.forEach((row, j) => {
+      row.forEach((height, i) => {
+        if (!(height > 0)) return;
+        const x = i * u + j * du;
+        const bottom = -j * dv;
+        const upper = bottom - height * u - (j > 0 ? dv : 0);
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x + u + du);
+        minY = Math.min(minY, upper);
+        maxY = Math.max(maxY, bottom);
+      });
+    });
+    if (!Number.isFinite(minX)) { minX = 0; maxX = u; minY = -u; maxY = 0; }
+    const dx = area.x + (area.width - (maxX - minX)) / 2 - minX;
+    const dy = area.y + (area.height - (maxY - minY)) / 2 - minY;
+    const totalW = width * u + depth * du;
+    const origin = area.x + Math.max(0, (area.width - totalW) / 2);
+    return { u, du, dv, dx, dy, origin, baseline: dy };
+  }
+
+  /* İzometrik cisim: yalnız görünen yüzler. Düz gölgeleme; yüz renkleri sabit:
+     üst kırmızı, ön mor, sağ sarı (sol yeşil, arka pembe, alt siyah — bu bakışta görünmez). */
+  function drawIso(heights, area, maxU) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+    const geo = isoGeometry(heights, area, maxU);
+    const { u, du, dv } = geo;
+    const parts = [];
+    /* Çizim sırası: arkadan öne, alttan üste (yüzler doğru örtüşsün). */
+    const baseX = geo.dx;
+    const baseY = geo.dy;
+    for (let j = depth - 1; j >= 0; j -= 1) {
+      for (let level = 0; level < top; level += 1) {
+        for (let i = 0; i < width; i += 1) {
+          if ((heights[j][i] || 0) <= level) continue;
+          const x = baseX + i * u + j * du;
+          const y = baseY - j * dv - level * u;
+          if ((heights[j][i] || 0) === level + 1) {
+            parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+              { fill: FACE_RGB.ust, stroke: '#1b2f49', width: 1 }));
+          }
+          if (j === 0 || (heights[j - 1][i] || 0) <= level) {
+            parts.push(rect(x, y - u, u, u, { fill: FACE_RGB.on, stroke: '#1b2f49', width: 1 }));
+          }
+          if (i === width - 1 || (heights[j][i + 1] || 0) <= level) {
+            parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+              { fill: FACE_RGB.sag, stroke: '#1b2f49', width: 1 }));
+          }
+        }
+      }
+    }
+    return parts.join('');
+  }
+
+  /* Kare ızgarası: dolu kare dolu renkte, boş kare beyaz. Sayı yazılmaz. */
+  function drawCells(cells, centerX, topY, maxW, maxH, fill) {
+    const rows = cells.length;
+    const cols = Math.max(...cells.map((row) => row.length));
+    const cell = Math.min(34, maxW / Math.max(cols, 1), maxH / Math.max(rows, 1));
+    const gx = centerX - (cols * cell) / 2;
+    const gy = topY + Math.max(0, (maxH - rows * cell) / 2);
+    const parts = [];
+    cells.forEach((row, r) => {
+      row.forEach((filled, c) => {
+        parts.push(rect(gx + c * cell, gy + r * cell, cell - 1, cell - 1, {
+          fill: filled ? fill : '#fff',
+          stroke: filled ? '#3f6c93' : '#c6d2e0',
+          width: filled ? 1 : 0.7,
+          rx: 2,
+        }));
+      });
+    });
+    return parts.join('');
+  }
+
+  function panelBox(x, y, w, h) {
+    return rect(x, y, w, h, { fill: '#fbfaff', stroke: '#e3ddf4', width: 1.1, rx: 10 });
+  }
+
+  /* 3B çizime numara yerleştirme: yüz seçilir, küpün görünen yüzüne yazılır. */
+  function drawIsoLabels(heights, area, labels, maxU) {
+    const geo = isoGeometry(heights, area, maxU);
+    const { u, du, dv } = geo;
+    return labels.map((item) => {
+      const x = geo.dx + item.i * u + item.j * du;
+      const y = geo.dy - item.j * dv - item.level * u;
+      const cx = item.face === 'top' ? x + u / 2 + du / 2 : x + u / 2;
+      const cy = item.face === 'top' ? y - u - dv / 2 : y - u / 2;
+      return `<circle cx="${coord(cx)}" cy="${coord(cy)}" r="${coord(u * 0.26)}" fill="#fff" stroke="#3f6c93" stroke-width="1.2"/>`
+        + text(cx, cy + u * 0.09, String(item.no), { size: Math.max(9, Math.round(u * 0.32)), anchor: 'middle', weight: 800, fill: '#1f3a56' });
+    }).join('');
+  }
+
+  /* Numaralı yapı: dört katlı kule ön sırada olduğu için her küp görünür;
+     numaralar görünen yüzün ortasına yazılır, arada boşluk kalmaz. */
+  const NUMARALI_YAPI = [[4, 1, 1], [0, 1, 1]];
+  const NUMARALI_ETIKET = [
+    { j: 0, i: 0, level: 0, no: 1, face: 'front' },
+    { j: 0, i: 0, level: 1, no: 2, face: 'front' },
+    { j: 0, i: 0, level: 2, no: 3, face: 'front' },
+    { j: 0, i: 0, level: 3, no: 4, face: 'front' },
+    { j: 0, i: 1, level: 0, no: 5, face: 'front' },
+    { j: 0, i: 2, level: 0, no: 6, face: 'front' },
+    { j: 1, i: 1, level: 0, no: 7, face: 'top' },
+    { j: 1, i: 2, level: 0, no: 8, face: 'top' },
+  ];
+
+  /* Eşleştirme sorusunun dört yapısı. */
+  const ESLESME_YAPILARI = [
+    [[2, 1, 1], [1, 1, 0]],
+    [[1, 2, 1], [1, 0, 1]],
+    [[1, 1, 1], [2, 1, 0]],
+    [[2, 0, 1], [1, 1, 1]],
+  ];
+
+  /* Eşleştirme seçenekleri: her seçenek üç görünümden oluşur. */
+  const ESLESME_PANELLERI = [
+    [
+      { title: 'arka', cells: [[0, 0, 1], [1, 1, 1]] },
+      { title: 'sol', cells: [[0, 1], [1, 1]] },
+      { title: 'üst', cells: [[1, 1, 0], [1, 1, 1]] },
+    ],
+    [
+      { title: 'üst', cells: [[1, 0, 1], [1, 1, 1]] },
+      { title: 'ön', cells: [[0, 1, 0], [1, 1, 1]] },
+    ],
+    [
+      { title: 'alt', cells: [[1, 0, 1], [1, 1, 1]] },
+      { title: 'arka', cells: [[0, 0, 1], [1, 1, 1]] },
+    ],
+  ];
+
+  /* Görünümü verilen yapı ve 3×3 görünümler: en az küp sorularının verisi. */
+  const VERILEN_GRUPLARI = [
+    {
+      note: 'Ön, sağ ve üst görünümü verilen yapı. Bu görünümleri elde etmek için en az kaç küp gerekir?',
+      panels: [
+        { title: 'ön', cells: [[1, 0, 0], [1, 1, 1], [1, 1, 1]] },
+        { title: 'sağ', cells: [[1, 0], [1, 1], [1, 1]] },
+        { title: 'üst', cells: [[1, 1, 1], [1, 1, 0]] },
+      ],
+    },
+    {
+      note: 'Önden, sağdan ve üstten 3 × 3 dolu kare görünen yapı. En az kaç küple kurulur?',
+      panels: [
+        { title: 'ön', cells: [[1, 1, 1], [1, 1, 1], [1, 1, 1]] },
+        { title: 'sağ', cells: [[1, 1, 1], [1, 1, 1], [1, 1, 1]] },
+        { title: 'üst', cells: [[1, 1, 1], [1, 1, 1], [1, 1, 1]] },
+      ],
+    },
+  ];
+
+  function stackHeights(state) {
+    const key = clampValue(state && state.desen, 1, 4, 1);
+    const cap = clampValue(state && state.h, 1, 3, 1);
+    const pattern = STACK_PATTERNS[key] || STACK_PATTERNS[1];
+    return pattern.map((row) => row.map((value) => Math.min(value, cap)));
+  }
+
+  /* Ön: her sütunun en yüksek küpü. Yan: her sıranın en yüksek küpü.
+     Üst: dolu kareler. Boş hücreler beyaz kalır; siluet basamaklı görünür. */
+  function viewPanels(heights) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat());
+    const front = [];
+    const side = [];
+    for (let level = top; level >= 1; level -= 1) {
+      front.push(Array.from({ length: width }, (_, i) => heights.some((row) => row[i] >= level)));
+      side.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => value >= level)));
+    }
+    return [
+      { key: 'on', title: 'Ön', cells: front, fill: '#d7ccf7' },
+      { key: 'yan', title: 'Yan', cells: side, fill: '#cfe4f7' },
+      { key: 'ust', title: 'Üst', cells: heights.map((row) => row.map((value) => value > 0)), fill: '#d5efdf' },
+    ];
+  }
+
+  /* Simetri sahnesi için şekiller: birim çember üzerinde köşeler. */
+  const SHAPES = {
+    1: { name: 'Kare', points: [[1, 1], [-1, 1], [-1, -1], [1, -1]] },
+    2: { name: 'Dikdörtgen', points: [[1, 0.62], [-1, 0.62], [-1, -0.62], [1, -0.62]] },
+    3: { name: 'Eşkenar üçgen', points: [[0, -1], [0.87, 0.5], [-0.87, 0.5]] },
+    4: { name: 'Düzgün beşgen', points: [[0, -1], [0.95, -0.31], [0.59, 0.81], [-0.59, 0.81], [-0.95, -0.31]] },
+  };
+
+  function shapeOf(index) {
+    return SHAPES[clampValue(index, 1, 4, 1)] || SHAPES[1];
+  }
+
   /* ---------- sayı ekseni ve sürükleme yardımcıları ---------- */
 
   /* Değeri sürgünün aralığına oturt: taşma ve adım kayması olmaz. */
@@ -942,6 +1253,13 @@
               parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]], { fill: '#efeafd', stroke: '#4a3d7a', width: 1 }));
               parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]], { fill: '#e4dcfa', stroke: '#4a3d7a', width: 1 }));
               parts.push(rect(x, y - u, u, u, { fill: front, stroke: '#4a3d7a', width: 1 }));
+              /* Ön sıradaki her küp numaralanır: birim küpler tek tek sayılır.
+                 Numaralar katman katman artar; arka sıralar aynı sırayı gizler. */
+              if (j === 0 && u >= 24) {
+                parts.push(text(x + u / 2, y - u / 2 + 4, String(k * a + i + 1), {
+                  size: u >= 34 ? 13 : 11, anchor: 'middle', weight: 800, fill: '#33265f',
+                }));
+              }
             }
           }
         }
@@ -951,7 +1269,7 @@
         parts.push(text(410, 100, `Taban: ${num(a)} × ${num(b)} = ?`, { size: 12.5, weight: 700 }));
         parts.push(text(410, 128, `Her katman: ? birim küp`, { size: 12.5, weight: 700, fill: '#41506a' }));
         parts.push(text(410, 156, 'Hacim = ? birimküp', { size: 14, weight: 800, fill: '#5b46a8' }));
-        parts.push(note(40, H - 20, 'Katman sayısı bir artarsa hacim taban alanı kadar artar.', { size: 12 }));
+        parts.push(note(40, H - 20, 'Numaralar yalnız ön sıradaki küpleri sayar; her yeni katman taban alanı kadar küp ekler.', { size: 12 }));
         return parts.join('');
       },
     },
@@ -997,6 +1315,490 @@
         return parts.join('');
       },
     },
+    /* Bileşik (L) cisim: bütün bloktan bir köşe prizması kesilmiş gibi düşünülür.
+       Cisim birim küplerden kurulur; hacim kesilen parça çıkarılarak bulunur. */
+    'bilesik-hacim': {
+      params: [
+        { name: 'a', label: 'Genişlik', min: 3, max: 4, step: 1, value: 4 },
+        { name: 'b', label: 'Derinlik', min: 2, max: 4, step: 1, value: 3 },
+        { name: 'h', label: 'Yükseklik', min: 1, max: 3, step: 1, value: 2 },
+        { name: 'k', label: 'Kesilen parça', min: 1, max: 2, step: 1, value: 2 },
+      ],
+      normalize(state) {
+        state.a = clampValue(state.a, 3, 4, 1);
+        state.b = clampValue(state.b, 2, 4, 1);
+        state.h = clampValue(state.h, 1, 3, 1);
+        state.k = clampValue(state.k, 1, 2, 1);
+      },
+      draw(state) {
+        const a = state.a;
+        const b = state.b;
+        const h = state.h;
+        const k = state.k;
+        const solid = (i, j) => !(i >= a - k && j >= 1);
+        const u = Math.min(46, 250 / (a + b * 0.5), 210 / (h + b * 0.35));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const totalW = a * u + b * du;
+        const totalH = h * u + b * dv;
+        const x0 = 56 + Math.max(0, (286 - totalW) / 2);
+        const y0 = 96 + totalH;
+        const parts = [note(40, 34, 'Bütün blok ile kesilen parça: hacmi iki prizma gibi ayır.', { size: 12.5 })];
+        /* Kesilen parçanın zemindeki yeri: boş kalan dikdörtgen. */
+        for (let j = b - 1; j >= 1; j -= 1) {
+          for (let i = a - 1; i >= a - k; i -= 1) {
+            const x = x0 + i * u + j * du;
+            const y = y0 - j * dv;
+            parts.push(polygon([[x, y], [x + u, y], [x + u + du, y - dv], [x + du, y - dv]], {
+              fill: '#f4f2f8', stroke: '#b9c0cc', width: 1, dash: '4 4',
+            }));
+          }
+        }
+        for (let j = b - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < h; level += 1) {
+            for (let i = 0; i < a; i += 1) {
+              if (!solid(i, j)) continue;
+              const x = x0 + i * u + j * du;
+              const y = y0 - j * dv - level * u;
+              const fill = (i + j + level) % 2 === 0 ? '#c9bff2' : '#ded5fb';
+              parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]], { fill: '#efeafd', stroke: '#4a3d7a', width: 0.9 }));
+              parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]], { fill: '#e4dcfa', stroke: '#4a3d7a', width: 0.9 }));
+              parts.push(rect(x, y - u, u, u, { fill, stroke: '#4a3d7a', width: 0.9 }));
+            }
+          }
+        }
+        /* Kesilen parçanın hacmi boş kalan bir kutu gibi gösterilir: zeminde ve üstte
+           kesikli çerçeve, köşelerde düşey kılavuzlar. Öğrenci "eksik" bloğu görür. */
+        const notch = (level) => {
+          const corners = [[a - k, 1], [a, 1], [a, b], [a - k, b]];
+          return corners.map(([i, j]) => [x0 + i * u + j * du, y0 - j * dv - level * u]);
+        };
+        parts.push(polygon(notch(h), { stroke: '#b8791a', width: 1.2, dash: '5 4' }));
+        parts.push(polygon(notch(0), { stroke: '#b8791a', width: 1.2, dash: '5 4' }));
+        [[a - k, 1], [a, b]].forEach(([i, j]) => {
+          parts.push(line(x0 + i * u + j * du, y0 - j * dv, x0 + i * u + j * du, y0 - j * dv - h * u, { stroke: '#b8791a', width: 1, dash: '4 4' }));
+        });
+        parts.push(text(x0 + totalW / 2, y0 + 22, `genişlik ${num(a)} · derinlik ${num(b)} · yükseklik ${num(h)}`, { size: 11.5, anchor: 'middle', weight: 700, fill: '#33265f' }));
+        parts.push(panel(392, 70, 224, 150));
+        parts.push(text(410, 98, 'Bütün blok', { size: 12.5, weight: 800, fill: '#33265f' }));
+        parts.push(note(410, 122, `${num(a)} · ${num(b)} · ${num(h)} = ? birimküp`, { size: 12 }));
+        parts.push(text(410, 154, 'Kesilen parça', { size: 12.5, weight: 800, fill: '#8a5a10' }));
+        parts.push(note(410, 178, `${num(k)} · ${num(b - 1)} · ${num(h)} = ? birimküp`, { size: 12 }));
+        parts.push(text(410, 206, 'Bileşik cismin hacmi = ?', { size: 13, weight: 800, fill: '#5b46a8' }));
+        parts.push(note(40, H - 20, 'Kesikli küpler boş bırakılır: hacim, kalan küplerin sayısıdır.', { size: 12 }));
+        return parts.join('');
+      },
+    },
+
+    /* Düzensiz küp yığını: sütun yükseklikleri desene göre değişir. Ön, yan ve üst
+       görünümler dolu dikdörtgen değil, basamaklı siluetlerdir. */
+    'duzensiz-yigin': {
+      params: [
+        { name: 'desen', label: 'Yapı', min: 1, max: 4, step: 1, value: 1 },
+        { name: 'h', label: 'En yüksek sütun', min: 1, max: 3, step: 1, value: 3 },
+      ],
+      normalize(state) {
+        state.desen = clampValue(state.desen, 1, 4, 1);
+        state.h = clampValue(state.h, 1, 3, 1);
+      },
+      draw(state) {
+        const heights = stackHeights(state);
+        const depth = heights.length;
+        const width = heights[0].length;
+        const top = Math.max(1, ...heights.flat());
+        const u = Math.min(44, 240 / (width + depth * 0.5), 208 / (top + depth * 0.35));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const totalW = width * u + depth * du;
+        const x0 = 34 + Math.max(0, (270 - totalW) / 2);
+        const y0 = 104 + top * u + depth * dv;
+        const parts = [note(40, 30, 'Her sütunun yüksekliği farklı: görünümler basamaklı olur.', { size: 12 })];
+        for (let j = depth - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < top; level += 1) {
+            for (let i = 0; i < width; i += 1) {
+              if (heights[j][i] <= level) continue;
+              const x = x0 + i * u + j * du;
+              const y = y0 - j * dv - level * u;
+              const fill = (i + j + level) % 2 === 0 ? '#cfe4f7' : '#e4dcfa';
+              parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]], { fill: '#eef6fc', stroke: '#2f6d9a', width: 0.9 }));
+              parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]], { fill: '#dfeef9', stroke: '#2f6d9a', width: 0.9 }));
+              parts.push(rect(x, y - u, u, u, { fill, stroke: '#2f6d9a', width: 0.9 }));
+            }
+          }
+        }
+        /* Üç görünüm: gerçek siluetler (dolu ve boş kareler). */
+        const panels = viewPanels(heights);
+        panels.forEach((panel, index) => {
+          const cols = panel.cells[0].length;
+          const rows = panel.cells.length;
+          const cell = Math.min(18, 60 / Math.max(cols, rows));
+          const boxX = 312 + index * 106;
+          parts.push(rect(boxX, 62, 100, 152, { fill: '#fbfaff', stroke: '#ded8f2', width: 1.1, rx: 10 }));
+          parts.push(text(boxX + 50, 82, panel.title, { size: 12, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          const gx = boxX + 50 - (cols * cell) / 2;
+          const gy = 96;
+          panel.cells.forEach((row, r) => {
+            row.forEach((filled, c) => {
+              parts.push(rect(gx + c * cell, gy + r * cell, cell - 1.2, cell - 1.2, {
+                fill: filled ? panel.fill : '#fff', stroke: filled ? '#4a3d7a' : '#e2dcf2', width: filled ? 0.8 : 0.6, rx: 2,
+              }));
+            });
+          });
+          parts.push(text(boxX + 50, 165, `${num(cols)} × ${num(rows)} kare`, { size: 11, anchor: 'middle', weight: 700, fill: '#41506a' }));
+          parts.push(text(boxX + 50, 184, 'dolu kare: ?', { size: 10.5, anchor: 'middle', fill: '#6b7a90' }));
+          parts.push(text(boxX + 50, 201, 'sen say', { size: 9.5, anchor: 'middle', fill: '#8a93a3' }));
+        });
+        parts.push(note(40, H - 18, 'Dolu kare görünür, boş kare görünmez; üç görünüm birlikte okunur.', { size: 11.5 }));
+        return parts.join('');
+      },
+    },
+
+    /* Karmaşık küp yapısı: solda 3B cisim, sağda yön görünümleri.
+       Sürgü 1–5 arasında başka bir yapıya geçirir. Sayı yazılmaz: öğrenci sayar. */
+    'yapi-gorunum': {
+      params: [
+        { name: 'set', label: 'Yapı grubu', min: 1, max: 2, step: 1, value: 1 },
+        { name: 'sekil', label: 'Şekil (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.set = clampValue(state.set, 1, 2, 1);
+        state.sekil = clampValue(state.sekil, 1, 5, 1);
+      },
+      draw(state) {
+        const heights = yapiOf(state);
+        const parts = [note(22, 28, 'Sürgüyle şekli değiştir; sağdaki görünümler aynı anda güncellenir.', { size: 12 })];
+        parts.push(drawIso(heights, { x: 12, y: 52, width: 262, height: 276 }));
+        const panels = besGorunum(heights);
+        const cols = 3;
+        panels.forEach((panel, index) => {
+          const bx = 292 + (index % cols) * 116;
+          const by = 44 + Math.floor(index / cols) * 158;
+          parts.push(panelBox(bx, by, 108, 148));
+          parts.push(text(bx + 54, by + 20, panel.title, { size: 12, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + 54, by + 40, 104, 104, '#c9dff0'));
+        });
+        return parts.join('');
+      },
+    },
+
+    /* Aynı yapılar, bu kez görünümler gizli: öğrenci kendi sayar. */
+    'yapi-kapali': {
+      params: [
+        { name: 'set', label: 'Yapı grubu', min: 1, max: 2, step: 1, value: 2 },
+        { name: 'sekil', label: 'Şekil (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.set = clampValue(state.set, 1, 2, 1);
+        state.sekil = clampValue(state.sekil, 1, 5, 1);
+      },
+      draw(state) {
+        const heights = yapiOf(state);
+        const parts = [note(22, 30, 'Cismi incele, sonra ön, arka, sağ, sol ve üst görünümdeki kareleri say.', { size: 12 })];
+        parts.push(drawIso(heights, { x: 120, y: 44, width: 400, height: 312 }, 54));
+        return parts.join('');
+      },
+    },
+
+    /* Döndürülebilir yapı: 3B motoru açıksa cisim parmakla döner, yoksa
+       döndürme sürgüsü aynı işi yapar. Görünümler verilmez; öğrenci sayar. */
+    'kup-dondur': {
+      params: [
+        { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.sekil = clampValue(state.sekil, 1, 5, 1);
+        state.donus = clampValue(Number(state.donus) || 0, 0, 3, 1);
+      },
+      draw(state) {
+        const heights = dondur(yapiOf({ set: 3, sekil: state.sekil }), state.donus);
+        const parts = [note(22, 30, 'Cismi tutup sağa–sola sürükleyerek döndür; her yönden incele.', { size: 12 })];
+        parts.push(drawIso(heights, { x: 90, y: 42, width: 460, height: 322 }, 72));
+        parts.push(handle('donus', 320, 190, 'Cismi sürükleyerek döndür'));
+        return parts.join('');
+      },
+      /* Sürükleme yatay bir çevirme kadranı gibi çalışır: sağa çekince cisim döner. */
+      drag(svg, event, name, state) {
+        const local = localPoint(svg, event);
+        state.donus = clampValue(Math.round((local.x - 130) / 120), 0, 3, 1);
+      },
+    },
+
+    /* Görünümleri verilen yapı: öğrenci en az küpü bulur, öteki yönleri çizer. */
+    'gorunum-verilen': {
+      params: [
+        { name: 'grup', label: 'Görünüm grubu', min: 1, max: 2, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.grup = clampValue(state.grup, 1, 2, 1);
+      },
+      draw(state) {
+        const group = VERILEN_GRUPLARI[state.grup - 1] || VERILEN_GRUPLARI[0];
+        const parts = [note(22, 30, group.note, { size: 12 })];
+        const count = group.panels.length;
+        const boxW = Math.min(168, 600 / count - 12);
+        group.panels.forEach((panel, index) => {
+          const bx = 22 + index * (boxW + 16);
+          const by = 58;
+          parts.push(panelBox(bx, by, boxW, 250));
+          parts.push(text(bx + boxW / 2, by + 24, panel.title, { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + boxW / 2, by + 44, boxW - 24, 186, '#c9dff0'));
+        });
+        return parts.join('');
+      },
+    },
+
+    /* En az küple çözümün 3B gösterimi (şifreyle açılır). */
+    'yapi-cozum': {
+      params: [
+        { name: 'goster', label: 'Çözüm (1 = açık)', min: 1, max: 2, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.goster = clampValue(state.goster, 1, 2, 1);
+      },
+      draw() {
+        const parts = [note(22, 30, 'En az küple çözüm: tabanda beş sütun, toplam dokuz küp.', { size: 12 })];
+        parts.push(drawIso([[3, 1, 2], [1, 2, 0]], { x: 150, y: 48, width: 340, height: 300 }));
+        return parts.join('');
+      },
+    },
+
+    /* Numaralı küpler: D/Y soruları numaralara gönderme yapar. */
+    'numarali-yapi': {
+      params: [
+        { name: 'kati', label: 'Kat sayısı', min: 4, max: 4, step: 1, value: 4 },
+      ],
+      normalize(state) {
+        state.kati = 4;
+      },
+      draw() {
+        const area = { x: 90, y: 46, width: 460, height: 306 };
+        const parts = [note(22, 30, 'Dört katlı yapıdaki her küp numaralanmıştır.', { size: 12 })];
+        parts.push(drawIso(NUMARALI_YAPI, area, 64));
+        parts.push(drawIsoLabels(NUMARALI_YAPI, area, NUMARALI_ETIKET, 64));
+        return parts.join('');
+      },
+    },
+
+    /* Eşleştirme: dört yapıdan biri sürgüyle seçilir. */
+    'yapi-tek': {
+      params: [
+        { name: 'secim', label: 'Yapı (A–D)', min: 1, max: 4, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.secim = clampValue(state.secim, 1, 4, 1);
+      },
+      draw(state) {
+        const heights = ESLESME_YAPILARI[state.secim - 1] || ESLESME_YAPILARI[0];
+        const harf = ['A', 'B', 'C', 'D'][state.secim - 1];
+        const parts = [note(22, 28, `${harf} yapısı`, { size: 14 })];
+        parts.push(drawIso(heights, { x: 100, y: 46, width: 300, height: 310 }));
+        return parts.join('');
+      },
+    },
+
+    /* Eşleştirme seçenekleri: üç görünümden oluşan grup. */
+    'gorunum-panelleri': {
+      params: [
+        { name: 'grup', label: 'Seçenek (1–3)', min: 1, max: 3, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.grup = clampValue(state.grup, 1, 3, 1);
+      },
+      draw(state) {
+        const panels = ESLESME_PANELLERI[state.grup - 1] || ESLESME_PANELLERI[0];
+        const parts = [note(22, 28, `${state.grup}. seçenek`, { size: 14 })];
+        const boxW = Math.min(170, 600 / panels.length - 14);
+        panels.forEach((panel, index) => {
+          const bx = 24 + index * (boxW + 16);
+          parts.push(panelBox(bx, 48, boxW, 268));
+          parts.push(text(bx + boxW / 2, 72, panel.title, { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + boxW / 2, 92, boxW - 24, 196, '#c9dff0'));
+        });
+        return parts.join('');
+      },
+    },
+
+    /* Eş küplerle prizma: en, boy ve yükseklik sürgüleriyle cisim büyür.
+       Sade görünüm: yalnız görünen yüzler çizilir (üst açık, ön orta, yan koyu);
+       ızgara, eksen, nokta işareti yok. Cevap (hacim) çizimde yazılmaz. */
+    'kup-kur': {
+      params: [
+        { name: 'en', label: 'En (birim küp)', min: 1, max: 5, step: 1, value: 4 },
+        { name: 'boy', label: 'Boy (birim küp)', min: 1, max: 5, step: 1, value: 3 },
+        { name: 'yuk', label: 'Yükseklik (kat)', min: 1, max: 4, step: 1, value: 2 },
+      ],
+      normalize(state) {
+        state.en = clampValue(state.en, 1, 5, 1);
+        state.boy = clampValue(state.boy, 1, 5, 1);
+        state.yuk = clampValue(state.yuk, 1, 4, 1);
+      },
+      draw(state) {
+        const cols = state.en;
+        const rows = state.boy;
+        const levels = state.yuk;
+        /* Ölçek: cisim pencereye sığsın, sağdan kesilmesin. */
+        const u = Math.min(54, 400 / (cols + rows * 0.5 + 1.2), 250 / (levels + rows * 0.36 + 0.8));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const shapeW = cols * u + rows * du;
+        const shapeH = levels * u + rows * dv;
+        const baseX = Math.max(28, (W - shapeW) / 2 - 30);
+        const baseY = Math.max(levels * u + 40, 340 - Math.max(0, (300 - shapeH) / 2));
+        const parts = [];
+        /* Cisim: arkadan öne doğru çizilir; yalnız görünen yüzler. */
+        /* Ressam sırası: en arkadaki sıra ve en alt kat önce, ön yüz en son. */
+        for (let j = rows - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < levels; level += 1) {
+            for (let i = 0; i < cols; i += 1) {
+              const x = baseX + i * u + j * du;
+              const y = baseY - j * dv - level * u;
+              const frontOpen = j === 0;
+              const sideOpen = i === cols - 1;
+              const topOpen = level === levels - 1;
+              if (topOpen) {
+                parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+                  { fill: '#e9f3fc', stroke: '#3f6c93', width: 1.1 }));
+              }
+              if (frontOpen) {
+                parts.push(rect(x, y - u, u, u, { fill: '#bcd6ec', stroke: '#3f6c93', width: 1.1 }));
+              }
+              if (sideOpen) {
+                parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+                  { fill: '#87aecd', stroke: '#3f6c93', width: 1.1 }));
+              }
+            }
+          }
+        }
+        const left = baseX;
+        const right = baseX + cols * u + rows * du;
+        parts.push(note(left, baseY + 30, `${num(cols)} birim`, { size: 12 }));
+        parts.push(text((left + right) / 2, 26, 'Küpleri say, sonra en · boy · yükseklik çarpımını yaz.', { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' }));
+        parts.push(note(24, baseY - levels * u - rows * dv - 18, 'Görünen yüzler: üst açık, ön orta, yan koyu.', { size: 11.5 }));
+        return parts.join('');
+      },
+    },
+
+    /* Prizmanın üç görünümü: en, boy ve yükseklik sürgüleriyle cisim değişir,
+       sağdaki ön/yan/üst görünümler aynı anda güncellenir. Cevap yazılmaz:
+       öğrenci kaç kare olduğunu kendisi sayar. */
+    'gorunum-kur': {
+      params: [
+        { name: 'en', label: 'En (birim)', min: 1, max: 5, step: 1, value: 4 },
+        { name: 'boy', label: 'Boy (birim)', min: 1, max: 4, step: 1, value: 3 },
+        { name: 'yuk', label: 'Yükseklik (kat)', min: 1, max: 4, step: 1, value: 2 },
+      ],
+      normalize(state) {
+        state.en = clampValue(state.en, 1, 5, 1);
+        state.boy = clampValue(state.boy, 1, 4, 1);
+        state.yuk = clampValue(state.yuk, 1, 4, 1);
+      },
+      draw(state) {
+        const cols = state.en;
+        const rows = state.boy;
+        const levels = state.yuk;
+        const u = Math.min(48, 250 / (cols + rows * 0.5 + 1), 200 / (levels + rows * 0.36 + 0.6));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const shapeW = cols * u + rows * du;
+        const baseX = 26 + Math.max(0, (250 - shapeW) / 2);
+        const baseY = 288 - Math.max(0, (150 - (levels * u + rows * dv)) / 2);
+        const parts = [note(24, 30, 'Sürgüleri değiştir: üç görünüm aynı anda güncellenir.', { size: 12 })];
+        /* Cisim: yalnız görünen yüzler, ressam sırası. */
+        for (let j = rows - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < levels; level += 1) {
+            for (let i = 0; i < cols; i += 1) {
+              const x = baseX + i * u + j * du;
+              const y = baseY - j * dv - level * u;
+              if (level === levels - 1) {
+                parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+                  { fill: '#e9f3fc', stroke: '#3f6c93', width: 1 }));
+              }
+              if (j === 0) parts.push(rect(x, y - u, u, u, { fill: '#bcd6ec', stroke: '#3f6c93', width: 1 }));
+              if (i === cols - 1) {
+                parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+                  { fill: '#87aecd', stroke: '#3f6c93', width: 1 }));
+              }
+            }
+          }
+        }
+        parts.push(note(baseX, baseY + 24, `${num(cols)} birim`, { size: 11.5 }));
+        /* Sağ paneller: gerçek siluetler, kare sayısı yazılmaz. */
+        const panels = [
+          { label: 'ön', cells: Array.from({ length: levels }, () => Array.from({ length: cols }, () => true)) },
+          { label: 'yan', cells: Array.from({ length: levels }, () => Array.from({ length: rows }, () => true)) },
+          { label: 'üst', cells: Array.from({ length: rows }, () => Array.from({ length: cols }, () => true)) },
+        ];
+        const cell = Math.min(19, 78 / Math.max(cols, rows, levels));
+        panels.forEach((view, index) => {
+          const boxX = 296 + index * 106;
+          const gridW = view.cells[0].length * cell;
+          const gridH = view.cells.length * cell;
+          parts.push(panel(boxX, 56, 100, 190));
+          parts.push(text(boxX + 50, 78, view.label, { size: 12.5, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          const gx = boxX + 50 - gridW / 2;
+          const gy = 98 + Math.max(0, (104 - gridH) / 2);
+          view.cells.forEach((row, r) => {
+            row.forEach((filled, c) => {
+              parts.push(rect(gx + c * cell, gy + r * cell, cell - 1, cell - 1, {
+                fill: filled ? '#c9dff0' : '#fff', stroke: '#3f6c93', width: 0.9, rx: 2,
+              }));
+            });
+          });
+          parts.push(note(boxX + 50, 232, 'kaç kare?', { size: 11, anchor: 'middle' }));
+        });
+        return parts.join('');
+      },
+    },
+
+    /* Yansıma ve simetri: ayna doğrusu döner, şeklin görüntüsü çizilir.
+       Görüntü şeklin üstüne oturduğunda o doğru bir simetri doğrusudur. */
+    'simetri-dogru': {
+      params: [
+        { name: 'sekiz', label: 'Şekil', min: 1, max: 4, step: 1, value: 1 },
+        { name: 'aci', label: 'Ayna doğrusu (derece)', min: 0, max: 180, step: 15, value: 0 },
+      ],
+      normalize(state) {
+        state.sekiz = clampValue(state.sekiz, 1, 4, 1);
+        state.aci = clampValue(state.aci, 0, 180, 15);
+      },
+      draw(state) {
+        const shape = shapeOf(state.sekiz);
+        const angle = (state.aci * Math.PI) / 180;
+        const cx = 186;
+        const cy = 196;
+        const R = 84;
+        const vertices = shape.points.map(([x, y]) => [cx + x * R, cy + y * R]);
+        const mirrored = vertices.map(([x, y]) => {
+          const dx = x - cx;
+          const dy = y - cy;
+          const cos = Math.cos(2 * angle);
+          const sin = Math.sin(2 * angle);
+          return [cx + dx * cos + dy * sin, cy + dx * sin - dy * cos];
+        });
+        const parts = [text(W / 2, 30, 'Ayna doğrusunu çevir: görüntü şeklin üstüne oturuyor mu?', { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' })];
+        parts.push(polygon(vertices, { fill: 'rgba(112,86,201,0.14)', stroke: '#5b46a8', width: 2 }));
+        /* Görüntü en üstte: örtüştüğünde yeşil kesikli çizgi mor kenarın üstünde kalır. */
+        parts.push(polygon(mirrored, { fill: 'none', stroke: '#2f8a63', width: 3.2, dash: '7 5' }));
+        vertices.forEach(([x, y]) => parts.push(circle(x, y, 3.2, { fill: '#5b46a8', stroke: '#fff', width: 1 })));
+        mirrored.forEach(([x, y]) => parts.push(circle(x, y, 3.2, { fill: '#2f8a63', stroke: '#fff', width: 1 })));
+        /* Ayna doğrusu: merkezden geçen, panelin dışına taşan kesikli çizgi. */
+        const long = 150;
+        parts.push(line(cx - long * Math.cos(angle), cy + long * Math.sin(angle), cx + long * Math.cos(angle), cy - long * Math.sin(angle), { stroke: '#b8791a', width: 2, dash: '8 5' }));
+        parts.push(circle(cx, cy, 4, { fill: '#b8791a', stroke: '#fff', width: 1.4 }));
+        /* Dört simetri adayı: öğrenci hangilerinin oturduğunu dener. */
+        parts.push(text(cx, 328, shape.name, { size: 12.5, anchor: 'middle', weight: 700, fill: '#33265f' }));
+        parts.push(panel(392, 62, 224, 176));
+        parts.push(text(410, 90, 'Ayna doğrusu', { size: 12.5, weight: 800, fill: '#33265f' }));
+        parts.push(note(410, 114, `${num(state.aci)}° — turuncu kesikli çizgi`, { size: 12 }));
+        parts.push(text(410, 146, 'Görüntü üst üste mi?', { size: 12.5, weight: 800, fill: '#5b46a8' }));
+        parts.push(note(410, 170, 'Yeşil kesikli: aynadaki görüntü.', { size: 11.5 }));
+        parts.push(note(410, 192, 'Örtüşen her açı bir simetri', { size: 11.5 }));
+        parts.push(note(410, 210, 'doğrusudur; kaç tane var?', { size: 11.5 }));
+        parts.push(note(40, H - 20, 'Bir şeklin simetri doğrusu sayısı, örtüşen ayna açılarının sayısıdır.', { size: 12 }));
+        return parts.join('');
+      },
+    },
+
     /* 12. hafta: ortanca ve açıklık — beş değer sıralanır, ortadaki işaretlenir. */
     'sirala-ortanca': {
       params: [
@@ -1102,31 +1904,53 @@
     },
 
     'ortalama': {
+      /* Dört değer: "toplamı eşit paylaştırma" ancak dört veriyle tam görünür. */
       params: [
-        { name: 'a', label: '1. değer', min: 1, max: 9, step: 1, value: 5 },
-        { name: 'b', label: '2. değer', min: 1, max: 9, step: 1, value: 7 },
-        { name: 'c', label: '3. değer', min: 1, max: 9, step: 1, value: 9 },
+        { name: 'a', label: '1. puan', min: 0, max: 100, step: 10, value: 60 },
+        { name: 'b', label: '2. puan', min: 0, max: 100, step: 10, value: 70 },
+        { name: 'c', label: '3. puan', min: 0, max: 100, step: 10, value: 80 },
+        { name: 'd', label: '4. puan', min: 0, max: 100, step: 10, value: 90 },
       ],
       draw(state) {
-        const values = [state.a, state.b, state.c];
-        const p = plotter([0, 10, -1, 3], { x: 50, y: 120, w: W - 100, h: 120 });
-        const mean = values.reduce((sum, value) => sum + value, 0) / 3;
-        const parts = [grid(p, { ylabels: false })];
-        parts.push(line(p.px(0), p.py(0), p.px(10), p.py(0), { width: 1.8 }));
-        for (let x = 0; x <= 10; x += 1) {
+        const values = [state.a, state.b, state.c, state.d];
+        const p = plotter([0, 100, -1, 4], { x: 50, y: 120, w: W - 100, h: 120 });
+        const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+        /* Izgara etiketsiz: eksen çentikleri aşağıda elle yazılır (10’ar). */
+        const parts = [grid(p, { labels: false, ylabels: false, step: 10 })];
+        parts.push(line(p.px(0), p.py(0), p.px(100), p.py(0), { width: 1.8 }));
+        for (let x = 0; x <= 100; x += 10) {
           parts.push(line(p.px(x), p.py(0) - 5, p.px(x), p.py(0) + 5, { width: 1 }));
-          parts.push(text(p.px(x), p.py(0) + 22, String(x), { size: 11, anchor: 'middle', fill: '#6b7a90' }));
+          if (x % 20 === 0) parts.push(text(p.px(x), p.py(0) + 22, String(x), { size: 11, anchor: 'middle', fill: '#6b7a90' }));
         }
+        /* Değer etiketleri aynı yükseklikte ve noktanın yanında: üst üste binmez. */
+        /* Değer etiketleri aynı yükseklikte ve noktanın yanında: üst üste binmez. */
+        const colors = ['#5b46a8', '#2f8a63', '#b8791a', '#4b6b8a'];
+        /* Aynı değer birden çok kez geçerse etiketler yana kaydırılır: üst üste binmez. */
+        const seen = new Map();
         values.forEach((value, index) => {
-          parts.push(circle(p.px(value), p.py(0), 6.5, { fill: ['#5b46a8', '#2f8a63', '#b8791a'][index] }));
-          parts.push(text(p.px(value), p.py(0) - 14 - index * 15, String(value), { size: 11.5, anchor: 'middle', weight: 700 }));
+          const x = p.px(value);
+          const repeat = seen.get(value) || 0;
+          seen.set(value, repeat + 1);
+          parts.push(circle(x, p.py(0), 6.5, { fill: colors[index] }));
+          const toLeft = x > p.px(70);
+          const anchor = toLeft ? 'end' : 'start';
+          const offset = toLeft ? -(10 + repeat * 28) : 10 + repeat * 28;
+          /* Etiketler sırayla iki yükseklikte: komşu değerlerin yazıları çakışmaz. */
+          const lift = 12 + (index % 2) * 17;
+          parts.push(text(x + offset, p.py(0) - lift, String(value), {
+            size: 11.5, anchor, weight: 700, fill: colors[index],
+          }));
         });
         parts.push(line(p.px(mean), p.py(1.6), p.px(mean), p.py(0), { stroke: '#c03744', width: 2, dash: '5 4' }));
-        parts.push(text(p.px(mean), p.py(1.85), 'ortalama = ?', { size: 12.5, anchor: 'middle', weight: 800, fill: '#c03744' }));
-        const sorted = [...values].sort((x, y) => x - y);
+        /* Sağ kenara yakın ortalamada etiket sol tarafa yaslanır: veri etiketleriyle çakışmaz. */
+        const rightSide = p.px(mean) > p.px(74);
+        const leftSide = p.px(mean) < p.px(20);
+        parts.push(text(p.px(mean) + (rightSide ? -10 : leftSide ? 10 : 0), p.py(3.5), 'ortalama = ?', {
+          size: 12.5, anchor: rightSide ? 'end' : leftSide ? 'start' : 'middle', weight: 800, fill: '#c03744',
+        }));
         parts.push(panel(40, 250, W - 80, 100));
-        parts.push(text(60, 280, `Ortalama: (${values.join(' + ')}) ÷ 3 = ?`, { size: 13.5, weight: 700 }));
-        parts.push(text(60, 306, 'Ortanca: ? · Açıklık: ?', { size: 13.5, weight: 700, fill: '#2f8a63' }));
+        parts.push(text(60, 280, `Ortalama: (${values.join(' + ')}) ÷ ${values.length} = ?`, { size: 13, weight: 700 }));
+        parts.push(text(60, 306, 'Ortanca: ? · Açıklık: ?', { size: 13, weight: 700, fill: '#2f8a63' }));
         parts.push(note(60, 330, 'Uç değerler ortalamayı daha çok etkiler; ortanca daha dayanıklıdır.', { size: 12 }));
         return parts.join('');
       },
@@ -1302,6 +2126,10 @@
     params.forEach((param) => {
       state[param.name] = clampValue(param.value, param.min, param.max, param.step);
     });
+    /* Sahne türünde olup sürgüyle gösterilmeyen sabit değerler (ör. önceden seçilmiş yapı grubu). */
+    if (spec.values && typeof spec.values === 'object') {
+      Object.keys(spec.values).forEach((name) => { state[name] = spec.values[name]; });
+    }
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -1316,12 +2144,17 @@
       applyNormalize(scene, state);
     }
 
+    const onPaint = typeof spec.onChange === 'function' ? spec.onChange : null;
+
     function paint() {
       normalize();
       try {
         svg.innerHTML = scene.draw(state);
       } catch (error) {
         svg.innerHTML = `<text x="20" y="40" font-size="14" fill="#b42318">Sahne çizilemedi.</text>`;
+      }
+      if (onPaint) {
+        try { onPaint(state); } catch (error) { /* geri çağrı hatası sahneyi durdurmaz */ }
       }
       if (scene.drag) {
         svg.querySelectorAll('[data-handle]').forEach((node) => {
@@ -1424,5 +2257,21 @@
     return scene.params.map((param) => ({ ...param }));
   }
 
-  window.MATEMATIK_SAHNE2 = Object.freeze({ mount, types, params, render, width: W, height: H });
+  /* Yapı verisi ve görünümleri dışarıdan okunur: etkinlik motoru küp sayılarını
+     buradan hesaplar, öğrenciye cevap anahtarı gönderilmez. */
+  function yapiOfSet(setNo, index) {
+    const set = setOf(setNo);
+    const list = set[(clampValue(index, 1, set.length, 1) - 1)] || set[0];
+    return list.map((row) => row.slice());
+  }
+
+  function gorunumOf(heights) {
+    const map = {};
+    besGorunum(heights).forEach((panel) => { map[panel.key] = panel.cells; });
+    return map;
+  }
+
+  window.MATEMATIK_SAHNE2 = Object.freeze({
+    mount, types, params, render, width: W, height: H, yapiOfSet, gorunumOf, dondur,
+  });
 })();
