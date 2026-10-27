@@ -119,6 +119,11 @@ assert.ok(GG.hasSplit('duzensiz-yigin'), 'Düzensiz yığın da bölünmüş gö
     `${type}: küpler z eksenine oturmalı, ızgara kaymamalı.`);
 });
 /* Düzensiz yığının izdüşümleri gerçek siluet olmalı: boş kare bulunmalı. */
+/* GeoGebra çerçevesi sade olmalı: soldaki cebir/parametre paneli kapatılır. */
+assert.ok(/function stripChrome/.test(ggb), 'GeoGebra çerçevesi sadeleştirilmeli (stripChrome).');
+assert.ok(/perspective: 'T'/.test(ggb), 'Applet 3B görünümle açılmalı (perspective: T).');
+assert.ok(/setPerspective\('-A'\)/.test(ggb), 'Soldaki cebir paneli kapatılmalı.');
+
 /* Ön, yan ve üst yüzler ayrı tonlarda: tek renkli blok kabul edilmez. */
 const frontColor = /front: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
 const sideColor = /side: \[(\d+), (\d+), (\d+)\]/.exec(ggb);

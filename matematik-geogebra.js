@@ -698,6 +698,26 @@
     return found.params.map((param) => ({ ...param }));
   }
 
+  /* Applet çerçevesini sadeleştirir: cebir paneli, araç çubuğu ve giriş alanı
+     kapatılır; yalnız 3B görünüm kalır. API sürümüne göre sessizce atlanır. */
+  function stripChrome(target) {
+    const attempts = [
+      () => target.setPerspective && target.setPerspective('T'),
+      () => target.setPerspective && target.setPerspective('-A'),
+      () => target.evalCommand && target.evalCommand('SetPerspective("T")'),
+      () => target.evalCommand && target.evalCommand('SetPerspective("-A")'),
+      () => target.setAxesVisible && target.setAxesVisible(false, false, false),
+      () => target.setGridVisible && target.setGridVisible(false),
+    ];
+    attempts.forEach((attempt) => {
+      try {
+        attempt();
+      } catch (error) {
+        /* sürüm desteklemiyorsa görünüm olduğu gibi kalır */
+      }
+    });
+  }
+
   function applyLabels(box) {
     if (!box || !box.api || typeof box.api.setLabelVisible !== 'function') return;
     box.names.forEach((name) => {
@@ -922,9 +942,13 @@
         errorDialogsActive: false,
         showLogging: false,
         borderColor: '#ded8f2',
+        perspective: 'T',
         appletOnLoad(nextApi) {
           api = nextApi;
           if (destroyed) return;
+          /* Yalnız 3B görünüm kalsın: soldaki cebir/nesne paneli (points, sliders
+             listesi) kalabalık yapıyordu; referans materyalde de yalnız cisim var. */
+          stripChrome(api);
           build(0);
           if (typeof window.ResizeObserver === 'function') {
             let debounce = null;

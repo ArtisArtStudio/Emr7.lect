@@ -1260,244 +1260,228 @@
       stages: [
         {
           kind: 'warmup',
-          title: 'Aynı yapı, üç fotoğraf',
+          title: 'Aynı yapı, farklı yön',
           context: [
-            'Anıtkabir’in farklı yönlerden çekilmiş fotoğrafları aynı yapıyı gösterir; bakış yönü değişince görüntü de değişir.',
-            'Yandaki üç fotoğraf eş küplerle kurulmuş tek bir yapıya ait: izometrik görünüm, önden görünüm ve üstten görünüm.',
+            'Anıtkabir’in farklı yönlerden çekilmiş fotoğrafları veriliyor: aynı yapı, farklı görüntü.',
+            'Yandaki üç kutu gerçek fotoğraf değil, eş küplerle kurulmuş aynı yapının üç ayrı yönden görünüşü.',
           ],
           questions: [
-            Object.assign(q('Birinci fotoğraftaki yapıda kaç eş küp vardır?',
-              'Sütun yüksekliklerini arkadan öne doğru tek tek say.',
-              'Arkadaki sütunlar $2$ ve $1$, öndekiler $1$ ve $1$: toplam $5$ küp.'), {
-              figure: { type: 'fotograf-uc', options: { heights: [[2, 1], [1, 1]] } },
+            Object.assign(q('Yandaki yapı kaç eş küpten oluşur?',
+              'Yapıyı arkadan öne doğru sütun sütun say.',
+              'Arkada $2$ ve $1$, önde $1$ ve $1$ küp var: toplam $5$ küp.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], note: 'İzometrik görünüm: küpleri tek tek say.' } },
             }),
-            Object.assign(q('İkinci fotoğrafta önden bakıldığında kaç kare dolu görünür?',
-              'Her sütunun en yüksek küpü görünür; arkadaki $2$ küp öndekinin arkasında kalır.',
-              'İki sütun, en yüksekleri $2$ ve $1$: $3$ kare dolu görünür.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], views: 'front', note: 'Önden bakış: sütun yükseklikleri 2 ve 1.' } },
+            Object.assign(q('Aynı yapının önden görünüşü hangi biçimdedir?',
+              'Önden bakınca derinlik kaybolur; her sütunun en yüksek küpü görünür.',
+              'Yükseklikler $2$ ve $1$: $3$ karelik basamaklı siluet.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], views: 'front', note: 'Önden bakış.' } },
             }),
-            Object.assign(q('Üçüncü fotoğraf hangi yönden çekilmiştir?',
-              'Fotoğrafta yükseklik yok, yalnız taban görünüyor.',
-              'Üstten: taban $2 \\times 2$ kare, hepsi dolu.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], views: 'top' } },
-            }),
-            Object.assign(q('Aynı yapının üç fotoğrafı neden birbirine benzemiyor?',
-              'Her fotoğrafta farklı iki boyut görünür: genişlik-yükseklik, derinlik-yükseklik, genişlik-derinlik.',
-              'Bakış yönü değiştikçe görünen boyutlar değişir; cisim aynı kalsa da siluet değişir.'), {
-              figure: { type: 'fotograf-uc', options: { heights: [[2, 2], [1, 0]] } },
+            Object.assign(q('Aynı yapı üstten bakıldığında ne görünür?',
+              'Üstten bakınca yükseklik kaybolur; taban görünür.',
+              'Taban $2 \\times 2$ kare, dört hücrede de küp var: $4$ dolu kare.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], views: 'top', note: 'Üstten bakış.' } },
             }),
           ],
         },
         {
           kind: 'start',
-          title: 'Eş küplerle yapı',
+          title: 'Küpleri say, çarpımı yaz',
           context: [
-            'Sınıfta eş küplerle bir yapı kuruluyor. Yapı döndürülmeden önden, yandan ve üstten bakılıp kaçar kare göründüğü yazılıyor.',
+            'Sıranın üzerinde eş küplerle bir prizma kuruluyor: en, boy ve yükseklik sayısı küplerle ayarlanıyor.',
+            'Aşağıdaki sahnede üç sürgü var. Sürgüleri değiştirdikçe cisim büyür; kaç küp olduğunu sayıp yazabilirsin.',
+          ],
+          intro: [
+            'Sahnedeki cismin eni $4$, boyu $3$, yüksekliği $2$ birim küp. Önce katman katman say, sonra çarpımı yaz.',
           ],
           questions: [
-            Object.assign(q('Yandaki yapının ön görünümünde kaç kare dolu görünür?',
-              'Sütunların en yüksek küplerini say: soldan sağa.',
-              '$3$ sütun, yükseklikleri $1$, $1$ ve $1$: $3$ kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[1, 1, 1]], views: 'all' } },
-            }),
-            Object.assign(q('Aynı yapının yan görünümünde kaç kare dolu görünür?',
-              'Yandan bakınca derinlik yatay, yükseklik düşey olur; yapı tek sıra derinliğinde.',
-              'Tek sütun, yükseklik $1$: $1$ kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[1, 1, 1]], views: 'side' } },
-            }),
-            Object.assign(q('Ön görünümü $3$ kare, yan görünümü $1$ kare, üst görünümü $3$ kare olan yapı en az kaç küple kurulur?',
-              'Üç görünüm de tek katlı bir sırayı gösteriyor.',
-              'Tek sıra, tek kat: $3$ küp.'), {
-              figure: { type: 'gorunum-tablo', options: { front: [[1, 1, 1]], side: [[1]], top: [[1, 1, 1]] } },
-            }),
-            Object.assign(q('Yandaki iki yapıdan hangisinde daha çok küp vardır?',
-              'Her yapının sütunlarını ayrı ayrı topla.',
-              'Soldaki $1+1+1+1 = 4$, sağdaki $1+1 = 2$ küp. Soldaki daha çok.'), {
-              figure: { type: 'kup-yapi', options: { stacks: [[[1, 1], [1, 1]], [[1, 1], [0, 0]]] } },
-            }),
+            q('Sahnedeki cismin bir katmanında kaç küp vardır?',
+              'Sürgüleri oynat: bir katman en × boy kadar küpten oluşur.',
+              'Bir katman $4 \\cdot 3 = 12$ küp.'),
+            q('Sahnedeki cismin toplam kaç birim küpten oluştuğunu bul.',
+              'Kaç katman var? Katman sayısı ile bir katmandaki küp sayısını çarp.',
+              '$12 \\cdot 2 = 24$ birim küp.'),
+            q('Eni $3$, boyu $2$, yüksekliği $4$ olacak biçimde sürgüleri ayarla. Kaç küp olur?',
+              'Önce bir katmanı, sonra kat sayısını düşün.',
+              '$3 \\cdot 2 = 6$ küp bir katmanda; $6 \\cdot 4 = 24$ küp.'),
           ],
+          scene: {
+              type: 'kup-kur',
+              params: [
+                  { name: 'en', label: 'En (birim küp)', min: 1, max: 5, step: 1, value: 4 },
+                  { name: 'boy', label: 'Boy (birim küp)', min: 1, max: 5, step: 1, value: 3 },
+                  { name: 'yuk', label: 'Yükseklik (kat)', min: 1, max: 4, step: 1, value: 2 },
+                ],
+            },
         },
         {
           kind: 'learn',
           title: 'Ön, yan ve üst görünüm',
           checks: [
-            Object.assign(q('Ön görünümü $2 \\times 2$, üst görünümü $2 \\times 1$ olan yapı en az kaç küple kurulur?',
-              'Üst görünüm tabanı $2 \\cdot 1 = 2$ küp; ikinci kat için aynı sütunlara birer küp daha gerekir.',
-              'Taban $2$ küp, ikinci kat $2$ küp: $4$ küp.'), {
-              figure: { type: 'gorunum-tablo', options: { front: [[1, 1], [1, 1]], side: [[1, 1]], top: [[1, 1]] } },
+            Object.assign(q('Yandaki prizmanın ön görünümünde kaç kare vardır?',
+              'Ön görünüm en × yükseklik kadardır.',
+              '$5 \\cdot 2 = 10$ kare.'), {
+              figure: { type: 'prizma', options: { a: 5, b: 3, c: 2 } },
             }),
-            Object.assign(q('Yandaki yapıda kaç birim küp vardır?',
-              'Her sütunun yüksekliğini ayrı ayrı topla.',
-              'Sütunlar $2$, $2$, $2$ ve $1$: toplam $7$ küp.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 2], [2, 1]] } },
+            Object.assign(q('Aynı prizmanın üst görünümünde kaç kare vardır?',
+              'Üst görünüm en × boy kadardır.',
+              '$5 \\cdot 3 = 15$ kare.'), {
+              figure: { type: 'prizma', options: { a: 5, b: 3, c: 2, note: 'En 5, boy 3, yükseklik 2 birim.' } },
             }),
-            Object.assign(q('Yandaki yapının üst görünümünde kaç kare dolu görülür?',
-              'Üst görünüm tabanı gösterir; yüksekliği sıfır olan hücre boş kalır.',
-              'Taban $2 \\times 2$, üç hücrede küp var: $3$ dolu kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[1, 1], [1, 0]], views: 'top' } },
-            }),
-            Object.assign(q('Yandaki yapının yan görünümünde kaç kare dolu görünür?',
-              'Yan görünümde derinlik yatay, yükseklik düşey okunur.',
-              'İki sıra derinlik, en yüksekleri $2$ ve $1$: $3$ kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], views: 'side' } },
+            Object.assign(q('Yandaki yapının yan görünümünde kaç kare vardır?',
+              'Yan görünüm boy × yükseklik kadardır; yapı iki sıra derinliğinde.',
+              'Boy $2$, yükseklik $2$: $4$ kare.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [1, 1]], views: 'side', note: 'Yandan bakış.' } },
             }),
           ],
           blocks: [
             {
-              heading: 'Ön görünüm: genişlik × yükseklik',
+              heading: 'Ön görünüm: en × yükseklik',
               paragraphs: [
-                'Önden bakıldığında yalnız genişlik ve yükseklik görünür; derinlik yok olur.',
-                'Aynı ön görünümü veren birden çok yapı olabilir: arkada kalan küpler siluete girmez. Bu yüzden küp sayısı yalnız ön görünümden bulunamaz.',
+                'Önden bakıldığında derinlik kaybolur; yalnız en ve yükseklik görünür.',
+                'Bu yüzden ön görünümdeki kare sayısı en ile yüksekliğin çarpımıdır. Arkada kalan küpler siluete girmez.',
               ],
-              figure: { type: 'kup-yapi', options: { stacks: [[[1, 1, 1], [0, 0, 0]], [[1, 1, 1], [1, 0, 1]]], note: 'İki yapının ön görünümü de üç kare; küp sayıları farklı.' } },
+              figure: { type: 'fotograf-uc', options: { heights: [[2, 1, 1], [1, 1, 0]], note: 'Önden bakış solda, ön ve üst silueti sağda.' } },
             },
             {
-              heading: 'Yan görünüm: derinlik × yükseklik',
+              heading: 'Yan görünüm: boy × yükseklik',
               paragraphs: [
-                'Yapı döndürülmeden yandan bakılır: derinlik yatay, yükseklik düşey okunur.',
-                'Ön görünümde üst üste gelen küpler yandan bakınca ayrılabilir; bu yüzden yan görünüm ön görünümün sakladığını gösterebilir.',
+                'Yandan bakıldığında en kaybolur; boy ve yükseklik görünür.',
+                'Ön görünümde üst üste gelen küpler yandan ayrılır: yan görünüm, ön görünümün sakladığını gösterebilir.',
               ],
-              figure: { type: 'fotograf-uc', options: { heights: [[2, 2], [1, 0]], note: 'Soldaki izometri, ortada ön, sağda üst görünüm.' } },
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 1], [1, 1, 0]], views: 'side', note: 'Yandan bakış: iki sıra derinlik.' } },
             },
             {
-              heading: 'Üst görünüm: genişlik × derinlik',
+              heading: 'Üst görünüm: en × boy',
               paragraphs: [
-                'Üstten bakıldığında taban görünür; her dolu kare, tabanında en az bir küp olan sütunu gösterir.',
-                'Ön, yan ve üst görünüm birlikte verildiğinde yapı büyük ölçüde belirlenir. En az küp sorulduğunda her görünen kareyi tek küple karşıla.',
+                'Üstten bakıldığında yükseklik kaybolur; taban görünür.',
+                'Dolu kare, tabanında en az bir küp olan sütunu gösterir. Üç görünüm birlikte yapıyı belirler.',
               ],
-              figure: { type: 'gorunum-tablo', options: { front: [[1, 1, 1], [1, 0, 1]], side: [[1, 1], [1, 0]], top: [[1, 1, 1], [0, 1, 0]] } },
+              figure: { type: 'gorunum-tablo', options: { front: [[1, 1, 1], [1, 1, 0]], side: [[1, 1], [1, 0]], top: [[1, 1, 1], [0, 1, 0]] } },
             },
             {
               heading: 'Yüz, ayrıt, köşe',
               paragraphs: [
-                'Dikdörtgenler prizmasında $6$ yüz, $12$ ayrıt, $8$ köşe vardır. Bu sayılar ölçülerden bağımsızdır.',
+                'Dikdörtgenler prizmasında yüz sayısı $6$, ayrıt sayısı $12$, köşe sayısı $8$’dir. Bu sayılar ölçülerden bağımsızdır.',
                 'Ayrıt iki yüzün kesiştiği doğru parçası, köşe üç ayrıtın buluştuğu noktadır.',
               ],
-              figure: { type: 'prizma', options: { a: 4, b: 3, c: 2 } },
+              figure: { type: 'ayrit', options: {} },
             },
           ],
           boxes: [
-            { title: 'Ön görünüm', body: 'Genişlik × yükseklik; arkadaki küpler görünmez.' },
-            { title: 'Yan görünüm', body: 'Derinlik × yükseklik; ön görünümün sakladığını gösterebilir.' },
-            { title: 'Üst görünüm', body: 'Genişlik × derinlik; dolu kare, tabanında küp olan sütun.' },
+            { title: 'Ön görünüm', body: 'En × yükseklik; arkadaki küpler görünmez.' },
+            { title: 'Yan görünüm', body: 'Boy × yükseklik; ön görünümün sakladığını gösterebilir.' },
+            { title: 'Üst görünüm', body: 'En × boy; dolu kare, tabanında küp olan sütun.' },
           ],
         },
         {
           kind: 'discuss',
           title: 'Görünümler neyi saklar?',
           items: [
-            Object.assign(q('Önden $3$ kare genişlik ve $2$ kare yükseklik görünen bir yapının toplam küp sayısı kesin olarak bulunabilir mi?',
-              'Arkadaki sütunların yüksekliğini ön görünüm söyler mi?',
-              'Bulunamaz: en yüksek sütunun $2$ olduğu bilinir, ama arkadaki küplerin sayısı ön görünümden görünmez.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 1], [2, 1, 1]], views: 'front' } },
+            Object.assign(q('Önden $5 \\times 2$ kare görünen bir prizmanın üst görünümü neden $5 \\times 4$ olabilir?',
+              'Ön görünüm derinliği göstermez; boy üst görünümde ortaya çıkar.',
+              'Ön görünüm yalnız en ve yüksekliği verir; boy $4$ olduğu için üst görünüm $5 \\cdot 4 = 20$ karedir.'), {
+              figure: { type: 'prizma', options: { a: 5, b: 4, c: 2, note: 'En 5, boy 4, yükseklik 2.' } },
             }),
             Object.assign(q('Yandaki iki yapının ön görünümü aynı mıdır?',
-              'Her yapının sütun yüksekliklerini karşılaştır.',
-              'Aynı: ikisinde de sütunlar $1$, $1$ ve $1$ yüksekliğinde. Yalnız ikinci yapıda önde bir küp daha var.'), {
-              figure: { type: 'kup-yapi', options: { stacks: [[[1, 1, 1]], [[1, 1, 1], [1, 0, 0]]] } },
+              'Sütun yüksekliklerini karşılaştır.',
+              'Aynı: ikisinde de sütunlar $1$ yüksekliğinde. İkinci yapıda yalnız arkada bir küp daha var.'), {
+              figure: { type: 'kup-yapi', options: { stacks: [[[1, 1, 1]], [[1, 1, 1], [1, 0, 0]]], note: '1. ve 2. yapı: ön görünüm aynı mı?' } },
             }),
-            Object.assign(q('Yandaki yapıya bir küp eklenirse hangi görünüm değişmeyebilir?',
+            Object.assign(q('Yandaki yapıya bir küp eklendiğinde hangi görünüm değişmeyebilir?',
               'Eklenen küp hangi görünümde başka bir küpün arkasında kalır?',
-              'Önde ve alçakta kalan küp, arkadaki yüksek sütunun arkasında kalırsa ön görünüm değişmez; üst görünüm değişir.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [0, 0]], views: 'all' } },
+              'Arkada ve alçakta kalan küp ön görünümü değiştirmez; üst görünümde yeni bir dolu kare belirir.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1], [0, 0]], views: 'front', note: 'Önden: sütunlar 2 ve 1.' } },
             }),
-            Object.assign(q('Üstten görünümde kaç dolu kare var? Bu sayı ile tabandaki küp sayısı arasında nasıl bir ilişki vardır?',
+            Object.assign(q('Üst görünümdeki dolu kare sayısı ile tabandaki küp sayısı arasında nasıl bir ilişki vardır?',
               'Her dolu kare, tabanında en az bir küp olan sütunu gösterir.',
-              'Dolu kare sayısı, tabanda küp bulunan sütun sayısına eşittir; yükseklik bu sayıya girmez.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 0], [1, 1, 1]], views: 'top' } },
+              'Eşittir: dolu kare sayısı, tabanda küp bulunan sütun sayısıdır; yükseklik bu sayıya girmez.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 0], [1, 1, 1]], views: 'top', note: 'Üstten: beş dolu kare.' } },
             }),
           ],
         },
         {
           kind: 'explore',
-          title: 'Düzensiz yığın: üç görünüm',
+          title: 'Kendi prizmanı kur, görünümlerini oku',
           intro: [
-            'Sahnedeki yığının sütunları farklı yükseklikte. Cismi parmağınla döndür, sonra sağdaki ön, yan ve üst panelleri incele.',
-            'Aşağıdaki soruların her biri kendi yığınını gösteriyor; önce şekli incele, sonra say.',
+            'Sahnede en, boy ve yükseklik sürgüleri var. Sürgüleri değiştirdikçe cisim ve sağdaki ön, yan, üst panelleri aynı anda değişir.',
+            'Aşağıdaki soruları sahnedeki değerlerle yanıtla; sonra kendi prizmanı kurup üç görünümünü defterine çiz.',
           ],
-          materials: 'Aşağıdaki 3B yığın sahnesi (döndürülebilir), eş küpler, kareli kâğıt',
+          materials: 'Aşağıdaki 3B sahne (sürgülerle ayarlanır), eş küpler, kareli kâğıt',
           steps: [
-            Object.assign(q('Yandaki yapının ön görünümünde kaç kare dolu görünür?',
-              'Sütunların en yüksek küplerini say: soldan sağa $2$, $1$, $1$.',
-              '$2 + 1 + 1 = 4$ kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 1]], views: 'front' } },
-            }),
-            Object.assign(q('Yandaki yapıya arkaya bir küp eklendiğinde ön görünüm değişti mi, kaç küp oldu?',
-              'Arkadaki küp öndeki sütunun arkasında kalıyor.',
-              'Ön görünüm değişmedi ($4$ kare), küp sayısı $4$’ten $5$’e çıktı.'), {
-              figure: { type: 'kup-yapi', options: { stacks: [[[2, 1, 1]], [[2, 1, 1], [1, 0, 0]]] } },
-            }),
-            Object.assign(q('Yandaki yapının üst görünümünde kaç dolu kare var?',
-              'Üst görünüm tabanı gösterir; yükseklik sıfır olan hücre boş kalır.',
-              'Taban $2 \times 3$, beş hücrede küp var: $5$ dolu kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 1], [1, 0, 1]], views: 'top' } },
-            }),
-            Object.assign(q('Yandaki yapının yan görünümünde kaç kare dolu görünür?',
-              'Yan görünümde derinlik yatay, yükseklik düşey okunur; iki sıranın en yüksekleri.',
-              'Sıraların en yüksekleri $2$ ve $1$: $3$ kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 1, 1], [1, 0, 1]], views: 'side' } },
-            }),
-            q('Sahnedeki yığını döndür: ön, yan ve üst paneller sürgülerle nasıl değişiyor? Kendi yığınını kur ve üç görünümünü defterine çiz.',
-              'Bir sütunun yüksekliğini artır: hangi paneller değişiyor?',
-              'Yükseklik artınca ön ve yan panelde yeni kare belirir; üst panel değişmez (taban aynı).'),
+            q('Sahnedeki prizmanın eni $5$, boyu $3$, yüksekliği $2$ birim. Ön görünümünde kaç kare var?',
+              'Ön panelde satır sayısı yükseklik, sütun sayısı en kadardır.',
+              '$5 \\cdot 2 = 10$ kare.'),
+            q('Aynı prizmanın üst görünümünde kaç kare var?',
+              'Üst panelde satır sayısı boy, sütun sayısı en kadardır.',
+              '$5 \\cdot 3 = 15$ kare.'),
+            q('Sürgülerle eni $2$, boyu $4$, yüksekliği $3$ yap. Yan görünümde kaç kare olur?',
+              'Yan görünüm boy × yükseklik.',
+              '$4 \\cdot 3 = 12$ kare.'),
+            q('Aynı cisimde toplam kaç birim küp vardır?',
+              'En · boy · yükseklik.',
+              '$2 \\cdot 4 \\cdot 3 = 24$ birim küp.'),
+            q('Kendi prizmanı kur: en, boy ve yükseklik kaç olursa ön ve üst görünümde aynı sayıda kare olur?',
+              'Ön görünüm en × yükseklik, üst görünüm en × boy.',
+              'Boy ile yükseklik eşit olduğunda iki görünümde aynı sayıda kare olur (ör. $2 \\times 3 \\times 3$).'),
           ],
           scene: {
-              type: 'duzensiz-yigin',
+              type: 'gorunum-kur',
               params: [
-                  { name: 'desen', label: 'Yapı', min: 1, max: 4, step: 1, value: 2 },
-                  { name: 'h', label: 'En yüksek sütun', min: 1, max: 3, step: 1, value: 3 },
+                  { name: 'en', label: 'En (birim)', min: 1, max: 5, step: 1, value: 5 },
+                  { name: 'boy', label: 'Boy (birim)', min: 1, max: 4, step: 1, value: 3 },
+                  { name: 'yuk', label: 'Yükseklik (kat)', min: 1, max: 4, step: 1, value: 2 },
                 ],
             },
         },
         {
           kind: 'practice',
-          title: 'Uygulayalım: görünümler ve ayrıtlar',
+          title: 'Uygulayalım: görünümler',
           intro: [
             'Uygulayalım: aşağıdaki alıştırmaları defterinde çöz, sonra cevabını ve gerekçeni yaz.',
           ],
           questions: [
             Object.assign(q('Yandaki yapıda kaç birim küp vardır?',
-              'Sütunları tek tek topla: $3 + 2 + 2 + 1 + 1$.',
+              'Sütunları tek tek topla: $3$, $2$, $2$, $1$ ve $1$.',
               '$9$ birim küp.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[3, 2], [2, 1], [1, 0]] } },
+              figure: { type: 'kup-yapi', options: { heights: [[3, 2], [2, 1], [1, 0]], note: 'Üç sıra derinlik; sütunları topla.' } },
             }),
-            Object.assign(q('Yandaki yapının ön görünümünde kaç kare dolu görünür?',
-              'Her sütunun en yüksek küpünü al.',
-              '$3 + 2 + 2 = 7$ kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[3, 2], [2, 1], [1, 0]], views: 'front' } },
+            Object.assign(q('Aynı yapının ön görünümünde kaç kare dolu görünür?',
+              'Her sütunun en yüksek küpünü al: $3$, $2$ ve $2$.',
+              '$7$ kare.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[3, 2], [2, 1], [1, 0]], views: 'front', note: 'Önden bakış.' } },
             }),
-            Object.assign(q('Ön görünümü $2 \times 3$, yan görünümü $1 \times 3$ olan yapı en az kaç küple kurulur?',
-              'Üst görünüm $2 \times 1$ olur: iki sütun, her biri $3$ kat.',
-              '$2 \\cdot 1 \\cdot 3 = 6$ küp.'), {
-              figure: { type: 'gorunum-tablo', options: { front: [[1, 1], [1, 1], [1, 1]], side: [[1], [1], [1]], top: [[1, 1]] } },
+            Object.assign(q('Eni $3$, boyu $2$, yüksekliği $4$ birim olan prizmanın hacmi kaç birimküptür?',
+              'Hacim = en · boy · yükseklik.',
+              '$3 \\cdot 2 \\cdot 4 = 24$ birimküp.'), {
+              figure: { type: 'prizma', options: { a: 3, b: 2, c: 4, note: 'En 3, boy 2, yükseklik 4.' } },
             }),
-            Object.assign(q('Ayrıtları $4$, $3$ ve $2$ birim olan dikdörtgenler prizmasının kaç yüzü, kaç ayrıtı, kaç köşesi vardır?',
-              'Yüz, ayrıt ve köşe sayısı ölçülerden bağımsızdır.',
-              '$6$ yüz, $12$ ayrıt, $8$ köşe.'), {
-              figure: { type: 'prizma', options: { a: 4, b: 3, c: 2 } },
+            Object.assign(q('Yandaki yapının üst görünümünde kaç dolu kare vardır?',
+              'Tabanı oku: yüksekliği sıfır olan hücre boş.',
+              'Taban $2 \\times 3$, beş hücrede küp var: $5$ dolu kare.'), {
+              figure: { type: 'kup-yapi', options: { heights: [[2, 0, 1], [1, 1, 0]], views: 'top', note: 'Üstten bakış.' } },
             }),
-            Object.assign(q('Yandaki yapının üst görünümünde kaç dolu kare var?',
-              'Tabanı oku; yüksekliği sıfır olan hücre boş.',
-              'Taban $2 \times 3$, beş hücrede küp var: $5$ dolu kare.'), {
-              figure: { type: 'kup-yapi', options: { heights: [[2, 0, 1], [1, 1, 0]], views: 'top' } },
+            Object.assign(q('Yandaki prizmanın yan görünümünde kaç kare vardır?',
+              'Yan görünüm boy × yükseklik.',
+              'Boy $4$, yükseklik $2$: $8$ kare.'), {
+              figure: { type: 'prizma', options: { a: 3, b: 4, c: 2 } },
             }),
           ],
         },
         {
           kind: 'problem',
-          title: 'En az kaç küp?',
+          title: 'Kutunun içine kaç küp sığar?',
           context: [
-            'Önden, yandan ve üstten görünümleri aynı olan bir yapı var. Bu yapı en az kaç eş küple oluşturulabilir?',
-            'Yandaki üç görünüm bu koşulu sağlıyor: her yönden aynı siluet görünüyor.',
+            'Bir fabrikada kenarı $1$ dm olan küp biçimli paketler, ayrıtları $4$ dm, $3$ dm ve $2$ dm olan dikdörtgenler prizması biçimindeki kutulara yerleştiriliyor.',
+            'Kutunun içi boşluksuz doldurulacak. Kaç paket sığar?',
           ],
           steps: [
-            step('Anla', 'Üç görünüm aynıysa yapı her yönden aynı silueti veriyor; istenen en az küp sayısı.'),
-            step('Planla', 'Üst görünüm tabanı verir. Sonra ön görünümün her sütun yüksekliğini yalnız gerekli yerde kullan.'),
-            step('Çöz', 'Taban $3 \times 3$ değil, $2 \times 2$: üst görünümde $4$ dolu kare var. Ön görünümde bir sütun $2$ katlı olduğu için bir sütuna bir küp daha eklenir: $4 + 1 = 5$ küp.'),
-            step('Kontrol', 'Her eklenen küp yeni bir kare oluşturuyor mu? Oluşturmuyorsa gereksizdir; çıkardığında görünümlerden biri bozulmalı.'),
+            step('Anla', 'Paketler küp, kutu prizma; hepsi aynı birimle (dm) verilmiş. Kutunun içi boşluksuz dolacak.'),
+            step('Planla', 'Kutunun hacmini birimküp cinsinden bul; her paket tam bir birimküpe karşılık gelir.'),
+            step('Çöz', '$4 \\cdot 3 \\cdot 2 = 24$ birimküp; kutuya $24$ paket sığar.'),
+            step('Kontrol', 'Katman katman düşün: bir katmanda $4 \\cdot 3 = 12$ paket, iki kat: $24$. Sonuç tutuyor.'),
           ],
-          figure: { type: 'gorunum-tablo', options: { front: [[1, 1, 0], [1, 1, 1]], side: [[1, 1], [1, 1]], top: [[1, 1, 0], [1, 1, 0]] } },
-          result: 'Üç görünüm birlikte okunur; gereksiz küp eklenmeden en az sayı bulunur.',
+          figure: { type: 'prizma', options: { a: 4, b: 3, c: 2, note: 'Ayrıtlar 4 dm, 3 dm, 2 dm.' } },
+          result: 'Kutunun hacmi $24$ birimküp olduğu için $24$ paket sığar.',
         },
       ],
     },

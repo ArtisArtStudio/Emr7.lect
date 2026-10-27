@@ -1191,6 +1191,138 @@
       },
     },
 
+    /* Eş küplerle prizma: en, boy ve yükseklik sürgüleriyle cisim büyür.
+       Sade görünüm: yalnız görünen yüzler çizilir (üst açık, ön orta, yan koyu);
+       ızgara, eksen, nokta işareti yok. Cevap (hacim) çizimde yazılmaz. */
+    'kup-kur': {
+      params: [
+        { name: 'en', label: 'En (birim küp)', min: 1, max: 5, step: 1, value: 4 },
+        { name: 'boy', label: 'Boy (birim küp)', min: 1, max: 5, step: 1, value: 3 },
+        { name: 'yuk', label: 'Yükseklik (kat)', min: 1, max: 4, step: 1, value: 2 },
+      ],
+      normalize(state) {
+        state.en = clampValue(state.en, 1, 5, 1);
+        state.boy = clampValue(state.boy, 1, 5, 1);
+        state.yuk = clampValue(state.yuk, 1, 4, 1);
+      },
+      draw(state) {
+        const cols = state.en;
+        const rows = state.boy;
+        const levels = state.yuk;
+        /* Ölçek: cisim pencereye sığsın, sağdan kesilmesin. */
+        const u = Math.min(54, 400 / (cols + rows * 0.5 + 1.2), 250 / (levels + rows * 0.36 + 0.8));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const shapeW = cols * u + rows * du;
+        const shapeH = levels * u + rows * dv;
+        const baseX = Math.max(28, (W - shapeW) / 2 - 30);
+        const baseY = Math.max(levels * u + 40, 340 - Math.max(0, (300 - shapeH) / 2));
+        const parts = [];
+        /* Cisim: arkadan öne doğru çizilir; yalnız görünen yüzler. */
+        /* Ressam sırası: en arkadaki sıra ve en alt kat önce, ön yüz en son. */
+        for (let j = rows - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < levels; level += 1) {
+            for (let i = 0; i < cols; i += 1) {
+              const x = baseX + i * u + j * du;
+              const y = baseY - j * dv - level * u;
+              const frontOpen = j === 0;
+              const sideOpen = i === cols - 1;
+              const topOpen = level === levels - 1;
+              if (topOpen) {
+                parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+                  { fill: '#e9f3fc', stroke: '#3f6c93', width: 1.1 }));
+              }
+              if (frontOpen) {
+                parts.push(rect(x, y - u, u, u, { fill: '#bcd6ec', stroke: '#3f6c93', width: 1.1 }));
+              }
+              if (sideOpen) {
+                parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+                  { fill: '#87aecd', stroke: '#3f6c93', width: 1.1 }));
+              }
+            }
+          }
+        }
+        const left = baseX;
+        const right = baseX + cols * u + rows * du;
+        parts.push(note(left, baseY + 30, `${num(cols)} birim`, { size: 12 }));
+        parts.push(text((left + right) / 2, 26, 'Küpleri say, sonra en · boy · yükseklik çarpımını yaz.', { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' }));
+        parts.push(note(24, baseY - levels * u - rows * dv - 18, 'Görünen yüzler: üst açık, ön orta, yan koyu.', { size: 11.5 }));
+        return parts.join('');
+      },
+    },
+
+    /* Prizmanın üç görünümü: en, boy ve yükseklik sürgüleriyle cisim değişir,
+       sağdaki ön/yan/üst görünümler aynı anda güncellenir. Cevap yazılmaz:
+       öğrenci kaç kare olduğunu kendisi sayar. */
+    'gorunum-kur': {
+      params: [
+        { name: 'en', label: 'En (birim)', min: 1, max: 5, step: 1, value: 4 },
+        { name: 'boy', label: 'Boy (birim)', min: 1, max: 4, step: 1, value: 3 },
+        { name: 'yuk', label: 'Yükseklik (kat)', min: 1, max: 4, step: 1, value: 2 },
+      ],
+      normalize(state) {
+        state.en = clampValue(state.en, 1, 5, 1);
+        state.boy = clampValue(state.boy, 1, 4, 1);
+        state.yuk = clampValue(state.yuk, 1, 4, 1);
+      },
+      draw(state) {
+        const cols = state.en;
+        const rows = state.boy;
+        const levels = state.yuk;
+        const u = Math.min(48, 250 / (cols + rows * 0.5 + 1), 200 / (levels + rows * 0.36 + 0.6));
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const shapeW = cols * u + rows * du;
+        const baseX = 26 + Math.max(0, (250 - shapeW) / 2);
+        const baseY = 288 - Math.max(0, (150 - (levels * u + rows * dv)) / 2);
+        const parts = [note(24, 30, 'Sürgüleri değiştir: üç görünüm aynı anda güncellenir.', { size: 12 })];
+        /* Cisim: yalnız görünen yüzler, ressam sırası. */
+        for (let j = rows - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < levels; level += 1) {
+            for (let i = 0; i < cols; i += 1) {
+              const x = baseX + i * u + j * du;
+              const y = baseY - j * dv - level * u;
+              if (level === levels - 1) {
+                parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+                  { fill: '#e9f3fc', stroke: '#3f6c93', width: 1 }));
+              }
+              if (j === 0) parts.push(rect(x, y - u, u, u, { fill: '#bcd6ec', stroke: '#3f6c93', width: 1 }));
+              if (i === cols - 1) {
+                parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+                  { fill: '#87aecd', stroke: '#3f6c93', width: 1 }));
+              }
+            }
+          }
+        }
+        parts.push(note(baseX, baseY + 24, `${num(cols)} birim`, { size: 11.5 }));
+        /* Sağ paneller: gerçek siluetler, kare sayısı yazılmaz. */
+        const panels = [
+          { label: 'ön', cells: Array.from({ length: levels }, () => Array.from({ length: cols }, () => true)) },
+          { label: 'yan', cells: Array.from({ length: levels }, () => Array.from({ length: rows }, () => true)) },
+          { label: 'üst', cells: Array.from({ length: rows }, () => Array.from({ length: cols }, () => true)) },
+        ];
+        const cell = Math.min(19, 78 / Math.max(cols, rows, levels));
+        panels.forEach((view, index) => {
+          const boxX = 296 + index * 106;
+          const gridW = view.cells[0].length * cell;
+          const gridH = view.cells.length * cell;
+          parts.push(panel(boxX, 56, 100, 190));
+          parts.push(text(boxX + 50, 78, view.label, { size: 12.5, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          const gx = boxX + 50 - gridW / 2;
+          const gy = 98 + Math.max(0, (104 - gridH) / 2);
+          view.cells.forEach((row, r) => {
+            row.forEach((filled, c) => {
+              parts.push(rect(gx + c * cell, gy + r * cell, cell - 1, cell - 1, {
+                fill: filled ? '#c9dff0' : '#fff', stroke: '#3f6c93', width: 0.9, rx: 2,
+              }));
+            });
+          });
+          parts.push(note(boxX + 50, 232, 'kaç kare?', { size: 11, anchor: 'middle' }));
+        });
+        return parts.join('');
+      },
+    },
+
     /* Yansıma ve simetri: ayna doğrusu döner, şeklin görüntüsü çizilir.
        Görüntü şeklin üstüne oturduğunda o doğru bir simetri doğrusudur. */
     'simetri-dogru': {

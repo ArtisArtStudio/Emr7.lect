@@ -877,9 +877,10 @@
     const top = Math.max(1, ...stacks.flat(2).map((value) => Number(value) || 0));
     const widest = Math.max(...stacks.map((rows) => rows[0].length));
     const deepest = Math.max(...stacks.map((rows) => rows.length));
-    const usableW = showPanels ? 150 : 300;
-    const per = two ? usableW / 2 - 8 : usableW;
-    const u = Math.min(27, per / (widest + deepest * 0.55), (top > 1 ? 104 : 92) / (top + deepest * 0.4));
+    const usableW = showPanels ? 160 : 316;
+    const per = two ? usableW / 2 - 10 : usableW;
+    /* Küpler tuvali doldursun: boş alanda minik yapı kalmasın. */
+    const u = Math.min(42, per / (widest + deepest * 0.5), 132 / (top + deepest * 0.36));
     const du = u * 0.5;
     const dv = u * 0.36;
     const parts = [];
@@ -889,7 +890,7 @@
       const totalW = width * u + depth * du;
       const totalH = top * u + depth * dv;
       const x0 = areaX + Math.max(0, (areaW - totalW) / 2);
-      const baseline = 168 - Math.max(0, (120 - totalH) / 2);
+      const baseline = 172 - Math.max(0, (128 - totalH) / 2);
       for (let j = depth - 1; j >= 0; j -= 1) {
         for (let level = 0; level < top; level += 1) {
           for (let i = 0; i < width; i += 1) {

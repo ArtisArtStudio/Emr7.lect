@@ -463,8 +463,11 @@ Object.keys(KITAP.weeks).forEach((key) => {
     });
   });
 });
-assert.ok(stackUses.some((item) => item.type === 'duzensiz-yigin' && Number(item.key) === 8),
-  'Görünüm haftasında düzensiz küp yığını sahnesi olmalı.');
+/* Görünüm haftası: cisim sürgülerle değişmeli (yerel `gorunum-kur`).
+   Eski GeoGebra `duzensiz-yigin` appleti soldaki parametre paneli yüzünden
+   sade görünmediği için sahneden çıkarıldı; yerine sade yerel sahne geldi. */
+assert.ok(stackUses.some((item) => item.type === 'gorunum-kur' && Number(item.key) === 8),
+  'Görünüm haftasında sürgülerle değişen 3B görünüm sahnesi (gorunum-kur) olmalı.');
 assert.ok(stackUses.some((item) => item.type === 'bilesik-hacim'),
   'Bileşik cisim sahnesi hacim haftalarında kullanılmalı.');
 assert.ok(/numaralanır|Numaralar/.test(sahneSource),
