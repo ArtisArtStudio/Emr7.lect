@@ -1524,9 +1524,9 @@
               scene: { type: 'numarali-yapi', params: [{ name: 'kati', label: 'Kat sayısı', min: 4, max: 4, step: 1, value: 4 }] },
               statements: [
                 { text: '3 numaralı küpü 5 numaralı küpün üstüne alırsan üstten görünüm değişmez.', answer: 'D' },
-                { text: '2 numaralı küp çıkarılırsa önden görünüm değişmez.', answer: 'D' },
+                { text: '2 numaralı küp çıkarılırsa önden görünüm değişir.', answer: 'D' },
                 { text: '5 numaralı küp çıkarılırsa üstten görünüm değişmez.', answer: 'Y' },
-                { text: '6 numaralı küp çıkarılırsa önden görünüm değişir.', answer: 'Y' },
+                { text: '7 numaralı küp çıkarılırsa önden görünüm değişir.', answer: 'Y' },
               ],
             },
             {

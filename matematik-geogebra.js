@@ -11,8 +11,10 @@
  *   üstte boş şerit bırakmaz.
  * - Tuval **kare**ye yakın ölçülür (en az 300×300); dar/uzun ince pencere oluşmaz.
  * - Cisim **orijine ortalanır**; böylece yakınlaştırma/uzaklaştırma cismi kırpmaz.
- * - Görünüm düğmeleri (Eğik · Ön · Yan · Üst) `SetViewDirection` ile çalışır; öğrenci
- *   cismi parmağıyla döndürebilir.
+ * - Görünüm düğmeleri (Eğik · Ön · Arka · Sağ · Sol · Alt · Üst) `SetViewDirection` ile
+ *   çalışır; varsayılan bakış yukarıdan eğiktir, öğrenci cismi parmağıyla döndürebilir.
+ * - `kup-dondur` düz (flat) gölgeli çizilir: her küpün her yüzü ayrı poligon ve ayrı ton,
+ *   dolgu tam; köşe noktaları/etiketler ve zemin düzlemi gizlenir.
  * - `acim` sahnesinde “Katla / Aç” düğmesi ve tuvale dokunma, kapalı kutu ile düz açınım
  *   arasında geçirir.
  * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
@@ -114,19 +116,43 @@
   /* Bakış yönleri. “Üst” tam dik (0,0,1) verilmez: dünya yukarı vektörüyle
      çakışınca GeoGebra döndürme eksenini bulamayıp donuyordu; küçük eğim
      görüntüyü bozmaz, donmayı önler. */
+  /* Vektör, cisimden göze doğru bakar. Eğik bakış yukarıdan ve önden:
+     yükseklik/z oranı büyütüldü, cisim artık alttan görünmüyor. */
   const VIEWS = {
-    egik: 'Vector((1.6, -2.4, 1.3))',
+    egik: 'Vector((1.35, -1.85, 2.3))',
     on: 'Vector((0.001, -1, 0.002))',
-    yan: 'Vector((1, 0.001, 0.002))',
+    arka: 'Vector((-0.001, 1, 0.002))',
+    sag: 'Vector((1, 0.001, 0.002))',
+    sol: 'Vector((-1, 0.001, 0.002))',
+    alt: 'Vector((0.04, -0.05, -1))',
     ust: 'Vector((0.04, -0.05, 1))',
+    yan: 'Vector((1, 0.001, 0.002))',
   };
 
   const VIEW_LABELS = [
     ['egik', 'Eğik'],
     ['on', 'Ön'],
-    ['yan', 'Yan'],
+    ['arka', 'Arka'],
+    ['sag', 'Sağ'],
+    ['sol', 'Sol'],
+    ['alt', 'Alt'],
     ['ust', 'Üst'],
   ];
+
+  /* Düz (flat) gölgeleme: her yüz tek renk, dolgu tam; küpün altı yüzü altı ayrı ton.
+     Böylece cisim döndürüldükçe hangi yüzün göründüğü renkten okunur. */
+  const FLAT_FACES = {
+    top: [186, 216, 238],
+    front: [146, 186, 219],
+    back: [112, 148, 184],
+    left: [128, 166, 200],
+    right: [96, 132, 170],
+    bottom: [76, 104, 136],
+  };
+
+  function shade(rgb, factor) {
+    return rgb.map((value) => Math.max(0, Math.min(255, Math.round(value * factor))));
+  }
 
   /* ---------- ortak çizim kapısı ---------- */
 
@@ -216,6 +242,26 @@
           box.polygon3(name, points);
           box.color(name, color);
           box.fill(name, opacity);
+        });
+      },
+      /* Düz küp: her yüz ayrı poligon, dolgu tam (saydamlık yok), komşuya bakan
+         iç yüzler hiç çizilmez (z-çakışması ve titreme olmaz). */
+      flatCube(prefix, x, y, z, faces, factor) {
+        const corners = {
+          bottom: [[x, y, z], [x + 1, y, z], [x + 1, y + 1, z], [x, y + 1, z]],
+          top: [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+          front: [[x, y, z], [x + 1, y, z], [x + 1, y, z + 1], [x, y, z + 1]],
+          back: [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+          left: [[x, y, z], [x, y + 1, z], [x, y + 1, z + 1], [x, y, z + 1]],
+          right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
+        };
+        const suffix = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
+        faces.forEach((face) => {
+          const name = `${prefix}${suffix[face]}`;
+          box.polygon3(name, corners[face]);
+          box.color(name, shade(FLAT_FACES[face], factor == null ? 1 : factor));
+          box.fill(name, 1);
+          box.thickness(name, 1);
         });
       },
       /* Nokta işaretleri küçültülür, etiketler kapatılır: sahnede cisim görünür,
@@ -435,29 +481,35 @@
       params: [
         { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
       ],
-      required: ['taban', 'k1'],
+      required: ['cap'],
       build(b, v) {
         const heights = rotateShape(Number(v.sekil));
         const depth = heights.length;
         const width = heights[0].length;
         const top = Math.max(1, ...heights.flat());
+        /* Cisim üç eksende de orijine ortalanır: kadrajda ortada durur. */
         const x0 = -width / 2;
         const y0 = -depth / 2;
         const z0 = -top / 2;
-        b.polygon3('taban', [
-          [x0, y0, z0], [x0 + width, y0, z0], [x0 + width, y0 + depth, z0], [x0, y0 + depth, z0],
-        ]);
-        b.color('taban', FACE_COLORS.bottom);
-        b.fill('taban', 0.3);
+        /* Doğrulama çapası: gizlenen tek nokta. Küp yüzleri komşuluğa göre
+           oluştuğu için sabit isim garanti değil; bu nokta her zaman vardır. */
+        b.point('cap', 0, 0, z0);
+        const solid = (j, i, level) => j >= 0 && j < depth && i >= 0 && i < width
+          && (heights[j][i] || 0) > level;
         let count = 0;
         heights.forEach((row, j) => {
           row.forEach((height, i) => {
             for (let level = 0; level < height; level += 1) {
               count += 1;
-              const name = `k${count}`;
-              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
-              b.color(name, cubeTint(i, j, level));
-              b.fill(name, 0.92);
+              const faces = [];
+              if (level === height - 1) faces.push('top');
+              if (level === 0) faces.push('bottom');
+              if (!solid(j - 1, i, level)) faces.push('front');
+              if (!solid(j + 1, i, level)) faces.push('back');
+              if (!solid(j, i - 1, level)) faces.push('left');
+              if (!solid(j, i + 1, level)) faces.push('right');
+              b.flatCube(`k${count}`, x0 + i, y0 + j, z0 + level, faces,
+                (i + j + level) % 2 === 0 ? 1 : 0.93);
             }
           });
         });
@@ -795,10 +847,11 @@
       }
       try { api.setLineThickness(name, 1); } catch (error) { /* yok say */ }
     });
-    /* Yatay zemin düzlemi ve eksenler: cismin altında gri bir levha görünmesin. */
-    ['xOyPlane', 'xOzPlane', 'yOzPlane'].forEach((plane) => {
-      try { api.setVisible(plane, false); } catch (error) { /* yok say */ }
-      try { api.evalCommand(`SetVisibleInView(${plane}, 1, false)`); } catch (error) { /* yok say */ }
+    /* Yatay zemin düzlemi ve eksenler: cismin altında gri bir levha görünmesin.
+       3B görünümün numarası -1'dir; 1 verilirse düzlem görünür kalır. */
+    ['xOyPlane', 'xOzPlane', 'yOzPlane', 'xAxis', 'yAxis', 'zAxis'].forEach((name) => {
+      try { api.setVisible(name, false); } catch (error) { /* yok say */ }
+      try { api.evalCommand(`SetVisibleInView(${name}, -1, false)`); } catch (error) { /* yok say */ }
     });
     ['ShowAxes(false)', 'ShowGrid(false)'].forEach((command) => {
       try { api.evalCommand(command); } catch (error) { /* yok say */ }
@@ -845,7 +898,7 @@
       <div class="math-ggb-loading">GeoGebra hazırlanıyor… <span>Üç boyutlu cisim yükleniyor.</span></div>
       ${conf.split ? '<div class="math-ggb-views" aria-hidden="true"></div>' : ''}
       <div class="math-ggb-bar">
-        ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}">${label}</button>`).join('')}
+        ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}"${key === 'egik' ? ' class="is-active"' : ''}>${label}</button>`).join('')}
         ${conf.net ? '<button type="button" data-ggb-net="1">Açınımı aç</button>' : ''}
       </div>
     </div>`;
@@ -909,6 +962,8 @@
         }
         if (verify()) {
           done = true;
+          /* Varsayılan bakış: yukarıdan eğik. Öğrenci isterse döndürür. */
+          if (box) box.view('egik');
           hideLoading();
           if (observer) observer.disconnect();
           const count = typeof api.getObjectNumber === 'function' ? api.getObjectNumber() : conf.required.length;

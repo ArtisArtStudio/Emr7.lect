@@ -139,8 +139,8 @@
     4: [[2, 0, 2], [1, 0, 1], [1, 1, 1]],
   };
 
-  /* Görünüm sorularında kullanılan karmaşık yapılar: satır = derinlik (arka→ön),
-     sütun = genişlik (sol→sağ). Boşluklar (0) siluette basamak oluşturur. */
+  /* Görünüm sorularında kullanılan karmaşık yapılar: satır = derinlik (öne en yakın
+     satır ilk sırada), sütun = genişlik (sol→sağ). Boşluklar (0) siluette basamak oluşturur. */
   const VIEW_TITLES = { on: 'ön', arka: 'arka', sag: 'sağ', sol: 'sol', ust: 'üst', alt: 'alt' };
 
   const YAPI_SET1 = [
@@ -222,8 +222,10 @@
 
   /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
      Küpler tek tek çizilir; sayı yazılmaz. */
-  function drawIso(heights, area, maxU) {
-    if (typeof drawIso.__check !== 'function') { /* yer tutucu */ }
+  /* İzometrik çizimin geometrisi: küp ölçüsü, taban çizgisi ve gerçek sınır kutusu.
+     Sınır kutusu gerçekten çizilen küplerden hesaplanır; böylece cisim tuvalde
+     yatay ve dikey olarak tam ortalanır (boş yüksek sütun payı sayılmaz). */
+  function isoGeometry(heights, area, maxU) {
     const depth = heights.length;
     const width = heights[0].length;
     const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
@@ -231,26 +233,58 @@
     const u = Math.max(8, Math.min(cap, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
     const du = u * 0.5;
     const dv = u * 0.36;
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    heights.forEach((row, j) => {
+      row.forEach((height, i) => {
+        if (!(height > 0)) return;
+        const x = i * u + j * du;
+        const bottom = -j * dv;
+        const upper = bottom - height * u - (j > 0 ? dv : 0);
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x + u + du);
+        minY = Math.min(minY, upper);
+        maxY = Math.max(maxY, bottom);
+      });
+    });
+    if (!Number.isFinite(minX)) { minX = 0; maxX = u; minY = -u; maxY = 0; }
+    const dx = area.x + (area.width - (maxX - minX)) / 2 - minX;
+    const dy = area.y + (area.height - (maxY - minY)) / 2 - minY;
     const totalW = width * u + depth * du;
-    const baseline = area.y + area.height - depth * dv - 10;
-    const x0 = area.x + Math.max(0, (area.width - totalW) / 2);
+    const origin = area.x + Math.max(0, (area.width - totalW) / 2);
+    return { u, du, dv, dx, dy, origin, baseline: dy };
+  }
+
+  /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
+     Düz gölgeleme: her yüz tek ve düz renkte; üç ton birbirinden belirgin ayrılır. */
+  function drawIso(heights, area, maxU) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+    const geo = isoGeometry(heights, area, maxU);
+    const { u, du, dv } = geo;
     const parts = [];
-    for (let j = heights.length - 1; j >= 0; j -= 1) {
+    /* Çizim sırası: arkadan öne, alttan üste (yüzler doğru örtüşsün). */
+    const baseX = geo.dx;
+    const baseY = geo.dy;
+    for (let j = depth - 1; j >= 0; j -= 1) {
       for (let level = 0; level < top; level += 1) {
         for (let i = 0; i < width; i += 1) {
           if ((heights[j][i] || 0) <= level) continue;
-          const x = x0 + i * u + j * du;
-          const y = baseline - j * dv - level * u;
+          const x = baseX + i * u + j * du;
+          const y = baseY - j * dv - level * u;
           if ((heights[j][i] || 0) === level + 1) {
             parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
-              { fill: '#e9f3fc', stroke: '#3f6c93', width: 1 }));
+              { fill: '#e3f0fa', stroke: '#3f6c93', width: 1 }));
           }
           if (j === 0 || (heights[j - 1][i] || 0) <= level) {
-            parts.push(rect(x, y - u, u, u, { fill: '#bcd6ec', stroke: '#3f6c93', width: 1 }));
+            parts.push(rect(x, y - u, u, u, { fill: '#a4c6e0', stroke: '#3f6c93', width: 1 }));
           }
           if (i === width - 1 || (heights[j][i + 1] || 0) <= level) {
             parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
-              { fill: '#87aecd', stroke: '#3f6c93', width: 1 }));
+              { fill: '#6f9dc4', stroke: '#3f6c93', width: 1 }));
           }
         }
       }
@@ -285,19 +319,11 @@
 
   /* 3B çizime numara yerleştirme: yüz seçilir, küpün görünen yüzüne yazılır. */
   function drawIsoLabels(heights, area, labels, maxU) {
-    const depth = heights.length;
-    const width = heights[0].length;
-    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
-    const cap = Math.max(8, Number(maxU) || 46);
-    const u = Math.max(8, Math.min(cap, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
-    const du = u * 0.5;
-    const dv = u * 0.36;
-    const totalW = width * u + depth * du;
-    const baseline = area.y + area.height - depth * dv - 10;
-    const x0 = area.x + Math.max(0, (area.width - totalW) / 2);
+    const geo = isoGeometry(heights, area, maxU);
+    const { u, du, dv } = geo;
     return labels.map((item) => {
-      const x = x0 + item.i * u + item.j * du;
-      const y = baseline - item.j * dv - item.level * u;
+      const x = geo.dx + item.i * u + item.j * du;
+      const y = geo.dy - item.j * dv - item.level * u;
       const cx = item.face === 'top' ? x + u / 2 + du / 2 : x + u / 2;
       const cy = item.face === 'top' ? y - u - dv / 2 : y - u / 2;
       return `<circle cx="${coord(cx)}" cy="${coord(cy)}" r="${coord(u * 0.26)}" fill="#fff" stroke="#3f6c93" stroke-width="1.2"/>`
@@ -1475,7 +1501,7 @@
       draw(state) {
         const heights = dondur(yapiOf({ set: 3, sekil: state.sekil }), state.donus);
         const parts = [note(22, 30, 'Cismi tutup sağa–sola sürükleyerek döndür; her yönden incele.', { size: 12 })];
-        parts.push(drawIso(heights, { x: 110, y: 48, width: 420, height: 302 }, 58));
+        parts.push(drawIso(heights, { x: 90, y: 42, width: 460, height: 322 }, 72));
         parts.push(handle('donus', 320, 190, 'Cismi sürükleyerek döndür'));
         return parts.join('');
       },
