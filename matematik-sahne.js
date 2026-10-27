@@ -155,11 +155,42 @@
     [[2, 1, 2, 1], [1, 2, 1, 2]],
     [[2, 2, 1], [3, 1, 1], [1, 2, 1]],
   ];
+  /* Döndürülebilir sahnede kullanılan yapılar: ilk iki gruptan farklı,
+     dört kata kadar çıkan, basamaklı ve boşluklu yapılar. */
+  const YAPI_SET3 = [
+    [[4, 1, 1], [2, 2, 1], [1, 1, 1]],
+    [[2, 1, 2], [3, 2, 1], [1, 1, 2]],
+    [[1, 3, 1], [2, 1, 2]],
+    [[3, 2, 1, 1], [1, 1, 2, 1]],
+    [[2, 3], [1, 1], [2, 1], [1, 1]],
+  ];
+
+  function setOf(group) {
+    const no = Number(group);
+    if (no === 3) return YAPI_SET3;
+    return no === 2 ? YAPI_SET2 : YAPI_SET1;
+  }
 
   function yapiOf(state) {
-    const set = Number(state.set) === 2 ? YAPI_SET2 : YAPI_SET1;
+    const set = setOf(state.set);
     const index = clampValue(state.sekil, 1, set.length, 1) - 1;
     return set[index] || set[0];
+  }
+
+  /* Yapıyı çeyrek tur döndürmek: satır ve sütunlar yer değiştirir. */
+  function dondur(heights, quarter) {
+    let current = heights.map((row) => row.slice());
+    const turns = ((Number(quarter) || 0) % 4 + 4) % 4;
+    for (let turn = 0; turn < turns; turn += 1) {
+      const depth = current.length;
+      const width = current[0].length;
+      const next = Array.from({ length: width }, () => Array.from({ length: depth }, () => 0));
+      for (let j = 0; j < depth; j += 1) {
+        for (let i = 0; i < width; i += 1) next[i][depth - 1 - j] = current[j][i];
+      }
+      current = next;
+    }
+    return current;
   }
 
   /* Beş yönün görünümü. Ön/arka ve sağ/sol birbirinin aynasıdır (katı yapıda). */
@@ -196,12 +227,13 @@
 
   /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
      Küpler tek tek çizilir; sayı yazılmaz. */
-  function drawIso(heights, area) {
+  function drawIso(heights, area, maxU) {
     if (typeof drawIso.__check !== 'function') { /* yer tutucu */ }
     const depth = heights.length;
     const width = heights[0].length;
     const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
-    const u = Math.max(8, Math.min(46, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
+    const cap = Math.max(8, Number(maxU) || 46);
+    const u = Math.max(8, Math.min(cap, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
     const du = u * 0.5;
     const dv = u * 0.36;
     const totalW = width * u + depth * du;
@@ -1426,8 +1458,32 @@
       draw(state) {
         const heights = yapiOf(state);
         const parts = [note(22, 30, 'Cismi incele, sonra ön, arka, sağ, sol ve üst görünümdeki kareleri say.', { size: 12 })];
-        parts.push(drawIso(heights, { x: 150, y: 44, width: 340, height: 312 }));
+        parts.push(drawIso(heights, { x: 120, y: 44, width: 400, height: 312 }, 54));
         return parts.join('');
+      },
+    },
+
+    /* Döndürülebilir yapı: 3B motoru açıksa cisim parmakla döner, yoksa
+       döndürme sürgüsü aynı işi yapar. Görünümler verilmez; öğrenci sayar. */
+    'kup-dondur': {
+      params: [
+        { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.sekil = clampValue(state.sekil, 1, 5, 1);
+        state.donus = clampValue(Number(state.donus) || 0, 0, 3, 1);
+      },
+      draw(state) {
+        const heights = dondur(yapiOf({ set: 3, sekil: state.sekil }), state.donus);
+        const parts = [note(22, 30, 'Cismi tutup sağa–sola sürükleyerek döndür; her yönden incele.', { size: 12 })];
+        parts.push(drawIso(heights, { x: 110, y: 48, width: 420, height: 302 }, 58));
+        parts.push(handle('donus', 320, 190, 'Cismi sürükleyerek döndür'));
+        return parts.join('');
+      },
+      /* Sürükleme yatay bir çevirme kadranı gibi çalışır: sağa çekince cisim döner. */
+      drag(svg, event, name, state) {
+        const local = localPoint(svg, event);
+        state.donus = clampValue(Math.round((local.x - 130) / 120), 0, 3, 1);
       },
     },
 
@@ -2167,7 +2223,7 @@
   /* Yapı verisi ve görünümleri dışarıdan okunur: etkinlik motoru küp sayılarını
      buradan hesaplar, öğrenciye cevap anahtarı gönderilmez. */
   function yapiOfSet(setNo, index) {
-    const set = Number(setNo) === 2 ? YAPI_SET2 : YAPI_SET1;
+    const set = setOf(setNo);
     const list = set[(clampValue(index, 1, set.length, 1) - 1)] || set[0];
     return list.map((row) => row.slice());
   }
@@ -2179,6 +2235,6 @@
   }
 
   window.MATEMATIK_SAHNE2 = Object.freeze({
-    mount, types, params, render, width: W, height: H, yapiOfSet, gorunumOf,
+    mount, types, params, render, width: W, height: H, yapiOfSet, gorunumOf, dondur,
   });
 })();

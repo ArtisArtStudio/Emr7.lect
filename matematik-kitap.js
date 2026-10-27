@@ -1372,19 +1372,19 @@
         },
         {
           kind: 'explore',
-          title: 'Beş yapıyı sürgüyle gez, görünümleri say',
+          title: 'Sürgüyle prizmayı büyüt, görünümleri karşılaştır',
           intro: [
             'Sahnede sürgüyle geçilen beş ayrı yapı var. Sürgü şekli değiştirdikçe soldaki 3B çizim ve sağdaki altı görünüm aynı anda güncellenir.',
             'Aşağıdaki görevde her yapı için ön, arka, sağ, sol ve üst görünümde kaçar küp göründüğünü yazacaksın. Bu bir hazırlık çalışması: görünümler hazır olduğu için sayarak ilerleyebilirsin.',
           ],
           materials: 'Sürgüyle çalışan 3B sahne, altı görünüm paneli, kareli kâğıt',
           steps: [
-            q('Sürgüyü 2. yapıya getir. Bu yapı önden bakıldığında kaç kare dolu görünür?',
-              'Ön panelde her sütunun en yüksek küpünü say.',
-              'Sütunların en yüksekleri 2, 2 ve 1: önden 5 dolu kare görünür.'),
-            q('Aynı yapıya üstten bakıldığında kaç dolu kare sayılır?',
-              'Üst panelde yüksekliği sıfırdan büyük her hücre dolu karedir.',
-              'Taban 3 × 3 ve dokuz hücrede de küp var: 9 dolu kare.'),
+            q('Sahnede en $4$, boy $3$, yükseklik $2$ birim olan prizma duruyor. Ön görünümünde kaç kare vardır?',
+              'Ön görünüm en ile yüksekliğin çarpımıdır; boy bu görünümde görünmez.',
+              'Ön görünüm $4 \\times 2 = 8$ karedir.'),
+            q('Sürgüleri en $3$, boy $2$, yükseklik $4$ yap. Üst görünümde kaç kare sayılır?',
+              'Üst görünüm en ile boyun çarpımıdır; yükseklik bu görünümde kaybolur.',
+              'Üst görünüm $3 \\times 2 = 6$ karedir.'),
           ],
           scene: {
             type: 'gorunum-kur',
@@ -1417,7 +1417,7 @@
           kind: 'practice',
           title: 'Uygulayalım: görünümleri say, çiz, eşleştir',
           intro: [
-            'Aşağıdaki görevler sırayla ilerler: görünümler gizliyken sayma, 8 × 8 kareye çizme, verilen görünümlerden en az küpü bulma, eşleştirme, numaralı küplerle doğru–yanlış ve 3 × 3 görünümler için en az küp.',
+            'Aşağıdaki görevler sırayla ilerler: görünümler gizliyken sayma, 3B döndürülebilir yapılarda sayma, 8 × 8 kareye çizme, verilen görünümlerden en az küpü bulma, eşleştirme, numaralı küplerle doğru–yanlış ve 3 × 3 görünümler için en az küp.',
             'Görevlerde cevap anahtarı gösterilmez; her denetim yalnız hangi yönün hatalı olduğunu söyler.',
           ],
           questions: [
@@ -1452,6 +1452,27 @@
               views: ['on', 'arka', 'sag', 'sol', 'ust'],
               attempts: 3,
               ai: true,
+            },
+            {
+              id: 'm8-e9',
+              type: 'sayim',
+              title: '3B döndür: beş yeni yapı',
+              intro: 'Bu kez cismi döndürebilirsin: parmağınla (ya da fareyle) çevir, görünüm düğmelerini dene. Beş yapının hiçbiri öncekilere benzemiyor; her biri için beş yönün kaçar küp gösterdiğini yaz.',
+              scene: {
+                type: 'kup-dondur',
+                params: [
+                  { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
+                ],
+              },
+              geoScene: {
+                type: 'kup-dondur',
+                params: [
+                  { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
+                ],
+              },
+              set: 3,
+              shapes: 5,
+              views: ['on', 'arka', 'sag', 'sol', 'ust'],
             },
             {
               id: 'm8-e3',

@@ -91,6 +91,45 @@
     }));
   }
 
+  /* Döndürülebilir görev: GeoGebra varsa cisim parmakla döner; yoksa aynı yapı
+     yerel çizimle, döndürme sürgüsüyle açılır. İki motor da aynı `set` arayüzünü verir. */
+  function mountEngine(host, controls, item, onState) {
+    const GG = window.MATEMATIK_GEOGEBRA;
+    const geoScene = item.geoScene;
+    const canGeo = Boolean(GG && geoScene && GG.supports(geoScene) && GG.prefers());
+    const holder = { instance: null };
+    const proxy = {
+      get state() { return holder.instance ? holder.instance.state : {}; },
+      set(name, value) {
+        if (holder.instance && typeof holder.instance.set === 'function') holder.instance.set(name, value);
+      },
+      reset() {
+        if (holder.instance && typeof holder.instance.reset === 'function') holder.instance.reset();
+      },
+    };
+    const mountLocal = () => {
+      holder.instance = mountScene(host, controls, item.scene, onState);
+      if (holder.instance && onState) onState(holder.instance.state);
+      return proxy;
+    };
+    if (canGeo) {
+      const made = GG.mount(host, controls, geoScene, { fallback: mountLocal, onStatus: () => {} });
+      if (made) {
+        holder.instance = made;
+        /* 3B motorda sürgü değişimi sahne geri çağrısı vermez: soru numarası
+           sürgüyle birlikte ilerlesin diye kontrolü buradan dinliyoruz. */
+        if (controls) {
+          controls.addEventListener('input', (event) => {
+            if (!event.target || !event.target.matches('[data-scene-param]')) return;
+            if (onState) onState(made.state);
+          });
+        }
+        return proxy;
+      }
+    }
+    return mountLocal();
+  }
+
   /* ---------------- Cevap hakları ---------------- */
 
   function attemptsLeft(entry, key, limit) {
@@ -344,7 +383,7 @@
       feedback.dataset.state = '';
     };
 
-    const instance = mountScene(stage, controls, item.scene, (state) => {
+    const instance = mountEngine(stage, controls, item, (state) => {
       const shape = Number(state.sekil) || 1;
       if (shape === current) return;
       remember();

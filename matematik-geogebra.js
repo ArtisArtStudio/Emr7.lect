@@ -426,6 +426,43 @@
       },
     },
 
+    /* Döndürülebilir eş küp yapısı: yalnız 3B görünüm, görünüm düğmeleri ve
+       serbest döndürme. Küpler tek tek nesnedir; öğrenci yapıyı her yönden inceler. */
+    'kup-dondur': {
+      label: 'Küp yapısı (döndürülebilir 3B)',
+      views: true,
+      params: [
+        { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      required: ['taban', 'k1'],
+      build(b, v) {
+        const heights = rotateShape(Number(v.sekil));
+        const depth = heights.length;
+        const width = heights[0].length;
+        const top = Math.max(1, ...heights.flat());
+        const x0 = -width / 2;
+        const y0 = -depth / 2;
+        const z0 = -top / 2;
+        b.polygon3('taban', [
+          [x0, y0, z0], [x0 + width, y0, z0], [x0 + width, y0 + depth, z0], [x0, y0 + depth, z0],
+        ]);
+        b.color('taban', FACE_COLORS.bottom);
+        b.fill('taban', 0.3);
+        let count = 0;
+        heights.forEach((row, j) => {
+          row.forEach((height, i) => {
+            for (let level = 0; level < height; level += 1) {
+              count += 1;
+              const name = `k${count}`;
+              b.cubeUp(name, x0 + i, y0 + j, z0 + level, 1);
+              b.color(name, cubeTint(i, j, level));
+              b.fill(name, 0.92);
+            }
+          });
+        });
+      },
+    },
+
     /* Düzensiz küp yığını: sütun yükseklikleri desene göre değişir; ön, yan ve üst
        görünümler bu yüzden düz dikdörtgen değil, basamaklı siluetlerdir. */
     'duzensiz-yigin': {
@@ -664,6 +701,15 @@
 
   function spec(type) {
     return APPLETS[type] || null;
+  }
+
+  /* Döndürülebilir yapı verisi yerel sahne motorundan gelir; iki yerde veri tutulmaz. */
+  function rotateShape(index) {
+    const source = window.MATEMATIK_SAHNE2;
+    if (source && typeof source.yapiOfSet === 'function') {
+      return source.yapiOfSet(3, Number(index) || 1);
+    }
+    return [[3, 1, 1], [2, 2, 1], [1, 1, 1]];
   }
 
   function supports(scene) {
@@ -1000,6 +1046,23 @@
       engine: 'geogebra',
       state: values,
       mode: () => mode,
+      /* Dışarıdan (şekil düğmeleri) değer değiştirme: sürgüyle aynı yolu kullanır. */
+      set(name, value) {
+        if (!(name in values)) return;
+        values[name] = Number(value);
+        const input = controls ? controls.querySelector(`[data-scene-param="${name}"]`) : null;
+        const out = controls ? controls.querySelector(`#scene-out-${scope}-${name}`) : null;
+        if (input) input.value = String(values[name]);
+        if (out) out.textContent = String(values[name]);
+        if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
+        if (!api) return;
+        try {
+          api.setValue(name, values[name]);
+        } catch (error) {
+          /* nesne henüz yoksa sessiz geç */
+        }
+        rebuild();
+      },
       reset() {
         params.forEach((param) => { values[param.name] = param.value; });
         mode = conf.net ? 'kapali' : '';

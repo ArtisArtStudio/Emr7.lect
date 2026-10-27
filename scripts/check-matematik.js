@@ -85,7 +85,8 @@ assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function
   'MATEMATIK_GEOGEBRA köprüsü yüklenemedi.');
 const localTypes = SAHNE.types();
 const geoTypes = GG.types();
-const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'duzensiz-yigin', 'acim'];
+/* kup-dondur: eş küp yapısı serbest döndürülerek incelenir (görünüm sorusu). */
+const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim'];
 assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
   `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
 GEO_3D.forEach((type) => {
