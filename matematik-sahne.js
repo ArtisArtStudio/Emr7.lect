@@ -1345,31 +1345,53 @@
     },
 
     'ortalama': {
+      /* Dört değer: "toplamı eşit paylaştırma" ancak dört veriyle tam görünür. */
       params: [
-        { name: 'a', label: '1. değer', min: 1, max: 9, step: 1, value: 5 },
-        { name: 'b', label: '2. değer', min: 1, max: 9, step: 1, value: 7 },
-        { name: 'c', label: '3. değer', min: 1, max: 9, step: 1, value: 9 },
+        { name: 'a', label: '1. puan', min: 0, max: 100, step: 10, value: 60 },
+        { name: 'b', label: '2. puan', min: 0, max: 100, step: 10, value: 70 },
+        { name: 'c', label: '3. puan', min: 0, max: 100, step: 10, value: 80 },
+        { name: 'd', label: '4. puan', min: 0, max: 100, step: 10, value: 90 },
       ],
       draw(state) {
-        const values = [state.a, state.b, state.c];
-        const p = plotter([0, 10, -1, 3], { x: 50, y: 120, w: W - 100, h: 120 });
-        const mean = values.reduce((sum, value) => sum + value, 0) / 3;
-        const parts = [grid(p, { ylabels: false })];
-        parts.push(line(p.px(0), p.py(0), p.px(10), p.py(0), { width: 1.8 }));
-        for (let x = 0; x <= 10; x += 1) {
+        const values = [state.a, state.b, state.c, state.d];
+        const p = plotter([0, 100, -1, 4], { x: 50, y: 120, w: W - 100, h: 120 });
+        const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+        /* Izgara etiketsiz: eksen çentikleri aşağıda elle yazılır (10’ar). */
+        const parts = [grid(p, { labels: false, ylabels: false, step: 10 })];
+        parts.push(line(p.px(0), p.py(0), p.px(100), p.py(0), { width: 1.8 }));
+        for (let x = 0; x <= 100; x += 10) {
           parts.push(line(p.px(x), p.py(0) - 5, p.px(x), p.py(0) + 5, { width: 1 }));
-          parts.push(text(p.px(x), p.py(0) + 22, String(x), { size: 11, anchor: 'middle', fill: '#6b7a90' }));
+          if (x % 20 === 0) parts.push(text(p.px(x), p.py(0) + 22, String(x), { size: 11, anchor: 'middle', fill: '#6b7a90' }));
         }
+        /* Değer etiketleri aynı yükseklikte ve noktanın yanında: üst üste binmez. */
+        /* Değer etiketleri aynı yükseklikte ve noktanın yanında: üst üste binmez. */
+        const colors = ['#5b46a8', '#2f8a63', '#b8791a', '#4b6b8a'];
+        /* Aynı değer birden çok kez geçerse etiketler yana kaydırılır: üst üste binmez. */
+        const seen = new Map();
         values.forEach((value, index) => {
-          parts.push(circle(p.px(value), p.py(0), 6.5, { fill: ['#5b46a8', '#2f8a63', '#b8791a'][index] }));
-          parts.push(text(p.px(value), p.py(0) - 14 - index * 15, String(value), { size: 11.5, anchor: 'middle', weight: 700 }));
+          const x = p.px(value);
+          const repeat = seen.get(value) || 0;
+          seen.set(value, repeat + 1);
+          parts.push(circle(x, p.py(0), 6.5, { fill: colors[index] }));
+          const toLeft = x > p.px(70);
+          const anchor = toLeft ? 'end' : 'start';
+          const offset = toLeft ? -(10 + repeat * 28) : 10 + repeat * 28;
+          /* Etiketler sırayla iki yükseklikte: komşu değerlerin yazıları çakışmaz. */
+          const lift = 12 + (index % 2) * 17;
+          parts.push(text(x + offset, p.py(0) - lift, String(value), {
+            size: 11.5, anchor, weight: 700, fill: colors[index],
+          }));
         });
         parts.push(line(p.px(mean), p.py(1.6), p.px(mean), p.py(0), { stroke: '#c03744', width: 2, dash: '5 4' }));
-        parts.push(text(p.px(mean), p.py(1.85), 'ortalama = ?', { size: 12.5, anchor: 'middle', weight: 800, fill: '#c03744' }));
-        const sorted = [...values].sort((x, y) => x - y);
+        /* Sağ kenara yakın ortalamada etiket sol tarafa yaslanır: veri etiketleriyle çakışmaz. */
+        const rightSide = p.px(mean) > p.px(74);
+        const leftSide = p.px(mean) < p.px(20);
+        parts.push(text(p.px(mean) + (rightSide ? -10 : leftSide ? 10 : 0), p.py(3.5), 'ortalama = ?', {
+          size: 12.5, anchor: rightSide ? 'end' : leftSide ? 'start' : 'middle', weight: 800, fill: '#c03744',
+        }));
         parts.push(panel(40, 250, W - 80, 100));
-        parts.push(text(60, 280, `Ortalama: (${values.join(' + ')}) ÷ 3 = ?`, { size: 13.5, weight: 700 }));
-        parts.push(text(60, 306, 'Ortanca: ? · Açıklık: ?', { size: 13.5, weight: 700, fill: '#2f8a63' }));
+        parts.push(text(60, 280, `Ortalama: (${values.join(' + ')}) ÷ ${values.length} = ?`, { size: 13, weight: 700 }));
+        parts.push(text(60, 306, 'Ortanca: ? · Açıklık: ?', { size: 13, weight: 700, fill: '#2f8a63' }));
         parts.push(note(60, 330, 'Uç değerler ortalamayı daha çok etkiler; ortanca daha dayanıklıdır.', { size: 12 }));
         return parts.join('');
       },

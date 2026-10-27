@@ -229,8 +229,20 @@ allActivities.forEach(({ week, activity }) => {
     assert.ok(!/ders kitab[ıi]/i.test(text), `${activity.id} kitap atfı içeriyor.`);
     assert.ok(!/\d+\s*\/\s*\d+/.test(text), `${activity.id} düz metin kesir içeriyor.`);
   });
+  /* Her soru görselle gelir: 8. haftadan sonra şekilsiz ve sahnesiz soru kalmaz.
+     (Şekil, sorudaki sayıları birebir gösterir; sahne ayrı bir etkileşimdir.) */
+  if (Number(week.id) >= 8) {
+    assert.ok(activity.figure || activity.scene,
+      `${activity.id} sorusunda ne şekil ne sahne var; her soruya görsel gerekir.`);
+  }
   if (activity.figure) {
     assert.ok(FIG.types().includes(activity.figure.type), `${activity.id} bilinmeyen şekil: ${activity.figure.type}`);
+    /* Dizi seçenekleri tırnak içinde metin olarak yazılmamalı: şekil sessizce
+       varsayılan veriye düşer (veri-nokta 4, 6, 8, 2 gösteriyordu). */
+    Object.entries(activity.figure.options || {}).forEach(([key, value]) => {
+      assert.ok(!(typeof value === 'string' && value.trim().startsWith('[')),
+        `${activity.id} şeklinde ${key} dizi olarak yazılmalı, metin değil.`);
+    });
     assert.ok(FIG.render(activity.figure.type, activity.figure.options || {}).includes('<svg'),
       `${activity.id} şekli çizilemedi.`);
   }

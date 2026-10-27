@@ -119,6 +119,17 @@ assert.ok(GG.hasSplit('duzensiz-yigin'), 'Düzensiz yığın da bölünmüş gö
     `${type}: küpler z eksenine oturmalı, ızgara kaymamalı.`);
 });
 /* Düzensiz yığının izdüşümleri gerçek siluet olmalı: boş kare bulunmalı. */
+/* Ön, yan ve üst yüzler ayrı tonlarda: tek renkli blok kabul edilmez. */
+const frontColor = /front: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
+const sideColor = /side: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
+const topColor = /top: \[(\d+), (\d+), (\d+)\]/.exec(ggb);
+assert.ok(frontColor && sideColor && topColor, 'Yüz renkleri (ön/yan/üst) tanımlı olmalı.');
+assert.notDeepEqual(frontColor.slice(1), sideColor.slice(1), 'Ön ve yan yüz aynı renkte olmamalı.');
+assert.notDeepEqual(sideColor.slice(1), topColor.slice(1), 'Yan ve üst yüz aynı renkte olmamalı.');
+assert.ok(/faces\(/.test(ggb), 'Prizma yüzleri ayrı ayrı çizilmeli (faces).');
+/* Tam dik “üst” bakış GeoGebra’yı donduruyordu; yön küçük eğimli olmalı. */
+assert.ok(/ust: 'Vector\(\(0\.\d+, -0\.\d+, 1\)\)'/.test(ggb), 'Üst görünüm dik değil, küçük eğimli olmalı.');
+
 assert.ok(/stackViewPanels/.test(ggb) && /stackHeights/.test(ggb),
   'Düzensiz yığın görünümleri yükseklik tablosundan üretilmeli.');
 assert.ok(/ortho\(values\)/.test(ggb) || /conf\.ortho/.test(ggb),
@@ -129,6 +140,7 @@ assert.ok(/ortho\(values\)/.test(ggb) || /conf\.ortho/.test(ggb),
 const GEO_COMMANDS = new Set([
   'Slider', 'SetValue', 'SetVisibleInView', 'SetCaption', 'SetLabelMode', 'SetFixed',
   'SetLineThickness', 'SetLineStyle', 'SetPointSize', 'SetFilling', 'Delete', 'Text',
+  'SetLabelVisible', 'ShowAxes', 'ShowGrid', 'SetViewDirection', 'SetColor',
   'Segment', 'Polygon', 'Circle', 'Vector', 'BarChart', 'Sequence', 'Cube', 'If',
   'Ray', 'Line', 'Reflect', 'Midpoint', 'PerpendicularBisector', 'AngleBisector', 'Min',
   'Element', 'SetColor',
@@ -167,6 +179,12 @@ GEO_3D.forEach((type) => {
     GG.required(type).forEach((label) => {
       assert.ok(defined.has(label), `${where}: zorunlu nesne tanımlanmadı → ${label}`);
     });
+    /* Görsel kalite: eksen ve ızgara kapalı, nokta işaretleri küçük ve etiketsiz,
+       yüzler tek renk değil (ön/yan/üst ayrı ton). */
+    assert.ok(commands.includes('ShowAxes(false)'), `${where}: eksen kapatılmalı.`);
+    assert.ok(commands.includes('ShowGrid(false)'), `${where}: ızgara kapatılmalı.`);
+    assert.ok(commands.some((command) => /^SetPointSize\(/.test(command)), `${where}: nokta boyutu ayarlanmalı.`);
+    assert.ok(commands.some((command) => /^SetLabelVisible\(/.test(command)), `${where}: nesne etiketleri kapatılmalı.`);
   });
 });
 

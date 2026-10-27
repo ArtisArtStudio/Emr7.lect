@@ -52,3 +52,13 @@ kendi görseli ve en az bir kontrol sorusu vardır. Denetim: `scripts/check-mate
 - Birim küpler `Cube(A, B, Vector((0,0,1)))` ile z eksenine oturtulur: ızgara kaymaz,
   komşu küpler birbirine değer. Her küp ayrı nesnedir; öğrenci tek tek sayabilir.
 - Lisans: GeoGebra ticari olmayan kullanım; atıf sahnede ve `THIRD-PARTY-NOTICES.md` içinde.
+- Görsel kalite (27 Ekim 2026): eksen ve ızgara kapalı (`ShowAxes(false)`, `ShowGrid(false)`),
+  her nesnede `SetLabelVisible(false)` ve `SetPointSize(1)`; nokta işaretleri değil cisim görünür.
+- Yüz renkleri ayrı: **ön** mavi, **yan** mor, **üst** açık mavi, **arka/alt** soluk.
+  Dikdörtgen prizma altı ayrı `Polygon` olarak çizilir (`b.faces`), birim küp yığınlarında
+  kat yükseldikçe ton değişir. Küp yığınlarında küpler tek tek sayılabilir kalır.
+- “Üst” bakış tam dik verilmez (`Vector((0.04, -0.05, 1))`): dünya yukarı vektörüyle
+  çakışınca GeoGebra döndürme eksenini bulamıyor ve sahne donuyordu. Aynı nedenle
+  yeniden boyutlandırma ölçü değişmediğinde hiç çalıştırılmaz (sonsuz `setSize` döngüsü).
+- Applet `LOAD_TIMEOUT + 6 sn` içinde açılmazsa durum yazılır ve yerel çizime geçilir;
+  ekran “GeoGebra hazırlanıyor…” yazısında kilitli kalmaz.
