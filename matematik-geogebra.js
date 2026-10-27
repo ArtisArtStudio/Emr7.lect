@@ -292,7 +292,6 @@
         b.cubeUp('birim', x0, y0, z0, 1);
         b.color('birim', COLOR.amber);
         b.fill('birim', 0.9);
-        b.text('etiket', 'Genişlik · derinlik · yükseklik: üç ayrıt, üç soru.', x0, y0 + b0 + 0.6, z0);
       },
     },
 
@@ -332,7 +331,6 @@
             }
           }
         }
-        b.text('etiket', 'Her katman a·b birim küp; kaç katman var?', x0, y0 + b0 + 0.7, z0);
       },
     },
 
@@ -350,7 +348,6 @@
         b.cube('birim', -half, -half, -half, 1);
         b.color('birim', COLOR.amber);
         b.fill('birim', 0.85);
-        b.text('etiket', `Ayrıt = ${s} dm · 1 dm³ = 1 L`, -half, -half + s + 0.6, -half + s);
       },
     },
 
@@ -426,7 +423,6 @@
         b.fill('taban', 0.16);
         b.fill('ust', 0.1);
         b.fill('kesik', 0.22);
-        b.text('etiket', 'Bütün blok ile kesilen parça: hacim iki prizma gibi düşünülür.', x0, y0 + b0 + 0.7, z0);
       },
     },
 
@@ -469,7 +465,6 @@
             }
           });
         });
-        b.text('etiket', 'Her sütunun yüksekliği farklı: görünümleri tek tek oku.', x0, y0 + depth + 0.7, z0);
       },
     },
 
@@ -504,7 +499,6 @@
             b.color(name, color);
             b.fill(name, 0.7);
           });
-          b.text('etiket', 'Açık hâl: altı yüz tek düzlemde.', 0, h + b0, 0);
         } else {
           /* Kapalı kutu: altı yüz. */
           const x0 = -a / 2;
@@ -524,7 +518,6 @@
             b.color(name, [168, 155, 226]);
             b.fill(name, 0.5);
           });
-          b.text('etiket', 'Kapalı kutu: altı yüz. Dokun: açınım açılsın.', 0, 0, z0 + h + 0.6);
         }
       },
     },

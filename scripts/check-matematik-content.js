@@ -264,6 +264,24 @@ content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
   assert.ok(withVisual.length >= 2, `Hafta ${week.id} geometri haftası ama sahne/şekil yok.`);
 });
 
+/* Görsel tekrarı yasak: aynı haftada iki soru birebir aynı şekli kullanamaz.
+   (Kullanıcı geri bildirimi: “sürekli görsel tekrarı yapmışsın”.) Henüz yeniden
+   yazılmamış haftalar listede; hafta yeniden yazıldıkça listeden çıkarılır. */
+const REPEAT_ALLOWED = new Set([9, 10, 11, 12, 13, 14, 15]);
+content.weeks.forEach((week) => {
+  const seen = new Map();
+  ACT.forWeek(week.id).forEach((activity) => {
+    if (!activity.figure) return;
+    const key = `${activity.figure.type}:${JSON.stringify(activity.figure.options || {})}`;
+    if (seen.has(key)) {
+      assert.ok(REPEAT_ALLOWED.has(Number(week.id)),
+        `Hafta ${week.id}: “${seen.get(key)}” ile “${activity.id}” aynı görseli kullanıyor.`);
+    } else {
+      seen.set(key, activity.id);
+    }
+  });
+});
+
 // 4c. Kitabın bölüm zinciri: her hafta aynı sırayı izlemeli
 const STAGE_ORDER = ['warmup', 'start', 'learn', 'discuss', 'explore', 'practice', 'problem'];
 const STAGE_LABEL = { warmup: 'NELER BİLİYORUZ?', start: 'BAŞLAYALIM', learn: 'ÖĞRENELİM', discuss: 'DÜŞÜN-TARTIŞ-AÇIKLA', explore: 'KATIL-UYGULA-KEŞFET', practice: 'UYGULAYALIM', problem: 'PROBLEM' };

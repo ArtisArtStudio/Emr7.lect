@@ -574,9 +574,9 @@
       view.cells.forEach(([cx, cy]) => {
         parts.push(rect(view.x + cx * 22, 122 - cy * 22, 22, 22, { fill: SOFT, stroke: ACCENT, width: 1 }));
       });
-      parts.push(txt(view.x + 4, 148, `${view.label} görünüm`, { size: 10.5, fill: INK }));
+      parts.push(txt(view.x, 156, `${view.label} görünüm`, { size: 10, fill: INK, maxWidth: 84 }));
     });
-    parts.push(txt(16, 176, 'Önden genişlik, yandan derinlik, üstten taban görülür.', { size: 10.5, fill: MUTED }));
+    parts.push(txt(16, 182, 'Önden genişlik, yandan derinlik, üstten taban görülür.', { size: 9.5, fill: MUTED, maxWidth: 312 }));
     return frame(parts.join(''), 'Ön, yan ve üst görünümler');
   }
 
@@ -859,6 +859,211 @@
     parts.push(txt(204, 152, 'sağ yarı', { size: 10, fill: MUTED }));
     parts.push(txt(16, 176, 'Katlanınca yarılar üst üste geliyorsa simetri doğrusu.', { size: 9.5, fill: MUTED }));
     return frame(parts.join(''), 'Bir şeklin simetri doğrusu boyunca iki eş yarısı');
+  }
+
+  /* --- 52. Eş küp yapısı: izometri, istenirse ön/yan/üst panelleri ---
+     Seçenekler:
+       heights  : [[...]] satır = derinlik (arka→ön), sütun = genişlik (sol→sağ)
+       stacks   : [heights, heights] iki yapı yan yana (karşılaştırma için)
+       views    : 'none' | 'front' | 'side' | 'top' | 'all'
+       arrows   : true → bakış yönü oku
+       note     : alt açıklama
+     Şekilde cevap (küp sayısı, kare sayısı) yazılmaz. */
+  function cubeStack(options = {}) {
+    const stacks = list(options.stacks, []).length ? list(options.stacks, []) : [list(options.heights, [[1, 1, 1]])];
+    const views = options.views || 'none';
+    const showPanels = views !== 'none';
+    const two = stacks.length > 1;
+    const top = Math.max(1, ...stacks.flat(2).map((value) => Number(value) || 0));
+    const widest = Math.max(...stacks.map((rows) => rows[0].length));
+    const deepest = Math.max(...stacks.map((rows) => rows.length));
+    const usableW = showPanels ? 150 : 300;
+    const per = two ? usableW / 2 - 8 : usableW;
+    const u = Math.min(27, per / (widest + deepest * 0.55), (top > 1 ? 104 : 92) / (top + deepest * 0.4));
+    const du = u * 0.5;
+    const dv = u * 0.36;
+    const parts = [];
+    const drawStack = (heights, areaX, areaW) => {
+      const depth = heights.length;
+      const width = heights[0].length;
+      const totalW = width * u + depth * du;
+      const totalH = top * u + depth * dv;
+      const x0 = areaX + Math.max(0, (areaW - totalW) / 2);
+      const baseline = 168 - Math.max(0, (120 - totalH) / 2);
+      for (let j = depth - 1; j >= 0; j -= 1) {
+        for (let level = 0; level < top; level += 1) {
+          for (let i = 0; i < width; i += 1) {
+            if ((heights[j][i] || 0) <= level) continue;
+            const x = x0 + i * u + j * du;
+            const y = baseline - j * dv - level * u;
+            /* Üst yüz açık, ön yüz orta, yan yüz koyu ton: cisim üç boyutlu okunur. */
+            parts.push(poly([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+              { fill: '#dcebf8', stroke: '#2f6d9a', width: 0.9 }));
+            parts.push(poly([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+              { fill: '#a9cbe6', stroke: '#2f6d9a', width: 0.9 }));
+            parts.push(rect(x, y - u, u, u, { fill: '#c3dcef', stroke: '#2f6d9a', width: 0.9 }));
+          }
+        }
+      }
+      const cx = x0 + totalW / 2;
+      if (options.arrows) {
+        const from = views === 'top' ? 'yukarıdan' : views === 'side' ? 'soldan' : 'önden';
+        parts.push(arrowLine(nextId(), cx - 4, baseline + 16, cx - 4, baseline - 4, ACCENT));
+        parts.push(txt(cx, baseline + 30, `${from} bakış`, { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 120 }));
+      }
+    };
+    if (two) {
+      drawStack(stacks[0], 12, per);
+      drawStack(stacks[1], 12 + per + 14, per);
+      parts.push(txt(12 + per / 2, 30, '1. yapı', { size: 10.5, anchor: 'middle', weight: 700, fill: INK }));
+      parts.push(txt(12 + per + 14 + per / 2, 30, '2. yapı', { size: 10.5, anchor: 'middle', weight: 700, fill: INK }));
+    } else {
+      drawStack(stacks[0], 12, usableW);
+    }
+
+    if (showPanels) {
+      const heights = stacks[0];
+      const depth = heights.length;
+      const width = heights[0].length;
+      const height = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+      const frontCells = [];
+      for (let level = height; level >= 1; level -= 1) {
+        frontCells.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
+      }
+      const sideCells = [];
+      for (let level = height; level >= 1; level -= 1) {
+        sideCells.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => (value || 0) >= level)));
+      }
+      const topCells = heights.map((row) => row.map((value) => (value || 0) > 0));
+      const panels = [];
+      if (views === 'all' || views === 'front') panels.push({ label: 'ön', cells: frontCells });
+      if (views === 'all' || views === 'side') panels.push({ label: 'yan', cells: sideCells });
+      if (views === 'all' || views === 'top') panels.push({ label: 'üst', cells: topCells });
+      /* Tek görünüm varsa kare büyür; iki-üç görünüm alt alta küçülür. */
+      const cell = panels.length === 1 ? 20 : 12;
+      const totalH = panels.reduce((sum, panel) => sum + panel.cells.length * cell + 16, 0);
+      let cursorY = Math.max(34, 96 - totalH / 2 + 8);
+      const left = panels.length === 1 ? 186 : 190;
+      panels.forEach((panel) => {
+        parts.push(txt(left, cursorY, panel.label, { size: 10.5, weight: 800, fill: INK }));
+        const gridX = left + 26;
+        panel.cells.forEach((row, r) => {
+          row.forEach((filled, c) => {
+            parts.push(rect(gridX + c * cell, cursorY + 4 + r * cell, cell - 1, cell - 1, {
+              fill: filled ? '#c3dcef' : '#ffffff',
+              stroke: filled ? '#2f6d9a' : '#e6e9ef',
+              width: filled ? 0.9 : 0.7,
+            }));
+          });
+        });
+        cursorY += panel.cells.length * cell + 18;
+      });
+
+    }
+    parts.push(txt(14, 184, options.note || 'Eş küplerle kurulmuş yapı', { size: 9.5, fill: MUTED, maxWidth: 312 }));
+    return frame(parts.join(''), options.title || 'Eş küplerle kurulmuş yapı');
+  }
+
+  /* --- 53. Yalnız üç görünüm: yapıyı görünümlerden kurma sorusu --- */
+  function viewTable(options = {}) {
+    const panels = [
+      { label: 'ÖN', cells: list(options.front, [[1, 1, 1]]) },
+      { label: 'YAN', cells: list(options.side, [[1], [1]]) },
+      { label: 'ÜST', cells: list(options.top, [[1, 1, 1]]) },
+    ];
+    const parts = [];
+    const maxRows = Math.max(...panels.map((panel) => panel.cells.length));
+    /* Az satırda kareler büyür: küçük ızgara kocaman tuvalde kaybolmaz. */
+    const cell = maxRows <= 2 ? 30 : maxRows === 3 ? 24 : 20;
+    let x = 14;
+    panels.forEach((panel) => {
+      const cols = Math.max(...panel.cells.map((row) => row.length));
+      const rows = panel.cells.length;
+      /* Etiket ızgaradan geniş olabilir: sıradaki panel ona göre kaydırılır. */
+      const labelW = panel.label.length * 7 + 8;
+      const gridW = cols * cell;
+      parts.push(txt(x, 54, panel.label, { size: 11, weight: 800, fill: INK }));
+      panel.cells.forEach((row, r) => {
+        row.forEach((filled, c) => {
+          parts.push(rect(x + c * cell, 64 + r * cell, cell - 1, cell - 1, {
+            fill: filled ? '#c3dcef' : '#ffffff',
+            stroke: filled ? '#2f6d9a' : '#e6e9ef',
+            width: filled ? 0.9 : 0.7,
+          }));
+        });
+      });
+      parts.push(txt(x, 64 + rows * cell + 16, `${rows} × ${cols}`, { size: 10, fill: MUTED }));
+      x += Math.max(gridW, labelW) + 14;
+    });
+    parts.push(txt(14, 176, 'ÖN · YAN · ÜST: aynı yapının üç görünümü.', { size: 9.5, fill: MUTED, maxWidth: 312 }));
+    if (options.note) parts.push(txt(14, 190, options.note, { size: 9.5, fill: MUTED, maxWidth: 312 }));
+    return frame(parts.join(''), 'Bir yapının ön, yan ve üst görünümleri');
+  }
+
+  /* --- 54. Aynı yapının üç fotoğrafı: yön değişince görüntü değişir --- */
+  function photoTriptych(options = {}) {
+    const heights = list(options.heights, [[2, 1], [1, 1]]);
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+    const parts = [];
+    const frames = [
+      { label: '1. fotoğraf', kind: 'iso' },
+      { label: '2. fotoğraf', kind: 'front' },
+      { label: '3. fotoğraf', kind: 'top' },
+    ];
+    const u = Math.min(20, 68 / (width + depth * 0.6), 56 / (top + depth * 0.45));
+    frames.forEach((frameItem, index) => {
+      const bx = 12 + index * 106;
+      parts.push(rect(bx, 34, 96, 104, { fill: '#fbfcfe', stroke: '#c9d3e0', width: 1 }));
+      if (frameItem.kind === 'iso') {
+        const du = u * 0.5;
+        const dv = u * 0.36;
+        const totalW = width * u + depth * du;
+        const totalH = top * u + depth * dv;
+        const x0 = bx + 48 - totalW / 2;
+        const baseline = 34 + 52 + totalH / 2;
+        for (let j = depth - 1; j >= 0; j -= 1) {
+          for (let level = 0; level < top; level += 1) {
+            for (let i = 0; i < width; i += 1) {
+              if ((heights[j][i] || 0) <= level) continue;
+              const x = x0 + i * u + j * du;
+              const y = baseline - j * dv - level * u;
+              parts.push(poly([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]], { fill: '#dcebf8', stroke: '#2f6d9a', width: 0.7 }));
+              parts.push(poly([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]], { fill: '#a9cbe6', stroke: '#2f6d9a', width: 0.7 }));
+              parts.push(rect(x, y - u, u, u, { fill: '#c3dcef', stroke: '#2f6d9a', width: 0.7 }));
+            }
+          }
+        }
+      } else {
+        /* Ön ve üst fotoğraf: aynı yapının düz silueti. */
+        const rows = frameItem.kind === 'front'
+          ? (() => {
+            const out = [];
+            for (let level = top; level >= 1; level -= 1) {
+              out.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
+            }
+            return out;
+          })()
+          : heights.map((row) => row.map((value) => (value || 0) > 0));
+        const cell = Math.min(15, 76 / Math.max(...rows.map((row) => row.length)), 68 / rows.length);
+        const gridW = Math.max(...rows.map((row) => row.length)) * cell;
+        const gx = bx + 48 - gridW / 2;
+        const gy = 34 + (104 - rows.length * cell) / 2;
+        rows.forEach((row, r) => {
+          row.forEach((filled, c) => {
+            parts.push(rect(gx + c * cell, gy + r * cell, cell - 1, cell - 1, {
+              fill: filled ? '#c3dcef' : '#ffffff',
+              stroke: filled ? '#2f6d9a' : '#e6e9ef',
+              width: filled ? 0.8 : 0.6,
+            }));
+          });
+        });
+      }
+      parts.push(txt(bx + 48, 152, frameItem.label, { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 92 }));
+    });
+    parts.push(txt(12, 176, options.note || 'Üç fotoğraf aynı yapıya mı ait?', { size: 10, fill: MUTED, maxWidth: 316 }));
+    return frame(parts.join(''), 'Aynı yapının üç ayrı yönden fotoğrafı');
   }
 
   /* --- 49. Koordinat düzlemi: noktalar, doğrular ve parçalar ---
@@ -1308,6 +1513,9 @@
     tepe: modeFigure,
     'daire-dilim': pieChart,
     'simetri-dogrusu': symmetryAxis,
+    'kup-yapi': cubeStack,
+    'gorunum-tablo': viewTable,
+    'fotograf-uc': photoTriptych,
     'koordinat-duzlem': coordPlane,
     'duzgun-cokgen': regularPolygon,
     'harf-simetri': letterSymmetry,
