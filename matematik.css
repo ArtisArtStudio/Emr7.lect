@@ -347,3 +347,6 @@
   .atolye-grids{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
   .atolye-fields{grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}
 }
+.math-ggb-legend{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px 14px;margin:0;font-size:11.5px;font-weight:700;color:#3c2f6b}
+.math-ggb-legend span{display:inline-flex;align-items:center;gap:5px}
+.math-ggb-legend i{width:12px;height:12px;border-radius:3px;border:1px solid rgba(27,47,73,.35);display:inline-block}

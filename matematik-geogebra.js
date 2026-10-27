@@ -116,18 +116,26 @@
   /* Bakış yönleri. “Üst” tam dik (0,0,1) verilmez: dünya yukarı vektörüyle
      çakışınca GeoGebra döndürme eksenini bulamayıp donuyordu; küçük eğim
      görüntüyü bozmaz, donmayı önler. */
-  /* Vektör, cisimden göze doğru bakar. Eğik bakış yukarıdan ve önden:
-     yükseklik/z oranı büyütüldü, cisim artık alttan görünmüyor. */
+  /* GeoGebra `SetViewDirection(Vector(v))` komutu gözü **-v** yönüne koyar
+     (kaynak: CmdSetViewDirection → setRotAnimation(-v); b açısı gözün yükselişidir).
+     Bu yüzden v, bakışın yönüdür: göz yukarıdaysa v aşağıyı gösterir.
+     Eğik bakış yukarıdan ve önden gelir; cisim alttan görünmez. */
   const VIEWS = {
-    egik: 'Vector((1.35, -1.85, 2.3))',
-    on: 'Vector((0.001, -1, 0.002))',
-    arka: 'Vector((-0.001, 1, 0.002))',
-    sag: 'Vector((1, 0.001, 0.002))',
-    sol: 'Vector((-1, 0.001, 0.002))',
-    alt: 'Vector((0.04, -0.05, -1))',
-    ust: 'Vector((0.04, -0.05, 1))',
-    yan: 'Vector((1, 0.001, 0.002))',
+    egik: 'Vector((-1.1, 1.7, -2.1))',
+    on: 'Vector((0.001, 1, 0.002))',
+    arka: 'Vector((-0.001, -1, 0.002))',
+    sag: 'Vector((-1, 0.001, 0.002))',
+    sol: 'Vector((1, 0.001, 0.002))',
+    alt: 'Vector((0.04, -0.05, 1))',
+    ust: 'Vector((0.04, -0.05, -1))',
+    yan: 'Vector((-1, 0.001, 0.002))',
   };
+
+  /* Yüz renkleri: düğmelerin doğru yönü göstermesi bu renklerden okunur. */
+  const FACE_LEGEND = [
+    ['üst', '#d62d20'], ['alt', '#262626'], ['sol', '#2e7d32'],
+    ['sağ', '#f2c200'], ['ön', '#7030a0'], ['arka', '#ef8fae'],
+  ];
 
   const VIEW_LABELS = [
     ['egik', 'Eğik'],
@@ -139,20 +147,17 @@
     ['ust', 'Üst'],
   ];
 
-  /* Düz (flat) gölgeleme: her yüz tek renk, dolgu tam; küpün altı yüzü altı ayrı ton.
+  /* Düz (flat) gölgeleme: her yüz tek renk, dolgu tam; küpün altı yüzü altı ayrı renk.
+     Renkler sabittir: üst kırmızı, alt siyah, sol yeşil, sağ sarı, ön mor, arka pembe.
      Böylece cisim döndürüldükçe hangi yüzün göründüğü renkten okunur. */
   const FLAT_FACES = {
-    top: [186, 216, 238],
-    front: [146, 186, 219],
-    back: [112, 148, 184],
-    left: [128, 166, 200],
-    right: [96, 132, 170],
-    bottom: [76, 104, 136],
+    top: [214, 45, 32],
+    bottom: [38, 38, 38],
+    left: [46, 125, 50],
+    right: [242, 194, 0],
+    front: [112, 48, 160],
+    back: [239, 143, 174],
   };
-
-  function shade(rgb, factor) {
-    return rgb.map((value) => Math.max(0, Math.min(255, Math.round(value * factor))));
-  }
 
   /* ---------- ortak çizim kapısı ---------- */
 
@@ -246,7 +251,7 @@
       },
       /* Düz küp: her yüz ayrı poligon, dolgu tam (saydamlık yok), komşuya bakan
          iç yüzler hiç çizilmez (z-çakışması ve titreme olmaz). */
-      flatCube(prefix, x, y, z, faces, factor) {
+      flatCube(prefix, x, y, z, faces) {
         const corners = {
           bottom: [[x, y, z], [x + 1, y, z], [x + 1, y + 1, z], [x, y + 1, z]],
           top: [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
@@ -259,7 +264,7 @@
         faces.forEach((face) => {
           const name = `${prefix}${suffix[face]}`;
           box.polygon3(name, corners[face]);
-          box.color(name, shade(FLAT_FACES[face], factor == null ? 1 : factor));
+          box.color(name, FLAT_FACES[face]);
           box.fill(name, 1);
           box.thickness(name, 1);
         });
@@ -478,6 +483,7 @@
       label: 'Küp yapısı (döndürülebilir 3B)',
       views: true,
       clean: true,
+      legend: true,
       params: [
         { name: 'sekil', label: 'Yapı (1–5)', min: 1, max: 5, step: 1, value: 1 },
       ],
@@ -508,8 +514,7 @@
               if (!solid(j + 1, i, level)) faces.push('back');
               if (!solid(j, i - 1, level)) faces.push('left');
               if (!solid(j, i + 1, level)) faces.push('right');
-              b.flatCube(`k${count}`, x0 + i, y0 + j, z0 + level, faces,
-                (i + j + level) % 2 === 0 ? 1 : 0.93);
+              b.flatCube(`k${count}`, x0 + i, y0 + j, z0 + level, faces);
             }
           });
         });
@@ -901,6 +906,7 @@
         ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}"${key === 'egik' ? ' class="is-active"' : ''}>${label}</button>`).join('')}
         ${conf.net ? '<button type="button" data-ggb-net="1">Açınımı aç</button>' : ''}
       </div>
+      ${conf.legend ? `<p class="math-ggb-legend">${FACE_LEGEND.map(([label, color]) => `<span><i style="background:${color}"></i>${label}</span>`).join('')}</p>` : ''}
     </div>`;
     const canvas = host.querySelector('.math-ggb-canvas');
     const loading = host.querySelector('.math-ggb-loading');

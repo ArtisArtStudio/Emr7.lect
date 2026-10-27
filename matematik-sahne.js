@@ -143,6 +143,17 @@
      satır ilk sırada), sütun = genişlik (sol→sağ). Boşluklar (0) siluette basamak oluşturur. */
   const VIEW_TITLES = { on: 'ön', arka: 'arka', sag: 'sağ', sol: 'sol', ust: 'üst', alt: 'alt' };
 
+  /* Yüz renkleri her yerde aynı: üst kırmızı, alt siyah, sol yeşil, sağ sarı,
+     ön mor, arka pembe. Öğrenci rengi yöne bağlayarak görünümleri okur. */
+  const FACE_RGB = {
+    ust: '#d62d20',
+    alt: '#262626',
+    sol: '#2e7d32',
+    sag: '#f2c200',
+    on: '#7030a0',
+    arka: '#ef8fae',
+  };
+
   const YAPI_SET1 = [
     [[3, 2, 1], [2, 1, 1], [1, 1, 1]],
     [[2, 2, 1], [1, 1, 1], [1, 1, 1]],
@@ -257,8 +268,8 @@
     return { u, du, dv, dx, dy, origin, baseline: dy };
   }
 
-  /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
-     Düz gölgeleme: her yüz tek ve düz renkte; üç ton birbirinden belirgin ayrılır. */
+  /* İzometrik cisim: yalnız görünen yüzler. Düz gölgeleme; yüz renkleri sabit:
+     üst kırmızı, ön mor, sağ sarı (sol yeşil, arka pembe, alt siyah — bu bakışta görünmez). */
   function drawIso(heights, area, maxU) {
     const depth = heights.length;
     const width = heights[0].length;
@@ -277,14 +288,14 @@
           const y = baseY - j * dv - level * u;
           if ((heights[j][i] || 0) === level + 1) {
             parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
-              { fill: '#e3f0fa', stroke: '#3f6c93', width: 1 }));
+              { fill: FACE_RGB.ust, stroke: '#1b2f49', width: 1 }));
           }
           if (j === 0 || (heights[j - 1][i] || 0) <= level) {
-            parts.push(rect(x, y - u, u, u, { fill: '#a4c6e0', stroke: '#3f6c93', width: 1 }));
+            parts.push(rect(x, y - u, u, u, { fill: FACE_RGB.on, stroke: '#1b2f49', width: 1 }));
           }
           if (i === width - 1 || (heights[j][i + 1] || 0) <= level) {
             parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
-              { fill: '#6f9dc4', stroke: '#3f6c93', width: 1 }));
+              { fill: FACE_RGB.sag, stroke: '#1b2f49', width: 1 }));
           }
         }
       }

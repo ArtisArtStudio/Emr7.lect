@@ -133,8 +133,15 @@ assert.ok(frontColor && sideColor && topColor, 'Yüz renkleri (ön/yan/üst) tan
 assert.notDeepEqual(frontColor.slice(1), sideColor.slice(1), 'Ön ve yan yüz aynı renkte olmamalı.');
 assert.notDeepEqual(sideColor.slice(1), topColor.slice(1), 'Yan ve üst yüz aynı renkte olmamalı.');
 assert.ok(/faces\(/.test(ggb), 'Prizma yüzleri ayrı ayrı çizilmeli (faces).');
-/* Tam dik “üst” bakış GeoGebra’yı donduruyordu; yön küçük eğimli olmalı. */
-assert.ok(/ust: 'Vector\(\(0\.\d+, -0\.\d+, 1\)\)'/.test(ggb), 'Üst görünüm dik değil, küçük eğimli olmalı.');
+/* Tam dik “üst” bakış GeoGebra’yı donduruyordu; yön küçük eğimli olmalı.
+   Ayrıca SetViewDirection(Vector(v)) gözü -v yönüne koyar: üst bakış için v aşağıyı
+   göstermeli (-1), alt bakış için yukarıyı (+1). Alt/üst karışmasın. */
+assert.ok(/ust: 'Vector\(\(0\.\d+, -0\.\d+, -1\)\)'/.test(ggb),
+  'Üst görünümde bakış vektörü aşağıyı göstermeli (göz yukarıda).');
+assert.ok(/alt: 'Vector\(\(0\.\d+, -0\.\d+, 1\)\)'/.test(ggb),
+  'Alt görünümde bakış vektörü yukarıyı göstermeli (göz aşağıda).');
+assert.ok(/egik: 'Vector\(\(-[\d.]+, [\d.]+, -[\d.]+\)\)'/.test(ggb),
+  'Eğik bakış yukarıdan olmalı (bakış vektörünün z değeri negatif).');
 
 assert.ok(/stackViewPanels/.test(ggb) && /stackHeights/.test(ggb),
   'Düzensiz yığın görünümleri yükseklik tablosundan üretilmeli.');
