@@ -139,6 +139,200 @@
     4: [[2, 0, 2], [1, 0, 1], [1, 1, 1]],
   };
 
+  /* Görünüm sorularında kullanılan karmaşık yapılar: satır = derinlik (arka→ön),
+     sütun = genişlik (sol→sağ). Boşluklar (0) siluette basamak oluşturur. */
+  const YAPI_SET1 = [
+    [[3, 2, 1], [2, 1, 1], [1, 1, 1]],
+    [[2, 2, 1], [1, 1, 1], [1, 1, 1]],
+    [[1, 2, 3], [1, 2, 2], [1, 1, 1]],
+    [[3, 3, 1], [2, 1, 1]],
+    [[2, 1, 1], [3, 2, 1], [1, 1, 1]],
+  ];
+  const YAPI_SET2 = [
+    [[2, 3, 2], [1, 2, 1], [2, 1, 2]],
+    [[1, 1, 1], [2, 2, 2], [1, 2, 1]],
+    [[3, 1, 3], [1, 1, 1]],
+    [[2, 1, 2, 1], [1, 2, 1, 2]],
+    [[2, 2, 1], [3, 1, 1], [1, 2, 1]],
+  ];
+
+  function yapiOf(state) {
+    const set = Number(state.set) === 2 ? YAPI_SET2 : YAPI_SET1;
+    const index = clampValue(state.sekil, 1, set.length, 1) - 1;
+    return set[index] || set[0];
+  }
+
+  /* Beş yönün görünümü. Ön/arka ve sağ/sol birbirinin aynasıdır (katı yapıda). */
+  function besGorunum(heights) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat());
+    const front = [];
+    const back = [];
+    const right = [];
+    const left = [];
+    for (let level = top; level >= 1; level -= 1) {
+      front.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
+      back.push(Array.from({ length: width }, (_, i) => heights.some((row) => (row[i] || 0) >= level)));
+      right.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => (value || 0) >= level)));
+      left.push(Array.from({ length: depth }, (_, j) => heights[j].some((value) => (value || 0) >= level)));
+    }
+    return [
+      { key: 'on', title: 'ön' },
+      { key: 'arka', title: 'arka' },
+      { key: 'sag', title: 'sağ' },
+      { key: 'sol', title: 'sol' },
+      { key: 'ust', title: 'üst' },
+      { key: 'alt', title: 'alt' },
+    ].map((panel) => ({
+      ...panel,
+      cells: panel.key === 'on' ? front
+        : panel.key === 'arka' ? back
+          : panel.key === 'sag' ? right
+            : panel.key === 'sol' ? left
+              : heights.slice().reverse().map((row) => row.map((value) => (value || 0) > 0)),
+    }));
+  }
+
+  /* İzometrik cisim: yalnız görünen yüzler (üst açık, ön orta, yan koyu).
+     Küpler tek tek çizilir; sayı yazılmaz. */
+  function drawIso(heights, area) {
+    if (typeof drawIso.__check !== 'function') { /* yer tutucu */ }
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+    const u = Math.max(8, Math.min(46, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
+    const du = u * 0.5;
+    const dv = u * 0.36;
+    const totalW = width * u + depth * du;
+    const baseline = area.y + area.height - depth * dv - 10;
+    const x0 = area.x + Math.max(0, (area.width - totalW) / 2);
+    const parts = [];
+    for (let j = heights.length - 1; j >= 0; j -= 1) {
+      for (let level = 0; level < top; level += 1) {
+        for (let i = 0; i < width; i += 1) {
+          if ((heights[j][i] || 0) <= level) continue;
+          const x = x0 + i * u + j * du;
+          const y = baseline - j * dv - level * u;
+          if ((heights[j][i] || 0) === level + 1) {
+            parts.push(polygon([[x, y - u], [x + u, y - u], [x + u + du, y - u - dv], [x + du, y - u - dv]],
+              { fill: '#e9f3fc', stroke: '#3f6c93', width: 1 }));
+          }
+          if (j === 0 || (heights[j - 1][i] || 0) <= level) {
+            parts.push(rect(x, y - u, u, u, { fill: '#bcd6ec', stroke: '#3f6c93', width: 1 }));
+          }
+          if (i === width - 1 || (heights[j][i + 1] || 0) <= level) {
+            parts.push(polygon([[x + u, y], [x + u + du, y - dv], [x + u + du, y - u - dv], [x + u, y - u]],
+              { fill: '#87aecd', stroke: '#3f6c93', width: 1 }));
+          }
+        }
+      }
+    }
+    return parts.join('');
+  }
+
+  /* Kare ızgarası: dolu kare dolu renkte, boş kare beyaz. Sayı yazılmaz. */
+  function drawCells(cells, centerX, topY, maxW, maxH, fill) {
+    const rows = cells.length;
+    const cols = Math.max(...cells.map((row) => row.length));
+    const cell = Math.min(34, maxW / Math.max(cols, 1), maxH / Math.max(rows, 1));
+    const gx = centerX - (cols * cell) / 2;
+    const gy = topY + Math.max(0, (maxH - rows * cell) / 2);
+    const parts = [];
+    cells.forEach((row, r) => {
+      row.forEach((filled, c) => {
+        parts.push(rect(gx + c * cell, gy + r * cell, cell - 1, cell - 1, {
+          fill: filled ? fill : '#fff',
+          stroke: filled ? '#3f6c93' : '#c6d2e0',
+          width: filled ? 1 : 0.7,
+          rx: 2,
+        }));
+      });
+    });
+    return parts.join('');
+  }
+
+  function panelBox(x, y, w, h) {
+    return rect(x, y, w, h, { fill: '#fbfaff', stroke: '#e3ddf4', width: 1.1, rx: 10 });
+  }
+
+  /* 3B çizime numara yerleştirme: yüz seçilir, küpün görünen yüzüne yazılır. */
+  function drawIsoLabels(heights, area, labels) {
+    const depth = heights.length;
+    const width = heights[0].length;
+    const top = Math.max(1, ...heights.flat().map((value) => Number(value) || 0));
+    const u = Math.max(8, Math.min(46, area.width / (width + depth * 0.5 + 0.6), area.height / (top + depth * 0.36 + 0.6)));
+    const du = u * 0.5;
+    const dv = u * 0.36;
+    const totalW = width * u + depth * du;
+    const baseline = area.y + area.height - depth * dv - 10;
+    const x0 = area.x + Math.max(0, (area.width - totalW) / 2);
+    return labels.map((item) => {
+      const x = x0 + item.i * u + item.j * du;
+      const y = baseline - item.j * dv - item.level * u;
+      const cx = item.face === 'top' ? x + u / 2 + du / 2 : x + u / 2;
+      const cy = item.face === 'top' ? y - u - dv / 2 : y - u / 2;
+      return `<circle cx="${coord(cx)}" cy="${coord(cy)}" r="${coord(u * 0.26)}" fill="#fff" stroke="#3f6c93" stroke-width="1.2"/>`
+        + text(cx, cy + u * 0.09, String(item.no), { size: Math.max(9, Math.round(u * 0.32)), anchor: 'middle', weight: 800, fill: '#1f3a56' });
+    }).join('');
+  }
+
+  const NUMARALI_YAPI = [[1, 1], [4, 1]];
+  const NUMARALI_ETIKET = [
+    { j: 1, i: 0, level: 0, no: 1, face: 'front' },
+    { j: 1, i: 0, level: 1, no: 2, face: 'front' },
+    { j: 1, i: 0, level: 2, no: 3, face: 'front' },
+    { j: 1, i: 0, level: 3, no: 4, face: 'front' },
+    { j: 0, i: 0, level: 0, no: 5, face: 'front' },
+    { j: 0, i: 1, level: 0, no: 6, face: 'front' },
+    { j: 1, i: 1, level: 0, no: 7, face: 'top' },
+  ];
+
+  /* Eşleştirme sorusunun dört yapısı. */
+  const ESLESME_YAPILARI = [
+    [[2, 1, 1], [1, 1, 0]],
+    [[1, 2, 1], [1, 0, 1]],
+    [[1, 1, 1], [2, 1, 0]],
+    [[2, 0, 1], [1, 1, 1]],
+  ];
+
+  /* Eşleştirme seçenekleri: her seçenek üç görünümden oluşur. */
+  const ESLESME_PANELLERI = [
+    [
+      { title: 'arka', cells: [[0, 0, 1], [1, 1, 1]] },
+      { title: 'sol', cells: [[0, 1], [1, 1]] },
+      { title: 'üst', cells: [[1, 1, 0], [1, 1, 1]] },
+    ],
+    [
+      { title: 'üst', cells: [[1, 0, 1], [1, 1, 1]] },
+      { title: 'ön', cells: [[0, 1, 0], [1, 1, 1]] },
+    ],
+    [
+      { title: 'alt', cells: [[1, 1, 1], [1, 0, 1]] },
+      { title: 'arka', cells: [[0, 0, 1], [1, 1, 1]] },
+    ],
+  ];
+
+  /* Görünümü verilen yapı ve 3×3 görünümler: en az küp sorularının verisi. */
+  const VERILEN_GRUPLARI = [
+    {
+      note: 'Ön, sağ ve üst görünümü verilen yapı. Bu görünümleri elde etmek için en az kaç küp gerekir?',
+      panels: [
+        { title: 'ön', cells: [[1, 0, 0], [1, 1, 1], [1, 1, 1]] },
+        { title: 'sağ', cells: [[1, 0], [1, 1], [1, 1]] },
+        { title: 'üst', cells: [[1, 1, 1], [1, 1, 0]] },
+      ],
+    },
+    {
+      note: 'Önden, sağdan ve üstten 3 × 3 dolu kare görünen yapı. En az kaç küple kurulur?',
+      panels: [
+        { title: 'ön', cells: [[1, 1, 1], [1, 1, 1], [1, 1, 1]] },
+        { title: 'sağ', cells: [[1, 1, 1], [1, 1, 1], [1, 1, 1]] },
+        { title: 'üst', cells: [[1, 1, 1], [1, 1, 1], [1, 1, 1]] },
+      ],
+    },
+  ];
+
   function stackHeights(state) {
     const key = clampValue(state && state.desen, 1, 4, 1);
     const cap = clampValue(state && state.h, 1, 3, 1);
@@ -1191,6 +1385,146 @@
       },
     },
 
+    /* Karmaşık küp yapısı: solda 3B cisim, sağda yön görünümleri.
+       Sürgü 1–5 arasında başka bir yapıya geçirir. Sayı yazılmaz: öğrenci sayar. */
+    'yapi-gorunum': {
+      params: [
+        { name: 'set', label: 'Yapı grubu', min: 1, max: 2, step: 1, value: 1 },
+        { name: 'sekil', label: 'Şekil (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.set = clampValue(state.set, 1, 2, 1);
+        state.sekil = clampValue(state.sekil, 1, 5, 1);
+      },
+      draw(state) {
+        const heights = yapiOf(state);
+        const parts = [note(22, 28, 'Sürgüyle şekli değiştir; sağdaki görünümler aynı anda güncellenir.', { size: 12 })];
+        parts.push(drawIso(heights, { x: 12, y: 52, width: 262, height: 276 }));
+        const panels = besGorunum(heights);
+        const cols = 3;
+        panels.forEach((panel, index) => {
+          const bx = 292 + (index % cols) * 116;
+          const by = 44 + Math.floor(index / cols) * 158;
+          parts.push(panelBox(bx, by, 108, 148));
+          parts.push(text(bx + 54, by + 20, panel.title, { size: 12, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + 54, by + 40, 104, 104, '#c9dff0'));
+        });
+        return parts.join('');
+      },
+    },
+
+    /* Aynı yapılar, bu kez görünümler gizli: öğrenci kendi sayar. */
+    'yapi-kapali': {
+      params: [
+        { name: 'set', label: 'Yapı grubu', min: 1, max: 2, step: 1, value: 2 },
+        { name: 'sekil', label: 'Şekil (1–5)', min: 1, max: 5, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.set = clampValue(state.set, 1, 2, 1);
+        state.sekil = clampValue(state.sekil, 1, 5, 1);
+      },
+      draw(state) {
+        const heights = yapiOf(state);
+        const parts = [note(22, 30, 'Cismi incele, sonra ön, arka, sağ, sol ve üst görünümdeki kareleri say.', { size: 12 })];
+        parts.push(drawIso(heights, { x: 150, y: 44, width: 340, height: 312 }));
+        return parts.join('');
+      },
+    },
+
+    /* Görünümleri verilen yapı: öğrenci en az küpü bulur, öteki yönleri çizer. */
+    'gorunum-verilen': {
+      params: [
+        { name: 'grup', label: 'Görünüm grubu', min: 1, max: 2, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.grup = clampValue(state.grup, 1, 2, 1);
+      },
+      draw(state) {
+        const group = VERILEN_GRUPLARI[state.grup - 1] || VERILEN_GRUPLARI[0];
+        const parts = [note(22, 30, group.note, { size: 12 })];
+        const count = group.panels.length;
+        const boxW = Math.min(168, 600 / count - 12);
+        group.panels.forEach((panel, index) => {
+          const bx = 22 + index * (boxW + 16);
+          const by = 58;
+          parts.push(panelBox(bx, by, boxW, 250));
+          parts.push(text(bx + boxW / 2, by + 24, panel.title, { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + boxW / 2, by + 44, boxW - 24, 186, '#c9dff0'));
+        });
+        return parts.join('');
+      },
+    },
+
+    /* En az küple çözümün 3B gösterimi (şifreyle açılır). */
+    'yapi-cozum': {
+      params: [
+        { name: 'goster', label: 'Çözüm (1 = açık)', min: 1, max: 2, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.goster = clampValue(state.goster, 1, 2, 1);
+      },
+      draw() {
+        const parts = [note(22, 30, 'En az küple çözüm: tabanda beş sütun, toplam dokuz küp.', { size: 12 })];
+        parts.push(drawIso([[3, 1, 2], [1, 2, 0]], { x: 150, y: 48, width: 340, height: 300 }));
+        return parts.join('');
+      },
+    },
+
+    /* Numaralı küpler: D/Y soruları numaralara gönderme yapar. */
+    'numarali-yapi': {
+      params: [
+        { name: 'kati', label: 'Kat sayısı', min: 4, max: 4, step: 1, value: 4 },
+      ],
+      normalize(state) {
+        state.kati = 4;
+      },
+      draw() {
+        const parts = [note(22, 30, 'Dört katlı yapıdaki her küp numaralanmıştır.', { size: 12 })];
+        parts.push(drawIso(NUMARALI_YAPI, { x: 176, y: 52, width: 300, height: 300 }));
+        parts.push(drawIsoLabels(NUMARALI_YAPI, { x: 176, y: 52, width: 300, height: 300 }, NUMARALI_ETIKET));
+        return parts.join('');
+      },
+    },
+
+    /* Eşleştirme: dört yapıdan biri sürgüyle seçilir. */
+    'yapi-tek': {
+      params: [
+        { name: 'secim', label: 'Yapı (A–D)', min: 1, max: 4, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.secim = clampValue(state.secim, 1, 4, 1);
+      },
+      draw(state) {
+        const heights = ESLESME_YAPILARI[state.secim - 1] || ESLESME_YAPILARI[0];
+        const harf = ['A', 'B', 'C', 'D'][state.secim - 1];
+        const parts = [note(22, 28, `${harf} yapısı`, { size: 14 })];
+        parts.push(drawIso(heights, { x: 100, y: 46, width: 300, height: 310 }));
+        return parts.join('');
+      },
+    },
+
+    /* Eşleştirme seçenekleri: üç görünümden oluşan grup. */
+    'gorunum-panelleri': {
+      params: [
+        { name: 'grup', label: 'Seçenek (1–3)', min: 1, max: 3, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.grup = clampValue(state.grup, 1, 3, 1);
+      },
+      draw(state) {
+        const panels = ESLESME_PANELLERI[state.grup - 1] || ESLESME_PANELLERI[0];
+        const parts = [note(22, 28, `${state.grup}. seçenek`, { size: 14 })];
+        const boxW = Math.min(170, 600 / panels.length - 14);
+        panels.forEach((panel, index) => {
+          const bx = 24 + index * (boxW + 16);
+          parts.push(panelBox(bx, 48, boxW, 268));
+          parts.push(text(bx + boxW / 2, 72, panel.title, { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + boxW / 2, 92, boxW - 24, 196, '#c9dff0'));
+        });
+        return parts.join('');
+      },
+    },
+
     /* Eş küplerle prizma: en, boy ve yükseklik sürgüleriyle cisim büyür.
        Sade görünüm: yalnız görünen yüzler çizilir (üst açık, ön orta, yan koyu);
        ızgara, eksen, nokta işareti yok. Cevap (hacim) çizimde yazılmaz. */
@@ -1699,6 +2033,10 @@
     params.forEach((param) => {
       state[param.name] = clampValue(param.value, param.min, param.max, param.step);
     });
+    /* Sahne türünde olup sürgüyle gösterilmeyen sabit değerler (ör. önceden seçilmiş yapı grubu). */
+    if (spec.values && typeof spec.values === 'object') {
+      Object.keys(spec.values).forEach((name) => { state[name] = spec.values[name]; });
+    }
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -1713,12 +2051,17 @@
       applyNormalize(scene, state);
     }
 
+    const onPaint = typeof spec.onChange === 'function' ? spec.onChange : null;
+
     function paint() {
       normalize();
       try {
         svg.innerHTML = scene.draw(state);
       } catch (error) {
         svg.innerHTML = `<text x="20" y="40" font-size="14" fill="#b42318">Sahne çizilemedi.</text>`;
+      }
+      if (onPaint) {
+        try { onPaint(state); } catch (error) { /* geri çağrı hatası sahneyi durdurmaz */ }
       }
       if (scene.drag) {
         svg.querySelectorAll('[data-handle]').forEach((node) => {
@@ -1821,5 +2164,21 @@
     return scene.params.map((param) => ({ ...param }));
   }
 
-  window.MATEMATIK_SAHNE2 = Object.freeze({ mount, types, params, render, width: W, height: H });
+  /* Yapı verisi ve görünümleri dışarıdan okunur: etkinlik motoru küp sayılarını
+     buradan hesaplar, öğrenciye cevap anahtarı gönderilmez. */
+  function yapiOfSet(setNo, index) {
+    const set = Number(setNo) === 2 ? YAPI_SET2 : YAPI_SET1;
+    const list = set[(clampValue(index, 1, set.length, 1) - 1)] || set[0];
+    return list.map((row) => row.slice());
+  }
+
+  function gorunumOf(heights) {
+    const map = {};
+    besGorunum(heights).forEach((panel) => { map[panel.key] = panel.cells; });
+    return map;
+  }
+
+  window.MATEMATIK_SAHNE2 = Object.freeze({
+    mount, types, params, render, width: W, height: H, yapiOfSet, gorunumOf,
+  });
 })();

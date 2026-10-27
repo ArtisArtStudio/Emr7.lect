@@ -1471,6 +1471,36 @@
     return frame(parts.join(''), 'Dikdörtgenler prizmasının açınımı ve katlama çizgileri');
   }
 
+  /* Görünüm çiftlerinin simetrisi: ön–arka dikey, üst–alt yatay doğruya göre. */
+  function viewSymmetry() {
+    const cell = 15;
+    const grid = (cells, x, y, fill) => cells.map((row, r) => row.map((on, c) => rect(
+      x + c * cell, y + r * cell, cell, cell,
+      { fill: on ? fill : '#fff', stroke: on ? '#3f6c93' : '#c6d2e0', width: on ? 1.1 : 0.9 },
+    )).join('')).join('');
+    const parts = [
+      txt(16, 14, 'ön – arka: dikey doğru', { size: 11.5, weight: 800 }),
+      grid([[1, 1], [1, 0]], 20, 24, '#c9dff0'),
+      line(68, 22, 68, 58, { stroke: ACCENT, width: 1.4, dash: '5 4' }),
+      grid([[1, 1], [0, 1]], 76, 24, '#c9dff0'),
+      txt(112, 34, 'aynı siluet,', { size: 10, fill: MUTED }),
+      txt(112, 48, 'ayna görüntüsü', { size: 10, fill: MUTED, maxWidth: 78 }),
+      txt(200, 32, 'Ön ve arka görünüm', { size: 11, weight: 800, maxWidth: 132 }),
+      txt(200, 48, 'dikey doğruya göre', { size: 10.5, fill: MUTED, maxWidth: 132 }),
+      txt(200, 64, 'simetriktir.', { size: 10.5, fill: MUTED, maxWidth: 132 }),
+      txt(16, 102, 'üst – alt: yatay doğru', { size: 11.5, weight: 800 }),
+      grid([[1, 0], [1, 1]], 20, 112, '#d5efdf'),
+      line(16, 148, 106, 148, { stroke: ACCENT, width: 1.4, dash: '5 4' }),
+      grid([[1, 0], [1, 1]], 20, 156, '#d5efdf'),
+      txt(114, 130, 'aynı siluet,', { size: 10, fill: MUTED }),
+      txt(114, 144, 'ayna görüntüsü', { size: 10, fill: MUTED, maxWidth: 78 }),
+      txt(200, 120, 'Üst ve alt görünüm', { size: 11, weight: 800, maxWidth: 132 }),
+      txt(200, 136, 'yatay doğruya göre', { size: 10.5, fill: MUTED, maxWidth: 132 }),
+      txt(200, 152, 'simetriktir.', { size: 10.5, fill: MUTED, maxWidth: 132 }),
+    ];
+    return frame(parts.join(''), 'Görünüm çiftlerinin simetrisi');
+  }
+
   const BUILDERS = {
     'pay-payda': fractionLabels,
     'kesir-serit': fractionBar,
@@ -1523,6 +1553,7 @@
     'koordinat-duzlem': coordPlane,
     'duzgun-cokgen': regularPolygon,
     'harf-simetri': letterSymmetry,
+    'gorunum-simetri': viewSymmetry,
     'kat-plani': buildingFloors,
     yonelim: orientation,
     insa: construction,
