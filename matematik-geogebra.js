@@ -15,6 +15,13 @@
  *   çalışır; varsayılan bakış yukarıdan eğiktir, öğrenci cismi parmağıyla döndürebilir.
  * - `kup-dondur` düz (flat) gölgeli çizilir: her küpün her yüzü ayrı poligon ve ayrı ton,
  *   dolgu tam; köşe noktaları/etiketler ve zemin düzlemi gizlenir.
+ * - Eksenler `setAxesVisible(-1, false, false, false)` ile kapatılır. Üç argümanlı
+ *   `setAxesVisible(false, false, false)` çağrısı **etkisizdir**: ilk argüman görünüm
+ *   numarası sanılır (0 → geçersiz) ve sahnede dikey z ekseni görünür kalırdı.
+ * - `kup-kur-ggb` etkileşimlidir: 3 × 3 tabanda boş sütunun zeminine, dolu sütunun
+ *   yüzüne dokununca o sütuna bir küp eklenir (silme modunda bir küp eksilir).
+ *   Tıklama `registerClickListener` ile alınır; nesne adı sütunu taşır. Cisim
+ *   GeoGebra'nın kendi nesneleridir, öğrenci parmağıyla döndürür; kadraj sabittir.
  * - `acim` sahnesinde “Katla / Aç” düğmesi ve tuvale dokunma, kapalı kutu ile düz açınım
  *   arasında geçirir.
  * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
@@ -569,6 +576,67 @@
       },
     },
 
+    /* Dokunarak küp kurma: 3 × 3 taban, en çok üç kat. Her sütunun görünen üst
+       yüzü (ya da ön yüzü) tıklanınca o sütuna bir küp eklenir; “sil” modunda
+       bir küp eksilir. Küpler GeoGebra'nın kendi nesneleridir; öğrenci cismi
+       parmağıyla döndürerek her yönden inceler, eklediği küpü yerinde görür.
+       Tıklama hedefi her sütunun üst yüzüne konan saydam levhadır; böylece
+       öndeki sütun arkadakini örtse bile tıklama doğru sütuna gider. */
+    'kup-kur-ggb': {
+      label: 'Küp kurma (3B, dokunarak)',
+      views: true,
+      clean: true,
+      legend: true,
+      interactive: true,
+      params: [],
+      required: ['cap'],
+      /* Kadraj sabit: küp eklendikçe görüntü zıplamaz, cisim ortada kalır. */
+      frame: { x: 1.9, y: 1.9, zMin: -0.15, zMax: 3.15 },
+      build(b, v, mode, data) {
+        const cubes = Array.from({ length: 9 }, () => 0);
+        if (data && Array.isArray(data.cubes)) {
+          for (let index = 0; index < 9; index += 1) {
+            cubes[index] = Math.max(0, Math.min(3, Math.round(Number(data.cubes[index]) || 0)));
+          }
+        }
+        const x0 = -1.5;
+        const y0 = -1.5;
+        const z0 = VIEW_CENTER_Z;
+        /* Doğrulama çapası: gizli tek nokta. */
+        b.point('cap', 0, 0, z0);
+        const at = (r, c) => cubes[r * 3 + c];
+        for (let r = 0; r < 3; r += 1) {
+          for (let c = 0; c < 3; c += 1) {
+            const height = at(r, c);
+            for (let level = 0; level < height; level += 1) {
+              const faces = [];
+              if (level === height - 1) faces.push('top');
+              if (level === 0) faces.push('bottom');
+              if (r === 0 || at(r - 1, c) <= level) faces.push('front');
+              if (r === 2 || at(r + 1, c) <= level) faces.push('back');
+              if (c === 0 || at(r, c - 1) <= level) faces.push('left');
+              if (c === 2 || at(r, c + 1) <= level) faces.push('right');
+              /* Ad, sütunu taşır: tıklamada hangi sütuna ekleneceği buradan okunur. */
+              b.flatCube(`k${r}${c}L${level}`, x0 + c, y0 + r, z0 + level, faces);
+            }
+            /* Boş sütunun zemini tıklama levhasıdır: küp eklemek için dokunulur.
+               Dolu sütunda levha konmaz — küpün kendi yüzleri (k..L..) tıklanır;
+               böylece üst yüzdeki siyah kenar çizgisi beyaz kenarla örtülmez. */
+            if (height === 0) {
+              b.polygon3(`t${r}${c}`, [
+                [x0 + c, y0 + r, z0], [x0 + c + 1, y0 + r, z0],
+                [x0 + c + 1, y0 + r + 1, z0], [x0 + c, y0 + r + 1, z0],
+              ]);
+              b.color(`t${r}${c}`, [255, 255, 255]);
+              b.fill(`t${r}${c}`, 0.02);
+              b.thickness(`t${r}${c}`, 1);
+              b.lineStyle(`t${r}${c}`, 0);
+            }
+          }
+        }
+      },
+    },
+
     /* Düzensiz küp yığını: sütun yükseklikleri desene göre değişir; ön, yan ve üst
        görünümler bu yüzden düz dikdörtgen değil, basamaklı siluetlerdir. */
     'duzensiz-yigin': {
@@ -852,14 +920,29 @@
 
   /* Applet çerçevesini sadeleştirir: cebir paneli, araç çubuğu ve giriş alanı
      kapatılır; yalnız 3B görünüm kalır. API sürümüne göre sessizce atlanır. */
+  /* Eksenler ve ızgara kapatılır. DİKKAT: `setAxesVisible(false, false, false)`
+     çağrısı GeoGebra'da **hiçbir şey yapmaz** — üç argümanlı sürüm dört
+     argümanlıya düşer ve ilk argümanı görünüm numarası sanar (`view = 0` →
+     geçersiz, sessizce döner). 3B görünümün numarası **-1**'dir. Kapatılmadığı
+     için sahnede ortadan geçen dikey z ekseni görünüyordu. */
+  function hideAxes(target) {
+    if (!target) return;
+    try { target.setAxesVisible(-1, false, false, false); } catch (error) { /* eski sürüm */ }
+    try { target.evalCommand('ShowAxes(false, false, false)'); } catch (error) { /* yok say */ }
+    try { target.setGridVisible && target.setGridVisible(false); } catch (error) { /* yok say */ }
+    ['xAxis', 'yAxis', 'zAxis', 'xOyPlane', 'xOzPlane', 'yOzPlane'].forEach((name) => {
+      try { target.setVisible(name, false); } catch (error) { /* yok say */ }
+      try { target.evalCommand(`SetVisibleInView(${name}, -1, false)`); } catch (error) { /* yok say */ }
+    });
+  }
+
   function stripChrome(target) {
     const attempts = [
       () => target.setPerspective && target.setPerspective('T'),
       () => target.setPerspective && target.setPerspective('-A'),
       () => target.evalCommand && target.evalCommand('SetPerspective("T")'),
       () => target.evalCommand && target.evalCommand('SetPerspective("-A")'),
-      () => target.setAxesVisible && target.setAxesVisible(false, false, false),
-      () => target.setGridVisible && target.setGridVisible(false),
+      () => hideAxes(target),
     ];
     attempts.forEach((attempt) => {
       try {
@@ -902,13 +985,7 @@
     });
     /* Yatay zemin düzlemi ve eksenler: cismin altında gri bir levha görünmesin.
        3B görünümün numarası -1'dir; 1 verilirse düzlem görünür kalır. */
-    ['xOyPlane', 'xOzPlane', 'yOzPlane', 'xAxis', 'yAxis', 'zAxis'].forEach((name) => {
-      try { api.setVisible(name, false); } catch (error) { /* yok say */ }
-      try { api.evalCommand(`SetVisibleInView(${name}, -1, false)`); } catch (error) { /* yok say */ }
-    });
-    ['ShowAxes(false)', 'ShowGrid(false)'].forEach((command) => {
-      try { api.evalCommand(command); } catch (error) { /* yok say */ }
-    });
+    hideAxes(api);
   }
 
   /* Cisim kadraja ortalanır. GeoGebra 3B görünümünün merkezi orijin değil
@@ -917,14 +994,26 @@
      merkezine taşınır: `setCoordSystem` görünümün sıfırını ve ölçeğini
      kutunun merkezine oturtur. Böylece öğrenci cismi çevirdikçe de ortada kalır.
      Kutu bir miktar genişletilir ki cisim kenarlara yapışmasın. */
-  function frameView(api, box) {
+  function frameView(api, box, conf) {
     if (!api || typeof api.setCoordSystem !== 'function') return;
-    const bounds = box && typeof box.bounds === 'function' ? box.bounds() : null;
+    /* Dokunarak kurulan sahnede kadraj sabittir: her küp eklendiğinde cisim
+       yeniden çerçevelenirse görüntü zıplar. Kutu 3 × 3 × 3 hacmin tamamıdır. */
+    const fixed = conf && conf.frame;
+    const bounds = fixed
+      ? {
+        minX: -fixed.x,
+        maxX: fixed.x,
+        minY: -fixed.y,
+        maxY: fixed.y,
+        minZ: VIEW_CENTER_Z + fixed.zMin,
+        maxZ: VIEW_CENTER_Z + fixed.zMax,
+      }
+      : (box && typeof box.bounds === 'function' ? box.bounds() : null);
     if (!bounds) return;
     const span = Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY, bounds.maxZ - bounds.minZ, 1);
-    /* Cisim döndürüldüğünde köşegeni kadar yer kaplar: kutu bir miktar
-       genişletilir ki çevirirken kenardan taşmasın. */
-    const pad = span * 0.28 + 0.2;
+    /* Sabit kadrajda pay zaten verilmiş: ikinci kez genişletilirse cisim küçülür.
+       Öteki cisimlerde döndürme payı eklenir ki çevirirken kenardan taşmasın. */
+    const pad = fixed ? 0 : span * 0.2 + 0.2;
     try {
       api.setCoordSystem(
         bounds.minX - pad, bounds.maxX + pad,
@@ -935,6 +1024,8 @@
     } catch (error) {
       /* oturtma desteklenmiyorsa GeoGebra'nın kendi kadrajı kalır */
     }
+    /* Kadraj ayarı eksenleri geri getirebilir: kapatmayı burada tazeliyoruz. */
+    hideAxes(api);
   }
 
   function applyLabels(box) {
@@ -963,6 +1054,16 @@
     const values = {};
     params.forEach((param) => { values[param.name] = param.value; });
     let mode = conf.net ? 'kapali' : '';
+    /* Dokunarak kurulan appletlerde durum JS'te tutulur: kaç sütunda kaç kat
+       olduğu ve ekleme/silme modu. Her tıklamada cisim yeniden kurulur. */
+    const data = conf.interactive ? {
+      cubes: Array.from({ length: 9 }, (_, index) => {
+        const source = settings.cubes;
+        return Math.max(0, Math.min(3, Math.round(Number(source && source[index]) || 0)));
+      }),
+      mod: Number(settings.mod) === 0 ? 0 : 1,
+    } : null;
+    const onCubes = typeof settings.onCubes === 'function' ? settings.onCubes : function () {};
 
     let api = null;
     let box = null;
@@ -989,6 +1090,36 @@
     renderControls(controls, params, values, scope);
     if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
     status('GeoGebra hazırlanıyor…');
+
+    /* Tıklanan nesnenin adından sütun okunur:
+       `k<satır><sütun>L<kat><yüz>` küp yüzü, `t<satır><sütun>` tıklama levhası. */
+    function columnOf(name) {
+      const label = String(name || '');
+      const plate = /^t([0-2])([0-2])$/.exec(label);
+      if (plate) return Number(plate[1]) * 3 + Number(plate[2]);
+      const cube = /^k([0-2])([0-2])L([0-3])/.exec(label);
+      if (cube) return Number(cube[1]) * 3 + Number(cube[2]);
+      return -1;
+    }
+
+    function onCubeClick(name) {
+      if (!data || destroyed) return;
+      const index = columnOf(name);
+      if (index < 0) return;
+      const current = Number(data.cubes[index]) || 0;
+      data.cubes[index] = data.mod === 0 ? Math.max(0, current - 1) : Math.min(3, current + 1);
+      rebuild();
+      try { onCubes(data.cubes.slice()); } catch (error) { /* geri çağrı hatası sahneyi durdurmaz */ }
+      status(`${Math.floor(index / 3) + 1}. sıra ${(index % 3) + 1}. sütun: ${data.cubes[index]} kat.`);
+    }
+
+    /* GeoGebra tıklama dinleyicisi global bir işlev adı ister. */
+    function registerClick() {
+      if (!data || !api || typeof api.registerClickListener !== 'function') return;
+      const handler = `ggbKupClick_${scope}`;
+      window[handler] = (name) => { onCubeClick(name); };
+      try { api.registerClickListener(handler); } catch (error) { /* sürüm desteklemiyorsa sessiz geç */ }
+    }
 
     function hideLoading() {
       if (loading) loading.hidden = true;
@@ -1020,13 +1151,13 @@
       if (!api) return;
       if (box) box.clear();
       box = builder(api);
-      conf.build(box, values, mode);
+      conf.build(box, values, mode, data);
       applyLabels(box);
       /* Nokta/etiket kalabalığı ve eksenler kapatılır: cisim öne çıkar. */
       if (typeof box.polish === 'function') box.polish();
       if (conf.clean) quietScene(box);
       /* Kadraj yalnız 3B appletlerde ortalanır; 2B çizimler kendi ölçeğini korur. */
-      if (conf.clean || conf.views) frameView(api, box);
+      if (conf.clean || conf.views) frameView(api, box, conf);
     }
 
     function build(attempt) {
@@ -1035,8 +1166,7 @@
       buildTimer = window.setTimeout(() => {
         if (done || destroyed) return;
         try {
-          if (typeof api.setAxesVisible === 'function') api.setAxesVisible(false, false, false);
-          if (typeof api.setGridVisible === 'function') api.setGridVisible(false);
+          hideAxes(api);
           rebuild();
           box.view('egik');
         } catch (error) {
@@ -1174,6 +1304,7 @@
           /* Yalnız 3B görünüm kalsın: soldaki cebir/nesne paneli (points, sliders
              listesi) kalabalık yapıyordu; referans materyalde de yalnız cisim var. */
           stripChrome(api);
+          registerClick();
           build(0);
           if (typeof window.ResizeObserver === 'function') {
             let debounce = null;
@@ -1225,8 +1356,21 @@
       engine: 'geogebra',
       state: values,
       mode: () => mode,
+      /* Dokunarak kurma: sütun yükseklikleri ve mod. */
+      cubes: () => (data ? data.cubes.slice() : []),
+      setMod(value) { if (data) data.mod = Number(value) === 0 ? 0 : 1; },
       /* Dışarıdan (şekil düğmeleri) değer değiştirme: sürgüyle aynı yolu kullanır. */
       set(name, value) {
+        if (data && name === 'mod') {
+          data.mod = Number(value) === 0 ? 0 : 1;
+          return;
+        }
+        if (data && name === 'cubes') {
+          const list = Array.isArray(value) ? value : [];
+          data.cubes = Array.from({ length: 9 }, (_, index) => Math.max(0, Math.min(3, Math.round(Number(list[index]) || 0))));
+          if (api) rebuild();
+          return;
+        }
         if (!(name in values)) return;
         values[name] = Number(value);
         const input = controls ? controls.querySelector(`[data-scene-param="${name}"]`) : null;
@@ -1291,7 +1435,8 @@
     });
     if (typeof conf.normalize === 'function') conf.normalize(state);
     const box = builder(fake);
-    conf.build(box, state, mode || (conf.net ? 'kapali' : ''));
+    const data = conf.interactive ? { cubes: Array(9).fill(0), mod: 1 } : null;
+    conf.build(box, state, mode || (conf.net ? 'kapali' : ''), data);
     if (typeof box.polish === 'function') box.polish();
     return commands;
   }
@@ -1306,6 +1451,7 @@
     required: (type) => (APPLETS[type] ? APPLETS[type].required.slice() : []),
     label: (type) => (APPLETS[type] ? APPLETS[type].label : ''),
     hasNet: (type) => Boolean(APPLETS[type] && APPLETS[type].net),
+    interactive: (type) => Boolean(APPLETS[type] && APPLETS[type].interactive),
     hasSplit: (type) => Boolean(APPLETS[type] && APPLETS[type].split),
     prefers,
     setPrefers,
