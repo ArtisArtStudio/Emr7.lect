@@ -55,10 +55,39 @@
     return (cells || []).reduce((total, row) => total + row.filter(Boolean).length, 0);
   }
 
-  function inlineSvg(type, values, extraClass) {
+  /* Küçük kartlarda çizim tuvalin ortasında küçücük kalıyordu: kırpma kutusu
+     (viewBox) verilirse yalnız çizimin kapladığı alan gösterilir, şekil
+     kartın içinde büyür. */
+  /* Küçük kartlarda çizim tuvalin ortasında küçücük kalıyordu. Kırpma kutusu
+     (viewBox) çizimin gerçek sınırlarından hesaplanır: şekil kartın içini
+     doldurur, sağda solda boş şerit kalmaz. */
+  function svgBounds(body) {
+    let minX = Infinity; let maxX = -Infinity; let minY = Infinity; let maxY = -Infinity;
+    const add = (x, y) => {
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      minX = Math.min(minX, x); maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+    };
+    body.replace(/points="([^"]+)"/g, (_, points) => {
+      const list = points.trim().split(/\s+/).map((pair) => pair.split(',').map(Number));
+      list.forEach(([x, y]) => add(x, y));
+      return '';
+    });
+    body.replace(/<rect x="([-\d.]+)" y="([-\d.]+)" width="([-\d.]+)" height="([-\d.]+)"/g, (_, x, y, w, h) => {
+      add(Number(x), Number(y));
+      add(Number(x) + Number(w), Number(y) + Number(h));
+      return '';
+    });
+    if (!Number.isFinite(minX)) return null;
+    const pad = 14;
+    return `${Math.round(minX - pad)} ${Math.round(minY - pad)} ${Math.round(maxX - minX + pad * 2)} ${Math.round(maxY - minY + pad * 2)}`;
+  }
+
+  function inlineSvg(type, values, extraClass, viewBox) {
     const body = SAHNE.render(type, values);
     if (!body) return '';
-    return `<svg class="atolye-svg${extraClass ? ` ${extraClass}` : ''}" viewBox="0 0 ${SAHNE.width} ${SAHNE.height}" role="img" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+    const box = viewBox || svgBounds(body) || `0 0 ${SAHNE.width} ${SAHNE.height}`;
+    return `<svg class="atolye-svg${extraClass ? ` ${extraClass}` : ''}" viewBox="${box}" role="img" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
   }
 
   /* Boş kareyi kırparak desen karşılaştırması: öğrenci ızgaranın herhangi bir
@@ -143,15 +172,19 @@
     store.save();
   }
 
-  /* ---------------- Boyama ızgarası (8 × 8) ---------------- */
+  /* ---------------- Boyama ızgarası (5 × 5) ----------------
+     Sekizlik ızgara gereğinden büyüktü: sekiz yapıdaki görünümlerin en
+     genişi 4 × 4 olduğu için beş kare her şekle yetiyor. Küçük ızgara
+     ekranda daha okunaklı ve kareler daha büyük. */
+  const GRID_N = 5;
 
   function gridMarkup(id, label) {
-    const cells = Array.from({ length: 64 }, (_, index) => (
+    const cells = Array.from({ length: GRID_N * GRID_N }, (_, index) => (
       `<button type="button" class="atolye-cell" data-grid="${id}" data-index="${index}" aria-label="${label} ${index + 1}. kare" aria-pressed="false"></button>`
     )).join('');
     return `<div class="atolye-grid-block">
       <p class="atolye-grid-label">${label}</p>
-      <div class="atolye-grid" data-grid-host="${id}" role="group" aria-label="${label} görünümünü 8 × 8 kareye çiz">${cells}</div>
+      <div class="atolye-grid" data-grid-host="${id}" role="group" aria-label="${label} 5 × 5 kareye çiz">${cells}</div>
       <div class="atolye-grid-actions">
         <button type="button" class="atolye-mini" data-grid-clear="${id}">Temizle</button>
         <button type="button" class="atolye-mini" data-grid-check="${id}">Bu görünümü kontrol et</button>
@@ -169,7 +202,7 @@
     const expectedFor = options.expectedFor;
     const onSolved = options.onSolved;
     const states = {};
-    const n = 8;
+    const n = GRID_N;
 
     const readGrid = (storageKey) => {
       const raw = entry.grids[storageKey] || [];
@@ -517,7 +550,7 @@
     load(1);
   }
 
-  /* ---------------- Görev 3–4: 8 × 8 kareye çizim ---------------- */
+  /* ---------------- Görev 3–4: 5 × 5 kareye çizim ---------------- */
 
   function cizimMarkup(item) {
     const grids = (item.views || ['on', 'arka', 'ust']).map((view) => gridMarkup(view, `${VIEW_LABEL[view]} görünüm`)).join('');
@@ -582,8 +615,19 @@
         </label>
         <button type="button" class="atolye-check" data-enaz-check="${item.id}">Kontrol et</button>
       </div>
+      ${item.builder ? `<div class="atolye-builder">
+        <p class="atolye-hint">Kendi yapını kur: aşağıdaki 3B alanda bir sütuna dokunduğunda o sütuna bir küp eklenir. Önce “Küp sil” düğmesine basarsan dokunduğun sütundan bir küp eksilir.</p>
+        <div class="math-scene-frame atolye-scene"><div class="math-scene-stage" data-builder-stage="${item.id}"></div></div>
+        <div class="atolye-grid-actions">
+          <button type="button" class="atolye-mini is-on" data-builder-mode="ekle" data-builder-for="${item.id}">Küp ekle</button>
+          <button type="button" class="atolye-mini" data-builder-mode="sil" data-builder-for="${item.id}">Küp sil</button>
+          <button type="button" class="atolye-mini" data-builder-clear="${item.id}">Temizle</button>
+          <span class="atolye-builder-count" data-builder-count="${item.id}">0 küp</span>
+        </div>
+        <p class="atolye-feedback" data-builder-note="${item.id}" role="status" aria-live="polite"></p>
+      </div>` : ''}
       <p class="atolye-feedback" data-enaz-feedback="${item.id}" role="status" aria-live="polite"></p>
-      ${grids ? `<p class="atolye-hint">Şimdi aynı yapının ${gridList.map((view) => VIEW_LABEL[view]).join(', ')} görünümünü 8 × 8 kareye çiz.</p>
+      ${grids ? `<p class="atolye-hint">Şimdi aynı yapının ${gridList.map((view) => VIEW_LABEL[view]).join(', ')} görünümünü 5 × 5 kareye çiz.</p>
       <div class="atolye-grids">${grids}</div>` : ''}
       ${item.lock === false ? '' : `<div class="atolye-lock">
         <label class="atolye-field atolye-field--password">
@@ -645,6 +689,8 @@
       });
     }
 
+    if (item.builder) bindBuilder(root, item);
+
     const unlock = root.querySelector(`[data-enaz-unlock="${item.id}"]`);
     if (unlock) {
       const reveal = () => {
@@ -669,6 +715,76 @@
         reveal();
         feedback.dataset.state = 'correct';
         feedback.textContent = 'Çözüm açıldı: 3B yapıyı inceleyip çizimini karşılaştır.';
+      });
+    }
+  }
+
+  /* Kendi yapısını kurma: 3 × 3 tabanda dokunarak küp ekleme. Cevap
+     yazılmaz; öğrenci kendi kurduğunun kaç küp olduğunu ve üç görünümün
+     dolup dolmadığını görür. */
+  function bindBuilder(root, item) {
+    const entry = store.item(item.id);
+    const stage = root.querySelector(`[data-builder-stage="${item.id}"]`);
+    const counter = root.querySelector(`[data-builder-count="${item.id}"]`);
+    const note = root.querySelector(`[data-builder-note="${item.id}"]`);
+    if (!stage) return;
+    const saved = Array.isArray(entry.answers.katlar) ? entry.answers.katlar : null;
+    const instance = mountScene(stage, null, {
+      type: 'kup-kur-tikla',
+      values: saved ? { katlar: saved } : {},
+    }, (state) => {
+      entry.answers.katlar = (state.katlar || []).slice();
+      store.save();
+      paintBuilderInfo(state);
+    });
+
+    const rowsOf = (state) => {
+      const list = Array.isArray(state.katlar) ? state.katlar : [];
+      return [0, 1, 2].map((r) => [0, 1, 2].map((c) => Number(list[r * 3 + c]) || 0));
+    };
+    /* Görünüm ancak 3 × 3'lük ve tamamen doluysa istenen durumdur:
+       iki katlı bir yapının ön görünümü de "tüm kareler dolu" görünür. */
+    const filled = (cells) => cells.length === 3
+      && cells.every((row) => row.length === 3 && row.every(Boolean));
+
+    function paintBuilderInfo(state) {
+      const heights = rowsOf(state);
+      const total = heights.reduce((sum, row) => sum + row.reduce((a, b) => a + b, 0), 0);
+      if (counter) counter.textContent = `${total} küp`;
+      if (!note) return;
+      if (!total) {
+        note.dataset.state = '';
+        note.textContent = 'Henüz küp yok: bir sütuna dokunarak başla.';
+        return;
+      }
+      const views = SAHNE.gorunumOf(heights);
+      const full = ['on', 'sag', 'ust'].every((view) => filled(views[view]));
+      note.dataset.state = full ? 'correct' : '';
+      note.textContent = full
+        ? 'Üç görünüm de 3 × 3 dolu: önden, sağdan ve üstten bakan biri tam kare bir yüzey görüyor. Kaç küp kullandığını say.'
+        : 'Üç görünümden biri ya da birkaçı henüz dolu değil; eksik sütunları yükseltmeyi dene.';
+    }
+
+    if (instance) paintBuilderInfo(instance.state);
+
+    root.querySelectorAll('[data-builder-mode]').forEach((button) => {
+      if (button.dataset.builderFor !== item.id) return;
+      button.addEventListener('click', () => {
+        const mode = button.dataset.builderMode === 'sil' ? 0 : 1;
+        root.querySelectorAll(`[data-builder-for="${item.id}"]`).forEach((node) => {
+          node.classList.toggle('is-on', node === button);
+        });
+        if (instance) instance.set('mod', mode);
+      });
+    });
+
+    const clear = root.querySelector(`[data-builder-clear="${item.id}"]`);
+    if (clear) {
+      clear.addEventListener('click', () => {
+        if (!instance) return;
+        instance.state.katlar = Array.from({ length: 9 }, () => 0);
+        instance.set('mod', instance.state.mod === 0 ? 0 : 1);
+        paintBuilderInfo(instance.state);
       });
     }
   }

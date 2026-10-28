@@ -147,6 +147,16 @@
     ['ust', 'Üst'],
   ];
 
+  /* GeoGebra 3B görünümünün varsayılan merkezi orijin DEĞİL: kaynakta
+     `ZZERO_SCENE_STANDARD = -1.5` (EuclidianView3DInterface). Yani ekranın tam
+     ortası dünya koordinatında (0, 0, -1.5) noktası. Cismi orijine ortalayınca
+     kadrajda 1.5 birim yukarıda kalıyordu. Cisim bu yüzden bu noktaya orta­lanır;
+     eksenler kapalı olduğu için sahnede başka hiçbir şey kalmaz. */
+  const VIEW_CENTER_Z = -1.5;
+
+  /* Birim küp kenarı: siyah, ince. Küplerin sınırı böylece her bakışta okunur. */
+  const EDGE_RGB = [0, 0, 0];
+
   /* Düz (flat) gölgeleme: her yüz tek renk, dolgu tam; küpün altı yüzü altı ayrı renk.
      Renkler sabittir: üst kırmızı, alt siyah, sol yeşil, sağ sarı, ön mor, arka pembe.
      Böylece cisim döndürüldükçe hangi yüzün göründüğü renkten okunur. */
@@ -164,6 +174,17 @@
   function builder(api) {
     const names = [];
     const labeled = new Set();
+    /* Çizilen her noktanın sınırları: sahne bu kutunun merkezine ortalanır. */
+    const bounds = { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity, minZ: Infinity, maxZ: -Infinity };
+    const grow = (points) => {
+      points.forEach((point) => {
+        const [x, y, z] = point;
+        if (![x, y, z].every((value) => Number.isFinite(Number(value)))) return;
+        bounds.minX = Math.min(bounds.minX, Number(x)); bounds.maxX = Math.max(bounds.maxX, Number(x));
+        bounds.minY = Math.min(bounds.minY, Number(y)); bounds.maxY = Math.max(bounds.maxY, Number(y));
+        bounds.minZ = Math.min(bounds.minZ, Number(z)); bounds.maxZ = Math.max(bounds.maxZ, Number(z));
+      });
+    };
     const run = (command) => {
       try {
         api.evalCommand(command);
@@ -183,15 +204,23 @@
       },
       point(name, x, y, z) {
         box.mark(name, false);
+        grow([[x, y, z]]);
         run(`${name} = ${P(x, y, z)}`);
       },
       segment(name, x1, y1, z1, x2, y2, z2) {
         box.mark(name, false);
+        grow([[x1, y1, z1], [x2, y2, z2]]);
         run(`${name} = Segment(${P(x1, y1, z1)}, ${P(x2, y2, z2)})`);
       },
       polygon3(name, points) {
         box.mark(name, false);
+        grow(points);
         run(`${name} = Polygon(${points.map(([x, y, z]) => P(x, y, z)).join(', ')})`);
+      },
+      /* Çizilen her şeyin sınır kutusu; sahne bu kutunun merkezine alınır. */
+      bounds() {
+        if (!Number.isFinite(bounds.minX)) return null;
+        return { ...bounds };
       },
       polygon(name, points) {
         box.mark(name, false);
@@ -261,11 +290,30 @@
           right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
         };
         const suffix = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
+        /* Kenarlar siyah ve ince çizilir: birim küpler birbirinden ayrılsın.
+           GeoGebra'da poligonun kenar rengi dolgu renginden türer, ayrı
+           ayarlanamaz; bu yüzden birim küpün sınırları ayrı Segment olarak
+           eklenir. Aynı kenar iki yüzde geçebilir; koordinatla tekilleştirilir. */
+        const edges = [];
+        const seen = new Set();
         faces.forEach((face) => {
           const name = `${prefix}${suffix[face]}`;
           box.polygon3(name, corners[face]);
           box.color(name, FLAT_FACES[face]);
           box.fill(name, 1);
+          box.thickness(name, 1);
+          corners[face].forEach((start, index, list) => {
+            const end = list[(index + 1) % list.length];
+            const key = [start.join(','), end.join(',')].sort().join('|');
+            if (seen.has(key)) return;
+            seen.add(key);
+            edges.push([start, end]);
+          });
+        });
+        edges.forEach(([start, end], index) => {
+          const name = `${prefix}c${index + 1}`;
+          box.segment(name, start[0], start[1], start[2], end[0], end[1], end[2]);
+          box.color(name, EDGE_RGB);
           box.thickness(name, 1);
         });
       },
@@ -334,10 +382,10 @@
         const a = Number(v.a);
         const b0 = Number(v.b);
         const h = Number(v.h);
-        /* Cisim orijine ortalanır: görünüm ne olursa olsun kadrajda kalır. */
+        /* Cisim kadraj merkezine ortalanır: görünüm ne olursa olsun ortada kalır. */
         const x0 = -a / 2;
         const y0 = -b0 / 2;
-        const z0 = -h / 2;
+        const z0 = VIEW_CENTER_Z - h / 2;
         b.faces(x0, y0, z0, a, b0, h);
         /* Ölçek küpü: prizmanın köşesinde duran tek birim küp. */
         b.cubeUp('birim', x0, y0, z0, 1);
@@ -361,7 +409,7 @@
         const h = Number(v.h);
         const x0 = -a / 2;
         const y0 = -b0 / 2;
-        const z0 = -h / 2;
+        const z0 = VIEW_CENTER_Z - h / 2;
         b.polygon3('taban', [[x0, y0, z0], [x0 + a, y0, z0], [x0 + a, y0 + b0, z0], [x0, y0 + b0, z0]]);
         b.polygon3('ust', [[x0, y0, z0 + h], [x0 + a, y0, z0 + h], [x0 + a, y0 + b0, z0 + h], [x0, y0 + b0, z0 + h]]);
         b.color('taban', FACE_COLORS.bottom);
@@ -418,7 +466,7 @@
         const h = Number(v.h);
         const x0 = -a / 2;
         const y0 = -b0 / 2;
-        const z0 = -h / 2;
+        const z0 = VIEW_CENTER_Z - h / 2;
         b.faces(x0, y0, z0, a, b0, h);
       },
     },
@@ -442,7 +490,7 @@
         const k = Math.max(1, Math.min(Number(v.k), a - 1));
         const x0 = -a / 2;
         const y0 = -b0 / 2;
-        const z0 = -h / 2;
+        const z0 = VIEW_CENTER_Z - h / 2;
         const solid = (i, j) => !(i >= a - k && j >= 1);
         const at = (i, j) => [x0 + i, y0 + j];
         /* Taban ve üst: L biçimli çevre. */
@@ -493,10 +541,10 @@
         const depth = heights.length;
         const width = heights[0].length;
         const top = Math.max(1, ...heights.flat());
-        /* Cisim üç eksende de orijine ortalanır: kadrajda ortada durur. */
+        /* Cisim kadrajın merkezine ortalanır (x, y = 0 ve z = VIEW_CENTER_Z). */
         const x0 = -width / 2;
         const y0 = -depth / 2;
-        const z0 = -top / 2;
+        const z0 = VIEW_CENTER_Z - top / 2;
         /* Doğrulama çapası: gizlenen tek nokta. Küp yüzleri komşuluğa göre
            oluştuğu için sabit isim garanti değil; bu nokta her zaman vardır. */
         b.point('cap', 0, 0, z0);
@@ -542,7 +590,7 @@
         const top = Math.max(1, ...heights.flat());
         const x0 = -width / 2;
         const y0 = -depth / 2;
-        const z0 = -top / 2;
+        const z0 = VIEW_CENTER_Z - top / 2;
         b.polygon3('taban', [
           [x0, y0, z0], [x0 + width, y0, z0], [x0 + width, y0 + depth, z0], [x0, y0 + depth, z0],
         ]);
@@ -598,7 +646,7 @@
           /* Kapalı kutu: altı yüz. */
           const x0 = -a / 2;
           const y0 = -b0 / 2;
-          const z0 = -h / 2;
+          const z0 = VIEW_CENTER_Z - h / 2;
           b.polygon3('on', [[x0, y0, z0], [x0 + a, y0, z0], [x0 + a, y0, z0 + h], [x0, y0, z0 + h]]);
           b.polygon3('arka', [[x0, y0 + b0, z0], [x0 + a, y0 + b0, z0], [x0 + a, y0 + b0, z0 + h], [x0, y0 + b0, z0 + h]]);
           b.polygon3('sol', [[x0, y0, z0], [x0, y0 + b0, z0], [x0, y0 + b0, z0 + h], [x0, y0, z0 + h]]);
@@ -863,6 +911,32 @@
     });
   }
 
+  /* Cisim kadraja ortalanır. GeoGebra 3B görünümünün merkezi orijin değil
+     (z = ZZERO_SCENE_STANDARD = -1.5); ayrıca döndürme her zaman bu merkezin
+     çevresinde olur. Bu yüzden cisim, çizilen nesnelerin sınır kutusunun
+     merkezine taşınır: `setCoordSystem` görünümün sıfırını ve ölçeğini
+     kutunun merkezine oturtur. Böylece öğrenci cismi çevirdikçe de ortada kalır.
+     Kutu bir miktar genişletilir ki cisim kenarlara yapışmasın. */
+  function frameView(api, box) {
+    if (!api || typeof api.setCoordSystem !== 'function') return;
+    const bounds = box && typeof box.bounds === 'function' ? box.bounds() : null;
+    if (!bounds) return;
+    const span = Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY, bounds.maxZ - bounds.minZ, 1);
+    /* Cisim döndürüldüğünde köşegeni kadar yer kaplar: kutu bir miktar
+       genişletilir ki çevirirken kenardan taşmasın. */
+    const pad = span * 0.28 + 0.2;
+    try {
+      api.setCoordSystem(
+        bounds.minX - pad, bounds.maxX + pad,
+        bounds.minY - pad, bounds.maxY + pad,
+        bounds.minZ - pad, bounds.maxZ + pad,
+        false,
+      );
+    } catch (error) {
+      /* oturtma desteklenmiyorsa GeoGebra'nın kendi kadrajı kalır */
+    }
+  }
+
   function applyLabels(box) {
     if (!box || !box.api || typeof box.api.setLabelVisible !== 'function') return;
     box.names.forEach((name) => {
@@ -951,6 +1025,8 @@
       /* Nokta/etiket kalabalığı ve eksenler kapatılır: cisim öne çıkar. */
       if (typeof box.polish === 'function') box.polish();
       if (conf.clean) quietScene(box);
+      /* Kadraj yalnız 3B appletlerde ortalanır; 2B çizimler kendi ölçeğini korur. */
+      if (conf.clean || conf.views) frameView(api, box);
     }
 
     function build(attempt) {
