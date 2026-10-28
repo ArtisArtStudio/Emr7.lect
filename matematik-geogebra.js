@@ -140,7 +140,7 @@
 
   /* Yüz renkleri: düğmelerin doğru yönü göstermesi bu renklerden okunur. */
   const FACE_LEGEND = [
-    ['üst', '#d62d20'], ['alt', '#262626'], ['sol', '#2e7d32'],
+    ['üst', '#d62d20'], ['alt', '#8e96a4'], ['sol', '#2e7d32'],
     ['sağ', '#f2c200'], ['ön', '#7030a0'], ['arka', '#ef8fae'],
   ];
 
@@ -165,11 +165,12 @@
   const EDGE_RGB = [0, 0, 0];
 
   /* Düz (flat) gölgeleme: her yüz tek renk, dolgu tam; küpün altı yüzü altı ayrı renk.
-     Renkler sabittir: üst kırmızı, alt siyah, sol yeşil, sağ sarı, ön mor, arka pembe.
-     Böylece cisim döndürüldükçe hangi yüzün göründüğü renkten okunur. */
+     Renkler sabittir: üst kırmızı, alt gri, sol yeşil, sağ sarı, ön mor, arka pembe.
+     Alt yüz siyah değil gri: siyah zemin küpün çizgilerini yutuyor, gölgede
+     kayboluyordu. Gri, siyah kenarları ve küpün biçimini okunur tutar. */
   const FLAT_FACES = {
     top: [214, 45, 32],
-    bottom: [38, 38, 38],
+    bottom: [142, 150, 164],
     left: [46, 125, 50],
     right: [242, 194, 0],
     front: [112, 48, 160],
@@ -297,10 +298,24 @@
           right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
         };
         const suffix = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
-        /* Kenarlar siyah ve ince çizilir: birim küpler birbirinden ayrılsın.
+        /* Kenarlar siyah çizilir: birim küpler birbirinden ayrılsın.
            GeoGebra'da poligonun kenar rengi dolgu renginden türer, ayrı
            ayarlanamaz; bu yüzden birim küpün sınırları ayrı Segment olarak
-           eklenir. Aynı kenar iki yüzde geçebilir; koordinatla tekilleştirilir. */
+           eklenir. İki incelik:
+           - Segmentler yüzeyin **biraz dışına** taşınır (merkezden %1,2 oranında
+             dışa ölçekleme). Tam aynı düzlemde kalınca poligon onları örtüyor,
+             siyah çizgiler görünmüyordu.
+           - Kalınlık 2: 1 kalınlık 3B görünümde tek pikselin altına düşüp
+             kayboluyordu. */
+        const cx = x + 0.5;
+        const cy = y + 0.5;
+        const cz = z + 0.5;
+        const lift = 1.012;
+        const out = (point) => [
+          cx + (point[0] - cx) * lift,
+          cy + (point[1] - cy) * lift,
+          cz + (point[2] - cz) * lift,
+        ];
         const edges = [];
         const seen = new Set();
         faces.forEach((face) => {
@@ -314,14 +329,14 @@
             const key = [start.join(','), end.join(',')].sort().join('|');
             if (seen.has(key)) return;
             seen.add(key);
-            edges.push([start, end]);
+            edges.push([out(start), out(end)]);
           });
         });
         edges.forEach(([start, end], index) => {
           const name = `${prefix}c${index + 1}`;
           box.segment(name, start[0], start[1], start[2], end[0], end[1], end[2]);
           box.color(name, EDGE_RGB);
-          box.thickness(name, 1);
+          box.thickness(name, 2);
         });
       },
       /* Nokta işaretleri küçültülür, etiketler kapatılır: sahnede cisim görünür,
@@ -619,19 +634,22 @@
               /* Ad, sütunu taşır: tıklamada hangi sütuna ekleneceği buradan okunur. */
               b.flatCube(`k${r}${c}L${level}`, x0 + c, y0 + r, z0 + level, faces);
             }
-            /* Boş sütunun zemini tıklama levhasıdır: küp eklemek için dokunulur.
-               Dolu sütunda levha konmaz — küpün kendi yüzleri (k..L..) tıklanır;
-               böylece üst yüzdeki siyah kenar çizgisi beyaz kenarla örtülmez. */
-            if (height === 0) {
-              b.polygon3(`t${r}${c}`, [
-                [x0 + c, y0 + r, z0], [x0 + c + 1, y0 + r, z0],
-                [x0 + c + 1, y0 + r + 1, z0], [x0 + c, y0 + r + 1, z0],
-              ]);
-              b.color(`t${r}${c}`, [255, 255, 255]);
-              b.fill(`t${r}${c}`, 0.02);
-              b.thickness(`t${r}${c}`, 1);
-              b.lineStyle(`t${r}${c}`, 0);
-            }
+            /* Her sütunun **görünen üst yüzeyi** tıklama levhasıdır.
+               - Boş sütunda levha zeminde: boş kareye dokununca küp eklenir.
+               - Dolu sütunda levha en üstteki küpün üst yüzünde: küpün üstüne
+                 dokunmak da küp ekler.
+               Levha dolgusu 0,18: tamamen saydam (0,02) levhaları GeoGebra
+               tıklamada güvenilir biçimde yakalamıyordu. Renk, altındaki yüzün
+               rengine yakın seçilir ki siyah kenarlar örtülmesin. */
+            const top = z0 + height;
+            b.polygon3(`t${r}${c}`, [
+              [x0 + c, y0 + r, top], [x0 + c + 1, y0 + r, top],
+              [x0 + c + 1, y0 + r + 1, top], [x0 + c, y0 + r + 1, top],
+            ]);
+            b.color(`t${r}${c}`, height === 0 ? [246, 244, 252] : FLAT_FACES.top);
+            b.fill(`t${r}${c}`, 0.18);
+            /* Levhanın kenarı çizilmez: küpün siyah kenarının üstüne binmesin. */
+            b.lineStyle(`t${r}${c}`, 0);
           }
         }
       },
@@ -927,12 +945,27 @@
      için sahnede ortadan geçen dikey z ekseni görünüyordu. */
   function hideAxes(target) {
     if (!target) return;
+    /* Sıra önemli: önce eksen bayrağı, sonra somut nesneler.
+       `ShowAxes` bazı sürümlerde yalnız eksen çizgisini kapatıp **ok başını**
+       bırakıyor; ortada aşağı bakan ok olarak görünen şey buydu. Eksen
+       nesneleri tek tek görünmez yapılıyor, ardından 3B görünüm için
+       SetVisibleInView(-1) ile de kapatılıyor. */
     try { target.setAxesVisible(-1, false, false, false); } catch (error) { /* eski sürüm */ }
-    try { target.evalCommand('ShowAxes(false, false, false)'); } catch (error) { /* yok say */ }
-    try { target.setGridVisible && target.setGridVisible(false); } catch (error) { /* yok say */ }
     ['xAxis', 'yAxis', 'zAxis', 'xOyPlane', 'xOzPlane', 'yOzPlane'].forEach((name) => {
       try { target.setVisible(name, false); } catch (error) { /* yok say */ }
       try { target.evalCommand(`SetVisibleInView(${name}, -1, false)`); } catch (error) { /* yok say */ }
+      try { target.evalCommand(`SetVisibleInView(${name}, 1, false)`); } catch (error) { /* yok say */ }
+    });
+    try { target.evalCommand('ShowAxes(false, false, false)'); } catch (error) { /* yok say */ }
+    try { target.evalCommand('ShowAxes(false)'); } catch (error) { /* yok say */ }
+    try { target.setGridVisible && target.setGridVisible(false); } catch (error) { /* yok say */ }
+  }
+
+  /* Eksenler kimi zaman çizimden hemen sonra geri gelir (GeoGebra görünümü
+     yeniden kurar). Kapatma birkaç kez tazelenir; ucuz bir işlemdir. */
+  function hideAxesLater(target, delays) {
+    (delays || [120, 420, 900]).forEach((delay) => {
+      window.setTimeout(() => { try { hideAxes(target); } catch (error) { /* yok say */ } }, delay);
     });
   }
 
@@ -1158,6 +1191,8 @@
       if (conf.clean) quietScene(box);
       /* Kadraj yalnız 3B appletlerde ortalanır; 2B çizimler kendi ölçeğini korur. */
       if (conf.clean || conf.views) frameView(api, box, conf);
+      /* Kadraj/çizim sonrası eksenler geri gelebilir: tazele. */
+      hideAxesLater(api);
     }
 
     function build(attempt) {

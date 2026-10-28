@@ -151,7 +151,7 @@
      ön mor, arka pembe. Öğrenci rengi yöne bağlayarak görünümleri okur. */
   const FACE_RGB = {
     ust: '#d62d20',
-    alt: '#262626',
+    alt: '#8e96a4',
     sol: '#2e7d32',
     sag: '#f2c200',
     on: '#7030a0',

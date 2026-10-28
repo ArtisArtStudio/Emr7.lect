@@ -1581,49 +1581,49 @@
       stages: [
         {
           kind: 'warmup',
-          title: 'Kutuyu açalım',
+          title: 'Cisimleri tanıyalım',
           context: [
-            'Bir kargo kutusunun ayrıtlarından kesilip açılıyor. Açılan yüzey tek düzlemde serilince altı parça sayılıyor.',
+            'Kutular, zar, kibrit kutusu, süt kutusu… Hepsi prizma biçiminde. Kitap bu konuya üç cismi tanıyarak başlıyor: küp, kare prizma ve dikdörtgenler prizması.',
           ],
           questions: [
-            Object.assign(q('Bir küpün açınımında kaç kare bulunur?',
-              'Küpün kaç yüzü var?',
-              '$6$ kare.'), {
-              figure: { type: 'acilim-adim', options: { a: 2, b: 2, h: 2 } },
+            Object.assign(q('Yandaki cisimlerin adlarını söyle.',
+              'Birinin bütün yüzleri eş kare, birinin tabanı kare, birinin bütün yüzleri dikdörtgen.',
+              'Soldan sağa: küp (altı yüzü de eş kare), kare prizma (tabanı kare), dikdörtgenler prizması (bütün yüzleri dikdörtgen).'), {
+              figure: { type: 'cisimler-uc', options: {} },
             }),
-            Object.assign(q('Yandaki açınımda kaç yüz var?',
-              'Üst, alt ve dört yan yüzü say.',
-              '$2 + 4 = 6$ yüz.'), {
-              figure: { type: 'acilim-adim', options: { a: 4, b: 3, h: 2 } },
+            Object.assign(q('Yandaki cismin kaç yüzü, kaç ayrıtı ve kaç köşesi var?',
+              'Yüzleri tek tek say: alt, üst ve dört yan yüz.',
+              '$6$ yüz, $12$ ayrıt, $8$ köşe.'), {
+              figure: { type: 'cisim-ton', options: { tur: 'kup', a: 4, b: 4, c: 4 } },
             }),
-            Object.assign(q('Açınımı katladığında hangi yüzler karşılıklı gelir?',
-              'Açınımda bir parça atlayan yüzler karşılıklıdır.',
-              'Arada bir yüz bulunan iki yüz karşılıklı gelir.'), {
-              figure: { type: 'acilim-adim', options: { a: 4, b: 2, h: 3 } },
+            Object.assign(q('Yandaki kare prizmanın yüzlerinden kaç tanesi karedir?',
+              'Tabanı kare olan prizmada alt ve üst yüz karedir.',
+              '$2$ yüz karedir; kalan $4$ yan yüz dikdörtgendir.'), {
+              figure: { type: 'cisim-ton', options: { tur: 'kare', a: 3, b: 3, c: 5, ad: 'Kare prizma' } },
             }),
           ],
         },
         {
           kind: 'start',
-          title: 'Kutuyu kaplamak',
+          title: 'Aynı cismin farklı açınımları',
           context: [
-            'Kutunun dış yüzeyi kâğıtla kaplanacak. Kaç birimkare kâğıt gerektiği yüzler tek tek hesaplanarak bulunuyor.',
+            'Kitap şu soruyu soruyor: bir prizmanın kaç farklı açınımı vardır? Aynı cisim birden çok biçimde açılabilir; hepsi katlanınca aynı kutuyu verir.',
           ],
           questions: [
-            Object.assign(q('Yandaki kutunun kaç yüzü vardır ve hangileri eştir?',
-              'Karşılıklı yüzler eş; üç farklı yüz ölçüsü var.',
-              '$6$ yüz; karşılıklı ikişer ikişer eş, üç çift.'), {
-              figure: { type: 'prizma', options: { a: 4, b: 3, c: 2 } },
+            Object.assign(q('Yandaki üç açınım da katlanınca kutu olur mu?',
+              'Her açınımda altı yüz var mı, yüzler üst üste biniyor mu?',
+              'Olur: üçünde de $6$ yüz vardır ve hiçbir yüz üst üste binmez; katlanınca aynı kutu oluşur.'), {
+              figure: { type: 'acilim-coklu', options: { a: 2, b: 1, h: 1 } },
             }),
-            Object.assign(q('Ayrıtları $2$, $3$, $4$ birim olan kutunun yüzey alanı kaç birimkare?',
-              '$A = 2(ab + ac + bc)$; üç farklı yüzün alanı $6$, $8$, $12$.',
-              '$2(6 + 8 + 12) = 52$ birimkare.'), {
-              figure: { type: 'prizma', options: { a: 2, b: 3, c: 4 } },
+            Object.assign(q('Aynı prizmanın üç farklı açınımı yanda. Açınımların ortak özelliği ne?',
+              'Her birinde kaç parça var, parçalar hangi ölçülerde?',
+              'Hepsi $6$ parçadır: iki taban ve dört yan yüz. Kapakların yeri değişiyor, yüzler değişmiyor.'), {
+              figure: { type: 'acilim-coklu', options: { a: 3, b: 2, h: 2 } },
             }),
-            Object.assign(q('Yandaki kutunun yüzey alanını üç çift yüz üzerinden hesapla.',
-              'Her ölçüyü iki kez sayacaksın.',
-              '$2(15 + 10 + 6) = 62$ birimkare.'), {
-              figure: { type: 'prizma', options: { a: 5, b: 3, c: 2 } },
+            Object.assign(q('Bir kare prizmanın açınımında kaç kare, kaç dikdörtgen bulunur?',
+              'Tabanlar kare (iki tane), yan yüzler dikdörtgen (dört tane).',
+              '$2$ kare ve $4$ dikdörtgen; toplam $6$ yüz.'), {
+              figure: { type: 'cisim-ton', options: { tur: 'kare', a: 3, b: 3, c: 5, ad: 'Kare prizma' } },
             }),
           ],
         },
@@ -1634,7 +1634,7 @@
             q('Ayrıtı $5$ cm olan küpün yüzey alanı kaç cm²’dir?',
               'Küpün altı yüzü de eş kare; bir yüzün alanını $6$ ile çarp.',
               '$6 \\cdot 25 = 150\\ \\mathrm{cm}^2$.',
-              { type: 'kup-ayrit', options: { edge: 5, unit: 'cm' } }),
+              { type: 'cisim-ton', options: { tur: 'kup', a: 5, b: 5, c: 5 } }),
             q('Kare prizmada taban ayrıtı $3$, yükseklik $4$ cm ise yüzey alanı kaç cm²’dir?',
               '$2a^2 + 4ab$.',
               '$18 + 48 = 66\\ \\mathrm{cm}^2$.',
@@ -1642,39 +1642,53 @@
             q('Açınımı katladığında iki yüz üst üste biniyorsa bu çizim neden açınım sayılmaz?',
               'Açınımda her yüz ayrı bir parça olmalı.',
               'Bir yüz karşılıksız kalır ve cisim kapanmaz; açınımda altı ayrı yüz olmalıdır.',
-              { type: 'acilim-adim', options: { a: 4, b: 3, h: 2 } }),
+              { type: 'acilim-coklu', options: { a: 2, b: 1, h: 1 } }),
+            q('Bütün yüzleri dikdörtgen olan, karşılıklı yüzleri eş prizmanın adı nedir?',
+              'Tabanı kare olmak zorunda mı?',
+              'Dikdörtgenler prizması. Tabanı kare olan özel durumuna kare prizma, bütün yüzleri eş kare olanına küp denir.',
+              { type: 'cisim-ton', options: { tur: 'dikdortgen', a: 5, b: 2, c: 3 } }),
           ],
           blocks: [
             {
-              heading: 'Prizma yüzey alanı: üç çift yüz',
+              heading: 'Üç prizma: küp, kare prizma, dikdörtgenler prizması',
+              paragraphs: [
+                'Kitap konuya cisimleri tanıyarak başlıyor. **Küp**: altı yüzü de eş karedir, bütün ayrıtları aynı uzunluktadır. **Kare prizma**: alt ve üst tabanı karedir, yan yüzleri dikdörtgendir. **Dikdörtgenler prizması**: bütün yüzleri dikdörtgendir, karşılıklı yüzler eş ve paraleldir.',
+                'Üçünde de $6$ yüz, $12$ ayrıt ve $8$ köşe vardır. Fark yüzlerin biçimindedir: küpte her yüz kare, kare prizmada iki yüz kare, dikdörtgenler prizmasında hiçbir yüz kare olmak zorunda değildir.',
+                'Birer günlük hayat örneği: zar bir küp, süt kutusu bir kare prizma, kibrit kutusu bir dikdörtgenler prizmasıdır.',
+              ],
+              figure: { type: 'cisimler-uc', options: {} },
+            },
+            {
+              heading: 'Aynı cismin birden çok açınımı',
               paragraphs: [
                 'Bir cismin yüzeylerinin düzleme açılmış hâline **açınım** denir. Açınımda her parça bir yüze karşılık gelir.',
-                'Dikdörtgenler prizmasının açınımında $6$ dikdörtgen vardır; karşılıklı yüzler eş olduğu için üç farklı alan ikişer kez sayılır: $A = 2 \\cdot (a \\cdot b + a \\cdot c + b \\cdot c)$.',
-                'Her açınım kapalı cisim oluşturmaz: bazı çizimlerde yüzler üst üste biner veya boşluk kalır.',
+                'Aynı prizma birden çok biçimde açılabilir: kapakların (tabanların) gövdeye hangi yüzden bağlandığı değişir. Üç açınım da katlanınca aynı kutuyu verir; hiçbiri diğerinin döndürülmüş kopyası değildir.',
+                'Dikdörtgenler prizmasının gövdesi dört yan yüzden oluşur; iki taban bu gövdenin uygun kenarlarına eklenir. Kapak yanlış yere konursa yüzler üst üste biner ve kutu kapanmaz.',
               ],
-              figure: { type: 'acim-cizim', options: {} },
+              figure: { type: 'acilim-coklu', options: { a: 2, b: 1, h: 1 } },
             },
             {
               heading: 'Küp: altı eş kare',
               paragraphs: [
-                'Küpte altı yüz de eş karedir; bir yüzün alanı $a^2$ olduğu için $A = 6a^2$.',
+                'Küpün açınımında altı eş kare bulunur; bir yüzün alanı $a^2$ olduğu için yüzey alanı $A = 6a^2$ olur.',
                 'Ters yönde: yüzey alanı verilen küpün ayrıtı, önce bir yüzün alanı bulunup karekök alınarak bulunur. $150 \\div 6 = 25$, $\\sqrt{25} = 5$ cm.',
               ],
-              figure: { type: 'birim-kup', options: {} },
+              figure: { type: 'cisim-ton', options: { tur: 'kup', a: 4, b: 4, c: 4 } },
             },
             {
               heading: 'Kare prizma: iki kare, dört dikdörtgen',
               paragraphs: [
                 'Tabanı kare olan prizmada iki taban $a^2$, dört yan yüz $a \\cdot b$ alanındadır: $A = 2a^2 + 4ab$.',
-                'Kare prizmada taban ayrıtı ve yükseklik verilip yüzey alanı; ya da yüzey alanı verilip yükseklik istenebilir.',
+                'Açınımında bu yüzden $2$ kare ve $4$ dikdörtgen vardır; kareler karşılıklı iki uca, dikdörtgenler gövdeye yerleşir.',
               ],
-              figure: { type: 'prizma', options: { a: 3, b: 3, c: 5 } },
+              figure: { type: 'cisim-ton', options: { tur: 'kare', a: 3, b: 3, c: 5, ad: 'Kare prizma' } },
             },
           ],
           boxes: [
-            { title: 'Prizma yüzey alanı', body: 'A = 2(ab + ac + bc). Karşılıklı yüzler eş olduğu için üç yüzün alanı toplanıp ikiyle çarpılır.' },
-            { title: 'Küp', body: 'A = 6a². Yüzey alanı verilirse a = √(A/6).' },
-            { title: 'Kare prizma', body: 'A = 2a² + 4ab.' },
+            { title: 'Üç prizma', body: 'Küp: 6 eş kare. Kare prizma: 2 kare + 4 dikdörtgen. Dikdörtgenler prizması: 6 dikdörtgen. Üçünde de 6 yüz, 12 ayrıt, 8 köşe vardır.' },
+            { title: 'Aynı cismin birden çok açınımı', body: 'Açınım: yüzeyin tek düzlemde açılmış hâli. Gövde 4 yan yüz, kapaklar 2 taban. Kapak yeri değişince açınım değişir; katlanınca aynı kutu olur.' },
+            { title: 'Küp', body: 'Açınımı 6 eş karedir; yüzey alanı A = 6a². Yüzey alanı verilirse a = √(A/6).' },
+            { title: 'Kare prizma', body: 'İki taban kare, dört yan yüz dikdörtgen; A = 2a² + 4ab.' },
           ],
         },
         {
@@ -1684,7 +1698,7 @@
             Object.assign(q('Yüzey alanı $54$ birimkare olan küpün ayrıtı kaç birimdir?',
               'Önce bir yüzün alanını bul: $54 \\div 6$.',
               '$9$ birimkare; karekökü $3$ birim.'), {
-              figure: { type: 'kup-ayrit', options: { edge: 3, unit: 'br' } },
+              figure: { type: 'cisim-ton', options: { tur: 'kup', a: 3, b: 3, c: 3 } },
             }),
             Object.assign(q('Bir prizmanın yüksekliği iki katına çıkarılırsa yüzey alanı iki katına çıkar mı?',
               'Tabanlar aynı kalır; yalnız yan yüzler büyür.',
@@ -1755,7 +1769,7 @@
             Object.assign(q('Yüzey alanı $96$ birimkare olan küpün bir ayrıtı kaç birimdir?',
               'Önce bir yüzün alanını bul: $96 \\div 6$.',
               '$16$ birimkare; karekökü $4$ birim.'), {
-              figure: { type: 'kup-ayrit', options: { edge: 4, unit: 'br' } },
+              figure: { type: 'cisim-ton', options: { tur: 'kup', a: 4, b: 4, c: 4 } },
             }),
             Object.assign(q('Taban ayrıtı $5$, yüksekliği $8$ birim olan kare prizmanın yüzey alanını bul.',
               '$A = 2a^2 + 4ab$; iki taban, dört yan yüz.',
