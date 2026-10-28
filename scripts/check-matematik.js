@@ -93,12 +93,16 @@ assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function
 const localTypes = SAHNE.types();
 const geoTypes = GG.types();
 /* kup-dondur: eş küp yapısı serbest döndürülerek incelenir (görünüm sorusu). */
-const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim'];
+const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim', 'kup-kur-ggb'];
 assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
   `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
+/* Dokunarak küp kurma: GeoGebra appletinin yerel yedeği `kup-kur-tikla`
+   sahnesidir; ikisinde de sürgü yoktur. */
+const LOCAL_FOR = { 'kup-kur-ggb': 'kup-kur-tikla' };
 GEO_3D.forEach((type) => {
-  assert.ok(localTypes.includes(type), `${type} için yerel yedek sahne korunmalı.`);
-  const local = SAHNE.params(type).map((param) => param.name);
+  const localType = LOCAL_FOR[type] || type;
+  assert.ok(localTypes.includes(localType), `${type} için yerel yedek sahne korunmalı.`);
+  const local = SAHNE.params(localType).map((param) => param.name);
   const geo = GG.params(type).map((param) => param.name);
   assert.deepEqual(geo, local, `${type} sürgüleri iki motorda aynı olmalı.`);
 });
@@ -106,6 +110,29 @@ GEO_3D.forEach((type) => {
 localTypes.filter((type) => !GEO_3D.includes(type)).forEach((type) => {
   assert.ok(!geoTypes.includes(type), `${type} 2B sahnesi GeoGebra ile açılmamalı.`);
 });
+/* Eksenler 3B görünümde (-1) kapatılmalı: `setAxesVisible(false,false,false)`
+   hiçbir şey yapmaz, sahnede dikey z ekseni kalır. */
+assert.ok(/setAxesVisible\(-1, false, false, false\)/.test(ggb),
+  '3B görünümün eksenleri setAxesVisible(-1, …) ile kapatılmalı.');
+/* Yorumları ayıklayıp koda bak: eski etkisiz çağrı yalnız açıklamada kalabilir. */
+const ggbCode = ggb.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+assert.ok(!/setAxesVisible\(false, false, false\)/.test(ggbCode),
+  'Eski (etkisiz) setAxesVisible(false,false,false) çağrısı kalmamalı.');
+assert.ok(/function hideAxes/.test(ggb), 'Eksen gizleme tek yardımcıda toplanmalı.');
+assert.ok(/function frameView[\s\S]*?hideAxes\(api\)/.test(ggb),
+  'Kadraj ayarından sonra eksenler yeniden kapatılmalı.');
+/* Dokunarak küp kurma GeoGebra ile yapılır. */
+assert.ok(GG.interactive('kup-kur-ggb'), 'Küp kurma GeoGebra appleti etkileşimli olmalı.');
+assert.ok(/registerClickListener/.test(ggb), 'Tıklama GeoGebra dinleyicisiyle alınmalı.');
+assert.ok(/function columnOf/.test(ggb), 'Tıklanan nesneden sütun çözülmeli.');
+const kurCommands = GG.script('kup-kur-ggb', {});
+assert.ok(kurCommands.some((command) => /^t22 = Polygon/.test(command)),
+  'Dokuz sütunun tıklama levhası üretilmeli.');
+assert.ok(kurCommands.some((command) => /^cap = \(/.test(command)), 'Doğrulama çapası üretilmeli.');
+assert.ok(!kurCommands.some((command) => /^k\d\d L/.test(command)), 'Boş sahnede küp olmamalı.');
+const atolyeSource = read('matematik-atolye.js');
+assert.ok(/GG\.interactive\('kup-kur-ggb'\)/.test(atolyeSource), 'Etkinlikte GeoGebra kurma alanı yeğlenmeli.');
+assert.ok(/mountLocal/.test(atolyeSource), 'GeoGebra yoksa yerel yedek sahne devreye girmeli.');
 /* Birim küp sınırları siyah çizilir: küpler döndürüldüğünde birbirinden ayrılır. */
 assert.ok(/const EDGE_RGB = \[0, 0, 0\]/.test(ggb),
   'Birim küp kenarı siyah olmalı (EDGE_RGB).');

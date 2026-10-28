@@ -616,7 +616,7 @@
         <button type="button" class="atolye-check" data-enaz-check="${item.id}">Kontrol et</button>
       </div>
       ${item.builder ? `<div class="atolye-builder">
-        <p class="atolye-hint">Kendi yapını kur: aşağıdaki 3B alanda bir sütuna dokunduğunda o sütuna bir küp eklenir. Önce “Küp sil” düğmesine basarsan dokunduğun sütundan bir küp eksilir.</p>
+        <p class="atolye-hint">Kendi yapını kur: aşağıdaki 3B alanda bir sütunun üstüne dokunduğunda o sütuna bir küp eklenir. Cismi parmağınla (ya da fareyle) sürükleyerek döndürebilir, eklediğin küpleri her yönden görebilirsin. “Küp sil” düğmesine basarsan dokunduğun sütundan bir küp eksilir.</p>
         <div class="math-scene-frame atolye-scene"><div class="math-scene-stage" data-builder-stage="${item.id}"></div></div>
         <div class="atolye-grid-actions">
           <button type="button" class="atolye-mini is-on" data-builder-mode="ekle" data-builder-for="${item.id}">Küp ekle</button>
@@ -721,25 +721,21 @@
 
   /* Kendi yapısını kurma: 3 × 3 tabanda dokunarak küp ekleme. Cevap
      yazılmaz; öğrenci kendi kurduğunun kaç küp olduğunu ve üç görünümün
-     dolup dolmadığını görür. */
+     dolup dolmadığını görür.
+     Kurma **GeoGebra** ile yapılır: cisim gerçek 3B nesnelerden oluşur ve
+     öğrenci onu parmağıyla döndürerek her yönden görebilir. GeoGebra
+     yüklenemezse aynı işi yerel izometrik sahne yapar (döndürme olmadan). */
   function bindBuilder(root, item) {
     const entry = store.item(item.id);
     const stage = root.querySelector(`[data-builder-stage="${item.id}"]`);
     const counter = root.querySelector(`[data-builder-count="${item.id}"]`);
     const note = root.querySelector(`[data-builder-note="${item.id}"]`);
     if (!stage) return;
-    const saved = Array.isArray(entry.answers.katlar) ? entry.answers.katlar : null;
-    const instance = mountScene(stage, null, {
-      type: 'kup-kur-tikla',
-      values: saved ? { katlar: saved } : {},
-    }, (state) => {
-      entry.answers.katlar = (state.katlar || []).slice();
-      store.save();
-      paintBuilderInfo(state);
-    });
+    const saved = Array.isArray(entry.answers.katlar) ? entry.answers.katlar.slice(0, 9) : null;
+    let instance = null;
 
-    const rowsOf = (state) => {
-      const list = Array.isArray(state.katlar) ? state.katlar : [];
+    const rowsOf = (payload) => {
+      const list = Array.isArray(payload) ? payload : (payload && Array.isArray(payload.katlar) ? payload.katlar : []);
       return [0, 1, 2].map((r) => [0, 1, 2].map((c) => Number(list[r * 3 + c]) || 0));
     };
     /* Görünüm ancak 3 × 3'lük ve tamamen doluysa istenen durumdur:
@@ -747,14 +743,14 @@
     const filled = (cells) => cells.length === 3
       && cells.every((row) => row.length === 3 && row.every(Boolean));
 
-    function paintBuilderInfo(state) {
-      const heights = rowsOf(state);
+    function paintBuilderInfo(payload) {
+      const heights = rowsOf(payload);
       const total = heights.reduce((sum, row) => sum + row.reduce((a, b) => a + b, 0), 0);
       if (counter) counter.textContent = `${total} küp`;
       if (!note) return;
       if (!total) {
         note.dataset.state = '';
-        note.textContent = 'Henüz küp yok: bir sütuna dokunarak başla.';
+        note.textContent = 'Henüz küp yok: bir sütunun üstüne dokunarak başla.';
         return;
       }
       const views = SAHNE.gorunumOf(heights);
@@ -765,7 +761,39 @@
         : 'Üç görünümden biri ya da birkaçı henüz dolu değil; eksik sütunları yükseltmeyi dene.';
     }
 
-    if (instance) paintBuilderInfo(instance.state);
+    const remember = (cubes) => {
+      entry.answers.katlar = cubes.slice(0, 9);
+      store.save();
+      paintBuilderInfo(entry.answers.katlar);
+    };
+
+    /* Yerel yedek: GeoGebra yoksa aynı alan izometrik çizimle kurulur. */
+    const mountLocal = () => {
+      if (instance) return instance;
+      instance = mountScene(stage, null, {
+        type: 'kup-kur-tikla',
+        values: saved ? { katlar: saved } : {},
+      }, (state) => { remember(state.katlar || []); });
+      return instance;
+    };
+
+    const GG = window.MATEMATIK_GEOGEBRA;
+    const geoScene = { type: 'kup-kur-ggb' };
+    const useGeo = Boolean(GG && typeof GG.mount === 'function' && GG.supports(geoScene)
+      && GG.prefers() && GG.interactive && GG.interactive('kup-kur-ggb'));
+
+    if (useGeo) {
+      const made = GG.mount(stage, null, geoScene, {
+        cubes: saved || Array.from({ length: 9 }, () => 0),
+        onCubes: (cubes) => { remember(cubes); },
+        onStatus: () => {},
+        fallback: () => { mountLocal(); },
+      });
+      if (made) instance = made;
+    }
+    if (!instance) mountLocal();
+
+    if (instance) paintBuilderInfo(instance.cubes ? instance.cubes() : instance.state);
 
     root.querySelectorAll('[data-builder-mode]').forEach((button) => {
       if (button.dataset.builderFor !== item.id) return;
@@ -782,9 +810,13 @@
     if (clear) {
       clear.addEventListener('click', () => {
         if (!instance) return;
-        instance.state.katlar = Array.from({ length: 9 }, () => 0);
-        instance.set('mod', instance.state.mod === 0 ? 0 : 1);
-        paintBuilderInfo(instance.state);
+        const zeros = Array.from({ length: 9 }, () => 0);
+        if (typeof instance.cubes === 'function') instance.set('cubes', zeros);
+        else {
+          instance.state.katlar = zeros.slice();
+          instance.set('mod', instance.state.mod === 0 ? 0 : 1);
+        }
+        remember(zeros);
       });
     }
   }
