@@ -51,7 +51,11 @@
 
   function polygon(points, options = {}) {
     const list = points.map(([x, y]) => `${coord(x)},${coord(y)}`).join(' ');
-    return `<polygon points="${list}" fill="${options.fill || 'none'}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.5}"${options.dash ? ` stroke-dasharray="${options.dash}"` : ''}/>`;
+    const attrs = options.attrs || '';
+    const dash = options.dash ? ` stroke-dasharray="${options.dash}"` : '';
+    const pointer = options.click ? ' pointer-events="all" style="cursor:pointer"' : '';
+    const tab = options.click ? ' tabindex="0" role="button"' : '';
+    return `<polygon points="${list}" fill="${options.fill || 'none'}" stroke="${options.stroke || '#1b2f49'}" stroke-width="${options.width || 1.5}"${dash}${attrs}${pointer}${tab}/>`;
   }
 
   function arrow(x1, y1, x2, y2, options = {}) {
@@ -307,7 +311,7 @@
   function drawCells(cells, centerX, topY, maxW, maxH, fill) {
     const rows = cells.length;
     const cols = Math.max(...cells.map((row) => row.length));
-    const cell = Math.min(34, maxW / Math.max(cols, 1), maxH / Math.max(rows, 1));
+    const cell = Math.min(48, maxW / Math.max(cols, 1), maxH / Math.max(rows, 1));
     const gx = centerX - (cols * cell) / 2;
     const gy = topY + Math.max(0, (maxH - rows * cell) / 2);
     const parts = [];
@@ -1547,6 +1551,74 @@
       },
     },
 
+    /* Öğrencinin kendi yapısını kurduğu 3B alan: 3 × 3 taban, en çok üç kat.
+       Kareye dokununca sütun bir küp yükselir (silme modunda alçalır); cisim
+       her adımda aynı izometrik düzende, her yüzü kendi renginde çizilir.
+       Cevap burada yazılmaz; öğrenci sayıyı kendisi görür. */
+    'kup-kur-tikla': {
+      params: [],
+      normalize(state) {
+        const size = 9;
+        if (!Array.isArray(state.katlar) || state.katlar.length !== size) {
+          state.katlar = Array.from({ length: size }, () => 0);
+        }
+        state.katlar = state.katlar.map((value) => clampValue(Number(value) || 0, 0, 3, 1));
+        /* 1 = küp ekle (varsayılan), 0 = küp sil. */
+        state.mod = Number(state.mod) === 0 ? 0 : 1;
+      },
+      draw(state) {
+        const rows = 3;
+        const cols = 3;
+        const heights = Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => state.katlar[r * cols + c]));
+        const area = { x: 130, y: 24, width: 380, height: 336 };
+        const geo = isoGeometry(heights, area, 78);
+        const { u, du, dv } = geo;
+        const parts = [];
+        /* Boş kareler zemin olarak görünür: küp nereye ekleneceği belli olsun. */
+        const empty = [];
+        heights.forEach((row, r) => row.forEach((height, c) => {
+          if (height > 0) return;
+          const x = geo.dx + c * u + r * du;
+          const y = geo.dy - r * dv;
+          empty.push(polygon([[x + 2, y - 2], [x + u - 2, y - 2], [x + u + du - 2, y - dv - 2], [x + du + 2, y - dv - 2]],
+            { fill: '#f4f2fb', stroke: '#b9b2d4', width: 1, dash: '5 4' }));
+        }));
+        parts.push(empty.join(''));
+        parts.push(drawIso(heights, area, 78));
+        /* Dokunma alanları en üstte: her sütunun görünen üst yüzü. */
+        for (let r = rows - 1; r >= 0; r -= 1) {
+          for (let c = 0; c < cols; c += 1) {
+            const height = heights[r][c];
+            const x = geo.dx + c * u + r * du;
+            const y = geo.dy - r * dv - height * u;
+            /* Dokunma alanı sütunun üst yüzü + ön yüzü: öndeki sütun arkadakini
+               örttüğü için tıklama hep görünen sütuna gider. */
+            const points = height > 0
+              ? [[x, y - u], [x + du, y - u - dv], [x + u + du, y - u - dv], [x + u, y], [x, y]]
+              : [[x, y], [x + u, y], [x + u + du, y - dv], [x + du, y - dv]];
+            parts.push(polygon(points, {
+              fill: 'rgba(0,0,0,0)',
+              stroke: 'none',
+              width: 0,
+              click: true,
+              attrs: ` data-cell="${r * cols + c}" aria-label="${r + 1}. sıra ${c + 1}. sütun: ${height} kat"`,
+            }));
+          }
+        }
+        return parts.join('');
+      },
+      /* Tıklama: ekleme modunda bir küp ekler, silme modunda bir küp kaldırır. */
+      click(name, state) {
+        const index = Number(name);
+        if (!Number.isInteger(index) || index < 0 || index > 8) return;
+        const current = Number(state.katlar[index]) || 0;
+        const next = state.mod === 0 ? Math.max(0, current - 1) : Math.min(3, current + 1);
+        state.katlar[index] = next;
+      },
+      /* Klavye: odaklanan kare Enter/Space ile aynı işi yapar. */
+      clickKeys: ['Enter', ' '],
+    },
+
     /* En az küple çözümün 3B gösterimi (şifreyle açılır). */
     'yapi-cozum': {
       params: [
@@ -1589,10 +1661,9 @@
       },
       draw(state) {
         const heights = ESLESME_YAPILARI[state.secim - 1] || ESLESME_YAPILARI[0];
-        const harf = ['A', 'B', 'C', 'D'][state.secim - 1];
-        const parts = [note(22, 28, `${harf} yapısı`, { size: 14 })];
-        parts.push(drawIso(heights, { x: 100, y: 46, width: 300, height: 310 }));
-        return parts.join('');
+        /* Görselin içine yazı yazılmaz: “A yapısı” etiketi kartın altında zaten
+           var; tekrar edince küçük ve gereksiz kalıyordu. */
+        return drawIso(heights, { x: 90, y: 20, width: 460, height: 340 }, 92);
       },
     },
 
@@ -1606,13 +1677,19 @@
       },
       draw(state) {
         const panels = ESLESME_PANELLERI[state.grup - 1] || ESLESME_PANELLERI[0];
-        const parts = [note(22, 28, `${state.grup}. seçenek`, { size: 14 })];
-        const boxW = Math.min(170, 600 / panels.length - 14);
+        /* “1. seçenek” yazısı kartın altında var; görselde tekrarlanmaz.
+           Panel adları (arka, sol, üst) soruda geçmediği için kalır. */
+        const parts = [];
+        const boxW = Math.min(190, 600 / panels.length - 14);
+        /* Kart yüksekliği içeriğe göre: iki satırlık görünüm için boş yer
+           bırakılmaz, kareler büyük kalır. */
+        const rows = Math.max(...panels.map((panel) => panel.cells.length), 1);
+        const boxH = 62 + rows * 46;
         panels.forEach((panel, index) => {
           const bx = 24 + index * (boxW + 16);
-          parts.push(panelBox(bx, 48, boxW, 268));
-          parts.push(text(bx + boxW / 2, 72, panel.title, { size: 13, anchor: 'middle', weight: 800, fill: '#33265f' }));
-          parts.push(drawCells(panel.cells, bx + boxW / 2, 92, boxW - 24, 196, '#c9dff0'));
+          parts.push(panelBox(bx, 26, boxW, boxH));
+          parts.push(text(bx + boxW / 2, 52, panel.title, { size: 14, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(drawCells(panel.cells, bx + boxW / 2, 66, boxW - 22, rows * 46, '#c9dff0'));
         });
         return parts.join('');
       },
@@ -2186,6 +2263,27 @@
             paint();
             syncControls();
             void plain;
+          });
+        });
+      }
+      /* Dokunarak kurulan sahneler: her çizimden sonra tıklama alanları
+         yeniden bağlanır (SVG yeniden üretildiği için dinleyiciler taşınmaz). */
+      if (typeof scene.click === 'function') {
+        const fire = (name) => {
+          scene.click(name, state);
+          paint();
+          syncControls();
+        };
+        svg.querySelectorAll('[data-cell]').forEach((node) => {
+          node.addEventListener('click', (event) => {
+            event.preventDefault();
+            fire(node.getAttribute('data-cell'));
+          });
+          node.addEventListener('keydown', (event) => {
+            const keys = scene.clickKeys || ['Enter', ' '];
+            if (keys.indexOf(event.key) === -1) return;
+            event.preventDefault();
+            fire(node.getAttribute('data-cell'));
           });
         });
       }

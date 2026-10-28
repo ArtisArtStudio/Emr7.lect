@@ -1417,7 +1417,7 @@
           kind: 'practice',
           title: 'Uygulayalım: görünümleri say, çiz, eşleştir',
           intro: [
-            'Aşağıdaki görevler sırayla ilerler: görünümler gizliyken sayma, 3B döndürülebilir yapılarda sayma, 8 × 8 kareye çizme, verilen görünümlerden en az küpü bulma, eşleştirme, numaralı küplerle doğru–yanlış ve 3 × 3 görünümler için en az küp.',
+            'Aşağıdaki görevler sırayla ilerler: görünümler gizliyken sayma, 3B döndürülebilir yapılarda sayma, 5 × 5 kareye çizme, verilen görünümlerden en az küpü bulma, eşleştirme, numaralı küplerle doğru–yanlış ve 3 × 3 görünümler için en az küp.',
             'Görevlerde cevap anahtarı gösterilmez; her denetim yalnız hangi yönün hatalı olduğunu söyler.',
           ],
           questions: [
@@ -1477,8 +1477,8 @@
             {
               id: 'm8-e3',
               type: 'cizim',
-              title: '8 × 8 kareye çiz: ön, arka ve üst görünüm',
-              intro: 'Cismi incele; ön, arka ve üst görünümü ayrı 8 × 8 kareye çiz. Kareleri fareyle tarayarak boyayabilirsin.',
+              title: '5 × 5 kareye çiz: ön, arka ve üst görünüm',
+              intro: 'Cismi incele; ön, arka ve üst görünümü ayrı 5 × 5 kareye çiz. Kareleri fareyle tarayarak boyayabilirsin.',
               scene: {
                 type: 'yapi-kapali',
                 values: { set: 1 },
@@ -1494,7 +1494,7 @@
               id: 'm8-e4',
               type: 'cizim',
               title: 'Başka bir yapı: ön, arka ve üst görünüm',
-              intro: 'Bu yapı daha basamaklı. Aynı biçimde ön, arka ve üst görünümü 8 × 8 kareye çiz.',
+              intro: 'Bu yapı daha basamaklı. Aynı biçimde ön, arka ve üst görünümü 5 × 5 kareye çiz.',
               scene: {
                 type: 'yapi-kapali',
                 values: { set: 1 },
@@ -1533,11 +1533,13 @@
               id: 'm8-e8',
               type: 'enaz',
               title: '3 × 3 görünümler için en az küp',
-              intro: 'Önden, sağdan ve üstten 3 × 3 dolu kare görünen bir yapı isteniyor. Bu görünümleri elde etmek için en az kaç küp gerekir?',
+              intro: 'Önden, sağdan ve üstten 3 × 3 dolu kare görünen bir yapı isteniyor. Bu görünümleri elde etmek için en az kaç küp gerekir? Aşağıdaki 3B alanda küpleri kendin ekleyerek de deneyebilirsin.',
               scene: { type: 'gorunum-verilen', params: [{ name: 'grup', label: 'Görünüm grubu', min: 1, max: 2, step: 1, value: 2 }] },
               answer: 15,
               grids: [],
               lock: false,
+              /* Öğrenci küpleri kendisi ekleyip görünümlerin dolduğunu görebilsin. */
+              builder: true,
             },
           ],
         },
@@ -1560,7 +1562,7 @@
               id: 'm8-e5',
               type: 'enaz',
               title: 'Verilen görünümlerden en az küp',
-              intro: 'Ön, sağ ve üst görünümü incele; en az kaç küp gerektiğini yaz. Arkadan, soldan ve alttan görünümü 8 × 8 kareye çiz. Çözümün 3B gösterimi şifreyle açılır.',
+              intro: 'Ön, sağ ve üst görünümü incele; en az kaç küp gerektiğini yaz. Arkadan, soldan ve alttan görünümü 5 × 5 kareye çiz. Çözümün 3B gösterimi şifreyle açılır.',
               scene: { type: 'gorunum-verilen', params: [{ name: 'grup', label: 'Görünüm grubu', min: 1, max: 2, step: 1, value: 1 }] },
               yapi: [[3, 1, 2], [1, 2, 0]],
               answer: 9,

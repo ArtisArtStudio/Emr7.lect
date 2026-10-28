@@ -31,8 +31,15 @@ assert.ok(typeof SAHNE.types === 'function' && typeof SAHNE.params === 'function
 assert.equal(SAHNE.width, 640, 'Sahne tuvali 640 birim geniş olmalı.');
 assert.equal(SAHNE.height, 380, 'Sahne tuvali 380 birim yüksek olmalı.');
 assert.ok(SAHNE.types().length >= 24, `Sahne türü sayısı az: ${SAHNE.types().length}`);
+/* Dokunarak kurulan sahnelerde sürgü yoktur: öğrenci küp ekleyerek yapıyı
+   kurar, kontrolü 3B alanın kendisi verir. Bu istisna açıkça listelenir. */
+const SLIDERLESS = new Set(['kup-kur-tikla']);
 SAHNE.types().forEach((type) => {
   const params = SAHNE.params(type);
+  if (SLIDERLESS.has(type)) {
+    assert.equal(params.length, 0, `${type} sahnesinde sürgü olmamalı (dokunarak kurulur).`);
+    return;
+  }
   assert.ok(params.length >= 1, `${type} sahnesinde oynanabilir sürgü olmalı.`);
   params.forEach((param) => {
     assert.ok(param.name && param.label, `${type} sürgü adı/etiketi eksik.`);
@@ -99,7 +106,25 @@ GEO_3D.forEach((type) => {
 localTypes.filter((type) => !GEO_3D.includes(type)).forEach((type) => {
   assert.ok(!geoTypes.includes(type), `${type} 2B sahnesi GeoGebra ile açılmamalı.`);
 });
-assert.ok(/\.is-ggb/.test(css) || /is-ggb/.test(css), 'GeoGebra kutusu için yerleşim sınıfı tanımlı olmalı.');
+/* Birim küp sınırları siyah çizilir: küpler döndürüldüğünde birbirinden ayrılır. */
+assert.ok(/const EDGE_RGB = \[0, 0, 0\]/.test(ggb),
+  'Birim küp kenarı siyah olmalı (EDGE_RGB).');
+assert.ok(/box\.color\(name, EDGE_RGB\)/.test(ggb), 'Küp kenar çizgileri siyah renkle çizilmeli.');
+assert.ok(/flatCube\([^)]*\{[^}]*\}|edges\.forEach/.test(ggb), 'Küp kenarları ayrı segment olarak eklenmeli.');
+/* Cisim kadraja ortalı: görünüm merkezi setCoordSystem ile kutunun merkezine alınır. */
+assert.ok(/setCoordSystem/.test(ggb), '3B cisim setCoordSystem ile kadraja ortalanmalı.');
+assert.ok(/bounds\(\)/.test(ggb), 'Çizilen nesnelerin sınır kutusu hesaplanmalı.');
+/* Çizim ızgarası 5 × 5: en geniş görünüm 4 × 4, sekizlik ızgara gereğinden büyüktü. */
+const atolye = read('matematik-atolye.js');
+assert.ok(/const GRID_N = 5;/.test(atolye), 'Çizim ızgarası 5 × 5 olmalı.');
+assert.ok(!/8 × 8/.test(atolye + kitap), 'Eski 8 × 8 ifadesi kalmamalı.');
+assert.ok(/repeat\(5,1fr\)/.test(css), 'Izgara 5 sütun olarak çizilmeli (CSS).');
+/* Dokunarak küp ekleme: dokuz taban karesi, ekleme/silme modu. */
+assert.ok(/data-cell=/.test(scene), 'Kurma sahnesinde dokunma alanları olmalı.');
+assert.ok(/state\.mod === 0/.test(scene), 'Kurma sahnesinde ekleme/silme modu olmalı.');
+assert.ok(/data-builder-stage/.test(atolye), 'Etkinlikte küp kurma alanı bulunmalı.');
+assert.ok(/builder: true/.test(kitap), 'En az küp sorusunda küp kurma açık olmalı.');
+assert.ok(/\.atolye-builder\{/.test(css), 'Küp kurma alanı için yerleşim kuralı tanımlı olmalı.');
 /* Çerçeve: yükleme yazısı kaplama, tuval kareye yakın ve en az 300 px. */
 assert.ok(/\.math-ggb-loading\{position:absolute/.test(css), 'Yükleme yazısı kaplama olmalı; üstte şerit bırakmamalı.');
 assert.ok(/height:clamp\(300px/.test(css), 'GeoGebra tuvali en az 300 px yüksekliğinde olmalı.');
