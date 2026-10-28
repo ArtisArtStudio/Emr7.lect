@@ -1501,6 +1501,145 @@
     return frame(parts.join(''), 'Görünüm çiftlerinin simetrisi');
   }
 
+  /* --- Gölgeli cisim: küp, kare prizma, dikdörtgenler prizması ---
+     Kitaptaki tanıtım sırası: önce cisimler, sonra açınımlar. Her cisim üç
+     görünen yüzle çizilir; yüzler aynı rengin üç tonu ve yumuşak geçişle
+     (gradient) boyanır. Böylece düz karton görüntüsü değil, hacmi olan bir
+     cisim görünür. Ölçüler harf değil sayı olarak yazılır. */
+  function tone(base, amount) {
+    const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
+    const target = amount >= 0 ? 255 : 0;
+    const t = Math.abs(amount);
+    return `#${[0, 1, 2].map((i) => clamp(base[i] + (target - base[i]) * t).toString(16).padStart(2, '0')).join('')}`;
+  }
+
+  function solidIso(cx, baseY, w, h, d, options = {}) {
+    const base = options.base || [112, 86, 201];
+    const dx = d * 0.52;
+    const dy = d * 0.34;
+    const x = cx - (w + dx) / 2;
+    const y = baseY;
+    const id = nextId();
+    const front = [x, y], topL = [x, y - h], topR = [x + w, y - h];
+    const parts = [];
+    parts.push(`<defs><linearGradient id="${id}a" x1="0" y1="0" x2="0" y2="1">`
+      + `<stop offset="0" stop-color="${tone(base, 0.34)}"/><stop offset="1" stop-color="${tone(base, 0.1)}"/></linearGradient>`
+      + `<linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="0.6">`
+      + `<stop offset="0" stop-color="${tone(base, 0.52)}"/><stop offset="1" stop-color="${tone(base, 0.24)}"/></linearGradient>`
+      + `<linearGradient id="${id}c" x1="0" y1="0" x2="1" y2="1">`
+      + `<stop offset="0" stop-color="${tone(base, -0.06)}"/><stop offset="1" stop-color="${tone(base, -0.3)}"/></linearGradient></defs>`);
+    /* Sağ yan (en koyu) → üst (en açık) → ön (orta): üst üste binme yok. */
+    parts.push(poly([[topR[0], topR[1]], [topR[0] + dx, topR[1] - dy], [topR[0] + dx, y - dy], [topR[0], y]],
+      { fill: `url(#${id}c)`, stroke: tone(base, -0.55), width: 1.2 }));
+    parts.push(poly([[topL[0], topL[1]], [topR[0], topR[1]], [topR[0] + dx, topR[1] - dy], [topL[0] + dx, topL[1] - dy]],
+      { fill: `url(#${id}b)`, stroke: tone(base, -0.55), width: 1.2 }));
+    parts.push(poly([[front[0], front[1]], [topR[0], y], [topR[0], topR[1]], [topL[0], topL[1]]],
+      { fill: `url(#${id}a)`, stroke: tone(base, -0.55), width: 1.2 }));
+    return { parts: parts.join(''), x, y, w, h, dx, dy };
+  }
+
+  function solidLabel(geo, text) {
+    return txt(geo.x + (geo.w + geo.dx) / 2, geo.y + 24, text,
+      { size: 11, anchor: 'middle', weight: 800, fill: INK, maxWidth: geo.w + geo.dx + 8 });
+  }
+
+  /* Tek cisim: küp, kare prizma ya da dikdörtgenler prizması. */
+  function shadedSolid(options = {}) {
+    const tur = options.tur || 'dikdortgen';
+    const spec = tur === 'kup'
+      ? { w: 86, h: 86, d: 86, ad: 'Küp', base: [112, 86, 201] }
+      : tur === 'kare'
+        ? { w: 66, h: 108, d: 66, ad: 'Kare prizma', base: [47, 138, 99] }
+        : { w: 116, h: 64, d: 52, ad: 'Dikdörtgenler prizması', base: [186, 121, 26] };
+    const geo = solidIso(170, 128, spec.w, spec.h, spec.d, { base: spec.base });
+    const parts = [geo.parts];
+    /* Ayrıt uzunlukları: ön genişlik (altta), ön yükseklik (solda), derinlik (sağda). */
+    if (options.olcu !== false) {
+      parts.push(txt(geo.x + geo.w / 2, geo.y + 15, `${options.a == null ? 4 : options.a} br`, { size: 10.5, anchor: 'middle', fill: MUTED }));
+      parts.push(txt(geo.x - 6, geo.y - geo.h / 2 + 4, `${options.c == null ? 3 : options.c} br`, { size: 10.5, anchor: 'end', fill: MUTED }));
+      parts.push(txt(geo.x + geo.w + geo.dx + 6, geo.y - geo.h - geo.dy / 2 + 4, `${options.b == null ? 2 : options.b} br`, { size: 10.5, fill: MUTED }));
+    }
+    /* Etiket ve açıklama cismin altında, ayrı satırlarda: üst üste binmesin. */
+    parts.push(txt(170, 162, options.ad || spec.ad, { size: 11.5, anchor: 'middle', weight: 800, fill: INK, maxWidth: 320 }));
+    parts.push(txt(170, 180, '6 yüz · 12 ayrıt · 8 köşe', { size: 10.5, anchor: 'middle', fill: MUTED }));
+    return frame(parts.join(''), options.ad || spec.ad);
+  }
+
+  /* Üç cisim bir arada: kitaptaki tanıtım sırası. */
+  function threeSolids() {
+    const parts = [];
+    /* Üç sütun: her cisim kendi sütununun ortasında, adı altında. */
+    const trio = [
+      { cx: 64, w: 40, h: 40, d: 40, ad: 'Küp', base: [112, 86, 201] },
+      { cx: 178, w: 30, h: 54, d: 30, ad: 'Kare prizma', base: [47, 138, 99] },
+      { cx: 280, w: 46, h: 26, d: 26, ad: 'Dikdörtgen prizma', base: [186, 121, 26] },
+    ];
+    /* Adlar iki satıra bölünür: “Dikdörtgenler prizması” tek satıra sığmıyor. */
+    const lines = { 'Küp': ['Küp'], 'Kare prizma': ['Kare', 'prizma'], 'Dikdörtgen prizma': ['Dikdörtgen', 'prizma'] };
+    trio.forEach((item) => {
+      const geo = solidIso(item.cx, 126, item.w, item.h, item.d, { base: item.base });
+      parts.push(geo.parts);
+      const label = lines[item.ad] || [item.ad];
+      label.forEach((line, index) => {
+        parts.push(txt(item.cx, 152 + index * 14, line, { size: 10.5, anchor: 'middle', weight: 800, fill: INK, maxWidth: 104 }));
+      });
+      parts.push(txt(item.cx, 152 + label.length * 14 + 4, '6 yüz · 12 ayrıt', { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 104 }));
+    });
+    return frame(parts.join(''), 'Küp, kare prizma ve dikdörtgenler prizması');
+  }
+
+  /* --- Aynı prizmanın farklı açınımları ---
+     Kitap, tek bir cismin birden çok açınımı olabileceğini gösteriyor.
+     Açınımlar birim karelerden oluşan ızgarada tanımlanır: her yüz, ızgara
+     hücresi kadar (a × h, b × h, a × b) dikdörtgen olarak yerleştirilir.
+     Izgara tanımı sayesinde yüzler birbirine tam oturur, kayma olmaz.
+     Her açınım 6 yüzden oluşur ve diğerinin döndürülmüş kopyası değildir. */
+  function netPatterns(options = {}) {
+    const a = Math.max(1, Math.min(4, Number(options.a) || 2));
+    const b = Math.max(1, Math.min(4, Number(options.b) || 1));
+    const h = Math.max(1, Math.min(4, Number(options.h) || 1));
+    /* Izgara birimi: en geniş açınım 7 birim; panele sığacak biçimde ölçekle. */
+    const unit = Math.min(22, 92 / (a + a + b + b * 0.5), 96 / (h * 3 + a));
+    /* Dikdörtgenler prizmasının gövdesi tek sıra hâlinde açılır:
+       a×h · b×h · a×h · b×h (sırayla ön, yan, arka, yan). Kapaklar (a×b)
+       gövdedeki bir yüzün üstüne ya da altına eklenir; kapak, genişliği a
+       olan yüze oturduğu için yalnız 1. ve 3. yüzün kenarına yapışabilir.
+       Üç açınım bu yüzden farklı kapak yerleşimleriyle kurulur — hepsi
+       gerçekten katlanıp kutu olur, hiçbiri diğerinin kopyası değildir. */
+    const body = [
+      [0, 0, a, h], [a, 0, b, h], [a + b, 0, a, h], [a + b + a, 0, b, h],
+    ];
+    const cap1 = a + b;           /* 1. yüzün (ön) sol kenarı */
+    const cap3 = a + b;           /* 3. yüzün (arka) sol kenarı */
+    const nets = [
+      /* 1) Haç: kapaklar ön yüzün üstünde ve altında. */
+      [...body, [cap1 - a, -b, a, b], [cap1 - a, h, a, b]],
+      /* 2) Kapaklar arka yüzün üstünde ve altında: haç sağa kayar. */
+      [...body, [cap3, -b, a, b], [cap3, h, a, b]],
+      /* 3) Basamak: iki kapak da üstte, biri ön biri arka yüzün üstünde. */
+      [...body, [cap1 - a, -b, a, b], [cap3, -b, a, b]],
+    ];
+    const labels = ['1. açınım', '2. açınım', '3. açınım'];
+    const parts = [];
+    nets.forEach((faces, index) => {
+      parts.push(rect(index * 114 + 4, 10, 108, 136, { fill: '#fbfaff', stroke: '#e3dffb', rx: 10, width: 1 }));
+      /* Sınır kutusu: açınım panelin ortasına oturur. */
+      const minX = Math.min(...faces.map(([x]) => x));
+      const maxX = Math.max(...faces.map(([x, , w]) => x + w));
+      const minY = Math.min(...faces.map(([, y]) => y));
+      const maxY = Math.max(...faces.map(([, y, , hh]) => y + hh));
+      const ox = index * 114 + 58 - ((maxX - minX) * unit) / 2;
+      const oy = 78 - ((maxY - minY) * unit) / 2;
+      faces.forEach(([x, y, w, hh]) => {
+        parts.push(rect(ox + (x - minX) * unit, oy + (y - minY) * unit, w * unit, hh * unit,
+          { fill: '#cfe0f5', stroke: '#3f6c93', width: 1.1, rx: 2 }));
+      });
+      parts.push(txt(index * 114 + 58, 162, labels[index], { size: 11, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: 104 }));
+    });
+    parts.push(txt(170, 180, 'Aynı prizmanın üç farklı açınımı', { size: 11, anchor: 'middle', fill: MUTED, maxWidth: 330 }));
+    return frame(parts.join(''), 'Aynı prizmanın farklı açınımları');
+  }
+
   const BUILDERS = {
     'pay-payda': fractionLabels,
     'kesir-serit': fractionBar,
@@ -1534,6 +1673,12 @@
     'gorunum-uc': stackViews,
     'bilesik-cizim': compositeSolid,
     'acilim-adim': netSteps,
+    'cisim-ton': shadedSolid,
+    /* Adlandırılmış kısayollar: kavram kutularında görsel türleri ayrışsın. */
+    'cisim-kare': (options = {}) => shadedSolid({ ...options, tur: 'kare', ad: options.ad || 'Kare prizma' }),
+    'cisim-dik': (options = {}) => shadedSolid({ ...options, tur: 'dikdortgen', ad: options.ad || 'Dikdörtgenler prizması' }),
+    'cisimler-uc': threeSolids,
+    'acilim-coklu': netPatterns,
     'yuzey-alani': surfaceArea,
     'kare-birim': squareUnit,
     'birim-merdiven': unitLadder,

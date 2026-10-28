@@ -589,10 +589,12 @@
       id: 9,
       date: '9–13 Kas',
       theme: 'geometri',
-      topic: 'Dikdörtgenler prizmasının açınımı ve yüzey alanı',
+      topic: 'Cisimlerin açınımı: küp, kare prizma ve dikdörtgenler prizması',
       pages: '125–133',
       summary: [
-        'Bir kutuyu ayrıtları boyunca kesip açtığında elde ettiğin düz şekle **açınım** denir. Açınım, cismin yüzeyini tek bir düzlemde gösterdiği için yüzey alanı hesabının en somut aracıdır. Dikdörtgenler prizmasının açınımında $6$ dikdörtgen bulunur; karşılıklı yüzler eş olduğu için üç farklı boyutta dikdörtgen çifti vardır.',
+        'Konuya üç prizma cismini tanıyarak başlanır. **Küp**: altı yüzü de eş karedir. **Kare prizma**: alt ve üst tabanı kare, yan yüzleri dikdörtgendir. **Dikdörtgenler prizması**: bütün yüzleri dikdörtgendir, karşılıklı yüzler eş ve paraleldir. Üçünde de $6$ yüz, $12$ ayrıt, $8$ köşe vardır; fark yüzlerin biçimindedir.',
+        'Bir cismi ayrıtları boyunca kesip açtığında elde ettiğin düz şekle **açınım** denir. Açınım, cismin yüzeyini tek bir düzlemde gösterdiği için yüzey alanı hesabının en somut aracıdır. Dikdörtgenler prizmasının açınımında $6$ dikdörtgen bulunur; karşılıklı yüzler eş olduğu için üç farklı boyutta dikdörtgen çifti vardır.',
+        'Aynı cismin birden çok açınımı vardır: gövdeyi oluşturan dört yan yüz aynı kalır, iki taban (kapak) farklı kenarlara bağlanır. Kapak yanlış yere konursa yüzler üst üste biner ve kutu kapanmaz; bu yüzden her çizim bir açınım değildir.',
         'Kenar uzunlukları $a$, $b$ ve $c$ olan bir dikdörtgenler prizmasının yüzey alanı $2\\left(ab + ac + bc\\right)$ bağıntısıyla bulunur. Buradaki üç çarpım, üç farklı yüz çiftinin alanıdır; $2$ çarpanı her yüzün karşıtının aynı alana sahip olmasından gelir. Küp için $a = b = c$ olduğundan bağıntı $6a^2$ biçimini alır. Yüzey alanının birimi santimetrekare, metrekare gibi **kare birimlerdir**.',
         'Yüzey alanı sorularında en sık yapılan hata, bütün yüzleri aynı kabul etmektir. $5$ cm, $3$ cm ve $2$ cm boyutlu bir prizmada yüzey alanı $2\\left(5\\cdot 3 + 5\\cdot 2 + 3\\cdot 2\\right) = 2\\left(15 + 10 + 6\\right) = 62\\ \\mathrm{cm}^2$ olur. Yalnız bir yüzün alanını hesaplayıp $6$ ile çarpmak yanlış sonuç verir; çünkü yüzler eş değildir.',
         'Günlük hayatta yüzey alanı “ne kadar malzeme gerekir” sorusunun cevabıdır: kutuyu kaplamak için gereken karton, duvarları boyamak için gereken boya miktarı, havuzun iç yüzeyini kaplamak için gereken fayans. Bu problemlerde bazı yüzlerin sayılmadığına dikkat et: kapaksız bir kutuda üst yüz hesaba katılmaz. Soruyu okurken “hangi yüzeyler gerçekten var?” sorusunu sormak fazla malzeme hesabını önler.',
@@ -620,9 +622,10 @@
         'Tüm yüzleri eş kabul etmek en sık yapılan hatadır.',
       ],
       terms: [
-        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli; prizmada $6$ dikdörtgen.', 'acim-cizim', 'Yüzey alanı hesabının öncesinde'),
+        term('Açınım', 'Cismin yüzeylerinin bir düzlemde açılmış hâli; prizmada $6$ yüz, gövde $4$ yan yüz + $2$ kapak.', 'acim-cizim', 'Yüzey alanı hesabının öncesinde'),
         term('Yüzey alanı', 'Cismin bütün yüzeylerinin alanları toplamı: $2\\left(ab+ac+bc\\right)$.', 'yuzey-alani', 'Kutu kaplama, boya, fayans sorularında'),
-        term('Kare birim', 'Kenarı bir birim olan karenin alanına dayanan alan ölçü birimi ($\\mathrm{cm}^2$).', 'kare-birim', 'Bütün alan sonuçlarında'),
+        term('Küp', 'Altı yüzü de eş kare olan prizma; $6$ yüz, $12$ ayrıt, $8$ köşe.', 'cisim-ton', 'Küp şeker, zar örneklerinde'),
+        term('Kare prizma', 'Alt ve üst tabanı kare, yan yüzleri dikdörtgen olan prizma.', 'cisim-kare', 'Süt kutusu, kare kolon örneklerinde'),
       ],
       scenes: [
         {

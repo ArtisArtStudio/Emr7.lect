@@ -133,6 +133,38 @@ assert.ok(!kurCommands.some((command) => /^k\d\d L/.test(command)), 'Boş sahned
 const atolyeSource = read('matematik-atolye.js');
 assert.ok(/GG\.interactive\('kup-kur-ggb'\)/.test(atolyeSource), 'Etkinlikte GeoGebra kurma alanı yeğlenmeli.');
 assert.ok(/mountLocal/.test(atolyeSource), 'GeoGebra yoksa yerel yedek sahne devreye girmeli.');
+/* Yeni şekiller: gölgeli cisimler ve çoklu açınım (kitabın sırası). */
+['cisim-ton', 'cisim-kare', 'cisim-dik', 'cisimler-uc', 'acilim-coklu'].forEach((type) => {
+  assert.ok(FIG.types().includes(type), `Şekil türü eksik: ${type}`);
+});
+/* Adlar iki satıra bölünür (tek satıra sığmıyor): kelimeler ayrı ayrı aranır. */
+const ucSvg = FIG.render('cisimler-uc', {});
+['Küp', 'Kare', 'Dikdörtgen'].forEach((label) => {
+  assert.ok(ucSvg.includes(label), `Üç cisim görselinde “${label}” yazmalı.`);
+});
+assert.equal((ucSvg.match(/>prizma</g) || []).length, 2, 'İki prizmanın adı yazılmalı.');
+assert.ok(/linearGradient/.test(FIG.render('cisim-ton', { tur: 'kup' })),
+  'Gölgeli cisim yumuşak geçişle (shading) boyanmalı.');
+/* Kapak yerleşimi: açınımlar 6 yüzden oluşur ve birbirinin kopyası değildir. */
+const netSvg = FIG.render('acilim-coklu', { a: 2, b: 1, h: 1 });
+assert.equal((netSvg.match(/<rect[^>]*fill="#cfe0f5"/g) || []).length, 18, 'Üç açınımın her biri 6 yüzden oluşmalı.');
+assert.equal((netSvg.match(/1\. açınım/g) || []).length, 1, 'Açınımlar adlandırılmalı.');
+/* Hacim konusu bu haftada olmamalı (kitapta 134–143. sayfalar). */
+/* Hafta 9 bölümü: dosyada `9: {` ile başlayan blok. */
+const week9Start = kitap.indexOf('\n    9: {');
+const week9End = kitap.indexOf('\n    10: {');
+assert.ok(week9Start > 0 && week9End > week9Start, 'Hafta 9 bölümü kitapta bulunamadı.');
+const week9Text = kitap.slice(week9Start, week9End);
+assert.ok(!/birim-kup|hacim birimi|birim³/.test(week9Text), 'Açınım haftasında hacim içeriği olmamalı.');
+/* Alt yüz siyah değil gri: siyah zemin kenar çizgilerini yutuyordu. */
+assert.ok(/bottom: \[142, 150, 164\]/.test(ggb), 'Küpün alt yüzü gri olmalı (siyah değil).');
+assert.ok(!/bottom: \[38, 38, 38\]/.test(ggb), 'Eski siyah alt yüz kalmamalı.');
+assert.ok(/const lift = 1\.012/.test(ggb), 'Kenar çizgileri yüzeyin biraz dışına taşınmalı (görünürlük).');
+assert.ok(/box\.thickness\(name, 2\)/.test(ggb), 'Kenar çizgileri 2 kalınlıkta olmalı.');
+/* Küp kurmada her sütunun üst yüzü tıklanabilir: boş kareye dokunmak da küp ekler. */
+const kur = ggb.replace(/\/\*[\s\S]*?\*\//g, '');
+assert.ok(/const top = z0 \+ height;/.test(kur), 'Tıklama levhası sütunun üst yüzüne konmalı.');
+assert.ok(/b\.polygon3\(`t\$\{r\}\$\{c\}`/.test(kur), 'Dokuz sütunun hepsi levha almalı.');
 /* Birim küp sınırları siyah çizilir: küpler döndürüldüğünde birbirinden ayrılır. */
 assert.ok(/const EDGE_RGB = \[0, 0, 0\]/.test(ggb),
   'Birim küp kenarı siyah olmalı (EDGE_RGB).');
