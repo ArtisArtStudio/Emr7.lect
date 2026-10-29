@@ -420,6 +420,26 @@ FIG.types().forEach((type) => {
   assert.ok(/<text[^>]*>[^<]+<\/text>/.test(svg), `${type} şekli en az bir okunur etiket içermeli.`);
 });
 
+/* Küp ekleme akıcı olmalı: tıklamada sahnenin tamamı değil, yalnız değişen
+   sütunlar yeniden çizilir. Aksi durumda her dokunuş yüzlerce GeoGebra komutu
+   üretiyor, sahne donuyordu. */
+const kupKur = ggb.slice(ggb.indexOf("'kup-kur-ggb': {"), ggb.indexOf("'duzensiz-yigin': {"));
+assert.ok(/incremental: true/.test(kupKur), 'Küp kurma sahnesi artımlı çizime açık olmalı.');
+assert.ok(/buildColumns\(b, v, mode, data, indexes\)/.test(kupKur), 'Küp kurmada sütun bazlı çizim yolu bulunmalı.');
+assert.ok(/function kupKurColumn\(b, cubes, index\)/.test(ggb), 'Tek sütunu çizen yardımcı bulunmalı.');
+assert.ok(/touch\(index, before, after, data\)/.test(kupKur), 'Dokunulan sütunun komşuları hesaplanmalı.');
+assert.ok(/setRepaintingActive/.test(ggb), 'Çizim sırasında yeniden boyama duraklatılmalı.');
+assert.ok(/requestAnimationFrame/.test(ggb), 'Hızlı dokunuşlar tek karede birleştirilmeli.');
+assert.ok(/function patchColumns\(indexes\)/.test(ggb), 'Artımlı tazeleme yolu bulunmalı.');
+assert.ok(/\.forEach\(dropColumn\)/.test(ggb), 'Değişen sütunların eski nesneleri silinmeli.');
+assert.ok(/api\.setLineThickness\(name, width\)/.test(ggb) && /api\.setFilling\(name, opacity\)/.test(ggb),
+  'Biçim komutları doğrudan API ile verilmeli (evalCommand ayrıştırma yükü olmasın).');
+/* Dokunuşta bütün kaydı yazmak yerine kısa gecikmeli kayıt. */
+assert.ok(/saveSoon\(/.test(atolye) && /store\.saveSoon\(\)/.test(atolye), 'Küp eklemede kayıt geciktirilmeli.');
+/* Fare hangi yüzeyin üzerindeyse o yüzey belli olsun: yalnız CSS, JS yükü yok. */
+assert.ok(/\.math-scene-svg polygon\[data-cell\]:hover\{fill:/.test(css),
+  'Küp kurmada fare altındaki yüzey CSS ile vurgulanmalı (ek yük getirmeden).');
+
 /* Üst ve alt görünüm: alt, üstün yatay aynasıdır (satırlar ters, sütunlar değil).
    Ne görselde ne metinde "alt = üst" fikri kalmalı. */
 const keyOf = (cells) => cells.map((row) => row.map((on) => (on ? 1 : 0)).join('')).join('/');
