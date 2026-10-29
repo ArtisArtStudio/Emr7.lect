@@ -975,10 +975,15 @@
       { label: 'YAN', cells: list(options.side, [[1], [1]]) },
       { label: 'ÜST', cells: list(options.top, [[1, 1, 1]]) },
     ];
+    /* Dördüncü panel isteğe bağlı: alt görünüm ancak üst görünümün satırları
+       ters çevrilerek bulunur (yatay ayna), bu yüzden yan yana gösterilir. */
+    if (options.alt) panels.push({ label: 'ALT', cells: list(options.alt, [[1, 1, 1]]) });
     const parts = [];
     const maxRows = Math.max(...panels.map((panel) => panel.cells.length));
-    /* Az satırda kareler büyür: küçük ızgara kocaman tuvalde kaybolmaz. */
-    const cell = maxRows <= 2 ? 30 : maxRows === 3 ? 24 : 20;
+    /* Az satırda kareler büyür: küçük ızgara kocaman tuvalde kaybolmaz.
+       Dört panel varsa kareler daralır ki hepsi aynı tuvale sığsın. */
+    const cell = panels.length > 3 ? 20 : maxRows <= 2 ? 30 : maxRows === 3 ? 24 : 20;
+    const gap = panels.length > 3 ? 10 : 14;
     let x = 14;
     panels.forEach((panel) => {
       const cols = Math.max(...panel.cells.map((row) => row.length));
@@ -997,11 +1002,16 @@
         });
       });
       parts.push(txt(x, 64 + rows * cell + 16, `${rows} × ${cols}`, { size: 10, fill: MUTED }));
-      x += Math.max(gridW, labelW) + 14;
+      x += Math.max(gridW, labelW) + gap;
     });
-    parts.push(txt(14, 176, 'ÖN · YAN · ÜST: aynı yapının üç görünümü.', { size: 9.5, fill: MUTED, maxWidth: 312 }));
-    if (options.note) parts.push(txt(14, 190, options.note, { size: 9.5, fill: MUTED, maxWidth: 312 }));
-    return frame(parts.join(''), 'Bir yapının ön, yan ve üst görünümleri');
+    const caption = options.alt
+      ? 'ÖN · YAN · ÜST · ALT: aynı yapının dört görünümü.'
+      : 'ÖN · YAN · ÜST: aynı yapının üç görünümü.';
+    parts.push(txt(14, 172, caption, { size: 9.5, fill: MUTED, maxWidth: 312 }));
+    if (options.note) parts.push(txt(14, 186, options.note, { size: 9.5, fill: MUTED, maxWidth: 312 }));
+    return frame(parts.join(''), options.alt
+      ? 'Bir yapının ön, yan, üst ve alt görünümleri'
+      : 'Bir yapının ön, yan ve üst görünümleri');
   }
 
   /* --- 54. Aynı yapının üç fotoğrafı: yön değişince görüntü değişir --- */
@@ -1483,20 +1493,20 @@
       grid([[1, 1], [1, 0]], 20, 24, '#c9dff0'),
       line(68, 22, 68, 58, { stroke: ACCENT, width: 1.4, dash: '5 4' }),
       grid([[1, 1], [0, 1]], 76, 24, '#c9dff0'),
-      txt(112, 34, 'aynı siluet,', { size: 10, fill: MUTED }),
-      txt(112, 48, 'ayna görüntüsü', { size: 10, fill: MUTED, maxWidth: 78 }),
-      txt(200, 32, 'Ön ve arka görünüm', { size: 11, weight: 800, maxWidth: 132 }),
-      txt(200, 48, 'dikey doğruya göre', { size: 10.5, fill: MUTED, maxWidth: 132 }),
-      txt(200, 64, 'simetriktir.', { size: 10.5, fill: MUTED, maxWidth: 132 }),
+      txt(112, 34, 'kareler aynı,', { size: 10, fill: MUTED }),
+      txt(112, 48, 'sütunlar ters', { size: 10, fill: MUTED, maxWidth: 78 }),
+      txt(196, 32, 'Ön ve arka görünüm', { size: 10.2, weight: 800, maxWidth: 128 }),
+      txt(196, 48, 'dikey doğruya göre', { size: 10, fill: MUTED, maxWidth: 128 }),
+      txt(196, 64, 'simetriktir.', { size: 10, fill: MUTED, maxWidth: 128 }),
       txt(16, 102, 'üst – alt: yatay doğru', { size: 11.5, weight: 800 }),
-      grid([[1, 0], [1, 1]], 20, 112, '#d5efdf'),
-      line(16, 148, 106, 148, { stroke: ACCENT, width: 1.4, dash: '5 4' }),
-      grid([[1, 0], [1, 1]], 20, 156, '#d5efdf'),
-      txt(114, 130, 'aynı siluet,', { size: 10, fill: MUTED }),
-      txt(114, 144, 'ayna görüntüsü', { size: 10, fill: MUTED, maxWidth: 78 }),
-      txt(200, 120, 'Üst ve alt görünüm', { size: 11, weight: 800, maxWidth: 132 }),
-      txt(200, 136, 'yatay doğruya göre', { size: 10.5, fill: MUTED, maxWidth: 132 }),
-      txt(200, 152, 'simetriktir.', { size: 10.5, fill: MUTED, maxWidth: 132 }),
+      grid([[1, 0], [1, 1]], 20, 108, '#d5efdf'),
+      line(16, 144, 106, 144, { stroke: ACCENT, width: 1.4, dash: '5 4' }),
+      grid([[1, 1], [1, 0]], 20, 152, '#d5efdf'),
+      txt(114, 126, 'kareler aynı,', { size: 10, fill: MUTED }),
+      txt(114, 140, 'satırlar ters', { size: 10, fill: MUTED, maxWidth: 78 }),
+      txt(196, 120, 'Üst ve alt görünüm', { size: 10.2, weight: 800, maxWidth: 128 }),
+      txt(196, 136, 'yatay doğruya göre', { size: 10, fill: MUTED, maxWidth: 128 }),
+      txt(196, 152, 'simetriktir.', { size: 10, fill: MUTED, maxWidth: 128 }),
     ];
     return frame(parts.join(''), 'Görünüm çiftlerinin simetrisi');
   }

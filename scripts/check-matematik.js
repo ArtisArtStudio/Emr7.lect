@@ -420,6 +420,41 @@ FIG.types().forEach((type) => {
   assert.ok(/<text[^>]*>[^<]+<\/text>/.test(svg), `${type} şekli en az bir okunur etiket içermeli.`);
 });
 
+/* Üst ve alt görünüm: alt, üstün yatay aynasıdır (satırlar ters, sütunlar değil).
+   Ne görselde ne metinde "alt = üst" fikri kalmalı. */
+const keyOf = (cells) => cells.map((row) => row.map((on) => (on ? 1 : 0)).join('')).join('/');
+const mirrorRows = (cells) => cells.slice().reverse().map((row) => row.slice());
+let altDiffers = 0;
+[1, 2, 3].forEach((setNo) => {
+  for (let shape = 1; shape <= 5; shape += 1) {
+    const views = SAHNE.gorunumOf(SAHNE.yapiOfSet(setNo, shape));
+    assert.equal(keyOf(views.alt), keyOf(mirrorRows(views.ust)),
+      `Set ${setNo} şekil ${shape}: alt görünüm, üst görünümün satırları ters çevrilmiş hâli olmalı.`);
+    if (keyOf(views.alt) !== keyOf(views.ust)) altDiffers += 1;
+  }
+});
+assert.ok(altDiffers >= 10, `Yapıların çoğunda alt görünüm üstten farklı olmalı (şu an ${altDiffers}/15).`);
+/* Simetri görselinde üst ve alt ızgara birebir aynı çizilmemeli. */
+const symSvg = FIG.render('gorunum-simetri', {});
+const gridAt = (top) => [...symSvg.matchAll(new RegExp(`<rect x="([0-9.]+)" y="${top}"[^>]*fill="([^"]+)"`, 'g'))]
+  .map((match) => `${match[1]}:${match[2]}`).join('|');
+assert.ok(gridAt(108).length > 0 && gridAt(152).length > 0, 'Simetri görselinde üst ve alt ızgara bulunmalı.');
+assert.notEqual(gridAt(108), gridAt(152), 'Simetri görselinde üst ve alt görünüm aynı desenle çizilmemeli.');
+/* Ders görseli dört paneli (ön · yan · üst · alt) gösterebilmeli. */
+const altTable = FIG.render('gorunum-tablo', {
+  front: [[1, 0, 0], [1, 1, 1]], side: [[1, 0], [1, 1]], top: [[1, 1, 0], [1, 1, 1]], alt: [[1, 1, 1], [1, 1, 0]],
+  note: 'Üstün satırlarını ters çevir: alt görünüm çıkar.',
+});
+assert.ok(altTable.includes('ALT'), 'Görünüm tablosu alt görünüm panelini çizebilmeli.');
+assert.ok(/Üstün satırlarını ters çevir/.test(altTable), 'Alt panel, üst görünümün satır aynası olduğunu yazmalı.');
+assert.ok(!/…/.test(altTable), 'Görünüm tablosu yazıları kırpmadan sığdırmalı.');
+/* Kitap metni: "birbirinin aynısı" ifadesi yanlıştı, yerine yatay ayna dili gelmeli. */
+assert.ok(!/Üst ve alt görünümün kareleri birbirinin aynısıdır/.test(kitap),
+  'Kitap, üst ve alt görünümü "birbirinin aynısı" diye anlatmamalı.');
+assert.ok(/satırları ters çevrilmiş/.test(kitap), 'Kitap, alt görünümü üst görünümün satır aynası olarak anlatmalı.');
+assert.ok(/satırların sırası ters döner/.test(atolye), 'Izgara denetimi, alt görünümde satırların ters döndüğünü söylemeli.');
+assert.ok(/Bu, üstten görünümün kendisi/.test(atolye), 'Üst deseni alta çizen öğrenciye özel uyarı verilmeli.');
+
 // 5. Yerleşim: çizim üstte, sürgü bandı altta; mobil tek kolon
 assert.ok(/math-scene-stage/.test(app) && /math-scene-controls/.test(app), 'Sahne kartı çizim + sürgü bandı içermeli.');
 assert.ok(/\.math-scene-frame\{display:flex;flex-direction:column/.test(css), 'Sahne çerçevesi dikey yerleşimde olmalı.');

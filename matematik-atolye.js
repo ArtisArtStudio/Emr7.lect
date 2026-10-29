@@ -308,8 +308,17 @@
             if (onSolved) onSolved();
             return;
           }
+          /* Alt görünüm üstten görünümün kopyası değildir: öğrenci üst görünümü
+             alta çizdiyse bunu adıyla söyle, "diziliş tutmuyor" demekle kalma. */
+          if (view === 'alt' && String(drawn) === normalize(expectedFor().ust || [])) {
+            note.textContent = 'Bu, üstten görünümün kendisi. Alttan bakınca satırların sırası ters döner: üst görünümün satırlarını ters çevirip çiz.';
+            note.dataset.state = 'wrong';
+            return;
+          }
           if (drawn === normalize(mirror(target))) {
-            note.textContent = `Kareler doğru ama ayna gibi: ${label} görünümünde sağ–sol yer değiştirmiş. Ters yönden bak.`;
+            note.textContent = view === 'alt'
+              ? 'Kareler doğru ama ayna yönü yanlış: alttan görünüm yatay doğruya göre simetriktir; sağ–sol değil, satırların sırası ters döner.'
+              : `Kareler doğru ama ayna gibi: ${label} görünümünde sağ–sol yer değiştirmiş. Ters yönden bak.`;
             note.dataset.state = 'wrong';
             return;
           }
