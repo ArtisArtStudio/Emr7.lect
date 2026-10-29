@@ -257,13 +257,25 @@
           /* renk verilemezse varsayılan kalır */
         }
       },
+      /* Biçim komutları doğrudan API'den verilir: `evalCommand` metni yeniden
+         ayrıştırır, her küp yüzü için onlarca kez çağrılınca dokunuş gecikir.
+         Eski sürümlerde yöntem yoksa komut yoluna düşülür. */
       thickness(name, width) {
+        if (typeof api.setLineThickness === 'function') {
+          try { api.setLineThickness(name, width); return; } catch (error) { /* yok say */ }
+        }
         run(`SetLineThickness(${name}, ${f(width)})`);
       },
       lineStyle(name, style) {
+        if (typeof api.setLineStyle === 'function') {
+          try { api.setLineStyle(name, style); return; } catch (error) { /* yok say */ }
+        }
         run(`SetLineStyle(${name}, ${f(style)})`);
       },
       fill(name, opacity) {
+        if (typeof api.setFilling === 'function') {
+          try { api.setFilling(name, opacity); return; } catch (error) { /* yok say */ }
+        }
         run(`SetFilling(${name}, ${f(opacity)})`);
       },
       hide(name) {
@@ -386,6 +398,59 @@
       },
     };
     return box;
+  }
+
+  /* ---------- dokunarak küp kurma: sütun sütun çizim ---------- */
+
+  /* Her sütunun kendi nesne adları vardır (k<satır><sütun>…, t<satır><sütun>).
+     Ad sütunu taşıdığı için tek bir sütun silinip yeniden çizilebilir; sahnenin
+     tamamını yeniden kurmak gereksiz yere yüzlerce komut üretiyordu. */
+  const kupKurColumns = () => [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+  function kupKurCubes(data) {
+    const source = data && Array.isArray(data.cubes) ? data.cubes : [];
+    return Array.from({ length: 9 }, (_, index) => (
+      Math.max(0, Math.min(3, Math.round(Number(source[index]) || 0)))
+    ));
+  }
+
+  /* Tek sütun: küpler (yalnız görünen yüzler) + sütunun görünen üst yüzeyindeki
+     tıklama levhası. Koordinatlar sabittir; kadraj `frame` ile kilitli. */
+  function kupKurColumn(b, cubes, index) {
+    const x0 = -1.5;
+    const y0 = -1.5;
+    const z0 = VIEW_CENTER_Z;
+    const r = Math.floor(index / 3);
+    const c = index % 3;
+    const at = (rr, cc) => cubes[rr * 3 + cc] || 0;
+    const height = at(r, c);
+    for (let level = 0; level < height; level += 1) {
+      const faces = [];
+      if (level === height - 1) faces.push('top');
+      if (level === 0) faces.push('bottom');
+      if (r === 0 || at(r - 1, c) <= level) faces.push('front');
+      if (r === 2 || at(r + 1, c) <= level) faces.push('back');
+      if (c === 0 || at(r, c - 1) <= level) faces.push('left');
+      if (c === 2 || at(r, c + 1) <= level) faces.push('right');
+      /* Ad, sütunu taşır: tıklamada hangi sütuna ekleneceği buradan okunur. */
+      b.flatCube(`k${r}${c}L${level}`, x0 + c, y0 + r, z0 + level, faces);
+    }
+    /* Her sütunun **görünen üst yüzeyi** tıklama levhasıdır.
+       - Boş sütunda levha zeminde: boş kareye dokununca küp eklenir.
+       - Dolu sütunda levha en üstteki küpün üst yüzünde: küpün üstüne
+         dokunmak da küp ekler.
+       Levha dolgusu 0,18: tamamen saydam (0,02) levhaları GeoGebra
+       tıklamada güvenilir biçimde yakalamıyordu. Renk, altındaki yüzün
+       rengine yakın seçilir ki siyah kenarlar örtülmesin. */
+    const top = z0 + height;
+    b.polygon3(`t${r}${c}`, [
+      [x0 + c, y0 + r, top], [x0 + c + 1, y0 + r, top],
+      [x0 + c + 1, y0 + r + 1, top], [x0 + c, y0 + r + 1, top],
+    ]);
+    b.color(`t${r}${c}`, height === 0 ? [246, 244, 252] : FLAT_FACES.top);
+    b.fill(`t${r}${c}`, 0.18);
+    /* Levhanın kenarı çizilmez: küpün siyah kenarının üstüne binmesin. */
+    b.lineStyle(`t${r}${c}`, 0);
   }
 
   /* ---------- applet tanımları: yalnız 3B cisimler ---------- */
@@ -603,55 +668,42 @@
       clean: true,
       legend: true,
       interactive: true,
+      /* Sütun sütun çizilir: tıklamada bütün sahne değil, yalnız değişen
+         sütunlar yeniden kurulur. */
+      incremental: true,
       params: [],
       required: ['cap'],
       /* Kadraj sabit: küp eklendikçe görüntü zıplamaz, cisim ortada kalır. */
       frame: { x: 1.9, y: 1.9, zMin: -0.15, zMax: 3.15 },
       build(b, v, mode, data) {
-        const cubes = Array.from({ length: 9 }, () => 0);
-        if (data && Array.isArray(data.cubes)) {
-          for (let index = 0; index < 9; index += 1) {
-            cubes[index] = Math.max(0, Math.min(3, Math.round(Number(data.cubes[index]) || 0)));
-          }
-        }
-        const x0 = -1.5;
-        const y0 = -1.5;
-        const z0 = VIEW_CENTER_Z;
+        const cubes = kupKurCubes(data);
         /* Doğrulama çapası: gizli tek nokta. */
-        b.point('cap', 0, 0, z0);
-        const at = (r, c) => cubes[r * 3 + c];
-        for (let r = 0; r < 3; r += 1) {
-          for (let c = 0; c < 3; c += 1) {
-            const height = at(r, c);
-            for (let level = 0; level < height; level += 1) {
-              const faces = [];
-              if (level === height - 1) faces.push('top');
-              if (level === 0) faces.push('bottom');
-              if (r === 0 || at(r - 1, c) <= level) faces.push('front');
-              if (r === 2 || at(r + 1, c) <= level) faces.push('back');
-              if (c === 0 || at(r, c - 1) <= level) faces.push('left');
-              if (c === 2 || at(r, c + 1) <= level) faces.push('right');
-              /* Ad, sütunu taşır: tıklamada hangi sütuna ekleneceği buradan okunur. */
-              b.flatCube(`k${r}${c}L${level}`, x0 + c, y0 + r, z0 + level, faces);
-            }
-            /* Her sütunun **görünen üst yüzeyi** tıklama levhasıdır.
-               - Boş sütunda levha zeminde: boş kareye dokununca küp eklenir.
-               - Dolu sütunda levha en üstteki küpün üst yüzünde: küpün üstüne
-                 dokunmak da küp ekler.
-               Levha dolgusu 0,18: tamamen saydam (0,02) levhaları GeoGebra
-               tıklamada güvenilir biçimde yakalamıyordu. Renk, altındaki yüzün
-               rengine yakın seçilir ki siyah kenarlar örtülmesin. */
-            const top = z0 + height;
-            b.polygon3(`t${r}${c}`, [
-              [x0 + c, y0 + r, top], [x0 + c + 1, y0 + r, top],
-              [x0 + c + 1, y0 + r + 1, top], [x0 + c, y0 + r + 1, top],
-            ]);
-            b.color(`t${r}${c}`, height === 0 ? [246, 244, 252] : FLAT_FACES.top);
-            b.fill(`t${r}${c}`, 0.18);
-            /* Levhanın kenarı çizilmez: küpün siyah kenarının üstüne binmesin. */
-            b.lineStyle(`t${r}${c}`, 0);
-          }
-        }
+        b.point('cap', 0, 0, VIEW_CENTER_Z);
+        kupKurColumns().forEach((index) => kupKurColumn(b, cubes, index));
+      },
+      /* Artımlı çizim: yalnız verilen sütunlar yeniden kurulur. */
+      buildColumns(b, v, mode, data, indexes) {
+        const cubes = kupKurCubes(data);
+        indexes.forEach((index) => kupKurColumn(b, cubes, index));
+      },
+      /* Bir sütunun yüksekliği değişince komşularının ona bakan yüzleri de
+         değişir — ama yalnız bu sütunun yüksekliğini aşan katlarda. Komşu daha
+         alçaksa hiçbir yüzü değişmez, boşuna yeniden çizilmez. */
+      touch(index, before, after, data) {
+        const cubes = kupKurCubes(data);
+        const row = Math.floor(index / 3);
+        const col = index % 3;
+        const low = Math.min(Number(before) || 0, Number(after) || 0);
+        const list = [index];
+        const neighbours = [];
+        if (row > 0) neighbours.push(index - 3);
+        if (row < 2) neighbours.push(index + 3);
+        if (col > 0) neighbours.push(index - 1);
+        if (col < 2) neighbours.push(index + 1);
+        neighbours.forEach((neighbour) => {
+          if ((cubes[neighbour] || 0) > low) list.push(neighbour);
+        });
+        return list;
       },
     },
 
@@ -1097,6 +1149,13 @@
       mod: Number(settings.mod) === 0 ? 0 : 1,
     } : null;
     const onCubes = typeof settings.onCubes === 'function' ? settings.onCubes : function () {};
+    /* Artımlı çizim: her sütunun nesne adları tutulur. Tıklamada yalnız
+       değişen sütunlar silinip yeniden çizilir; kadraj, eksen temizliği ve
+       etiket taraması tekrar çalışmaz. */
+    const incremental = Boolean(conf.incremental && typeof conf.buildColumns === 'function');
+    const columnNames = new Map();
+    const dirtyColumns = new Set();
+    let patchTimer = null;
 
     let api = null;
     let box = null;
@@ -1140,10 +1199,30 @@
       const index = columnOf(name);
       if (index < 0) return;
       const current = Number(data.cubes[index]) || 0;
-      data.cubes[index] = data.mod === 0 ? Math.max(0, current - 1) : Math.min(3, current + 1);
-      rebuild();
+      const next = data.mod === 0 ? Math.max(0, current - 1) : Math.min(3, current + 1);
+      /* Sınıra dayanmış sütunda değişiklik yok: boşuna yeniden çizim yapılmaz. */
+      if (next === current) {
+        status(data.mod === 0
+          ? 'Bu sütunda küp yok: silinecek bir şey kalmadı.'
+          : 'Bu sütun üç katına ulaştı; daha yükseğe küp eklenemez.');
+        return;
+      }
+      data.cubes[index] = next;
+      /* Sayaç hemen güncellenir; cisim bir sonraki karede çizilir. */
       try { onCubes(data.cubes.slice()); } catch (error) { /* geri çağrı hatası sahneyi durdurmaz */ }
       status(`${Math.floor(index / 3) + 1}. sıra ${(index % 3) + 1}. sütun: ${data.cubes[index]} kat.`);
+      if (incremental) {
+        /* İlk çizim bitmeden gelen dokunuş yok sayılır: veri zaten tazelenir,
+           çizim ilk kurulumda bu veriyle yapılır. */
+        if (done) {
+          const dirty = typeof conf.touch === 'function'
+            ? conf.touch(index, current, data.cubes[index], data)
+            : [index];
+          schedulePatch(dirty);
+        }
+        return;
+      }
+      rebuild();
     }
 
     /* GeoGebra tıklama dinleyicisi global bir işlev adı ister. */
@@ -1180,13 +1259,106 @@
       return total >= conf.required.length && missing.length === 0;
     }
 
+    /* Nesne adından sütun numarası: `k<satır><sütun>L<kat>…` ve `t<satır><sütun>`.
+       Başka adlar (ör. `cap`) sütuna bağlı değildir. */
+    function columnOfName(name) {
+      const match = /^[kt]([0-2])([0-2])/.exec(String(name || ''));
+      return match ? Number(match[1]) * 3 + Number(match[2]) : -1;
+    }
+
+    function collectColumns(names) {
+      columnNames.clear();
+      names.forEach((name) => {
+        const index = columnOfName(name);
+        if (index < 0) return;
+        if (!columnNames.has(index)) columnNames.set(index, []);
+        columnNames.get(index).push(name);
+      });
+    }
+
+    /* Çizim sırasında yeniden boyama kapatılır: her komutta bütün 3B görünüm
+       yeniden çizilmesin. Tek bir açma/kapama, onlarca çizimi tek kareye indirir. */
+    function withPaintingPaused(task) {
+      let paused = false;
+      if (api && typeof api.setRepaintingActive === 'function') {
+        try { api.setRepaintingActive(false); paused = true; } catch (error) { paused = false; }
+      }
+      try {
+        task();
+      } finally {
+        if (paused) {
+          try { api.setRepaintingActive(true); } catch (error) { /* yok say */ }
+        }
+      }
+    }
+
+    function dropColumn(index) {
+      (columnNames.get(index) || []).forEach((name) => {
+        try {
+          if (typeof api.deleteObject === 'function') api.deleteObject(name);
+          else api.evalCommand(`Delete(${name})`);
+        } catch (error) {
+          /* nesne zaten yoksa sessiz geç */
+        }
+      });
+      columnNames.set(index, []);
+    }
+
+    /* Yalnız verilen sütunları yeniden çiz. */
+    function patchColumns(indexes) {
+      if (!api || destroyed) return;
+      const unique = Array.from(new Set(indexes)).filter((index) => index >= 0 && index <= 8);
+      if (!unique.length) return;
+      withPaintingPaused(() => {
+        unique.forEach(dropColumn);
+        const patch = builder(api);
+        conf.buildColumns(patch, values, mode, data, unique);
+        patch.names.forEach((name) => {
+          const index = columnOfName(name);
+          if (index < 0) return;
+          if (!columnNames.has(index)) columnNames.set(index, []);
+          columnNames.get(index).push(name);
+          try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
+        });
+      });
+    }
+
+    /* Hızlı art arda dokunuşlarda tek karede bir çizim: her dokunuş için ayrı
+       tam çizim yapılırsa kuyruk birikir ve sahne donar. */
+    function schedulePatch(indexes) {
+      indexes.forEach((index) => dirtyColumns.add(index));
+      if (patchTimer != null) return;
+      const run = () => {
+        patchTimer = null;
+        const list = Array.from(dirtyColumns);
+        dirtyColumns.clear();
+        patchColumns(list);
+      };
+      if (typeof window.requestAnimationFrame === 'function') {
+        patchTimer = window.requestAnimationFrame(run);
+      } else {
+        patchTimer = window.setTimeout(run, 16);
+      }
+    }
+
     function rebuild() {
       if (!api) return;
+      /* Tam çizim bekleyen artımlı işi geçersiz kılar. */
+      if (patchTimer != null) {
+        if (typeof window.cancelAnimationFrame === 'function') window.cancelAnimationFrame(patchTimer);
+        window.clearTimeout(patchTimer);
+        patchTimer = null;
+      }
+      dirtyColumns.clear();
       if (box) box.clear();
-      box = builder(api);
-      conf.build(box, values, mode, data);
+      withPaintingPaused(() => {
+        box = builder(api);
+        conf.build(box, values, mode, data);
+      });
+      if (incremental) collectColumns(box.names);
       applyLabels(box);
-      /* Nokta/etiket kalabalığı ve eksenler kapatılır: cisim öne çıkar. */
+      /* Nokta/etiket kalabalığı ve eksenler kapatılır: cisim öne çıkar.
+         Bu tarama bütün nesneleri gezer; artık yalnız ilk çizimde çalışır. */
       if (typeof box.polish === 'function') box.polish();
       if (conf.clean) quietScene(box);
       /* Kadraj yalnız 3B appletlerde ortalanır; 2B çizimler kendi ölçeğini korur. */
@@ -1403,7 +1575,10 @@
         if (data && name === 'cubes') {
           const list = Array.isArray(value) ? value : [];
           data.cubes = Array.from({ length: 9 }, (_, index) => Math.max(0, Math.min(3, Math.round(Number(list[index]) || 0))));
-          if (api) rebuild();
+          /* “Temizle” gibi toplu değişimlerde de tam yeniden kurulum yerine
+             sütun tazeleme yolu kullanılır: eksen/etiket taraması tekrar etmez. */
+          if (api && incremental && done) schedulePatch([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+          else if (api) rebuild();
           return;
         }
         if (!(name in values)) return;
@@ -1444,6 +1619,11 @@
         destroyed = true;
         done = true;
         if (buildTimer) window.clearTimeout(buildTimer);
+        if (patchTimer != null) {
+          if (typeof window.cancelAnimationFrame === 'function') window.cancelAnimationFrame(patchTimer);
+          window.clearTimeout(patchTimer);
+          patchTimer = null;
+        }
         if (observer) observer.disconnect();
         host.innerHTML = '';
         host.classList.remove('is-ready');

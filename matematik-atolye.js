@@ -32,6 +32,15 @@
     save() {
       try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); } catch (error) { /* kota */ }
     },
+    /* Art arda hızlı değişen durumlarda (küp ekleme) her dokunuşta bütün kaydı
+       yazmak ana iş parçacığını meşgul eder; yazma kısa süre ertelenir. */
+    saveSoon(delay) {
+      if (this.saveTimer) window.clearTimeout(this.saveTimer);
+      this.saveTimer = window.setTimeout(() => {
+        this.saveTimer = null;
+        this.save();
+      }, delay === undefined ? 400 : delay);
+    },
     item(id) {
       if (!this.data[id] || typeof this.data[id] !== 'object') {
         this.data[id] = { solved: [], attempts: {}, answers: {}, grids: {}, unlocked: [], done: false };
@@ -772,7 +781,9 @@
 
     const remember = (cubes) => {
       entry.answers.katlar = cubes.slice(0, 9);
-      store.save();
+      /* Küp eklerken her dokunuşta tüm kaydı yazmak yerine kısa bir gecikmeyle
+         bir kez yazılır; sahne donmaz, veri yine kaybolmaz. */
+      store.saveSoon();
       paintBuilderInfo(entry.answers.katlar);
     };
 
@@ -829,6 +840,15 @@
       });
     }
   }
+
+  /* Sekme kapanırken bekleyen kayıt kaybolmasın. */
+  window.addEventListener('pagehide', () => {
+    if (store.saveTimer) {
+      window.clearTimeout(store.saveTimer);
+      store.saveTimer = null;
+      store.save();
+    }
+  });
 
   /* ---------------- Görev 6: eşleştirme ---------------- */
 
