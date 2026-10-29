@@ -1335,16 +1335,16 @@
             {
               heading: 'Üst ve alt görünüm: yatay doğruya göre simetri',
               paragraphs: [
-                'Üstten bakıldığında yükseklik saklanır; tabanda küp bulunan her hücre dolu kare olarak görünür. Alttan bakıldığında aynı taban görünür.',
-                'Üst ve alt görünümün kareleri birbirinin aynısıdır: iki görünüm yatay bir doğruya göre simetriktir.',
+                'Üstten bakıldığında yükseklik saklanır; tabanda küp bulunan her hücre dolu kare olarak görünür. Alttan bakıldığında da aynı taban görünür ama **satırların sırası ters döner**: önden bakışta en önde duran sıra, alttan bakışta en arkada kalır.',
+                'Bu yüzden alt görünüm, üst görünümün **satırları ters çevrilmiş** hâlidir; iki görünüm yatay bir doğruya göre simetriktir. Kare sayısı aynıdır, diziliş aynı değildir: üst görünümü olduğu gibi alta çizmek yanlış olur.',
               ],
-              figure: { type: 'gorunum-tablo', options: { front: [[1, 1, 0], [1, 1, 1]], side: [[1, 1], [1, 1]], top: [[1, 1, 1], [1, 1, 0]] } },
+              figure: { type: 'gorunum-tablo', options: { front: [[1, 0, 0], [1, 1, 1]], side: [[1, 0], [1, 1]], top: [[1, 1, 0], [1, 1, 1]], alt: [[1, 1, 1], [1, 1, 0]], note: 'Üstün satırlarını ters çevir: alt görünüm çıkar.' } },
             },
             {
               heading: 'Simetri: dikey ve yatay doğru',
               paragraphs: [
-                'Eş küplerle oluşturulan yapıların ön–arka ve sol–sağ görünümleri dikey bir doğruya göre, üst–alt görünümleri ise yatay bir doğruya göre simetriktir.',
-                'Bu yüzden altı görünümü tek tek çizmek yerine üç görünüm (ön, sağ, üst) yeterlidir; öteki üçü bunların aynasıdır.',
+                'Eş küplerle oluşturulan yapıların ön–arka ve sol–sağ görünümleri dikey bir doğruya göre, üst–alt görünümleri ise yatay bir doğruya göre simetriktir. Arkaya geçerken sütunlar, alta geçerken satırlar tersine döner.',
+                'Bu yüzden altı görünümü tek tek çizmek yerine üç görünüm (ön, sağ, üst) yeterlidir; öteki üçü bunların aynasıdır. Aynayı doğru yönde çevirmek gerekir: alta geçerken üst görünümün satırlarını ters çevir, sağ–solu değiştirme.',
               ],
               figure: { type: 'gorunum-simetri', options: {} },
             },
@@ -1352,7 +1352,7 @@
           boxes: [
             { title: 'Ön ve arka görünüm', body: 'Dikey doğruya göre simetrik; kare sayısı aynı, sağ–sol yer değişir.' },
             { title: 'Sağ ve sol görünüm', body: 'Dikey doğruya göre simetrik; sıraların en yüksek küpleri görünür.' },
-            { title: 'Üst ve alt görünüm', body: 'Yatay doğruya göre simetrik; tabandaki dolu hücreler kare olur.' },
+            { title: 'Üst ve alt görünüm', body: 'Yatay doğruya göre simetrik; tabandaki dolu hücreler kare olur. Alttan görünüm, üstten görünümün satırları ters çevrilmiş hâlidir; olduğu gibi kopyalanmaz.' },
             { title: 'Simetri', body: 'Ön–arka ve sol–sağ dikey doğruya, üst–alt yatay doğruya göre simetriktir.' },
           ],
         },
@@ -1562,7 +1562,7 @@
               id: 'm8-e5',
               type: 'enaz',
               title: 'Verilen görünümlerden en az küp',
-              intro: 'Ön, sağ ve üst görünümü incele; en az kaç küp gerektiğini yaz. Arkadan, soldan ve alttan görünümü 5 × 5 kareye çiz. Çözümün 3B gösterimi şifreyle açılır.',
+              intro: 'Ön, sağ ve üst görünümü incele; en az kaç küp gerektiğini yaz. Arkadan, soldan ve alttan görünümü 5 × 5 kareye çiz. Alt görünüm üst görünümün aynısı değildir: üst görünümün satırlarını ters çevirince alt görünüm çıkar. Çözümün 3B gösterimi şifreyle açılır.',
               scene: { type: 'gorunum-verilen', params: [{ name: 'grup', label: 'Görünüm grubu', min: 1, max: 2, step: 1, value: 1 }] },
               yapi: [[3, 1, 2], [1, 2, 0]],
               answer: 9,

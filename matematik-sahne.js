@@ -158,28 +158,31 @@
     arka: '#ef8fae',
   };
 
+  /* Tabanlarda bilerek boşluk bırakılır: üst ve alt görünüm böylece birbirinden
+     ayrılır. Tabanın bütün hücreleri dolu olsaydı iki görünüm üst üste çakışır,
+     öğrenci "alt = üst" sanırdı; oysa alt, üstün yatay aynasıdır. */
   const YAPI_SET1 = [
-    [[3, 2, 1], [2, 1, 1], [1, 1, 1]],
-    [[2, 2, 1], [1, 1, 1], [1, 1, 1]],
-    [[1, 2, 3], [1, 2, 2], [1, 1, 1]],
-    [[3, 3, 1], [2, 1, 1]],
+    [[3, 2, 1], [2, 1, 1], [1, 0, 1]],
+    [[2, 2, 1], [1, 1, 1], [0, 1, 1]],
+    [[1, 2, 3], [1, 2, 2], [1, 0, 1]],
+    [[3, 3, 1], [2, 1, 0]],
     [[2, 1, 1], [3, 2, 1], [1, 1, 1]],
   ];
   const YAPI_SET2 = [
-    [[2, 3, 2], [1, 2, 1], [2, 1, 2]],
-    [[1, 1, 1], [2, 2, 2], [1, 2, 1]],
-    [[3, 1, 3], [1, 1, 1]],
-    [[2, 1, 2, 1], [1, 2, 1, 2]],
-    [[2, 2, 1], [3, 1, 1], [1, 2, 1]],
+    [[2, 3, 2], [1, 2, 1], [2, 0, 2]],
+    [[1, 1, 1], [2, 2, 2], [1, 2, 0]],
+    [[3, 1, 3], [1, 1, 0]],
+    [[2, 1, 2, 1], [1, 2, 0, 2]],
+    [[2, 2, 1], [3, 1, 1], [1, 2, 0]],
   ];
   /* Döndürülebilir sahnede kullanılan yapılar: ilk iki gruptan farklı,
      dört kata kadar çıkan, basamaklı ve boşluklu yapılar. */
   const YAPI_SET3 = [
-    [[4, 1, 1], [2, 2, 1], [1, 1, 1]],
-    [[2, 1, 2], [3, 2, 1], [1, 1, 2]],
+    [[4, 1, 1], [2, 2, 1], [1, 1, 0]],
+    [[2, 1, 2], [3, 2, 1], [1, 1, 0]],
     [[1, 3, 1], [2, 1, 2]],
-    [[3, 2, 1, 1], [1, 1, 2, 1]],
-    [[2, 3], [1, 1], [2, 1], [1, 1]],
+    [[3, 2, 1, 1], [1, 1, 2, 0]],
+    [[2, 3], [1, 1], [2, 1], [0, 1]],
   ];
 
   function setOf(group) {
@@ -1470,7 +1473,7 @@
       },
       draw(state) {
         const heights = yapiOf(state);
-        const parts = [note(22, 28, 'Sürgüyle şekli değiştir; sağdaki görünümler aynı anda güncellenir.', { size: 12 })];
+        const parts = [note(22, 28, 'Sürgüyle şekli değiştir; sağdaki altı görünüm aynı anda güncellenir.', { size: 12 })];
         parts.push(drawIso(heights, { x: 12, y: 52, width: 262, height: 276 }));
         const panels = besGorunum(heights);
         const cols = 3;
