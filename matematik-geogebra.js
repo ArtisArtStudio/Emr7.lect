@@ -61,6 +61,40 @@
     }
   }
 
+  /* ---------- hızlı açılış: ön yükleme ve önbellek durumu ---------- */
+
+  /* GeoGebra 3B çalışma ortamı ~8 MB: ilk açılış kaçınılmaz olarak yavaş.
+     İkinci açılış hızlı olsun diye iki şey yapılır:
+     1. `sw.js` (hizmet çalışanı) bu dosyaları cihazda saklar.
+     2. Sayfa boştayken yalnız başlatıcı betik (deployggb.js, ~36 KB) önden
+        indirilir; böylece öğrenci 3B alanı açtığında ağ beklemesi kısalır.
+     Çalışma ortamının tamamı kendiliğinden indirilmez: mobil veride 8 MB'lık
+     gereksiz trafik olurdu. */
+  let warmed = false;
+
+  function idle(callback) {
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(callback, { timeout: 3000 });
+      return;
+    }
+    window.setTimeout(callback, 1200);
+  }
+
+  function warm() {
+    if (warmed || loadFailed || !prefers()) return;
+    if (typeof navigator !== 'undefined' && navigator.connection && navigator.connection.saveData) return;
+    warmed = true;
+    idle(() => { loadDeployGGB().catch(() => { /* ağ yoksa sessiz geç */ }); });
+  }
+
+  /* Önbellekte GeoGebra var mı? Varsa 3B sahne hızla açılır ve doğrudan
+     GeoGebra ile başlanabilir; yoksa önce yerel çizim gösterilir.
+     Hizmet çalışanı yoksa `null` döner (bilinmiyor). */
+  function cached() {
+    if (typeof caches === 'undefined' || typeof caches.match !== 'function') return Promise.resolve(null);
+    return caches.match(CDN).then((hit) => Boolean(hit)).catch(() => null);
+  }
+
   /* ---------- sayı ve komut biçimi ---------- */
 
   /* GeoGebra komutları nokta ondalığı ve ASCII eksi ister; virgül ya da U+2212
@@ -1670,6 +1704,8 @@
     hasSplit: (type) => Boolean(APPLETS[type] && APPLETS[type].split),
     prefers,
     setPrefers,
+    warm,
+    cached,
     cdn: CDN,
   });
 })();
