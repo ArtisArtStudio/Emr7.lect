@@ -230,8 +230,11 @@ allActivities.forEach(({ week, activity }) => {
     assert.ok(!/\d+\s*\/\s*\d+/.test(text), `${activity.id} düz metin kesir içeriyor.`);
   });
   /* Her soru görselle gelir: 8. haftadan sonra şekilsiz ve sahnesiz soru kalmaz.
-     (Şekil, sorudaki sayıları birebir gösterir; sahne ayrı bir etkileşimdir.) */
-  if (Number(week.id) >= 8) {
+     (Şekil, sorudaki sayıları birebir gösterir; sahne ayrı bir etkileşimdir.)
+     Tartışma bölümü bunun dışında: orada üç çocuğun sözü metin olarak verilir,
+     sorular bu sözler üzerine düşünmeyi ister; şekil eklemek soruyu bozar. */
+  const METIN_SORUSU = activity.stageKind === 'discuss';
+  if (Number(week.id) >= 8 && !METIN_SORUSU) {
     assert.ok(activity.figure || activity.scene,
       `${activity.id} sorusunda ne şekil ne sahne var; her soruya görsel gerekir.`);
   }
@@ -267,7 +270,7 @@ content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
 /* Görsel tekrarı yasak: aynı haftada iki soru birebir aynı şekli kullanamaz.
    (Kullanıcı geri bildirimi: “sürekli görsel tekrarı yapmışsın”.) Henüz yeniden
    yazılmamış haftalar listede; hafta yeniden yazıldıkça listeden çıkarılır. */
-const REPEAT_ALLOWED = new Set([9, 10, 11, 12, 13, 14, 15]);
+const REPEAT_ALLOWED = new Set([10, 11, 12, 13, 14, 15]);
 content.weeks.forEach((week) => {
   const seen = new Map();
   ACT.forWeek(week.id).forEach((activity) => {
@@ -447,6 +450,44 @@ GEOMETRY_BOX_WEEKS.forEach((id) => {
   assert.ok((learn.checks || []).length >= learn.boxes.length,
     `Hafta ${id} her bilgi kutusuna en az bir kontrol sorusu düşmeli.`);
 });
+
+// 4e-2. Açınım haftası: küpün 11 açınımı, tek açınım seçimi ve köşe harfleri.
+const netEleven = FIG.render('acilim-onbir', {});
+assert.equal((netEleven.match(/<rect[^>]*fill="#cfe0f5"/g) || []).length, 66,
+  'Küpün 11 açınımının her biri 6 kareden oluşmalı (66 kare).');
+assert.ok((netEleven.match(/>\d+</g) || []).length >= 11, 'On bir açınım numaralanmalı.');
+const tekNet = FIG.render('acilim-bes', { secili: 4 });
+assert.equal((tekNet.match(/<rect[^>]*fill="#[0-9a-f]{6}"/g) || []).length, 6,
+  'Tek açınım seçildiğinde yalnız o açınımın 6 yüzü çizilmeli.');
+assert.ok(/4\. açınım/.test(tekNet), 'Tek açınım başlığında numarası yazmalı.');
+const harfli = FIG.render('acilim-harfli', { a: 6, b: 4, c: 5 });
+/* Köşe harfleri yerinde olmalı: E, A'nın; F, B'nin; G, C'nin; H, D'nin üstünde. */
+const corner = {};
+harfli.replace(/<text x="([\d.]+)" y="([\d.]+)"[^>]*>([A-H])<\/text>/g, (whole, x, y, name) => {
+  corner[name] = { x: Number(x), y: Number(y) };
+  return whole;
+});
+['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach((name) => {
+  assert.ok(corner[name], `ABCDEFGH görselinde ${name} köşesi yazılmalı.`);
+});
+[['E', 'A'], ['F', 'B'], ['G', 'C'], ['H', 'D']].forEach(([ust, alt]) => {
+  assert.ok(corner[ust].y < corner[alt].y - 10,
+    `${ust} köşesi ${alt} köşesinin üstünde olmalı (üst taban harfleri).`);
+  assert.ok(Math.abs(corner[ust].x - corner[alt].x) < 12,
+    `${ust} köşesi ${alt} köşesinin tam üstünde olmalı (düşey ayrıt).`);
+});
+const week9 = KITAP.weeks[9].stages;
+const week9Scenes = week9.map((stage) => (stage.scene ? stage.scene.type : '')).filter(Boolean);
+assert.ok(week9Scenes.includes('acilim-katla'), 'Açınım haftasında katlanan açınım sahnesi olmalı.');
+const week9Figures = week9.flatMap((stage) => [
+  stage.figure ? stage.figure.type : '',
+  ...(stage.blocks || []).map((block) => (block.figure ? block.figure.type : '')),
+  ...[...(stage.questions || []), ...(stage.checks || []), ...(stage.items || []), ...(stage.steps || [])]
+    .map((item) => (item && item.figure ? item.figure.type : '')),
+]).filter(Boolean);
+assert.ok(!week9Figures.includes('acilim-tur'),
+  'Hafta 9: zar/süt kutusu tanıtım görseli (acilim-tur) kaldırılmalı; günlük hayat için gunluk-esya kullanılır.');
+assert.ok(week9Figures.includes('gunluk-esya'), 'Hafta 9 günlük hayat kutularını göstermeli.');
 
 // 4f. Birim küpler tek tek sayılabilmeli ve düzensiz görünüm GeoGebra sahnesinde olmalı.
 const sahneSource = read('matematik-sahne.js');

@@ -101,6 +101,12 @@ const FIGURE_OPTIONS = {
   'kesir-serit': [{ total: 10, shaded: 10 }],
   'sayi-dogrusu': [{ from: -9, to: 9, mark: -9 }],
   'kesir-carpim': [{ n1: 4, d1: 5, n2: 4, d2: 5 }],
+  /* 9. hafta: her şeklin uç değerleri tek tek çizilir. */
+  'acilim-bes': [{ secili: 1 }, { secili: 4 }, { secili: 5 }],
+  'hediye-paketi': [{ vurgu: 'on' }, { vurgu: 'yan' }, { vurgu: 'ust' }],
+  'olculu-cisim': [{ tur: 'kup', a: 1 }, { tur: 'kup', a: 9, gizli: true }, { tur: 'kare', a: 1, c: 9 }, { tur: 'dikdortgen', a: 9, b: 1, c: 1 }],
+  'acilim-harfli': [{ a: 1, b: 1, c: 1 }, { a: 9, b: 9, c: 9 }, { a: 6, b: 4, c: 5 }],
+  'acilim-renk': [{ tur: 'kup' }, { tur: 'kare' }, { tur: 'dikdortgen' }],
 };
 FIG.types().forEach((type) => {
   const variants = [{}].concat(FIGURE_OPTIONS[type] || []);

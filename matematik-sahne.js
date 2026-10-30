@@ -1276,10 +1276,10 @@
         const tur = clampValue(state.tur, 1, 3, 1);
         const kat = clampValue(state.kat, 0, 1, 0.05);
         const spec = tur === 1
-          ? { a: 3, b: 3, h: 3, ad: 'Küp', ornek: 'zar' }
+          ? { a: 3, b: 3, h: 3, ad: 'Küp' }
           : tur === 2
-            ? { a: 3, b: 3, h: 4, ad: 'Kare prizma', ornek: 'süt kutusu' }
-            : { a: 4, b: 3, h: 2, ad: 'Dikdörtgenler prizması', ornek: 'kibrit kutusu' };
+            ? { a: 3, b: 3, h: 5, ad: 'Kare prizma' }
+            : { a: 4, b: 3, h: 2, ad: 'Dikdörtgenler prizması' };
         const parts = [text(24, 28, 'Açınımı katla: düz kâğıttan kutuya', { size: 13.5, weight: 800, fill: '#33265f' })];
         parts.push(rect(20, 40, 202, 256, { fill: '#fbfaff', stroke: '#e6e1f8', rx: 12, width: 1 }));
         parts.push(rect(236, 40, 384, 256, { fill: '#fbfaff', stroke: '#e6e1f8', rx: 12, width: 1 }));
@@ -1304,7 +1304,7 @@
         parts.push(line(x + dx, base - dy, x + dx, base - hh - dy, { stroke: '#4a3d7a', width: 1.1, dash: '4 3' }));
         parts.push(line(x + dx, base - dy, x + w + dx, base - dy, { stroke: '#4a3d7a', width: 1.1, dash: '4 3' }));
         parts.push(text(121, 274, spec.ad, { size: 12.5, anchor: 'middle', weight: 800, fill: '#33265f' }));
-        parts.push(note(121, 290, `günlük hayatta: ${spec.ornek}`));
+        parts.push(note(121, 292, `${spec.a} × ${spec.b} × ${spec.h} birim`));
 
         /* Sağ: açınımın katlanması. Kamera da açıyla döner. */
         const quads = foldNet(netRectangles(spec.a, spec.b, spec.h), (Math.PI / 2) * kat) || [];
