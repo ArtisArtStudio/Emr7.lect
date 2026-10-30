@@ -61,7 +61,7 @@ assert.ok(/deployggb\.js/.test(ggb), 'GeoGebra resmî yükleyicisinden gelmeli (
 assert.ok(/const LOAD_TIMEOUT = 12000/.test(ggb), 'Yükleme için 12 sn zaman aşımı olmalı.');
 assert.ok(/BUILD_DELAYS = \[0, 300, 900, 2000\]/.test(ggb), 'Komutlar kademeli yeniden denenmeli.');
 assert.ok(/getObjectNumber\(\)/.test(ggb) && /api\.exists\(/.test(ggb), 'Nesne sayısı ve varlığı doğrulanmalı.');
-assert.ok(/çizimi oluşturamadı/.test(ggb), 'Boş tuval sessiz kalmamalı, durum satırına yazılmalı.');
+assert.ok(/cisimleri oluşturamadı/.test(ggb), 'Boş tuval sessiz kalmamalı, durum satırına yazılmalı.');
 assert.ok(/fallback/.test(ggb) && /MATEMATIK_SAHNE2\.mount/.test(app),
   'GeoGebra açılamazsa aynı sahne yerel SVG ile çizilmeli.');
 assert.ok(/math-ggb-credit/.test(app) && /ticari olmayan kullanım/.test(app), 'Atıf satırı sahnede görünmeli.');
@@ -167,15 +167,20 @@ function testServiceWorker() {
   const network = [];
   const fakeFetch = async (req) => {
     network.push(req.url);
-    return { ok: true, type: 'basic', clone() { return this; } };
+    return { ok: true, status: 200, type: 'basic', clone() { return this; } };
   };
   const scope = { addEventListener: (type, fn) => { listeners[type] = fn; }, skipWaiting: async () => {}, clients: { claim: async () => {} } };
   new Function('self', 'caches', 'fetch', sw)(scope, cachesMap, fakeFetch);
-  const request = (url) => {
+  /* Gerçek isteklerde `destination`/`mode` bulunur: betikler no-cors ile gelir. */
+  const request = (url, extra) => {
     let response = null;
     const waits = [];
+    const req = Object.assign({
+      url, method: 'GET', destination: 'script', mode: 'no-cors',
+      headers: { get: () => null },
+    }, extra || {});
     listeners.fetch({
-      request: { url, method: 'GET' },
+      request: req,
       respondWith: (value) => { response = value; },
       waitUntil: (value) => waits.push(value),
     });
@@ -197,6 +202,16 @@ function testServiceWorker() {
     await request(starter);
     assert.equal(network.length, afterFirst + 1, 'Başlatıcı dosya oturumda yalnız bir kez tazelenmeli.');
     assert.ok(store.has(versioned) && store.has(starter), 'GeoGebra dosyaları önbelleğe yazılmalı.');
+    /* CORS ile istenen dosyalar hizmet çalışanına takılmamalı: önbellekteki
+       saydam (opaque) yanıt CORS denetimini geçemez, applet boş kalırdı. */
+    const corsUrl = 'https://www.geogebra.org/apps/5.4.920.0/web3d/veri.json';
+    const handled = await request(corsUrl, { destination: '', mode: 'cors' });
+    assert.equal(handled, null, 'CORS istekleri hizmet çalışanınca ele alınmamalı.');
+    assert.ok(!store.has(corsUrl), 'CORS isteği önbelleğe yazılmamalı.');
+    /* Sitenin kendi betikleri de ele alınmaz. */
+    const siteUrl = 'https://artisartstudio.github.io/Emr7.lect/matematik.js';
+    const site = await request(siteUrl, { destination: 'script', mode: 'no-cors' });
+    assert.equal(site, null, 'Sitenin kendi dosyaları hizmet çalışanına takılmamalı.');
   })();
 }
 
@@ -505,10 +520,12 @@ assert.ok(/function patchColumns\(indexes\)/.test(ggb), 'Artımlı tazeleme yolu
 assert.ok(/const missing = \[\]/.test(ggb) && /wanted\.has\(name\)/.test(ggb),
   'Artımlı güncelleme yalnız değişen parçaları yazmalı (fark alınmalı).');
 assert.ok(!/dropColumn/.test(ggb), 'Sütunun tamamı silinip yeniden çizilmemeli.');
-/* Köşe noktaları paylaşılır: her yüzey kendi noktalarını üretirse nesne sayısı
-   dokunuş başına artar ve sahne yavaşlar. */
-assert.ok(/const pointCache = new Map\(\)/.test(ggb) && /function pointFor\(x, y, z\)/.test(ggb),
-  'Köşe noktaları önbelleklenip paylaşılmalı.');
+/* Koordinatlar doğrudan yazılır: köşe noktalarını adlandırıp poligonlara ad
+   verme denemesi 3B sahnede boş görüntüye yol açtı, tekrar denenmemeli. */
+assert.ok(!/pointFor|pointCache|resolver/.test(ggb),
+  'Poligon köşeleri paylaşılan nokta adlarıyla yazılmamalı (boş sahne hatası).');
+assert.ok(/const via = \(points\) => points\.map\(\(\[x, y, z\]\) => P\(x, y, z\)\)\.join\(', '\)/.test(ggb),
+  'Poligon köşeleri koordinatla yazılmalı.');
 assert.ok(/function schedulePatch\(indexes\)[\s\S]{0,400}?patchColumns\(list\)/.test(ggb),
   'Dokunuş anında çizim yapılmalı (kare beklenmemeli).');
 /* Nesne bütçesi: bir sütun en fazla 24 parça üretmeli (3 kat + çerçeve + levha).
