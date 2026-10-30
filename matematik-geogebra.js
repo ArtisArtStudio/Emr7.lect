@@ -20,8 +20,15 @@
  *   numarası sanılır (0 → geçersiz) ve sahnede dikey z ekseni görünür kalırdı.
  * - `kup-kur-ggb` etkileşimlidir: 3 × 3 tabanda boş sütunun zeminine, dolu sütunun
  *   yüzüne dokununca o sütuna bir küp eklenir (silme modunda bir küp eksilir).
- *   Tıklama `registerClickListener` ile alınır; nesne adı sütunu taşır. Cisim
- *   GeoGebra'nın kendi nesneleridir, öğrenci parmağıyla döndürür; kadraj sabittir.
+ *   Tıklama `registerClickListener` ile alınır; nesne adı sütunu taşır. Her sütunun
+ *   üstünde, üst yüzeyin 0,05 üstünde duran bir tıklama levhası vardır; levha küpün
+ *   üst yüzüyle çakışmadığı için dokunuş şaşmaz. Cisim GeoGebra'nın kendi
+ *   nesneleridir, öğrenci parmağıyla döndürür; kadraj sabittir. Yerel yedeği yoktur:
+ *   bu etkinlik yalnız 3B ile çalışır.
+ * - Dokunuş hızı: sütunun çizilecek parçaları saf veri olarak üretilir (`kupKurParts`);
+ *   güncellemede fark alınır, yalnız değişen parçalar yazılır ve çizim dokunuş
+ *   anında (kare beklemeden) yapılır. Köşe noktaları önbelleklenip paylaşılır, siyah
+ *   çerçeve sütun başına bir kez çizilir; böylece nesne sayısı dokunuşla büyümez.
  * - `acim` sahnesinde “Katla / Aç” düğmesi ve tuvale dokunma, kapalı kutu ile düz açınım
  *   arasında geçirir.
  * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
@@ -211,9 +218,95 @@
     back: [239, 143, 174],
   };
 
+  /* Düz küpün parçaları: görünen yüzler (her yüz ayrı poligon) ve siyah
+     kenarlar. Saf veri döner (komut üretmez); hem ilk çizimde hem artımlı
+     güncellemede aynı liste kullanılır, böylece bir dokunuşta yalnız değişen
+     parçalar yazılır. Kenarlar:
+     - Segmentler yüzeyin **biraz dışına** taşınır (merkezden %1,2 oranında
+       dışa ölçekleme). Tam aynı düzlemde kalınca poligon onları örtüyor,
+       siyah çizgiler görünmüyordu.
+     - Kalınlık 2: 1 kalınlık 3B görünümde tek pikselin altına düşüp
+       kayboluyordu. */
+  function cubeCorners(x, y, z) {
+    return {
+      bottom: [[x, y, z], [x + 1, y, z], [x + 1, y + 1, z], [x, y + 1, z]],
+      top: [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+      front: [[x, y, z], [x + 1, y, z], [x + 1, y, z + 1], [x, y, z + 1]],
+      back: [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+      left: [[x, y, z], [x, y + 1, z], [x, y + 1, z + 1], [x, y, z + 1]],
+      right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
+    };
+  }
+
+  const FACE_SUFFIX = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
+
+  /* Yalnız görünen renkli yüzler (kenar çizgisi yok). */
+  function cubeFaceParts(prefix, x, y, z, faces) {
+    const corners = cubeCorners(x, y, z);
+    const parts = [];
+    faces.forEach((face) => {
+      const points = corners[face];
+      if (!points) return;
+      parts.push({
+        kind: 'poly',
+        name: `${prefix}${FACE_SUFFIX[face]}`,
+        points,
+        color: FLAT_FACES[face],
+        fill: 1,
+        thickness: 1,
+      });
+    });
+    return parts;
+  }
+
+  function flatCubeParts(prefix, x, y, z, faces) {
+    const corners = {
+      bottom: [[x, y, z], [x + 1, y, z], [x + 1, y + 1, z], [x, y + 1, z]],
+      top: [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+      front: [[x, y, z], [x + 1, y, z], [x + 1, y, z + 1], [x, y, z + 1]],
+      back: [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
+      left: [[x, y, z], [x, y + 1, z], [x, y + 1, z + 1], [x, y, z + 1]],
+      right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
+    };
+    const suffix = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
+    const cx = x + 0.5;
+    const cy = y + 0.5;
+    const cz = z + 0.5;
+    const lift = 1.012;
+    const out = (point) => [
+      cx + (point[0] - cx) * lift,
+      cy + (point[1] - cy) * lift,
+      cz + (point[2] - cz) * lift,
+    ];
+    const parts = [];
+    const edges = [];
+    const seen = new Set();
+    faces.forEach((face) => {
+      const name = `${prefix}${suffix[face]}`;
+      const points = corners[face];
+      if (!points) return;
+      parts.push({
+        kind: 'poly', name, points, color: FLAT_FACES[face], fill: 1, thickness: 1,
+      });
+      points.forEach((start, index, list) => {
+        const end = list[(index + 1) % list.length];
+        const key = [start.join(','), end.join(',')].sort().join('|');
+        if (seen.has(key)) return;
+        seen.add(key);
+        edges.push([out(start), out(end)]);
+      });
+    });
+    edges.forEach(([start, end], index) => {
+      parts.push({
+        kind: 'seg', name: `${prefix}c${index + 1}`, a: start, b: end, color: EDGE_RGB, thickness: 2,
+      });
+    });
+    return parts;
+  }
+
   /* ---------- ortak çizim kapısı ---------- */
 
-  function builder(api) {
+  function builder(api, resolver) {
     const names = [];
     const labeled = new Set();
     /* Çizilen her noktanın sınırları: sahne bu kutunun merkezine ortalanır. */
@@ -234,6 +327,13 @@
         /* komut hatası doğrulamada yakalanır */
       }
     };
+    /* Nokta listesi: paylaşılan köşe noktaları varsa adlarıyla, yoksa
+       koordinatla yazılır. Adlarla yazmak, her poligonun kendi köşe
+       noktalarını üretmesini önler (dokunuş başına onlarca fazla nesne). */
+    const via = (points) => points.map(([x, y, z]) => {
+      const named = resolver ? resolver(x, y, z) : null;
+      return named || P(x, y, z);
+    }).join(', ');
     const box = {
       api,
       names,
@@ -252,12 +352,25 @@
       segment(name, x1, y1, z1, x2, y2, z2) {
         box.mark(name, false);
         grow([[x1, y1, z1], [x2, y2, z2]]);
-        run(`${name} = Segment(${P(x1, y1, z1)}, ${P(x2, y2, z2)})`);
+        run(`${name} = Segment(${via([[x1, y1, z1], [x2, y2, z2]])})`);
       },
       polygon3(name, points) {
         box.mark(name, false);
         grow(points);
-        run(`${name} = Polygon(${points.map(([x, y, z]) => P(x, y, z)).join(', ')})`);
+        run(`${name} = Polygon(${via(points)})`);
+      },
+      /* Parça (saf veri) çizimi: poligon/segment + renk, dolgu, kalınlık. */
+      paint(part) {
+        if (!part) return;
+        if (part.kind === 'seg') {
+          box.segment(part.name, part.a[0], part.a[1], part.a[2], part.b[0], part.b[1], part.b[2]);
+        } else {
+          box.polygon3(part.name, part.points);
+        }
+        if (part.color) box.color(part.name, part.color);
+        if (part.fill != null) box.fill(part.name, part.fill);
+        if (part.style != null) box.lineStyle(part.name, part.style);
+        if (part.thickness != null) box.thickness(part.name, part.thickness);
       },
       /* Çizilen her şeyin sınır kutusu; sahne bu kutunun merkezine alınır. */
       bounds() {
@@ -335,55 +448,11 @@
       /* Düz küp: her yüz ayrı poligon, dolgu tam (saydamlık yok), komşuya bakan
          iç yüzler hiç çizilmez (z-çakışması ve titreme olmaz). */
       flatCube(prefix, x, y, z, faces) {
-        const corners = {
-          bottom: [[x, y, z], [x + 1, y, z], [x + 1, y + 1, z], [x, y + 1, z]],
-          top: [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
-          front: [[x, y, z], [x + 1, y, z], [x + 1, y, z + 1], [x, y, z + 1]],
-          back: [[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
-          left: [[x, y, z], [x, y + 1, z], [x, y + 1, z + 1], [x, y, z + 1]],
-          right: [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]],
-        };
-        const suffix = { top: 'u', bottom: 'a', front: 'o', back: 'r', left: 'l', right: 'g' };
-        /* Kenarlar siyah çizilir: birim küpler birbirinden ayrılsın.
-           GeoGebra'da poligonun kenar rengi dolgu renginden türer, ayrı
-           ayarlanamaz; bu yüzden birim küpün sınırları ayrı Segment olarak
-           eklenir. İki incelik:
-           - Segmentler yüzeyin **biraz dışına** taşınır (merkezden %1,2 oranında
-             dışa ölçekleme). Tam aynı düzlemde kalınca poligon onları örtüyor,
-             siyah çizgiler görünmüyordu.
-           - Kalınlık 2: 1 kalınlık 3B görünümde tek pikselin altına düşüp
-             kayboluyordu. */
-        const cx = x + 0.5;
-        const cy = y + 0.5;
-        const cz = z + 0.5;
-        const lift = 1.012;
-        const out = (point) => [
-          cx + (point[0] - cx) * lift,
-          cy + (point[1] - cy) * lift,
-          cz + (point[2] - cz) * lift,
-        ];
-        const edges = [];
-        const seen = new Set();
-        faces.forEach((face) => {
-          const name = `${prefix}${suffix[face]}`;
-          box.polygon3(name, corners[face]);
-          box.color(name, FLAT_FACES[face]);
-          box.fill(name, 1);
-          box.thickness(name, 1);
-          corners[face].forEach((start, index, list) => {
-            const end = list[(index + 1) % list.length];
-            const key = [start.join(','), end.join(',')].sort().join('|');
-            if (seen.has(key)) return;
-            seen.add(key);
-            edges.push([out(start), out(end)]);
-          });
-        });
-        edges.forEach(([start, end], index) => {
-          const name = `${prefix}c${index + 1}`;
-          box.segment(name, start[0], start[1], start[2], end[0], end[1], end[2]);
-          box.color(name, EDGE_RGB);
-          box.thickness(name, 2);
-        });
+        flatCubeParts(prefix, x, y, z, faces).forEach((part) => box.paint(part));
+      },
+      /* Açınım/poligon kümeleri: parça listesi doğrudan çizilir. */
+      parts(prefix, x, y, z, faces) {
+        return flatCubeParts(prefix, x, y, z, faces);
       },
       /* Nokta işaretleri küçültülür, etiketler kapatılır: sahnede cisim görünür,
          işaret kalabalığı değil. Eksenler ve ızgara da kapanır. */
@@ -448,9 +517,15 @@
     ));
   }
 
-  /* Tek sütun: küpler (yalnız görünen yüzler) + sütunun görünen üst yüzeyindeki
-     tıklama levhası. Koordinatlar sabittir; kadraj `frame` ile kilitli. */
-  function kupKurColumn(b, cubes, index) {
+  /* Boş sütunun zemin levhası: dokunulacak kare belli olsun diye açık gri-mor. */
+  const BOARD_RGB = [205, 200, 224];
+
+  /* Tek sütunun çizilecek parçaları: küplerin yalnız görünen yüzleri, siyah
+     kenarları ve sütunun üstündeki tıklama levhası. Saf veri döner; çizim
+     `box.paint` ile yapılır. Aynı liste hem ilk kurulumda hem artımlı
+     güncellemede kullanıldığı için bir dokunuşta yalnız değişen parçalar
+     GeoGebra'ya yazılır. */
+  function kupKurParts(cubes, index) {
     const x0 = -1.5;
     const y0 = -1.5;
     const z0 = VIEW_CENTER_Z;
@@ -458,6 +533,7 @@
     const c = index % 3;
     const at = (rr, cc) => cubes[rr * 3 + cc] || 0;
     const height = at(r, c);
+    const parts = [];
     for (let level = 0; level < height; level += 1) {
       const faces = [];
       if (level === height - 1) faces.push('top');
@@ -466,25 +542,70 @@
       if (r === 2 || at(r + 1, c) <= level) faces.push('back');
       if (c === 0 || at(r, c - 1) <= level) faces.push('left');
       if (c === 2 || at(r, c + 1) <= level) faces.push('right');
-      /* Ad, sütunu taşır: tıklamada hangi sütuna ekleneceği buradan okunur. */
-      b.flatCube(`k${r}${c}L${level}`, x0 + c, y0 + r, z0 + level, faces);
+      /* Ad, sütunu ve katı taşır: tıklamada hangi sütuna ekleneceği buradan
+         okunur, artımlı güncellemede hangi parçanın değiştiği de. */
+      cubeFaceParts(`k${r}${c}L${level}`, x0 + c, y0 + r, z0 + level, faces)
+        .forEach((part) => parts.push(part));
     }
-    /* Her sütunun **görünen üst yüzeyi** tıklama levhasıdır.
-       - Boş sütunda levha zeminde: boş kareye dokununca küp eklenir.
-       - Dolu sütunda levha en üstteki küpün üst yüzünde: küpün üstüne
-         dokunmak da küp ekler.
-       Levha dolgusu 0,18: tamamen saydam (0,02) levhaları GeoGebra
-       tıklamada güvenilir biçimde yakalamıyordu. Renk, altındaki yüzün
-       rengine yakın seçilir ki siyah kenarlar örtülmesin. */
-    const top = z0 + height;
-    b.polygon3(`t${r}${c}`, [
-      [x0 + c, y0 + r, top], [x0 + c + 1, y0 + r, top],
-      [x0 + c + 1, y0 + r + 1, top], [x0 + c, y0 + r + 1, top],
-    ]);
-    b.color(`t${r}${c}`, height === 0 ? [246, 244, 252] : FLAT_FACES.top);
-    b.fill(`t${r}${c}`, 0.18);
-    /* Levhanın kenarı çizilmez: küpün siyah kenarının üstüne binmesin. */
-    b.lineStyle(`t${r}${c}`, 0);
+    if (height > 0) {
+      /* Siyah çerçeve sütun başına çizilir: her katın üstünde bir kare,
+         tabanda bir kare ve dört dikey kenar. Eskiden her birim küp 12 ayrı
+         segment olarak çiziliyordu; aynı çizgiler komşu küplerde üç kez
+         üretiliyor, dokunuş başına onlarca nesne yaratıyordu. Tek sütun
+         çerçevesi görüntüyü değiştirmeden nesne sayısını ~4 kat azaltır. */
+      const lift = 1.012;
+      const cx = x0 + c + 0.5;
+      const cy = y0 + r + 0.5;
+      const out = (x, y) => [cx + (x - cx) * lift, cy + (y - cy) * lift];
+      const square = (name, z) => parts.push({
+        kind: 'poly',
+        name,
+        points: [
+          [x0 + c, y0 + r, z], [x0 + c + 1, y0 + r, z],
+          [x0 + c + 1, y0 + r + 1, z], [x0 + c, y0 + r + 1, z],
+        ],
+        color: EDGE_RGB,
+        fill: 0,
+        thickness: 2,
+      });
+      /* Kareler yüzlerin 0,004 üstünde/altında: tam aynı düzlemde kalınca
+         çakışıp titriyorlardı. */
+      square(`k${r}${c}b`, z0 - 0.004);
+      for (let level = 0; level < height; level += 1) square(`k${r}${c}L${level}s`, z0 + level + 1 + 0.004);
+      const corners = [
+        [x0 + c, y0 + r], [x0 + c + 1, y0 + r], [x0 + c + 1, y0 + r + 1], [x0 + c, y0 + r + 1],
+      ];
+      corners.forEach(([x, y], order) => {
+        const [lx, ly] = out(x, y);
+        parts.push({
+          kind: 'seg',
+          name: `k${r}${c}v${order + 1}`,
+          a: [lx, ly, z0],
+          b: [lx, ly, z0 + height],
+          color: EDGE_RGB,
+          thickness: 2,
+        });
+      });
+    }
+    /* Tıklama levhası: sütunun üst yüzeyinin 0,03 birim üstünde durur.
+       Tam üst yüzle aynı düzlemde kalınca iki yüzey çakışıyor (z-çakışması);
+       dokunuş bazen arkadaki sütunun yüzeyine gidiyordu. Levha biraz yukarıda
+       olunca hedef tektir ve şaşmaz. Boş sütunda zemin karesi olarak görünür:
+       dokunulacak yer belli olur. */
+    const top = z0 + height + 0.03;
+    parts.push({
+      kind: 'poly',
+      name: `t${r}${c}`,
+      points: [
+        [x0 + c, y0 + r, top], [x0 + c + 1, y0 + r, top],
+        [x0 + c + 1, y0 + r + 1, top], [x0 + c, y0 + r + 1, top],
+      ],
+      color: height === 0 ? BOARD_RGB : FLAT_FACES.top,
+      fill: height === 0 ? 0.55 : 0.18,
+      /* Levhanın kenarı çizilmez: küpün siyah kenarının üstüne binmesin. */
+      style: 0,
+    });
+    return parts;
   }
 
   /* ---------- applet tanımları: yalnız 3B cisimler ---------- */
@@ -713,12 +834,20 @@
         const cubes = kupKurCubes(data);
         /* Doğrulama çapası: gizli tek nokta. */
         b.point('cap', 0, 0, VIEW_CENTER_Z);
-        kupKurColumns().forEach((index) => kupKurColumn(b, cubes, index));
+        kupKurColumns().forEach((index) => {
+          kupKurParts(cubes, index).forEach((part) => b.paint(part));
+        });
       },
-      /* Artımlı çizim: yalnız verilen sütunlar yeniden kurulur. */
+      /* Artımlı çizim: yalnız verilen sütunların **değişen** parçaları yazılır. */
       buildColumns(b, v, mode, data, indexes) {
         const cubes = kupKurCubes(data);
-        indexes.forEach((index) => kupKurColumn(b, cubes, index));
+        indexes.forEach((index) => {
+          kupKurParts(cubes, index).forEach((part) => b.paint(part));
+        });
+      },
+      /* Bir sütunun hedef parça listesi: artımlı güncellemede fark alınır. */
+      parts(cubes, index) {
+        return kupKurParts(cubes, index);
       },
       /* Bir sütunun yüksekliği değişince komşularının ona bakan yüzleri de
          değişir — ama yalnız bu sütunun yüksekliğini aşan katlarda. Komşu daha
@@ -1100,6 +1229,9 @@
       if (!labeled.has(name)) {
         try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
       }
+      /* Bizim çizdiğimiz parçaların kalınlığı kendi ayarında kalır (siyah
+         küp kenarları 2): burada 1'e çekilirse ilk çizimde ince görünürdü. */
+      if (box.names && box.names.indexOf(name) >= 0) return;
       try { api.setLineThickness(name, 1); } catch (error) { /* yok say */ }
     });
     /* Yatay zemin düzlemi ve eksenler: cismin altında gri bir levha görünmesin.
@@ -1189,7 +1321,30 @@
     const incremental = Boolean(conf.incremental && typeof conf.buildColumns === 'function');
     const columnNames = new Map();
     const dirtyColumns = new Set();
-    let patchTimer = null;
+    let patching = false;
+    /* Köşe noktaları bir kez üretilir ve bütün yüzeylerce paylaşılır. Her
+       poligon kendi köşe noktalarını üretseydi dokunuş başına onlarca görünmez
+       nokta birikir, sahne yavaşlar ve tıklama gecikirdi. */
+    const pointCache = new Map();
+    let pointSeq = 0;
+    function pointFor(x, y, z) {
+      const key = `${Math.round(x * 1000)}:${Math.round(y * 1000)}:${Math.round(z * 1000)}`;
+      const hit = pointCache.get(key);
+      if (hit) return hit;
+      if (!api || typeof api.evalCommand !== 'function') return null;
+      pointSeq += 1;
+      const name = `g${pointSeq}`;
+      try {
+        api.evalCommand(`${name} = (${f(x)}, ${f(y)}, ${f(z)})`);
+        if (typeof api.exists === 'function' && !api.exists(name)) return null;
+        if (typeof api.setVisible === 'function') api.setVisible(name, false);
+        if (typeof api.setLabelVisible === 'function') api.setLabelVisible(name, false);
+      } catch (error) {
+        return null;
+      }
+      pointCache.set(key, name);
+      return name;
+    }
 
     let api = null;
     let box = null;
@@ -1326,67 +1481,71 @@
       }
     }
 
-    function dropColumn(index) {
-      (columnNames.get(index) || []).forEach((name) => {
-        try {
-          if (typeof api.deleteObject === 'function') api.deleteObject(name);
-          else api.evalCommand(`Delete(${name})`);
-        } catch (error) {
-          /* nesne zaten yoksa sessiz geç */
-        }
-      });
-      columnNames.set(index, []);
+    function deleteName(name) {
+      try {
+        if (typeof api.deleteObject === 'function') api.deleteObject(name);
+        else api.evalCommand(`Delete(${name})`);
+      } catch (error) {
+        /* nesne zaten yoksa sessiz geç */
+      }
     }
 
-    /* Yalnız verilen sütunları yeniden çiz. */
+    /* Yalnız **değişen** parçalar yazılır: sütunun hedef parça listesi ile
+       sahnedeki nesneleri karşılaştırılır. Eskiden sütunun tamamı silinip
+       yeniden çiziliyordu; her dokunuş onlarca komut üretiyor, sahne
+       ağırlaşıyordu. Şimdi bir küp eklemek ~10-15 komut. */
     function patchColumns(indexes) {
       if (!api || destroyed) return;
       const unique = Array.from(new Set(indexes)).filter((index) => index >= 0 && index <= 8);
       if (!unique.length) return;
+      const cubes = kupKurCubes(data);
       withPaintingPaused(() => {
-        unique.forEach(dropColumn);
-        const patch = builder(api);
-        conf.buildColumns(patch, values, mode, data, unique);
-        patch.names.forEach((name) => {
-          const index = columnOfName(name);
-          if (index < 0) return;
-          if (!columnNames.has(index)) columnNames.set(index, []);
-          columnNames.get(index).push(name);
-          try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
+        unique.forEach((index) => {
+          const wanted = new Map();
+          if (typeof conf.parts === 'function') {
+            conf.parts(cubes, index).forEach((part) => wanted.set(part.name, part));
+          }
+          const listed = columnNames.get(index) || [];
+          listed.forEach((name) => {
+            if (wanted.has(name)) return;
+            deleteName(name);
+          });
+          const known = new Set(listed);
+          const missing = [];
+          wanted.forEach((part, name) => { if (!known.has(name)) missing.push(part); });
+          if (missing.length) {
+            const patch = builder(api, pointFor);
+            missing.forEach((part) => patch.paint(part));
+            patch.names.forEach((name) => {
+              try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
+            });
+          }
+          columnNames.set(index, Array.from(wanted.keys()));
         });
       });
     }
 
-    /* Hızlı art arda dokunuşlarda tek karede bir çizim: her dokunuş için ayrı
-       tam çizim yapılırsa kuyruk birikir ve sahne donar. */
+    /* Dokunuş anında çizim: bekleme yok. Art arda gelen dokunuşlar tek tek
+       işlenir (zaten birkaç komut); böylece ekrandaki değişiklik parmağın
+       altında olur ve “yanlış sütuna dokundum” hissi kalmaz. */
     function schedulePatch(indexes) {
       indexes.forEach((index) => dirtyColumns.add(index));
-      if (patchTimer != null) return;
-      const run = () => {
-        patchTimer = null;
+      if (patching) return;
+      patching = true;
+      try {
         const list = Array.from(dirtyColumns);
         dirtyColumns.clear();
         patchColumns(list);
-      };
-      if (typeof window.requestAnimationFrame === 'function') {
-        patchTimer = window.requestAnimationFrame(run);
-      } else {
-        patchTimer = window.setTimeout(run, 16);
+      } finally {
+        patching = false;
       }
     }
-
     function rebuild() {
       if (!api) return;
-      /* Tam çizim bekleyen artımlı işi geçersiz kılar. */
-      if (patchTimer != null) {
-        if (typeof window.cancelAnimationFrame === 'function') window.cancelAnimationFrame(patchTimer);
-        window.clearTimeout(patchTimer);
-        patchTimer = null;
-      }
       dirtyColumns.clear();
       if (box) box.clear();
       withPaintingPaused(() => {
-        box = builder(api);
+        box = builder(api, pointFor);
         conf.build(box, values, mode, data);
       });
       if (incremental) collectColumns(box.names);
@@ -1653,11 +1812,6 @@
         destroyed = true;
         done = true;
         if (buildTimer) window.clearTimeout(buildTimer);
-        if (patchTimer != null) {
-          if (typeof window.cancelAnimationFrame === 'function') window.cancelAnimationFrame(patchTimer);
-          window.clearTimeout(patchTimer);
-          patchTimer = null;
-        }
         if (observer) observer.disconnect();
         host.innerHTML = '';
         host.classList.remove('is-ready');
@@ -1707,5 +1861,11 @@
     warm,
     cached,
     cdn: CDN,
+    /* Dokunarak kurma: bir sütunun çizilecek parçaları (denetim ve ölçüm için).
+       Saf veridir; GeoGebra'ya komut göndermez. */
+    columnParts: (cubes, index) => kupKurParts(
+      Array.from({ length: 9 }, (_, i) => Math.max(0, Math.min(3, Math.round(Number(cubes && cubes[i]) || 0)))),
+      index,
+    ),
   });
 })();

@@ -31,15 +31,8 @@ assert.ok(typeof SAHNE.types === 'function' && typeof SAHNE.params === 'function
 assert.equal(SAHNE.width, 640, 'Sahne tuvali 640 birim geniş olmalı.');
 assert.equal(SAHNE.height, 380, 'Sahne tuvali 380 birim yüksek olmalı.');
 assert.ok(SAHNE.types().length >= 24, `Sahne türü sayısı az: ${SAHNE.types().length}`);
-/* Dokunarak kurulan sahnelerde sürgü yoktur: öğrenci küp ekleyerek yapıyı
-   kurar, kontrolü 3B alanın kendisi verir. Bu istisna açıkça listelenir. */
-const SLIDERLESS = new Set(['kup-kur-tikla']);
 SAHNE.types().forEach((type) => {
   const params = SAHNE.params(type);
-  if (SLIDERLESS.has(type)) {
-    assert.equal(params.length, 0, `${type} sahnesinde sürgü olmamalı (dokunarak kurulur).`);
-    return;
-  }
   assert.ok(params.length >= 1, `${type} sahnesinde oynanabilir sürgü olmalı.`);
   params.forEach((param) => {
     assert.ok(param.name && param.label, `${type} sürgü adı/etiketi eksik.`);
@@ -96,16 +89,18 @@ const geoTypes = GG.types();
 const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim', 'kup-kur-ggb'];
 assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
   `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
-/* Dokunarak küp kurma: GeoGebra appletinin yerel yedeği `kup-kur-tikla`
-   sahnesidir; ikisinde de sürgü yoktur. */
-const LOCAL_FOR = { 'kup-kur-ggb': 'kup-kur-tikla' };
-GEO_3D.forEach((type) => {
-  const localType = LOCAL_FOR[type] || type;
-  assert.ok(localTypes.includes(localType), `${type} için yerel yedek sahne korunmalı.`);
-  const local = SAHNE.params(localType).map((param) => param.name);
+/* Dokunarak küp kurma yalnız GeoGebra ile yapılır: yerel eşleniği kaldırıldı. */
+assert.ok(!localTypes.includes('kup-kur-tikla'),
+  'Yerel küp kurma sahnesi (kup-kur-tikla) kaldırılmış olmalı.');
+assert.ok(!/kup-kur-tikla/.test(read('matematik-sahne.js') + read('matematik-atolye.js')),
+  'Yerel küp kurma sahnesine hiçbir yerde başvurulmamalı.');
+GEO_3D.filter((type) => type !== 'kup-kur-ggb').forEach((type) => {
+  assert.ok(localTypes.includes(type), `${type} için yerel yedek sahne korunmalı.`);
+  const local = SAHNE.params(type).map((param) => param.name);
   const geo = GG.params(type).map((param) => param.name);
   assert.deepEqual(geo, local, `${type} sürgüleri iki motorda aynı olmalı.`);
 });
+assert.equal(SAHNE.params('kup-kur-tikla').length, 0, 'Kaldırılan sahne parametre döndürmemeli.');
 /* 2B sahneler GeoGebra'ya bağlanmamalı. */
 localTypes.filter((type) => !GEO_3D.includes(type)).forEach((type) => {
   assert.ok(!geoTypes.includes(type), `${type} 2B sahnesi GeoGebra ile açılmamalı.`);
@@ -132,18 +127,17 @@ assert.ok(kurCommands.some((command) => /^cap = \(/.test(command)), 'Doğrulama 
 assert.ok(!kurCommands.some((command) => /^k\d\d L/.test(command)), 'Boş sahnede küp olmamalı.');
 const atolyeSource = read('matematik-atolye.js');
 assert.ok(/GG\.interactive\('kup-kur-ggb'\)/.test(atolyeSource), 'Etkinlikte GeoGebra kurma alanı yeğlenmeli.');
-assert.ok(/mountLocal/.test(atolyeSource), 'GeoGebra yoksa yerel yedek sahne devreye girmeli.');
+assert.ok(!/mountLocal/.test(atolyeSource.slice(atolyeSource.indexOf('function bindBuilder'))),
+  'Küp kurmada yerel yedek çizim kalmamalı.');
 
 /* ---- Hız: küp ekleme anında, GeoGebra ikinci açılışta hazır ---- */
-/* Yerel çizim önce kurulur: dokunuş ağ beklemeden çalışsın. */
 const builderStart = atolyeSource.slice(atolyeSource.indexOf('function bindBuilder'));
 const builderBody = builderStart.slice(0, builderStart.indexOf('/* ---------------- Görev 6'));
-assert.ok(/mountLocal\(\);\s*\n\s*if \(canGeo\) GG\.warm\(\);/.test(builderBody),
-  'Küp kurmada önce yerel çizim kurulmalı, GeoGebra arka planda ısıtılmalı.');
-assert.ok(/data-builder-geo=/.test(atolyeSource), 'İsteğe bağlı 3B (GeoGebra) düğmesi bulunmalı.');
-assert.ok(/GG\.cached\(\)/.test(builderBody), 'Önbellekte GeoGebra varsa doğrudan 3B ile başlanmalı.');
-assert.ok(/geoInstance\.destroy/.test(builderBody), 'Yerel çizime dönünce GeoGebra appleti kapatılmalı.');
-assert.ok(/typeof GG\.warm === 'function'|GG\.warm/.test(atolyeSource), 'GeoGebra ısıtma çağrısı etkinlikte olmalı.');
+assert.ok(/mountGeo\(\);/.test(builderBody), 'Küp kurmada sahne doğrudan GeoGebra ile açılmalı.');
+assert.ok(!/kup-kur-tikla/.test(builderBody), 'Küp kurmada yerel çizim yolu bulunmamalı.');
+assert.ok(!/data-builder-geo=/.test(atolyeSource), 'Yerel/3B geçiş düğmesi kaldırılmalı.');
+assert.ok(/GG\.mount\(stage, null, geoScene/.test(builderBody), 'Sahne GeoGebra köprüsüyle kurulmalı.');
+assert.ok(/GG\.warm/.test(builderBody), 'Çalışma ortamı arka planda ısıtılmalı.');
 assert.ok(typeof GG.warm === 'function' && typeof GG.cached === 'function',
   'GeoGebra köprüsü warm() ve cached() vermeli.');
 /* Hizmet çalışanı: yalnız GeoGebra dosyaları cihazda saklanır, ikinci açılış hızlı olur. */
@@ -233,16 +227,18 @@ assert.ok(!/birim-kup|hacim birimi|birim³/.test(week9Text), 'Açınım haftası
 assert.ok(/bottom: \[142, 150, 164\]/.test(ggb), 'Küpün alt yüzü gri olmalı (siyah değil).');
 assert.ok(!/bottom: \[38, 38, 38\]/.test(ggb), 'Eski siyah alt yüz kalmamalı.');
 assert.ok(/const lift = 1\.012/.test(ggb), 'Kenar çizgileri yüzeyin biraz dışına taşınmalı (görünürlük).');
-assert.ok(/box\.thickness\(name, 2\)/.test(ggb), 'Kenar çizgileri 2 kalınlıkta olmalı.');
+assert.ok(/thickness: 2/.test(ggb), 'Kenar çizgileri 2 kalınlıkta olmalı.');
 /* Küp kurmada her sütunun üst yüzü tıklanabilir: boş kareye dokunmak da küp ekler. */
 const kur = ggb.replace(/\/\*[\s\S]*?\*\//g, '');
-assert.ok(/const top = z0 \+ height;/.test(kur), 'Tıklama levhası sütunun üst yüzüne konmalı.');
-assert.ok(/b\.polygon3\(`t\$\{r\}\$\{c\}`/.test(kur), 'Dokuz sütunun hepsi levha almalı.');
+/* Levha sütunun 0,03 üstünde: küpün üst yüzüyle çakışmaz, hedef tektir. */
+assert.ok(/const top = z0 \+ height \+ 0\.03;/.test(kur), 'Tıklama levhası sütunun üst yüzeyinin az üstünde olmalı.');
+assert.ok(/name: `t\$\{r\}\$\{c\}`/.test(kur), 'Dokuz sütunun hepsi levha almalı.');
+assert.ok(/fill: height === 0 \? 0\.55 : 0\.18/.test(kur), 'Boş kare dokunulabilir zemin olarak görünmeli.');
 /* Birim küp sınırları siyah çizilir: küpler döndürüldüğünde birbirinden ayrılır. */
 assert.ok(/const EDGE_RGB = \[0, 0, 0\]/.test(ggb),
   'Birim küp kenarı siyah olmalı (EDGE_RGB).');
-assert.ok(/box\.color\(name, EDGE_RGB\)/.test(ggb), 'Küp kenar çizgileri siyah renkle çizilmeli.');
-assert.ok(/flatCube\([^)]*\{[^}]*\}|edges\.forEach/.test(ggb), 'Küp kenarları ayrı segment olarak eklenmeli.');
+assert.ok(/color: EDGE_RGB/.test(ggb), 'Küp kenar çizgileri siyah renkle çizilmeli.');
+assert.ok(/flatCubeParts/.test(ggb) && /kind: 'seg'/.test(ggb), 'Küp kenarları ayrı segment olarak eklenmeli.');
 /* Cisim kadraja ortalı: görünüm merkezi setCoordSystem ile kutunun merkezine alınır. */
 assert.ok(/setCoordSystem/.test(ggb), '3B cisim setCoordSystem ile kadraja ortalanmalı.');
 assert.ok(/bounds\(\)/.test(ggb), 'Çizilen nesnelerin sınır kutusu hesaplanmalı.');
@@ -251,9 +247,10 @@ const atolye = read('matematik-atolye.js');
 assert.ok(/const GRID_N = 5;/.test(atolye), 'Çizim ızgarası 5 × 5 olmalı.');
 assert.ok(!/8 × 8/.test(atolye + kitap), 'Eski 8 × 8 ifadesi kalmamalı.');
 assert.ok(/repeat\(5,1fr\)/.test(css), 'Izgara 5 sütun olarak çizilmeli (CSS).');
-/* Dokunarak küp ekleme: dokuz taban karesi, ekleme/silme modu. */
-assert.ok(/data-cell=/.test(scene), 'Kurma sahnesinde dokunma alanları olmalı.');
-assert.ok(/state\.mod === 0/.test(scene), 'Kurma sahnesinde ekleme/silme modu olmalı.');
+/* Dokunarak küp ekleme GeoGebra'da: dokuz sütun levhası, ekleme/silme modu. */
+assert.ok(/name: `t\$\{r\}\$\{c\}`/.test(kur), 'Kurma sahnesinde dokuz sütun levhası olmalı.');
+assert.ok(/data\.mod === 0/.test(ggb), 'Kurma sahnesinde ekleme/silme modu olmalı.');
+assert.ok(/dokuz sütun|kupKurColumns/.test(ggb), 'Sütun listesi GeoGebra çiziminde tanımlı olmalı.');
 assert.ok(/data-builder-stage/.test(atolye), 'Etkinlikte küp kurma alanı bulunmalı.');
 assert.ok(/builder: true/.test(kitap), 'En az küp sorusunda küp kurma açık olmalı.');
 assert.ok(/\.atolye-builder\{/.test(css), 'Küp kurma alanı için yerleşim kuralı tanımlı olmalı.');
@@ -499,12 +496,50 @@ FIG.types().forEach((type) => {
 const kupKur = ggb.slice(ggb.indexOf("'kup-kur-ggb': {"), ggb.indexOf("'duzensiz-yigin': {"));
 assert.ok(/incremental: true/.test(kupKur), 'Küp kurma sahnesi artımlı çizime açık olmalı.');
 assert.ok(/buildColumns\(b, v, mode, data, indexes\)/.test(kupKur), 'Küp kurmada sütun bazlı çizim yolu bulunmalı.');
-assert.ok(/function kupKurColumn\(b, cubes, index\)/.test(ggb), 'Tek sütunu çizen yardımcı bulunmalı.');
+assert.ok(/function kupKurParts\(cubes, index\)/.test(ggb), 'Tek sütunun parçalarını üreten yardımcı bulunmalı.');
+assert.ok(/parts\(cubes, index\) \{\s*\n\s*return kupKurParts/.test(kupKur), 'Sahne hedef parça listesini vermeli.');
 assert.ok(/touch\(index, before, after, data\)/.test(kupKur), 'Dokunulan sütunun komşuları hesaplanmalı.');
 assert.ok(/setRepaintingActive/.test(ggb), 'Çizim sırasında yeniden boyama duraklatılmalı.');
-assert.ok(/requestAnimationFrame/.test(ggb), 'Hızlı dokunuşlar tek karede birleştirilmeli.');
 assert.ok(/function patchColumns\(indexes\)/.test(ggb), 'Artımlı tazeleme yolu bulunmalı.');
-assert.ok(/\.forEach\(dropColumn\)/.test(ggb), 'Değişen sütunların eski nesneleri silinmeli.');
+/* Fark tabanlı güncelleme: yalnız değişen parçalar yazılır, sütun baştan kurulmaz. */
+assert.ok(/const missing = \[\]/.test(ggb) && /wanted\.has\(name\)/.test(ggb),
+  'Artımlı güncelleme yalnız değişen parçaları yazmalı (fark alınmalı).');
+assert.ok(!/dropColumn/.test(ggb), 'Sütunun tamamı silinip yeniden çizilmemeli.');
+/* Köşe noktaları paylaşılır: her yüzey kendi noktalarını üretirse nesne sayısı
+   dokunuş başına artar ve sahne yavaşlar. */
+assert.ok(/const pointCache = new Map\(\)/.test(ggb) && /function pointFor\(x, y, z\)/.test(ggb),
+  'Köşe noktaları önbelleklenip paylaşılmalı.');
+assert.ok(/function schedulePatch\(indexes\)[\s\S]{0,400}?patchColumns\(list\)/.test(ggb),
+  'Dokunuş anında çizim yapılmalı (kare beklenmemeli).');
+/* Nesne bütçesi: bir sütun en fazla 24 parça üretmeli (3 kat + çerçeve + levha).
+   Eskiden her birim küp 12 ayrı kenar segmentiyle çiziliyordu; aynı çizgiler
+   komşu küplerde tekrar ediyor, dokunuş başına yüzlerce komut oluşuyordu. */
+const FULL = [3, 3, 3, 3, 3, 3, 3, 3, 3];
+assert.ok(typeof GG.columnParts === 'function', 'Sütun parçaları ölçülebilmeli (columnParts).');
+let partTotal = 0;
+for (let index = 0; index < 9; index += 1) {
+  const list = GG.columnParts(FULL, index);
+  assert.ok(list.length <= 24, `Sütun parça sayısı çok: ${list.length}`);
+  assert.ok(list.every((part) => part.name && (part.kind === 'poly' || part.kind === 'seg')),
+    'Her parçanın adı ve türü olmalı.');
+  const names = new Set(list.map((part) => part.name));
+  assert.equal(names.size, list.length, 'Parça adları sütun içinde benzersiz olmalı.');
+  partTotal += list.length;
+}
+assert.ok(partTotal <= 180, `Dolu sahnede toplam parça çok: ${partTotal}`);
+/* Bir küp eklemek yalnız o sütunun üst katını değiştirir: fark küçük kalmalı. */
+const before = new Map(GG.columnParts([0, 0, 0, 0, 1, 0, 0, 0, 0], 4).map((part) => [part.name, part]));
+const afterList = GG.columnParts([0, 0, 0, 0, 2, 0, 0, 0, 0], 4);
+const after = new Map(afterList.map((part) => [part.name, part]));
+const fresh = afterList.filter((part) => !before.has(part.name)).length;
+const stale = [...before.keys()].filter((name) => !after.has(name)).length;
+assert.ok(fresh <= 10, `Bir küp eklemek en çok 10 yeni parça yazmalı (şu an ${fresh}).`);
+assert.ok(stale <= 2, `Bir küp eklemek en çok 2 parça silmeli (şu an ${stale}).`);
+/* Tıklama levhası küpün üst yüzüyle çakışmamalı (z-çakışması yanlış sütuna götürür). */
+const plate = afterList.find((part) => part.name === 't11');
+const topFace = afterList.find((part) => part.name === 'k11L1u');
+assert.ok(plate && topFace, 'Levha ve üst yüz bulunmalı.');
+assert.ok(plate.points[0][2] > topFace.points[0][2] + 0.01, 'Levha üst yüzün belirgin biçimde üstünde olmalı.');
 assert.ok(/api\.setLineThickness\(name, width\)/.test(ggb) && /api\.setFilling\(name, opacity\)/.test(ggb),
   'Biçim komutları doğrudan API ile verilmeli (evalCommand ayrıştırma yükü olmasın).');
 /* Dokunuşta bütün kaydı yazmak yerine kısa gecikmeli kayıt. */
