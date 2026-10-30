@@ -372,6 +372,30 @@ GEO_3D.forEach((type) => {
 
 // 3. Sürgü + sürükleme davranışı
 assert.ok(/data-scene-param/.test(scene), 'Sürgüler data-scene-param ile bağlanmalı.');
+/* Seçim düğmeleri: küp / kare prizma / dikdörtgenler prizması gibi tek seçim
+   sürgü değil radyo düğmesiyle yapılır. */
+assert.ok(/kind === 'secim'/.test(scene), 'Sahnede seçim (radyo) parametresi desteklenmeli.');
+assert.ok(/type="radio"/.test(scene) && /secenekler/.test(scene), 'Seçim düğmeleri radyo olarak çizilmeli.');
+assert.ok(/scene-pick/.test(scene) && /scene-pick/.test(css), 'Seçim düğmelerinin yerleşimi tanımlı olmalı.');
+const katlaParams = SAHNE.params('acilim-katla');
+assert.ok(katlaParams.some((param) => param.kind === 'secim' && (param.secenekler || []).length === 3),
+  'Açınımı katla sahnesinde üç cisim radyo düğmesiyle seçilmeli.');
+assert.ok(katlaParams.some((param) => param.name === 'kat' && param.min === 0 && param.max === 1),
+  'Açınım sürgüsü 0 (düz açınım) ile 1 (kapalı kutu) arasında olmalı.');
+/* Katlama gerçekten üç boyutta: açı 90° iken altı yüz kapalı kutu kurar. */
+const kapali = SAHNE.render('acilim-katla', { tur: 3, kat: 1 });
+/* Sağdaki katlanmış açınım son altı poligondur; kapalı kutuda 8 köşe kalır. */
+const katlanmis = (kapali.match(/points="([^"]*)"/g) || []).slice(-6);
+assert.equal(katlanmis.length, 6, 'Katlanmış açınım altı yüzden oluşmalı.');
+const kose = new Set(katlanmis
+  .flatMap((item) => item.slice(8, -1).split(' '))
+  .map((pair) => pair.split(',').map((value) => Math.round(Number(value))).join(',')));
+assert.equal(kose.size, 8, `Kapalı kutuda 8 köşe olmalı (${kose.size}).`);
+assert.ok(/kapalı kutu/.test(kapali), 'Sürgü sonunda “kapalı kutu” durumu yazılmalı.');
+assert.ok(/açınım/.test(SAHNE.render('acilim-katla', { tur: 3, kat: 0 })), 'Sürgü başında düz açınım görünmeli.');
+/* Kutu açınımı kapatmalı: dört açınım geçerli, biri çakışan. */
+const besNet = SAHNE.types().includes('acilim-katla') && FIG.render('acilim-bes', {});
+assert.ok(/4\. açınım/.test(besNet), 'Beş açınım numaralanmalı.');
 assert.ok(/scene-out-/.test(scene), 'Sürgü değeri canlı okunmalı (output).');
 assert.ok(/pointerdown/.test(scene) && /pointermove/.test(scene), 'Sahne noktaları sürüklenebilmeli.');
 assert.ok(/data-handle/.test(scene), 'Sürüklenebilir nokta işaretlenmeli.');
