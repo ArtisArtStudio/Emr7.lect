@@ -517,8 +517,14 @@ assert.ok(/emr7lect\.matematik\.v1/.test(app), 'İlerleme ayrı anahtarda saklan
 assert.ok(/MATEMATIK_SAHNE2/.test(app), 'Uygulama yerel sahne motorunu kullanmalı.');
 assert.ok(/MATEMATIK_GEOGEBRA/.test(app) && /MATEMATIK_SAHNE2/.test(app),
   'Uygulama sahneleri GeoGebra ile açmalı, yerel motor yedek kalmalı.');
-assert.ok(/if \(canGeo && GG\.prefers\(\)\) mountGeo\(\)/.test(app),
-  'GeoGebra destekli sahnelerde applet açılmalı; yerel çizim yedek.');
+/* Hız politikası: 3B destekli sahne önce yerel çizimle anında açılır;
+   GeoGebra yalnız cihazda hazırsa (önbellek) kendiliğinden devreye girer,
+   yoksa “GeoGebra ile aç” düğmesiyle açılır. Böylece ilk açılışta 8 MB'lık
+   çalışma ortamı sayfayı bekletmez. */
+assert.ok(/mountLocal\(\);\s*\n\s*if \(canGeo && GG\.prefers\(\)\)/.test(app),
+  '3B destekli sahne önce yerel çizimle açılmalı.');
+assert.ok(/GG\.cached\(\)/.test(app), 'GeoGebra önbellekte hazırsa kendiliğinden açılmalı.');
+assert.ok(/GeoGebra ile aç/.test(app), 'İlk açılışta 3B için düğme sunulmalı.');
 assert.ok(/MATEMATIK_GEOGEBRA\.supports\(scene\)/.test(app),
   'GeoGebra yalnız desteklediği (3B) sahnelerde kullanılmalı.');
 /* Çözüm adımları ile etkinlik soruları karışmamalı: numara boş kalmaz. */

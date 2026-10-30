@@ -381,8 +381,22 @@
       }
     }
 
-    if (canGeo && GG.prefers()) mountGeo();
-    else mountLocal();
+    /* Hız: sahne önce yerel çizimle anında açılır (~0,4 ms). GeoGebra
+       çalışma ortamı ~8 MB olduğu için yalnız cihazda önbellekte hazırsa
+       (ikinci ve sonraki açılışlar) kendiliğinden devreye girer; ilk açılışta
+       öğrenci “GeoGebra ile aç” düğmesiyle açar. Böylece sayfa, 3B beklerken
+       donmaz. */
+    mountLocal();
+    if (canGeo && GG.prefers()) {
+      if (typeof GG.warm === 'function') GG.warm();
+      if (typeof GG.cached === 'function') {
+        GG.cached().then((hit) => {
+          if (hit === true && stage.isConnected && !(instance && instance.engine === 'geogebra')) mountGeo();
+        }).catch(() => { /* önbellek sorgulanamıyorsa yerel çizim kalır */ });
+      } else {
+        mountGeo();
+      }
+    }
 
     if (engineButton && canGeo) {
       engineButton.addEventListener('click', () => {

@@ -133,6 +133,79 @@ assert.ok(!kurCommands.some((command) => /^k\d\d L/.test(command)), 'Boş sahned
 const atolyeSource = read('matematik-atolye.js');
 assert.ok(/GG\.interactive\('kup-kur-ggb'\)/.test(atolyeSource), 'Etkinlikte GeoGebra kurma alanı yeğlenmeli.');
 assert.ok(/mountLocal/.test(atolyeSource), 'GeoGebra yoksa yerel yedek sahne devreye girmeli.');
+
+/* ---- Hız: küp ekleme anında, GeoGebra ikinci açılışta hazır ---- */
+/* Yerel çizim önce kurulur: dokunuş ağ beklemeden çalışsın. */
+const builderStart = atolyeSource.slice(atolyeSource.indexOf('function bindBuilder'));
+const builderBody = builderStart.slice(0, builderStart.indexOf('/* ---------------- Görev 6'));
+assert.ok(/mountLocal\(\);\s*\n\s*if \(canGeo\) GG\.warm\(\);/.test(builderBody),
+  'Küp kurmada önce yerel çizim kurulmalı, GeoGebra arka planda ısıtılmalı.');
+assert.ok(/data-builder-geo=/.test(atolyeSource), 'İsteğe bağlı 3B (GeoGebra) düğmesi bulunmalı.');
+assert.ok(/GG\.cached\(\)/.test(builderBody), 'Önbellekte GeoGebra varsa doğrudan 3B ile başlanmalı.');
+assert.ok(/geoInstance\.destroy/.test(builderBody), 'Yerel çizime dönünce GeoGebra appleti kapatılmalı.');
+assert.ok(/typeof GG\.warm === 'function'|GG\.warm/.test(atolyeSource), 'GeoGebra ısıtma çağrısı etkinlikte olmalı.');
+assert.ok(typeof GG.warm === 'function' && typeof GG.cached === 'function',
+  'GeoGebra köprüsü warm() ve cached() vermeli.');
+/* Hizmet çalışanı: yalnız GeoGebra dosyaları cihazda saklanır, ikinci açılış hızlı olur. */
+const sw = read('sw.js');
+assert.ok(/addEventListener\('fetch'/.test(sw), 'Hizmet çalışanı fetch olayını ele almalı.');
+assert.ok(sw.includes('geogebra\\.org') && sw.includes('geogebra\\.com'), 'Yalnız GeoGebra adresleri önbelleğe alınmalı.');
+assert.ok(/const isGeoGebra =/.test(sw), 'Önbellek kapsamı tek bir süzgeçle belirlenmeli.');
+assert.ok(/self\.skipWaiting\(\)/.test(sw) && /clients\.claim\(\)/.test(sw),
+  'Yeni çalışan beklemeden devreye girmeli.');
+assert.ok(/stale-while-revalidate|arka planda tazele/.test(sw), 'Önbellek arka planda tazelenmeli.');
+assert.ok(/MAX_ENTRIES/.test(sw), 'Önbellek boyutu sınırlandırılmalı.');
+assert.ok(/serviceWorker/.test(html) && /sw\.js/.test(html), 'index.html hizmet çalışanını kaydetmeli.');
+assert.ok(/rel="preconnect" href="https:\/\/www\.geogebra\.org"/.test(html),
+  'GeoGebra adresine ön bağlantı (preconnect) verilmeli.');
+
+/* Hizmet çalışanının işleyişi: yalnız GeoGebra, sürümlü dosyalar bir kez. */
+function testServiceWorker() {
+  const listeners = {};
+  const store = new Map();
+  const cache = {
+    async match(req) { return store.get(req.url); },
+    async put(req, res) { store.set(req.url, res); },
+    async keys() { return [...store.keys()].map((url) => ({ url })); },
+    async delete() { return true; },
+  };
+  const cachesMap = { open: async () => cache, keys: async () => [], delete: async () => true };
+  const network = [];
+  const fakeFetch = async (req) => {
+    network.push(req.url);
+    return { ok: true, type: 'basic', clone() { return this; } };
+  };
+  const scope = { addEventListener: (type, fn) => { listeners[type] = fn; }, skipWaiting: async () => {}, clients: { claim: async () => {} } };
+  new Function('self', 'caches', 'fetch', sw)(scope, cachesMap, fakeFetch);
+  const request = (url) => {
+    let response = null;
+    const waits = [];
+    listeners.fetch({
+      request: { url, method: 'GET' },
+      respondWith: (value) => { response = value; },
+      waitUntil: (value) => waits.push(value),
+    });
+    return Promise.resolve(response).then((value) => Promise.all(waits).then(() => value));
+  };
+  return (async () => {
+    await request('https://artisartstudio.github.io/Emr7.lect/matematik.js');
+    assert.equal(network.length, 0, 'Sitenin kendi dosyaları hizmet çalışanına takılmamalı.');
+    const versioned = 'https://www.geogebra.org/apps/5.4.920.0/web3d/main.cache.js';
+    await request(versioned);
+    const once = network.length;
+    await request(versioned);
+    await request(versioned);
+    assert.equal(network.length, once, 'Sürümlü GeoGebra dosyası ikinci kez ağdan istenmemeli.');
+    const starter = 'https://www.geogebra.org/apps/deployggb.js';
+    await request(starter);
+    const afterFirst = network.length;
+    await request(starter);
+    await request(starter);
+    assert.equal(network.length, afterFirst + 1, 'Başlatıcı dosya oturumda yalnız bir kez tazelenmeli.');
+    assert.ok(store.has(versioned) && store.has(starter), 'GeoGebra dosyaları önbelleğe yazılmalı.');
+  })();
+}
+
 /* Yeni şekiller: gölgeli cisimler ve çoklu açınım (kitabın sırası). */
 ['cisim-ton', 'cisim-kare', 'cisim-dik', 'cisimler-uc', 'acilim-coklu'].forEach((type) => {
   assert.ok(FIG.types().includes(type), `Şekil türü eksik: ${type}`);
@@ -519,6 +592,11 @@ assert.ok(/ticari olmayan/i.test(notices) && /geogebra\.org/i.test(notices),
   'Atıf notu ticari olmayan kullanım ve geogebra.org bağlantısını içermeli.');
 assert.ok(/yerel SVG/.test(analysis), 'Analiz dokümanı yerel sahne kararını anlatmalı.');
 
-console.log(`Matematik denetimi geçti: ${GG.types().length} GeoGebra 3B appleti, `
+const summary = `Matematik denetimi geçti: ${GG.types().length} GeoGebra 3B appleti, `
   + `${SAHNE.types().length} yerel sahne, ${FIG.types().length} şekil türü; sürgü koordinatları, `
-  + 'sürükleme, tek kolon mobil yerleşim, GeoGebra komut geçerliliği ve yerel yedek kuralı doğru.');
+  + 'sürükleme, tek kolon mobil yerleşim, GeoGebra komut geçerliliği ve yerel yedek kuralı doğru.';
+
+testServiceWorker().then(() => console.log(summary), (error) => {
+  console.error('Hizmet çalışanı denetimi başarısız:', error.message);
+  process.exit(1);
+});
