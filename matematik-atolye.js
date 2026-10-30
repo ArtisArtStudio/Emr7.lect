@@ -649,16 +649,15 @@
         <button type="button" class="atolye-check" data-enaz-check="${item.id}">Kontrol et</button>
       </div>
       ${item.builder ? `<div class="atolye-builder">
-        <p class="atolye-hint">Kendi yapını kur: bir sütunun üst yüzeyine dokunduğunda o sütuna bir küp eklenir, “Küp sil” seçiliyken bir küp eksilir. Çizim hemen açılır; cismi parmağınla döndürmek istersen “3B olarak döndür” düğmesine bas.</p>
+        <p class="atolye-hint">Kendi yapını kur: bir sütunun üstüne (boş kareye ya da küpün üstüne) dokunduğunda o sütuna bir küp eklenir, “Küp sil” seçiliyken bir küp eksilir. Cismi parmağınla döndürebilirsin.</p>
         <div class="math-scene-frame atolye-scene"><div class="math-scene-stage" data-builder-stage="${item.id}"></div></div>
         <div class="atolye-grid-actions">
           <button type="button" class="atolye-mini is-on" data-builder-mode="ekle" data-builder-for="${item.id}">Küp ekle</button>
           <button type="button" class="atolye-mini" data-builder-mode="sil" data-builder-for="${item.id}">Küp sil</button>
           <button type="button" class="atolye-mini" data-builder-clear="${item.id}">Temizle</button>
-          <button type="button" class="atolye-mini" data-builder-geo="${item.id}">3B olarak döndür</button>
           <span class="atolye-builder-count" data-builder-count="${item.id}">0 küp</span>
         </div>
-        <p class="atolye-feedback" data-builder-geo-note="${item.id}" role="status" aria-live="polite"></p>
+        <p class="atolye-feedback" data-builder-status="${item.id}" role="status" aria-live="polite"></p>
         <p class="atolye-feedback" data-builder-note="${item.id}" role="status" aria-live="polite"></p>
       </div>` : ''}
       <p class="atolye-feedback" data-enaz-feedback="${item.id}" role="status" aria-live="polite"></p>
@@ -757,17 +756,21 @@
   /* Kendi yapısını kurma: 3 × 3 tabanda dokunarak küp ekleme. Cevap
      yazılmaz; öğrenci kendi kurduğunun kaç küp olduğunu ve üç görünümün
      dolup dolmadığını görür.
-     Kurma **GeoGebra** ile yapılır: cisim gerçek 3B nesnelerden oluşur ve
-     öğrenci onu parmağıyla döndürerek her yönden görebilir. GeoGebra
-     yüklenemezse aynı işi yerel izometrik sahne yapar (döndürme olmadan). */
+     Kurma **yalnız GeoGebra** ile yapılır: cisim gerçek 3B nesnelerden oluşur,
+     öğrenci onu parmağıyla döndürerek her yönden görür. Yerel yedek çizim bu
+     etkinlikten kaldırıldı: tıklama yerel SVG'de de, 3B'de de aynı işi
+     yapıyordu ama iki ayrı çizim yolu bakımı ve karışıklık getiriyordu.
+     GeoGebra açılamazsa sahne boş kalmaz: durum satırı ne yapılacağını söyler. */
   function bindBuilder(root, item) {
     const entry = store.item(item.id);
     const stage = root.querySelector(`[data-builder-stage="${item.id}"]`);
     const counter = root.querySelector(`[data-builder-count="${item.id}"]`);
     const note = root.querySelector(`[data-builder-note="${item.id}"]`);
+    const statusLine = root.querySelector(`[data-builder-status="${item.id}"]`);
     if (!stage) return;
-    const saved = Array.isArray(entry.answers.katlar) ? entry.answers.katlar.slice(0, 9) : null;
     let instance = null;
+    /* Düğme applet hazır olmadan basılırsa seçim kaybolmasın. */
+    let pendingMod = 1;
 
     const rowsOf = (payload) => {
       const list = Array.isArray(payload) ? payload : (payload && Array.isArray(payload.katlar) ? payload.katlar : []);
@@ -804,104 +807,46 @@
       paintBuilderInfo(entry.answers.katlar);
     };
 
-    /* İki çizim yolu var:
-       - **Yerel** izometrik çizim: ağ beklemez, 27 küpte bile tek karede
-         çizilir (~0,4 ms). Küp ekleme/çıkarma hep burada anında çalışır.
-       - **GeoGebra**: cisim gerçek 3B nesnelerden oluşur ve parmakla döner;
-         ancak çalışma ortamı ~8 MB olduğu için ilk açılış yavaştır.
-       Bu yüzden varsayılan yerel çizimdir. GeoGebra, ya cihazda önbellekte
-       hazırsa (ikinci ve sonraki açılışlar) kendiliğinden ya da öğrenci
-       “3B olarak döndür” düğmesine bastığında açılır. */
-    const geoNote = root.querySelector(`[data-builder-geo-note="${item.id}"]`);
-    const geoButton = root.querySelector(`[data-builder-geo="${item.id}"]`);
-    let mode = 'local';
-    let touched = false;
-    let geoInstance = null;
-
     const cubesNow = () => (Array.isArray(entry.answers.katlar)
       ? entry.answers.katlar.slice(0, 9)
       : Array.from({ length: 9 }, () => 0));
 
-    const mountLocal = () => {
-      mode = 'local';
-      /* GeoGebra'dan dönülüyorsa applet kapatılır: arka planda çizim yapmayı
-         sürdürmesin, pil ve işlemci boşa harcanmasın. */
-      if (geoInstance && typeof geoInstance.destroy === 'function') {
-        try { geoInstance.destroy(); } catch (error) { /* yok say */ }
-      }
-      geoInstance = null;
-      instance = mountScene(stage, null, {
-        type: 'kup-kur-tikla',
-        values: { katlar: cubesNow() },
-      }, (state) => { remember(state.katlar || []); });
-      if (geoButton) {
-        geoButton.classList.remove('is-on');
-        geoButton.textContent = '3B olarak döndür';
-      }
-      return instance;
-    };
+    const say = (text) => { if (statusLine) statusLine.textContent = text || ''; };
 
     const GG = window.MATEMATIK_GEOGEBRA;
     const geoScene = { type: 'kup-kur-ggb' };
-    const canGeo = Boolean(GG && typeof GG.mount === 'function' && GG.supports(geoScene)
-      && GG.prefers() && GG.interactive && GG.interactive('kup-kur-ggb'));
+    /* Bu etkinlik 3B olmadan anlamlı değil: GeoGebra tercihi kapalı olsa bile
+       kurma alanı GeoGebra ile açılır. */
+    const canGeo = Boolean(GG && typeof GG.mount === 'function'
+      && GG.supports(geoScene) && GG.interactive && GG.interactive('kup-kur-ggb'));
 
     const mountGeo = () => {
-      if (!canGeo) return null;
-      mode = 'geo';
-      instance = null;
+      if (!canGeo) {
+        say('Bu tarayıcıda 3B görünüm açılamıyor; sayfayı yenileyip yeniden dene.');
+        return null;
+      }
+      say('3B görünüm hazırlanıyor…');
       const made = GG.mount(stage, null, geoScene, {
         cubes: cubesNow(),
-        onCubes: (cubes) => { touched = true; remember(cubes); },
-        onStatus: (text) => { if (geoNote) geoNote.textContent = text || ''; },
+        onCubes: (cubes) => { remember(cubes); },
+        onStatus: (text) => { say(text); },
         fallback: () => {
-          if (geoNote) geoNote.textContent = 'GeoGebra açılamadı; yerel çizim kullanılıyor.';
-          mountLocal();
+          say('GeoGebra açılamadı. İnternet bağlantısını denetleyip sayfayı yenile.');
         },
       });
       if (made) {
         instance = made;
-        geoInstance = made;
-        if (geoButton) {
-          geoButton.classList.add('is-on');
-          geoButton.textContent = 'Yerel çizime dön';
-        }
+        if (pendingMod === 0) instance.set('mod', 0);
+        paintBuilderInfo(made.cubes ? made.cubes() : made.state);
       } else {
-        mountLocal();
+        say('GeoGebra açılamadı. İnternet bağlantısını denetleyip sayfayı yenile.');
       }
       return instance;
     };
 
-    /* Önce yerel çizim: dokunuş anında çalışsın. */
-    mountLocal();
-    if (canGeo) GG.warm();
-    /* GeoGebra kullanılamıyorsa (kapalı ya da desteklenmiyor) düğme görünmez. */
-    if (geoButton && !canGeo) geoButton.hidden = true;
-
-    if (geoButton) {
-      geoButton.addEventListener('click', () => {
-        if (mode === 'geo') {
-          if (geoNote) geoNote.textContent = '';
-          mountLocal();
-          return;
-        }
-        if (geoNote) geoNote.textContent = '3B hazırlanıyor…';
-        mountGeo();
-      });
-    }
-
-    /* Önbellekte GeoGebra hazırsa (daha önce açılmış) doğrudan 3B ile başla;
-       öğrenci yerel çizime dokunmadıysa geçiş fark edilmez. */
-    if (canGeo && typeof GG.cached === 'function') {
-      GG.cached().then((hit) => {
-        if (hit !== true || mode !== 'local' || touched) return;
-        if (!stage.isConnected) return;
-        mountGeo();
-      }).catch(() => { /* önbellek sorgulanamıyorsa yerel çizim kalır */ });
-    }
-
-    /* Yerel çizimde bir dokunuş olduysa kendiliğinden geçiş yapılmaz. */
-    stage.addEventListener('pointerdown', () => { touched = true; }, true);
+    mountGeo();
+    /* Çalışma ortamı arka planda ısıtılır: ikinci açılışta hazır olur. */
+    if (canGeo && typeof GG.warm === 'function') GG.warm();
 
     if (instance) paintBuilderInfo(instance.cubes ? instance.cubes() : instance.state);
 
@@ -912,6 +857,7 @@
         root.querySelectorAll(`[data-builder-for="${item.id}"]`).forEach((node) => {
           node.classList.toggle('is-on', node === button);
         });
+        pendingMod = nextMod;
         if (instance && typeof instance.set === 'function') instance.set('mod', nextMod);
       });
     });
@@ -919,13 +865,8 @@
     const clear = root.querySelector(`[data-builder-clear="${item.id}"]`);
     if (clear) {
       clear.addEventListener('click', () => {
-        if (!instance) return;
         const zeros = Array.from({ length: 9 }, () => 0);
-        if (typeof instance.cubes === 'function') instance.set('cubes', zeros);
-        else {
-          instance.state.katlar = zeros.slice();
-          instance.set('katlar', zeros.slice());
-        }
+        if (instance && typeof instance.set === 'function') instance.set('cubes', zeros);
         remember(zeros);
       });
     }
