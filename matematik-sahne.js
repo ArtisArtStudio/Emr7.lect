@@ -121,15 +121,33 @@
 
   let uid = 0;
 
+  /* Sürgülerin yanında seçim düğmeleri de olabilir: radyo düğmesi tek bir
+     türü seçer (küp, kare prizma, dikdörtgenler prizması gibi). Seçim
+     düğmesi sürgü gibi `data-scene-param` taşır; motor ikisini aynı yolla
+     okur, değer yine aralığa ve adıma oturtulur. */
   function controlsMarkup(params, state, scope) {
     if (!params.length) return '<p class="scene-empty">Bu sahnede ayar yok.</p>';
-    return params.map((param) => `<div class="scene-slider">
+    return params.map((param) => {
+      if (param.kind === 'secim') {
+        const choices = (param.secenekler || []).map((choice) => `<label class="scene-choice">
+            <input type="radio" name="scene-${scope}-${esc(param.name)}" value="${choice.value}"
+              data-scene-param="${esc(param.name)}" min="${param.min}" max="${param.max}" step="${param.step || 1}"
+              ${Number(state[param.name]) === Number(choice.value) ? 'checked' : ''}>
+            <span>${esc(choice.label)}</span>
+          </label>`).join('');
+        return `<fieldset class="scene-pick">
+        <legend>${esc(param.label || param.name)}</legend>
+        ${choices}
+      </fieldset>`;
+      }
+      return `<div class="scene-slider">
         <label for="scene-${scope}-${esc(param.name)}">${esc(param.label || param.name)}
           <output id="scene-out-${scope}-${esc(param.name)}">${num(state[param.name])}</output>
         </label>
         <input type="range" id="scene-${scope}-${esc(param.name)}" data-scene-param="${esc(param.name)}"
           min="${param.min}" max="${param.max}" step="${param.step || 1}" value="${state[param.name]}">
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   /* ---------- düzensiz yığın ve simetri yardımcıları ---------- */
@@ -500,6 +518,136 @@
   }
 
   /* ---------- sahneler ---------- */
+
+  /* ---------- Açınım katlama motoru (9. hafta) ----------
+
+     Açınım düzlemdeki dikdörtgenlerden oluşur. Her yüz, komşusuna ortak
+     kenardan menteşeyle bağlıdır; katlama açısı büyüdükçe yüzler kalkar ve
+     altı yüz kutu olur. Hesap gerçekten üç boyutta yapılır: yüzler köşe
+     noktalarıyla taşınır, ekrana eğik izdüşümle verilir. Açınım 0°'de
+     tepeden, kutu 90°'de eğik bakışla görünür; kamera da açıyla birlikte
+     döner, böylece düz açınım gerçek bir açınım gibi okunur. */
+
+  const matMul = (left, right) => [0, 1, 2].map((row) => [0, 1, 2].map((col) => (
+    left[row][0] * right[0][col] + left[row][1] * right[1][col] + left[row][2] * right[2][col]
+  )));
+  const matApply = (matrix, point) => [0, 1, 2].map((row) => (
+    matrix[row][0] * point[0] + matrix[row][1] * point[1] + matrix[row][2] * point[2]
+  ));
+  const vecAdd = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const vecSub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const vecScale = (a, k) => [a[0] * k, a[1] * k, a[2] * k];
+
+  function axisRotation(axis, angle) {
+    const [x, y, z] = axis;
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    const t = 1 - c;
+    return [
+      [t * x * x + c, t * x * y - s * z, t * x * z + s * y],
+      [t * x * y + s * z, t * y * y + c, t * y * z - s * x],
+      [t * x * z - s * y, t * y * z + s * x, t * z * z + c],
+    ];
+  }
+
+  /* Açınım dikdörtgenleri: gövde tek sıra (yan, ön, yan, arka), kapaklar
+     ön yüzün üstünde ve altında. Kapaklar katlanınca alt ve üst taban olur. */
+  function netRectangles(a, b, h) {
+    return [
+      { id: 'sol', x: 0, y: 0, w: b, h },
+      { id: 'on', x: b, y: 0, w: a, h },
+      { id: 'sag', x: b + a, y: 0, w: b, h },
+      { id: 'arka', x: b + a + b, y: 0, w: a, h },
+      { id: 'ust', x: b, y: -b, w: a, h: b },
+      { id: 'alt', x: b, y: h, w: a, h: b },
+    ];
+  }
+
+  const rectCorners = (face) => [
+    [face.x, face.y], [face.x + face.w, face.y],
+    [face.x + face.w, face.y + face.h], [face.x, face.y + face.h],
+  ];
+
+  /* İki yüzün ortak kenarı; yön, ikinci yüzün köşe sırasına göre verilir. */
+  function commonEdge(first, second) {
+    const left = rectCorners(first);
+    const right = rectCorners(second);
+    for (let i = 0; i < 4; i += 1) {
+      const p = left[i];
+      const q = left[(i + 1) % 4];
+      for (let j = 0; j < 4; j += 1) {
+        const r = right[j];
+        const s = right[(j + 1) % 4];
+        const same = (u, v) => Math.abs(u[0] - v[0]) < 1e-6 && Math.abs(u[1] - v[1]) < 1e-6;
+        if (same(p, r) && same(q, s)) return { p, q };
+        if (same(p, s) && same(q, r)) return { p: s, q: r };
+      }
+    }
+    return null;
+  }
+
+  /* Açınımı `angle` kadar katlar; her yüzün dört köşesini 3 boyutta döndürür. */
+  function foldNet(faces, angle) {
+    const run = (sign) => {
+      const maps = new Array(faces.length).fill(null);
+      maps[0] = { matrix: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], shift: [0, 0, 0] };
+      const queue = [0];
+      while (queue.length) {
+        const index = queue.shift();
+        faces.forEach((face, other) => {
+          if (maps[other]) return;
+          const edge = commonEdge(faces[index], face);
+          if (!edge) return;
+          const from = [edge.p[0], edge.p[1], 0];
+          const to = [edge.q[0], edge.q[1], 0];
+          const axis = vecScale(vecSub(to, from), 1 / Math.hypot(to[0] - from[0], to[1] - from[1]));
+          const rotation = axisRotation(axis, angle * sign);
+          const parent = maps[index];
+          maps[other] = {
+            matrix: matMul(parent.matrix, rotation),
+            shift: vecAdd(parent.shift, matApply(parent.matrix, vecSub(from, matApply(rotation, from)))),
+          };
+          queue.push(other);
+        });
+      }
+      if (maps.some((map) => !map)) return null;
+      return faces.map((face, index) => {
+        const map = maps[index];
+        return {
+          id: face.id,
+          points: rectCorners(face).map(([x, y]) => vecAdd(matApply(map.matrix, [x, y, 0]), map.shift)),
+        };
+      });
+    };
+    const up = run(-1);
+    const down = run(1);
+    if (!up) return down;
+    if (!down) return up;
+    const meanZ = (quads) => quads.reduce((total, quad) => (
+      total + quad.points.reduce((sum, point) => sum + point[2], 0) / 4
+    ), 0) / quads.length;
+    /* Kutu, düzlemin üstüne doğru katlanır: ortalaması yukarıda olan yön seçilir. */
+    return meanZ(up) >= meanZ(down) ? up : down;
+  }
+
+  /* Eğik izdüşüm: kamera açıyla birlikte döner. 0'da düz açınım tepeden,
+     1'de kutu eğik görünür. depth büyükse yüz öndedir. */
+  function foldCamera(turn) {
+    const rad = (degrees) => (degrees * Math.PI) / 180;
+    const azimuth = rad(42) * turn;
+    const tilt = rad(56) * turn;
+    return {
+      project(point) {
+        const x = point[0] * Math.cos(azimuth) - point[1] * Math.sin(azimuth);
+        const y = point[0] * Math.sin(azimuth) + point[1] * Math.cos(azimuth);
+        return {
+          x,
+          y: y * Math.cos(tilt) - point[2] * Math.sin(tilt),
+          depth: y * Math.sin(tilt) + point[2] * Math.cos(tilt),
+        };
+      },
+    };
+  }
 
   const SCENES = {
     /* 1. Tam sayılar: sayı doğrusu, ters sayı ve sıfıra uzaklık */
@@ -1094,6 +1242,111 @@
           : (a > 0) === (b > 0) ? 'İki sayının işareti aynı: çarpım pozitif.'
             : 'İşaretler zıt: çarpım negatif.';
         parts.push(note(60, 326, rule, { size: 12.5 }));
+        return parts.join('');
+      },
+    },
+
+    /* Açınımı katla: solda cisim, sağda açınımı. Sürgü açınımı 3 boyutta
+       katlar; radyo düğmeleri küp, kare prizma ve dikdörtgenler prizmasını
+       seçer. Karşılıklı yüzler aynı renkte: ön–arka mor, sol–sağ yeşil,
+       üst–alt amber. Çizimde sonuç yazılmaz, öğrenci katlamayı izler. */
+    'acilim-katla': {
+      params: [
+        {
+          name: 'tur',
+          label: 'Cisim',
+          kind: 'secim',
+          min: 1,
+          max: 3,
+          step: 1,
+          value: 3,
+          secenekler: [
+            { value: 1, label: 'Küp' },
+            { value: 2, label: 'Kare prizma' },
+            { value: 3, label: 'Dikdörtgenler prizması' },
+          ],
+        },
+        { name: 'kat', label: 'Açınım → kutu', min: 0, max: 1, step: 0.05, value: 0 },
+      ],
+      normalize(state) {
+        state.tur = clampValue(state.tur, 1, 3, 1);
+        state.kat = clampValue(state.kat, 0, 1, 0.05);
+      },
+      draw(state) {
+        const tur = clampValue(state.tur, 1, 3, 1);
+        const kat = clampValue(state.kat, 0, 1, 0.05);
+        const spec = tur === 1
+          ? { a: 3, b: 3, h: 3, ad: 'Küp', ornek: 'zar' }
+          : tur === 2
+            ? { a: 3, b: 3, h: 4, ad: 'Kare prizma', ornek: 'süt kutusu' }
+            : { a: 4, b: 3, h: 2, ad: 'Dikdörtgenler prizması', ornek: 'kibrit kutusu' };
+        const parts = [text(24, 28, 'Açınımı katla: düz kâğıttan kutuya', { size: 13.5, weight: 800, fill: '#33265f' })];
+        parts.push(rect(20, 40, 202, 256, { fill: '#fbfaff', stroke: '#e6e1f8', rx: 12, width: 1 }));
+        parts.push(rect(236, 40, 384, 256, { fill: '#fbfaff', stroke: '#e6e1f8', rx: 12, width: 1 }));
+        parts.push(note(36, 62, 'cisim', { size: 12 }));
+        parts.push(note(252, 62, kat === 0 ? 'açınım' : kat >= 1 ? 'kutu' : 'katlanıyor', { size: 12 }));
+
+        /* Sol: cisim. Yalnız görünen üç yüz; karşılıkları aynı renkte. */
+        const scale = Math.min(26, 150 / (spec.a + spec.b * 0.6), 160 / (spec.h + spec.b * 0.4));
+        const w = spec.a * scale;
+        const hh = spec.h * scale;
+        const dx = spec.b * scale * 0.6;
+        const dy = spec.b * scale * 0.4;
+        const x = 121 - (w + dx) / 2;
+        const base = 250;
+        parts.push(polygon([[x + w, base], [x + w + dx, base - dy], [x + w + dx, base - hh - dy], [x + w, base - hh]],
+          { fill: '#9fd8bd', stroke: '#4a3d7a', width: 1.4 }));
+        parts.push(polygon([[x, base - hh], [x + w, base - hh], [x + w + dx, base - hh - dy], [x + dx, base - hh - dy]],
+          { fill: '#f8cf7d', stroke: '#4a3d7a', width: 1.4 }));
+        parts.push(polygon([[x, base], [x + w, base], [x + w, base - hh], [x, base - hh]],
+          { fill: '#bfaef5', stroke: '#4a3d7a', width: 1.4 }));
+        parts.push(line(x, base, x + dx, base - dy, { stroke: '#4a3d7a', width: 1.1, dash: '4 3' }));
+        parts.push(line(x + dx, base - dy, x + dx, base - hh - dy, { stroke: '#4a3d7a', width: 1.1, dash: '4 3' }));
+        parts.push(line(x + dx, base - dy, x + w + dx, base - dy, { stroke: '#4a3d7a', width: 1.1, dash: '4 3' }));
+        parts.push(text(121, 274, spec.ad, { size: 12.5, anchor: 'middle', weight: 800, fill: '#33265f' }));
+        parts.push(note(121, 290, `günlük hayatta: ${spec.ornek}`));
+
+        /* Sağ: açınımın katlanması. Kamera da açıyla döner. */
+        const quads = foldNet(netRectangles(spec.a, spec.b, spec.h), (Math.PI / 2) * kat) || [];
+        const camera = foldCamera(kat);
+        const projected = quads.map((quad) => {
+          const points = quad.points.map((point) => camera.project(point));
+          const depth = points.reduce((sum, point) => sum + point.depth, 0) / points.length;
+          return { id: quad.id, points, depth };
+        });
+        const all = projected.flatMap((quad) => quad.points);
+        if (all.length) {
+          const minX = Math.min(...all.map((point) => point.x));
+          const maxX = Math.max(...all.map((point) => point.x));
+          const minY = Math.min(...all.map((point) => point.y));
+          const maxY = Math.max(...all.map((point) => point.y));
+          const unit = Math.min(340 / Math.max(0.001, maxX - minX), 196 / Math.max(0.001, maxY - minY));
+          const ox = 428 - ((minX + maxX) / 2) * unit;
+          const oy = 176 - ((minY + maxY) / 2) * unit;
+          const fill = (id) => (id === 'sol' || id === 'sag' ? '#9fd8bd' : id === 'on' || id === 'arka' ? '#bfaef5' : '#f8cf7d');
+          projected.slice().sort((left, right) => left.depth - right.depth).forEach((quad) => {
+            parts.push(polygon(quad.points.map((point) => [ox + point.x * unit, oy + point.y * unit]),
+              { fill: fill(quad.id), stroke: '#4a3d7a', width: 1.4 }));
+          });
+        }
+
+        /* Renk anahtarı: hangi iki yüz karşılıklı. */
+        const legend = [
+          { x: 250, color: '#bfaef5', label: 'ön – arka' },
+          { x: 386, color: '#9fd8bd', label: 'sol – sağ' },
+          { x: 512, color: '#f8cf7d', label: 'üst – alt' },
+        ];
+        legend.forEach((item) => {
+          parts.push(rect(item.x, 306, 14, 14, { fill: item.color, stroke: '#4a3d7a', width: 1, rx: 3 }));
+          parts.push(note(item.x + 20, 318, item.label));
+        });
+        const durum = kat === 0
+          ? 'Şu an: düz açınım · 6 yüz tek düzlemde'
+          : kat >= 1
+            ? 'Şu an: kapalı kutu · 6 yüz, 12 ayrıt, 8 köşe'
+            : 'Şu an: katlanıyor · yüzler menteşeden kalkıyor';
+        parts.push(text(250, 346, durum, { size: 12.5, weight: 700, fill: '#4a3d7a' }));
+        parts.push(note(24, 370, 'Sürgü: 0 düz açınım, 1 kapalı kutu. Radyo düğmesi cismi değiştirir.'));
         return parts.join('');
       },
     },
@@ -2131,7 +2384,14 @@
   function mount(host, controls, spec) {
     if (!host || !spec || !SCENES[spec.type]) return null;
     const scene = SCENES[spec.type];
-    const params = (spec.params && spec.params.length ? spec.params : scene.params) || [];
+    /* Sürgü listesi etkinlikten gelir; ama seçim düğmeleri (kind, seçenekler)
+       sahnenin kendi tanımındadır. Bu yüzden her parametre sahne tanımıyla
+       birleştirilir: etkinlik yalnız değer/aralık verir, düğme türü kaybolmaz. */
+    const params = ((spec.params && spec.params.length ? spec.params : scene.params) || [])
+      .map((param) => {
+        const base = (scene.params || []).find((item) => item.name === param.name);
+        return base ? { ...base, ...param } : { ...param };
+      });
     uid += 1;
     const scope = `s${uid}`;
     const state = {};
@@ -2227,10 +2487,16 @@
     function syncControls() {
       if (!controls) return;
       params.forEach((param) => {
-        const input = controls.querySelector(`[data-scene-param="${param.name}"]`);
         const out = controls.querySelector(`#scene-out-${scope}-${param.name}`);
         const value = state[param.name];
-        if (input && String(input.value) !== String(value)) input.value = String(value);
+        if (param.kind === 'secim') {
+          controls.querySelectorAll(`[data-scene-param="${param.name}"]`).forEach((radio) => {
+            radio.checked = Number(radio.value) === Number(value);
+          });
+        } else {
+          const input = controls.querySelector(`[data-scene-param="${param.name}"]`);
+          if (input && String(input.value) !== String(value)) input.value = String(value);
+        }
         if (out) out.textContent = num(value);
       });
     }
@@ -2239,12 +2505,15 @@
       controls.innerHTML = controlsMarkup(params, state, scope);
       controls.querySelectorAll('[data-scene-param]').forEach((input) => {
         const param = params.find((item) => item.name === input.dataset.sceneParam);
-        input.addEventListener('input', () => {
+        /* Radyo düğmesi `change` (bazı tarayıcılarda yalnız `change`) gönderir. */
+        const update = () => {
           if (!param) return;
           state[param.name] = clampValue(input.value, param.min, param.max, param.step);
           paint();
           syncControls();
-        });
+        };
+        input.addEventListener('input', update);
+        input.addEventListener('change', update);
       });
     }
 
