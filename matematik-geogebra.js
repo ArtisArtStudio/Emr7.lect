@@ -306,7 +306,7 @@
 
   /* ---------- ortak çizim kapısı ---------- */
 
-  function builder(api, resolver) {
+  function builder(api) {
     const names = [];
     const labeled = new Set();
     /* Çizilen her noktanın sınırları: sahne bu kutunun merkezine ortalanır. */
@@ -327,13 +327,9 @@
         /* komut hatası doğrulamada yakalanır */
       }
     };
-    /* Nokta listesi: paylaşılan köşe noktaları varsa adlarıyla, yoksa
-       koordinatla yazılır. Adlarla yazmak, her poligonun kendi köşe
-       noktalarını üretmesini önler (dokunuş başına onlarca fazla nesne). */
-    const via = (points) => points.map(([x, y, z]) => {
-      const named = resolver ? resolver(x, y, z) : null;
-      return named || P(x, y, z);
-    }).join(', ');
+    /* Koordinatlar her zaman doğrudan yazılır. (Köşe noktalarını adlandırıp
+       poligonlara ad verme denemesi geri alındı: 3B sahnede cisim çizilmiyordu.) */
+    const via = (points) => points.map(([x, y, z]) => P(x, y, z)).join(', ');
     const box = {
       api,
       names,
@@ -1290,6 +1286,34 @@
     });
   }
 
+  /* Applet açılmadığında: cihazdaki GeoGebra önbelleği bozulmuş olabilir
+     (yarım inmiş ya da hatalı saklanmış dosya). Hizmet çalışanından önbelleği
+     boşaltmasını isteriz; bir sonraki denemede dosyalar ağdan taze gelir. */
+  function resetRuntimeCache() {
+    const container = window.navigator && window.navigator.serviceWorker;
+    try {
+      if (container && container.controller) container.controller.postMessage({ type: 'ggb-reset' });
+    } catch (error) { /* hizmet çalışanı yoksa yapılacak bir şey yok */ }
+    /* İkinci başarısızlıkta önbellek katmanı tümüyle kaldırılır: bu tarayıcıda
+       hizmet çalışanı sorun çıkarıyorsa GeoGebra doğrudan ağdan yüklensin. */
+    try {
+      const key = 'emr7lect.ggb.failures';
+      const count = (Number(window.sessionStorage.getItem(key)) || 0) + 1;
+      window.sessionStorage.setItem(key, String(count));
+      if (count < 2 || !container || typeof container.getRegistrations !== 'function') return;
+      window.sessionStorage.setItem(key, '0');
+      const cachesApi = window.caches;
+      container.getRegistrations()
+        .then((list) => list.forEach((entry) => { try { entry.unregister(); } catch (error) { /* yok say */ } }))
+        .catch(() => {});
+      if (cachesApi && typeof cachesApi.keys === 'function') {
+        cachesApi.keys()
+          .then((names) => names.forEach((name) => { try { cachesApi.delete(name); } catch (error) { /* yok say */ } }))
+          .catch(() => {});
+      }
+    } catch (error) { /* depolama kapalıysa yok say */ }
+  }
+
   /* ---------- ana giriş ---------- */
 
   function mount(host, controls, scene, options) {
@@ -1322,30 +1346,6 @@
     const columnNames = new Map();
     const dirtyColumns = new Set();
     let patching = false;
-    /* Köşe noktaları bir kez üretilir ve bütün yüzeylerce paylaşılır. Her
-       poligon kendi köşe noktalarını üretseydi dokunuş başına onlarca görünmez
-       nokta birikir, sahne yavaşlar ve tıklama gecikirdi. */
-    const pointCache = new Map();
-    let pointSeq = 0;
-    function pointFor(x, y, z) {
-      const key = `${Math.round(x * 1000)}:${Math.round(y * 1000)}:${Math.round(z * 1000)}`;
-      const hit = pointCache.get(key);
-      if (hit) return hit;
-      if (!api || typeof api.evalCommand !== 'function') return null;
-      pointSeq += 1;
-      const name = `g${pointSeq}`;
-      try {
-        api.evalCommand(`${name} = (${f(x)}, ${f(y)}, ${f(z)})`);
-        if (typeof api.exists === 'function' && !api.exists(name)) return null;
-        if (typeof api.setVisible === 'function') api.setVisible(name, false);
-        if (typeof api.setLabelVisible === 'function') api.setLabelVisible(name, false);
-      } catch (error) {
-        return null;
-      }
-      pointCache.set(key, name);
-      return name;
-    }
-
     let api = null;
     let box = null;
     let done = false;
@@ -1425,6 +1425,8 @@
     function hideLoading() {
       if (loading) loading.hidden = true;
       host.classList.add('is-ready');
+      /* Sahne açıldı: başarısızlık sayacı sıfırlanır. */
+      try { window.sessionStorage.setItem('emr7lect.ggb.failures', '0'); } catch (error) { /* yok say */ }
     }
 
     function fail(message) {
@@ -1432,9 +1434,26 @@
       done = true;
       if (buildTimer) window.clearTimeout(buildTimer);
       if (observer) observer.disconnect();
-      host.innerHTML = '';
+      /* Bozuk önbellek bir sonraki denemeyi de bozmasın. */
+      resetRuntimeCache();
+      /* Boş tuval en kötü sonuç: öğrenci ne olduğunu anlamıyor. Yerine açıklama
+         ve “Yeniden dene” düğmesi konur. */
+      host.innerHTML = `<div class="math-ggb-fail">
+        <p>${escapeHtml(message || 'GeoGebra açılamadı.')}</p>
+        <button type="button" data-ggb-retry>Yeniden dene</button>
+      </div>`;
       host.classList.remove('is-ready');
       if (controls) controls.innerHTML = '';
+      const retry = host.querySelector('[data-ggb-retry]');
+      if (retry) {
+        retry.addEventListener('click', () => {
+          retry.disabled = true;
+          retry.textContent = 'Yeniden yükleniyor…';
+          resetRuntimeCache();
+          /* Sayfa yenilenir: applet yeniden kurulur, önbellek boşaltılmış olur. */
+          window.setTimeout(() => { try { window.location.reload(); } catch (error) { /* yok say */ } }, 400);
+        });
+      }
       status(message);
       fallback(message);
     }
@@ -1514,7 +1533,7 @@
           const missing = [];
           wanted.forEach((part, name) => { if (!known.has(name)) missing.push(part); });
           if (missing.length) {
-            const patch = builder(api, pointFor);
+            const patch = builder(api);
             missing.forEach((part) => patch.paint(part));
             patch.names.forEach((name) => {
               try { api.setLabelVisible(name, false); } catch (error) { /* yok say */ }
@@ -1545,7 +1564,7 @@
       dirtyColumns.clear();
       if (box) box.clear();
       withPaintingPaused(() => {
-        box = builder(api, pointFor);
+        box = builder(api);
         conf.build(box, values, mode, data);
       });
       if (incremental) collectColumns(box.names);
@@ -1599,7 +1618,7 @@
           build(attempt + 1);
           return;
         }
-        fail('GeoGebra çizimi oluşturamadı; yerel çizim gösteriliyor.');
+        fail('GeoGebra cisimleri oluşturamadı.');
       }, delay);
     }
 
@@ -1742,14 +1761,14 @@
            kalmasın; süre dolunca durum yazılır ve yerel çizim gösterilir. */
         window.setTimeout(() => {
           if (destroyed || done || api) return;
-          fail('GeoGebra açılmadı; yerel çizim gösteriliyor.');
+          fail('GeoGebra açılmadı (zaman aşımı).');
         }, LOAD_TIMEOUT + 6000);
       } catch (error) {
-        fail('GeoGebra başlatılamadı; yerel çizim gösteriliyor.');
+        fail('GeoGebra başlatılamadı.');
       }
     }).catch(() => {
       loadFailed = true;
-      fail('GeoGebra yüklenemedi (çevrimdışı ya da ağ engeli); yerel çizim gösteriliyor.');
+      fail('GeoGebra yüklenemedi (çevrimdışı ya da ağ engeli).');
     });
 
     return {
