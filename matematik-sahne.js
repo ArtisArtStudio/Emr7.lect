@@ -1441,6 +1441,74 @@
         return parts.join('');
       },
     },
+    /* Küpün 11 açınımı: 3B anlatımın yerel yedeği. 3B motorda katlanma ara
+       açılarda da görünür; burada iki durum arasında geçilir (kapalı küp / düz
+       açınım), seçilen açınım numarası ikisinde de aynıdır. */
+    'kup-net': {
+      params: [
+        { name: 't', label: 'Katlanma', min: 0, max: 1, step: 0.05, value: 0 },
+        { name: 'net', label: 'Açınım no', min: 1, max: 11, step: 1, value: 1 },
+      ],
+      normalize(state) {
+        state.t = clampValue(state.t, 0, 1, 0.05);
+        state.net = clampValue(state.net, 1, 11, 1);
+      },
+      draw(state) {
+        const index = Math.round(state.net);
+        const open = state.t >= 0.5;
+        const faceFills = ['#d7ccf7', '#c9bff2', '#cfe4f7', '#d5efdf', '#ffe3a3', '#f3d7e6'];
+        const parts = [text(40, 30, open
+          ? `${num(index)}. açınım: altı yüz tek düzlemde`
+          : `Kapalı küp: ${num(index)}. açınım seçili`, { size: 14, weight: 800, fill: '#33265f' })];
+        if (open) {
+          /* Açınım kareleri tablodan gelir: her açınım altı birim kareden oluşur. */
+          const source = window.MATEMATIK_FIGURE;
+          const table = source && typeof source.nets === 'function' ? source.nets() : [];
+          const shape = table[(index - 1) % Math.max(1, table.length)] || [[0, 0], [1, 0], [1, 1], [1, 2], [2, 2], [2, 3]];
+          const cols = shape.map(([x]) => x);
+          const rows = shape.map(([, y]) => y);
+          const minC = Math.min(...cols);
+          const maxC = Math.max(...cols);
+          const minR = Math.min(...rows);
+          const maxR = Math.max(...rows);
+          const unit = Math.min(56, 320 / (maxC - minC + 1), 220 / (maxR - minR + 1));
+          const width = (maxC - minC + 1) * unit;
+          const height = (maxR - minR + 1) * unit;
+          const x0 = W / 2 - width / 2;
+          const y0 = 74 + Math.max(0, (206 - height) / 2);
+          shape.forEach(([c, r], order) => {
+            parts.push(rect(
+              x0 + (c - minC) * unit,
+              y0 + (r - minR) * unit,
+              unit,
+              unit,
+              { fill: faceFills[order % faceFills.length], stroke: '#4a3d7a', width: 1.5, rx: 3 },
+            ));
+          });
+        } else {
+          /* Kapalı küp: ön yüz mor, üst yüz kırmızı, sağ yüz sarı (küp görselleriyle aynı). */
+          const side = 118;
+          const du = 54;
+          const dv = 40;
+          const x0 = W / 2 - (side + du) / 2;
+          const y0 = 276;
+          parts.push(polygon([
+            [x0, y0 - side], [x0 + side, y0 - side],
+            [x0 + side + du, y0 - side - dv], [x0 + du, y0 - side - dv],
+          ], { fill: '#d62d20', stroke: '#1b2f49', width: 1.8 }));
+          parts.push(polygon([
+            [x0 + side, y0], [x0 + side + du, y0 - dv],
+            [x0 + side + du, y0 - side - dv], [x0 + side, y0 - side],
+          ], { fill: '#f2c200', stroke: '#1b2f49', width: 1.8 }));
+          parts.push(rect(x0, y0 - side, side, side, { fill: '#7030a0', stroke: '#1b2f49', width: 1.8 }));
+          parts.push(text(x0 + side / 2, y0 - side / 2 + 5, 'ön', { size: 12, anchor: 'middle', weight: 800, fill: '#fff' }));
+          parts.push(text(x0 + side + du / 2, y0 - side / 2 - dv / 2 + 5, 'sağ', { size: 12, anchor: 'middle', weight: 800, fill: '#33265f' }));
+          parts.push(text(x0 + side / 2 + du / 2, y0 - side - dv / 2 + 4, 'üst', { size: 12, anchor: 'middle', weight: 800, fill: '#fff' }));
+        }
+        parts.push(note(40, H - 20, 'Sürgü katlanmayı yönetir; açınım numarası on bir açınımı gezer.', { size: 12 }));
+        return parts.join('');
+      },
+    },
     'uc-gorunum': {
       params: [
         { name: 'a', label: 'Genişlik (ön görünüm)', min: 1, max: 4, step: 1, value: 3 },

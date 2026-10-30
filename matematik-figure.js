@@ -2111,5 +2111,11 @@
     return Object.keys(BUILDERS);
   }
 
-  window.MATEMATIK_FIGURE = Object.freeze({ render, types });
+  /* Küpün on bir açınımı: yerel `kup-net` sahnesi de aynı listeden çizer,
+     açınım tablosu iki yerde tutulmaz. Kopya döner, çağıran tabloyu bozamaz. */
+  function nets() {
+    return CUBE_NETS.map((cells) => cells.map((cell) => cell.slice()));
+  }
+
+  window.MATEMATIK_FIGURE = Object.freeze({ render, types, nets });
 })();
