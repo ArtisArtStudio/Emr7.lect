@@ -86,7 +86,7 @@ assert.ok(GG && typeof GG.mount === 'function' && typeof GG.script === 'function
 const localTypes = SAHNE.types();
 const geoTypes = GG.types();
 /* kup-dondur: eş küp yapısı serbest döndürülerek incelenir (görünüm sorusu). */
-const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim', 'kup-kur-ggb'];
+const GEO_3D = ['prizma3b', 'hacim', 'birim-donusum', 'uc-gorunum', 'bilesik-hacim', 'kup-dondur', 'duzensiz-yigin', 'acim', 'kup-net', 'kup-kur-ggb'];
 assert.deepEqual(geoTypes.slice().sort(), GEO_3D.slice().sort(),
   `GeoGebra yalnız 3B cisim sahnelerinde olmalı: ${geoTypes.join(', ')}`);
 /* Dokunarak küp kurma yalnız GeoGebra ile yapılır: yerel eşleniği kaldırıldı. */
@@ -280,6 +280,35 @@ assert.ok(/math-ggb-ortho/.test(ggb) && /math-ggb-views/.test(ggb), 'Üç görü
 assert.ok(GG.hasSplit('uc-gorunum') && GG.hasNet('acim'), 'Bölünmüş görünüm ve açınım sahneleri tanımlı olmalı.');
 assert.ok(GG.hasSplit('duzensiz-yigin'), 'Düzensiz yığın da bölünmüş görünümle açılmalı (ön · yan · üst).');
 
+/* Küpün 11 açınımı: hepsi GeoGebra `Net` komutuyla kurulmalı, sürgüyle katlanmalı,
+   açınım numarası sürgüsü 1–11 arasında gezmeli ve yalnız seçili açınım görünmeli. */
+const netParams = GG.params('kup-net');
+assert.deepEqual(netParams.map((param) => param.name), ['t', 'net'],
+  'Küp açınımı sahnesinde katlanma (t) ve açınım numarası sürgüleri olmalı.');
+assert.equal(netParams[0].min, 0, 'Katlanma sürgüsü 0 (kapalı küp) ile başlamalı.');
+assert.equal(netParams[0].max, 1, 'Katlanma sürgüsü 1 (düz açınım) ile bitmeli.');
+assert.equal(netParams[1].min, 1, 'Açınım numarası 1 ile başlamalı.');
+assert.equal(netParams[1].max, 11, 'Açınım numarası 11 ile bitmeli.');
+const netCommands = GG.script('kup-net', { net: 5, t: 0.5 });
+const netLines = netCommands.filter((command) => /=\s*Net\(/.test(command));
+assert.equal(netLines.length, 11, `Küpün 11 açınımı da kurulmalı (${netLines.length}).`);
+assert.ok(netLines.every((command) => /^net\d+ = Net\(cub, t, faceABCD, edge[A-H]{2}/.test(command)),
+  'Her açınım tek bir taban yüzü ve kesilen kenarlarla kurulmalı.');
+assert.equal(new Set(netLines.map((command) => command.split(' =')[0])).size, 11,
+  'On bir açınımın nesne adları birbirinden farklı olmalı.');
+assert.equal(new Set(netLines).size, 11, 'Aynı açınım iki kez kurulmamalı.');
+assert.ok(netCommands.includes('SetVisibleInView(net5, -1, true)'),
+  'Seçili açınım görünür olmalı.');
+assert.ok(netCommands.includes('SetVisibleInView(net4, -1, false)')
+  && netCommands.includes('SetVisibleInView(cub, -1, false)'),
+  'Seçili olmayan açınımlar ve açıkken küp gizlenmeli (3B görünüm -1).');
+assert.ok(GG.script('kup-net', { net: 1, t: 0 }).includes('SetVisibleInView(cub, -1, true)'),
+  'Katlanma sıfırken kapalı küp görünmeli.');
+assert.ok(/data-ggb-anim/.test(ggb) && /Katlanmayı oynat/.test(ggb),
+  'Küp açınımı kendiliğinden katlanabilmeli (oynat düğmesi).');
+assert.ok(/StartAnimation/.test(ggb) && /StopAnimation/.test(ggb),
+  'Oynatma GeoGebra animasyon komutlarıyla yapılmalı.');
+
 /* Birim küpler tek tek görünmeli: hacim sahneleri her küpü ayrı nesne olarak kurar. */
 ['hacim', 'bilesik-hacim', 'duzensiz-yigin'].forEach((type) => {
   const commands = GG.script(type, {});
@@ -323,7 +352,7 @@ const GEO_COMMANDS = new Set([
   'Slider', 'SetValue', 'SetVisibleInView', 'SetCaption', 'SetLabelMode', 'SetFixed',
   'SetLineThickness', 'SetLineStyle', 'SetPointSize', 'SetFilling', 'Delete', 'Text',
   'SetLabelVisible', 'ShowAxes', 'ShowGrid', 'SetViewDirection', 'SetColor',
-  'Segment', 'Polygon', 'Circle', 'Vector', 'BarChart', 'Sequence', 'Cube', 'If',
+  'Segment', 'Polygon', 'Circle', 'Vector', 'BarChart', 'Sequence', 'Cube', 'If', 'Net',
   'Ray', 'Line', 'Reflect', 'Midpoint', 'PerpendicularBisector', 'AngleBisector', 'Min',
   'Element', 'SetColor',
   'abs', 'cos', 'sin', 'pi', 'Point',

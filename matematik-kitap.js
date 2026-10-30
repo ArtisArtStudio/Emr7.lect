@@ -1672,6 +1672,20 @@
               figure: { type: 'acilim-onbir', options: {} },
             },
             {
+              heading: 'Açınımı katla, on birini dene',
+              paragraphs: [
+                'Aşağıdaki sahnede küp kapalı duruyor. **Katlanma** sürgüsünü sağa çektiğinde altı yüz teker teker açılır; sürgü sona vardığında yüzey tek düzlemde, yani açınım olarak durur. **Katlanmayı oynat** düğmesi aynı işi kendiliğinden yapar.',
+                '**Açınım no** sürgüsüyle küpün on bir farklı açınımını tek tek dene. Hepsi katlanınca aynı küpü verir: hiçbir yüz üst üste binmez, altı yüz de birer yüz olur; değişen yalnız kâğıdın biçimidir.',
+              ],
+              scene: {
+                type: 'kup-net',
+                params: [
+                  { name: 't', label: 'Katlanma', min: 0, max: 1, step: 0.05, value: 0 },
+                  { name: 'net', label: 'Açınım no', min: 1, max: 11, step: 1, value: 1 },
+                ],
+              },
+            },
+            {
               heading: 'Prizmanın yüzey alanı',
               paragraphs: [
                 'Prizmanın köşeleri harflerle adlandırılır: alt taban $ABCD$, üst taban $EFGH$. Aynı harf sırası karşılıklı köşeleri gösterir; $E$, $A$’nın tam üstünde durur, $F$ de $B$’nin.',

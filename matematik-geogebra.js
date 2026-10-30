@@ -1,7 +1,7 @@
 /* Matematik: GeoGebra köprüsü — yalnız üç boyutlu cisimler.
  *
  * Kural (27 Ekim 2026, 3. sürüm): GeoGebra **sadece 3B cisimlerde** kullanılır:
- *   prizma3b · hacim · birim-donusum · uc-gorunum · acim · bilesik-hacim · duzensiz-yigin
+ *   prizma3b · hacim · birim-donusum · uc-gorunum · acim · kup-net · bilesik-hacim · duzensiz-yigin
  * Diğer sahneler yerel SVG ile çizilir. Gerekçe: 2B sahnelerde
  * yerel çizim daha hızlı, çevrimdışı ve cevap sızdırmıyor; GeoGebra'nın pencere/ölçek
  * davranışı 2B'de ek yük getiriyordu.
@@ -31,6 +31,14 @@
  *   çerçeve sütun başına bir kez çizilir; böylece nesne sayısı dokunuşla büyümez.
  * - `acim` sahnesinde “Katla / Aç” düğmesi ve tuvale dokunma, kapalı kutu ile düz açınım
  *   arasında geçirir.
+ * - `kup-net` sahnesi küpün **11 farklı açınımını** GeoGebra'nın `Net` komutuyla kurar:
+ *   `cub = Cube(A, B, C)` ve `netK = Net(cub, t, faceABCD, edge…)`. `t` sürgüsü 0
+ *   (kapalı küp) ile 1 (düz açınım) arasında katlar; `net` sürgüsü 1–11 arasında açınım
+ *   seçer. On bir açınım birlikte kurulur, yalnız seçili olan görünür; katlanma sıfırken
+ *   onlar gizlenip kapalı küp görünür (aynı yerde çakışıp titremesinler). Sürgü
+ *   çekilirken nesneler **yeniden kurulmaz** (`live`): yalnız değer ve görünürlük
+ *   değişir, katlanma akıcı kalır. “Katlanmayı oynat” düğmesi `StartAnimation` ile
+ *   kendiliğinden katlar; HTML sürgüsü animasyon boyunca eşitlenir.
  * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
  *   3B cisim, sağda ön/yan/üst dik izdüşümleri aynı sürgülerle eşzamanlı güncellenir.
  *   Düzensiz yığında izdüşümler gerçek siluettir (boşluklar ve basamaklar görünür).
@@ -604,6 +612,85 @@
     return parts;
   }
 
+  /* ---------- küpün on bir açınımı (GeoGebra `Net` komutu) ---------- */
+
+  /* `Net(cub, t, faceABCD, edge…)` küpü t = 0 (kapalı) ile t = 1 (düz açınım)
+     arasında katlar. Hangi kenarların kesildiği açınımı belirler: her açınım
+     için kesilen kenar listesi farklıdır. Liste GeoGebra'nın kendi küp açınımı
+     çalışma sayfasındaki (Rafael Losada) sırayla aynıdır. */
+  const NET_FACE = 'faceABCD';
+  const CUBE_NET_EDGES = {
+    1: ['edgeAB', 'edgeFG', 'edgeEH', 'edgeAE', 'edgeBF'],
+    2: ['edgeAB', 'edgeAE'],
+    3: ['edgeAB', 'edgeCD', 'edgeAE'],
+    4: ['edgeAB', 'edgeBC', 'edgeCG', 'edgeFG', 'edgeEH', 'edgeAE'],
+    5: ['edgeAB'],
+    6: ['edgeAE'],
+    7: ['edgeBC'],
+    8: ['edgeAB', 'edgeBC'],
+    9: ['edgeAB', 'edgeBC', 'edgeCG', 'edgeEF', 'edgeEH', 'edgeAE'],
+    10: ['edgeAB', 'edgeBC', 'edgeGH', 'edgeEH'],
+    11: ['edgeAB', 'edgeBC', 'edgeAE'],
+  };
+  const NET_COUNT = 11;
+
+  /* Görünürlük kararı yalnız katlanma başladığında ve açınım numarası
+     değiştiğinde değişir; sürgü her kıpırdadığında 20+ komut göndermemek için
+     karar kısa bir imzayla önbelleklenir. */
+  function netSignature(values) {
+    return `${Number(values && values.t) > 0.004 ? 'acik' : 'kapali'}:${netIndex(values && values.net)}`;
+  }
+
+  function netIndex(value) {
+    const number = Math.round(Number(value));
+    if (!Number.isFinite(number)) return 1;
+    return Math.max(1, Math.min(NET_COUNT, number));
+  }
+
+  /* Katlanma sıfırda açınım küpün yüzeyiyle çakışır: o anda yalnız kapalı küp
+     görünür, katlanma başlar başlamaz küp gizlenip seçili açınım görünür.
+     Gizleme 3B görünüm (-1) için yapılır; görünüm 1 verilirse nesne 3B'de kalır. */
+  function applyNetVisibility(run, values, api) {
+    const open = Number(values && values.t) > 0.004;
+    const chosen = netIndex(values && values.net);
+    const show = (name, on) => {
+      run(`SetVisibleInView(${name}, -1, ${on ? 'true' : 'false'})`);
+      /* Görünüm numarasına bağlı gizleme bazı sürümlerde nesneyi bırakır:
+         genel görünürlük de aynı karara ayarlanır. */
+      if (api && typeof api.setVisible === 'function') {
+        try { api.setVisible(name, on); } catch (error) { /* yok say */ }
+      }
+    };
+    for (let index = 1; index <= NET_COUNT; index += 1) {
+      show(`net${index}`, open && index === chosen);
+    }
+    show('cub', !open);
+  }
+
+  /* Katlanma ilerledikçe kadraj genişler: kapalı küp tuvali doldurur, düz
+     açınım (küpün dört katı) yine içeri sığar. Sabit kadrajda küp ya çok
+     küçülüyor ya da açınım kenardan kesiliyordu. */
+  function frameNetZoom(api, values) {
+    if (!api || typeof api.setCoordSystem !== 'function') return;
+    const t = Math.max(0, Math.min(1, Number(values && values.t) || 0));
+    const half = 0.95 + 1.7 * t;
+    const centerZ = VIEW_CENTER_Z + 0.5;
+    const halfZ = 0.65 + 0.45 * t;
+    try {
+      api.setCoordSystem(-half, half, -half, half, centerZ - halfZ, centerZ + halfZ, false);
+    } catch (error) {
+      /* oturtma desteklenmiyorsa sabit kadraj kalır */
+    }
+    /* Kadraj ayarı eksenleri geri getirebilir: kapatmayı burada tazeliyoruz.
+       Sürgü sürüklenirken saniyede onlarca kez çağrılmasın diye seyreltilir. */
+    const now = Date.now();
+    if (now - lastAxisHide > 220) {
+      lastAxisHide = now;
+      hideAxes(api);
+    }
+  }
+  let lastAxisHide = 0;
+
   /* ---------- applet tanımları: yalnız 3B cisimler ---------- */
 
   const APPLETS = {
@@ -959,6 +1046,77 @@
             b.fill(name, 0.5);
           });
         }
+      },
+    },
+
+    /* Küpün on bir açınımı: `Net` komutu küpü t sürgüsüyle katlar. On bir
+       açınım da kurulur, yalnız seçili olan görünür; sürgü çekilirken nesneler
+       yeniden kurulmaz (yeni açınım seçilmedikçe), böylece katlanma akıcıdır. */
+    'kup-net': {
+      label: 'Küp açınımı (3B)',
+      views: true,
+      clean: true,
+      /* Sürgü oynatılırken yeniden kurulum yok: yalnız değer ve görünürlük. */
+      live: true,
+      animate: 't',
+      /* Sabit kadraj (yedek): kutu, düz açınımın en geniş hâlini de içine alır.
+         Asıl kadraj `frameNetZoom` ile katlanmaya göre yumuşakça genişler. */
+      frame: { x: 2.8, y: 2.8, zMin: -0.6, zMax: 1.4 },
+      params: [
+        { name: 't', label: 'Katlanma', min: 0, max: 1, step: 0.05, value: 0 },
+        { name: 'net', label: 'Açınım no', min: 1, max: NET_COUNT, step: 1, value: 1 },
+      ],
+      /* Küp ve katlama sürgüsü her durumda kurulur: `Net` desteklenmese bile
+         sahne boş kalmaz, durum yazısı öğrenciye yolu gösterir. */
+      required: ['cub', 't'],
+      build(b, v) {
+        const edge = 1;
+        /* Taban yüzü yatayda orijine ortalanır; yükseklikte görünüm merkezine
+           (VIEW_CENTER_Z) oturur — yoksa küp kadrajın dışında kalır. */
+        b.point('A', -edge / 2, -edge / 2, VIEW_CENTER_Z);
+        b.point('B', edge / 2, -edge / 2, VIEW_CENTER_Z);
+        b.point('C', edge / 2, edge / 2, VIEW_CENTER_Z);
+        b.run('cub = Cube(A, B, C)');
+        b.mark('cub', false);
+        b.slider('t', 0, 1, 0.01);
+        b.mark('t', false);
+        b.set('t', Number(v.t) || 0);
+        for (let index = 1; index <= NET_COUNT; index += 1) {
+          const edges = [NET_FACE].concat(CUBE_NET_EDGES[index]).join(', ');
+          b.run(`net${index} = Net(cub, t, ${edges})`);
+          b.mark(`net${index}`, false);
+        }
+        applyNetVisibility((command) => { b.run(command); }, v, b.api);
+        b.netSignature = netSignature(v);
+      },
+      /* Sürgü değişince yalnız görünürlük ve kadraj tazelenir; nesneler yerinde
+         kalır (yeniden kurulum yok), katlanma akıcı olur. */
+      sync(api, box, values) {
+        const signature = netSignature(values);
+        if (!box || box.netSignature !== signature) {
+          if (box) box.netSignature = signature;
+          applyNetVisibility((command) => {
+            try { api.evalCommand(command); } catch (error) { /* yok say */ }
+          }, values, api);
+        }
+        frameNetZoom(api, values);
+      },
+      liveStatus(values) {
+        const open = Number(values && values.t) > 0.004;
+        return `${netIndex(values && values.net)}. açınım · ${open ? 'katlanma' : 'kapalı küp'} ${Math.round(Number(values && values.t) * 100)}%`;
+      },
+      /* `Net` komutu bu sürümde yoksa küp görünür ama açınım görünmez: sessiz
+         kalmak yerine öğrenciye ne olduğunu ve ne yapacağını yazarız. */
+      notice(api) {
+        let exists = true;
+        try {
+          exists = typeof api.exists === 'function' ? api.exists('net1') : true;
+        } catch (error) {
+          exists = true;
+        }
+        return exists
+          ? ''
+          : 'Küp hazır; bu tarayıcıdaki GeoGebra sürümü katlanan açınımı (Net) desteklemiyor. “Yerel çizime geç” ile açınımı görebilirsin.';
       },
     },
   };
@@ -1352,6 +1510,10 @@
     let destroyed = false;
     let buildTimer = null;
     let observer = null;
+    /* “Katlanmayı oynat” açıkken GeoGebra sürgüsü kendi kendine oynar; HTML
+       sürgüsü ve açınım görünürlüğü bu sayede aynı anda tazelenir. */
+    let playing = false;
+    let animTimer = null;
 
     /* Kaplama: applet gelince kaldırılır, üstte boş şerit bırakmaz. */
     host.innerHTML = `<div class="math-ggb-shell${conf.split ? ' is-split' : ''}">
@@ -1360,6 +1522,7 @@
       ${conf.split ? '<div class="math-ggb-views" aria-hidden="true"></div>' : ''}
       <div class="math-ggb-bar">
         ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}"${key === 'egik' ? ' class="is-active"' : ''}>${label}</button>`).join('')}
+        ${conf.animate ? `<button type="button" data-ggb-anim="${conf.animate}">Katlanmayı oynat</button>` : ''}
         ${conf.net ? '<button type="button" data-ggb-net="1">Açınımı aç</button>' : ''}
       </div>
       ${conf.legend ? `<p class="math-ggb-legend">${FACE_LEGEND.map(([label, color]) => `<span><i style="background:${color}"></i>${label}</span>`).join('')}</p>` : ''}
@@ -1575,6 +1738,11 @@
       if (conf.clean) quietScene(box);
       /* Kadraj yalnız 3B appletlerde ortalanır; 2B çizimler kendi ölçeğini korur. */
       if (conf.clean || conf.views) frameView(api, box, conf);
+      /* Görünürlük ve appletin kendi kadrajı en son uygulanır ki çerçeve
+         temizliği bunları ezmesin. */
+      if (typeof conf.sync === 'function') {
+        try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
+      }
       /* Kadraj/çizim sonrası eksenler geri gelebilir: tazele. */
       hideAxesLater(api);
     }
@@ -1599,6 +1767,12 @@
           if (observer) observer.disconnect();
           const count = typeof api.getObjectNumber === 'function' ? api.getObjectNumber() : conf.required.length;
           status(`GeoGebra hazır · ${count} nesne · cismi parmağınla döndürebilirsin.`);
+          /* Appletin kendi notu (ör. `Net` desteklenmiyorsa) son sözü söyler. */
+          if (typeof conf.notice === 'function') {
+            let note = '';
+            try { note = conf.notice(api, values) || ''; } catch (error) { note = ''; }
+            if (note) status(note);
+          }
           window.setTimeout(() => {
             if (destroyed || !api) return;
             try {
@@ -1639,13 +1813,82 @@
           /* nesne henüz yoksa sessiz geç */
         }
       });
+      /* Canlı appletlerde (küpün katlanması) nesneler yeniden kurulmaz: sürgü
+         çekilirken küp silinip yeniden çizilirse katlanma sıçrar. */
+      if (conf.live) {
+        if (typeof conf.sync === 'function') {
+          try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
+        }
+        if (done) {
+          status(typeof conf.liveStatus === 'function'
+            ? conf.liveStatus(values)
+            : 'GeoGebra hazır · sürgüler cismi güncelliyor.');
+        }
+        return;
+      }
       rebuild();
       if (done) status('GeoGebra hazır · sürgüler cismi güncelliyor.');
     }
 
+    /* Oynatma: GeoGebra sürgüsü kendi kendine 0 ↔ 1 arasında gider; HTML
+       sürgüsü ve seçili açınımın görünürlüğü kısa aralıklarla eşitlenir. */
+    function stopAnimPoll() {
+      if (animTimer) {
+        window.clearInterval(animTimer);
+        animTimer = null;
+      }
+    }
+
+    function setPlayButton(on) {
+      const button = bar ? bar.querySelector('[data-ggb-anim]') : null;
+      if (!button) return;
+      button.classList.toggle('is-active', on);
+      button.textContent = on ? 'Katlanmayı durdur' : 'Katlanmayı oynat';
+    }
+
+    function stopPlayback() {
+      playing = false;
+      stopAnimPoll();
+      setPlayButton(false);
+      if (!api) return;
+      const button = bar ? bar.querySelector('[data-ggb-anim]') : null;
+      const name = button ? button.getAttribute('data-ggb-anim') : conf.animate;
+      try { api.evalCommand(`StopAnimation(${name})`); } catch (error) { /* yok say */ }
+    }
+
+    function startPlayback(name) {
+      playing = true;
+      setPlayButton(true);
+      try { api.evalCommand(`StartAnimation(${name}, true)`); } catch (error) { /* yok say */ }
+      stopAnimPoll();
+      animTimer = window.setInterval(() => {
+        if (destroyed || !api) {
+          stopAnimPoll();
+          return;
+        }
+        let current = NaN;
+        try { current = Number(api.getValue(name)); } catch (error) { current = NaN; }
+        if (!Number.isFinite(current)) return;
+        values[name] = Math.max(0, Math.min(1, current));
+        const input = controls ? controls.querySelector(`[data-scene-param="${name}"]`) : null;
+        const out = controls ? controls.querySelector(`#scene-out-${scope}-${name}`) : null;
+        if (input) input.value = String(values[name]);
+        if (out) out.textContent = String(Math.round(values[name] * 100) / 100);
+        if (typeof conf.sync === 'function') {
+          try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
+        }
+        status(typeof conf.liveStatus === 'function'
+          ? conf.liveStatus(values)
+          : 'GeoGebra hazır · cismi parmağınla döndürebilirsin.');
+      }, 120);
+    }
+
     if (controls) {
       controls.addEventListener('input', (event) => {
-        if (event.target && event.target.matches('[data-scene-param]')) syncFromControls();
+        if (event.target && event.target.matches('[data-scene-param]')) {
+          if (playing) stopPlayback();
+          syncFromControls();
+        }
       });
     }
 
@@ -1656,6 +1899,16 @@
           bar.querySelectorAll('[data-ggb-view]').forEach((node) => node.classList.remove('is-active'));
           view.classList.add('is-active');
           if (box) box.view(view.getAttribute('data-ggb-view'));
+          return;
+        }
+        const anim = event.target.closest('[data-ggb-anim]');
+        if (anim) {
+          if (!api) return;
+          if (playing) stopPlayback();
+          else startPlayback(anim.getAttribute('data-ggb-anim'));
+          status(playing
+            ? 'Katlanma oynuyor: küp açınıma dönüşüyor.'
+            : 'Katlanma durdu; sürgüyle istediğin açıyı seçebilirsin.');
           return;
         }
         const net = event.target.closest('[data-ggb-net]');
@@ -1809,6 +2062,7 @@
         rebuild();
       },
       reset() {
+        if (playing) stopPlayback();
         params.forEach((param) => { values[param.name] = param.value; });
         mode = conf.net ? 'kapali' : '';
         renderControls(controls, params, values, scope);
@@ -1830,6 +2084,8 @@
       destroy() {
         destroyed = true;
         done = true;
+        playing = false;
+        stopAnimPoll();
         if (buildTimer) window.clearTimeout(buildTimer);
         if (observer) observer.disconnect();
         host.innerHTML = '';
