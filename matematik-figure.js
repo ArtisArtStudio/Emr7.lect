@@ -1586,16 +1586,30 @@
     ];
     /* Adlar iki satıra bölünür: “Dikdörtgenler prizması” tek satıra sığmıyor. */
     const lines = { 'Küp': ['Küp'], 'Kare prizma': ['Kare', 'prizma'], 'Dikdörtgen prizma': ['Dikdörtgen', 'prizma'] };
+    /* Günlük hayattan örnekler adın altında yazar: prizma sorulurken öğrenci
+       cismi somut bir nesneyle eşleştirir. */
+    const ornek = {
+      'Küp': ['örnek: şeker küpü', 'buz küpü'],
+      'Kare prizma': ['örnek: şurup', 'kutusu'],
+      'Dikdörtgen prizma': ['örnek: peçete', 'kutusu'],
+    };
     trio.forEach((item) => {
-      const geo = solidIso(item.cx, 126, item.w, item.h, item.d, { base: item.base });
+      const geo = solidIso(item.cx, 112, item.w, item.h, item.d, { base: item.base });
       parts.push(geo.parts);
       /* Ad yazılmazsa şekil yalnız cisimleri gösterir (öğrenci adları kendisi yazar). */
       if (options.adlar === false) return;
       const label = lines[item.ad] || [item.ad];
       label.forEach((line, index) => {
-        parts.push(txt(item.cx, 152 + index * 14, line, { size: 10.5, anchor: 'middle', weight: 800, fill: INK, maxWidth: 104 }));
+        parts.push(txt(item.cx, 134 + index * 13, line, { size: 10.5, anchor: 'middle', weight: 800, fill: INK, maxWidth: 104 }));
       });
-      parts.push(txt(item.cx, 152 + label.length * 14 + 4, '6 yüz · 12 ayrıt', { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 104 }));
+      const base = 134 + label.length * 13;
+      if (options.ornekler === false) {
+        parts.push(txt(item.cx, base + 4, '6 yüz · 12 ayrıt', { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 104 }));
+        return;
+      }
+      (ornek[item.ad] || []).forEach((name, index) => {
+        parts.push(txt(item.cx, base + 3 + index * 13, name, { size: 10, anchor: 'middle', fill: GREEN, maxWidth: 104 }));
+      });
     });
     return frame(parts.join(''), 'Küp, kare prizma ve dikdörtgenler prizması');
   }
@@ -1745,21 +1759,31 @@
   /* Günlük hayattan üç kutu: şeker küpü, peçete kutusu, tuğla.
      Biçimleri üç prizmayı ayırt ettirir; adları altlarında yazar. */
   function dailyBoxes() {
+    /* Dört nesne: her prizma türüne bir örnek düşsün. Kare prizmayı şurup
+       kutusu temsil eder: tabanı kare, boyu uzundur (küpe benzemez). */
     const items = [
       {
-        cx: 62, w: 52, h: 52, d: 52, ad: ['şeker', 'küpü'], fill: { yan: '#e8e3f7', govde: '#f4f1fd', kapak: '#dcd4f6' },
+        cx: 46, w: 44, h: 44, d: 44, ad: ['şeker', 'küpü'], fill: { yan: '#e8e3f7', govde: '#f4f1fd', kapak: '#dcd4f6' },
       },
       {
-        cx: 176, w: 82, h: 28, d: 46, ad: ['peçete', 'kutusu'], fill: { yan: '#cfe3d7', govde: '#e3f1e8', kapak: '#bfdcc9' },
+        cx: 134, w: 34, h: 62, d: 34, ad: ['şurup', 'kutusu'], fill: { yan: '#f2dfc2', govde: '#fbf0dc', kapak: '#e6cba0' },
       },
       {
-        cx: 286, w: 74, h: 32, d: 32, ad: ['tuğla'], fill: { yan: '#c8695f', govde: '#d97f74', kapak: '#b95b52' },
+        cx: 214, w: 62, h: 24, d: 40, ad: ['peçete', 'kutusu'], fill: { yan: '#cfe3d7', govde: '#e3f1e8', kapak: '#bfdcc9' },
+      },
+      {
+        cx: 300, w: 58, h: 26, d: 26, ad: ['tuğla'], fill: { yan: '#c8695f', govde: '#d97f74', kapak: '#b95b52' },
       },
     ];
     const parts = [];
     items.forEach((item) => {
-      const geo = renkliKutu(item.cx, 126, item.w, item.h, item.d, { fill: item.fill });
+      const geo = renkliKutu(item.cx, 132, item.w, item.h, item.d, { fill: item.fill });
       parts.push(geo.parts);
+      if (item.ad[0] === 'şurup') {
+        /* Şurup kutusunun kapağı ve etiketi: kare prizma olduğu sezilsin. */
+        parts.push(rect(geo.x + 4, geo.y - geo.h + 8, geo.w - 8, geo.h * 0.42, { fill: '#fff8ec', stroke: '#d3b07a', width: 1, rx: 3 }));
+        parts.push(txt(geo.x + geo.w / 2, geo.y - geo.h * 0.5, 'şurup', { size: 9.5, anchor: 'middle', weight: 800, fill: '#8a5a10', maxWidth: geo.w - 8 }));
+      }
       if (item.ad[0] === 'peçete') {
         /* Kutunun üstündeki oval açıklık: peçete kutusunu belli eder. */
         parts.push(`<ellipse cx="${geo.x + geo.w / 2 + geo.dx / 2}" cy="${geo.y - geo.h - geo.dy / 2}" rx="13" ry="5.5" fill="#fff" stroke="${NET_EDGE}" stroke-width="1.1"/>`);
@@ -1776,10 +1800,10 @@
         parts.push(circle(geo.x + geo.w / 2 + geo.dx / 2 + 6, geo.y - geo.h - geo.dy / 2 - 1, 2.6, { fill: '#fff', stroke: '#8d7fc0', width: 1 }));
       }
       item.ad.forEach((line, index) => {
-        parts.push(txt(item.cx, 140 + index * 13, line, { size: 10.5, anchor: 'middle', weight: 800, maxWidth: 106 }));
+        parts.push(txt(item.cx, 152 + index * 13, line, { size: 10.5, anchor: 'middle', weight: 800, maxWidth: 106 }));
       });
     });
-    return frame(parts.join(''), 'Şeker küpü, peçete kutusu ve tuğla');
+    return frame(parts.join(''), 'Şeker küpü, şurup kutusu, peçete kutusu ve tuğla');
   }
 
   /* Ölçülü cisim: soruda verilen sayılar şeklin üstünde yazar.
@@ -1793,7 +1817,7 @@
     const c = tur === 'kup' ? a : (Number(options.c) || (tur === 'kare' ? 5 : 3));
     const scale = Math.min(24, 150 / (a + 0.62 * b), 104 / (c + 0.42 * b));
     const geo = renkliKutu(170, 152, a * scale, c * scale, b * scale, {});
-    const { x, y, w, h, dx } = geo;
+    const { x, y, w, h, dx, dy } = geo;
     const parts = [geo.parts];
     const etiket = (value) => `${value} ${birim}`;
     if (tur === 'kup') {
@@ -1802,26 +1826,35 @@
       parts.push(txt(170, 44, options.ustYazi || 'altı yüz de eş kare', { size: 10, anchor: 'middle', fill: MUTED, maxWidth: 300 }));
     } else {
       parts.push(txt(x + w / 2, y + 16, etiket(a), { size: 11, anchor: 'middle', weight: 700, fill: MUTED, maxWidth: 80 }));
-      parts.push(txt(x - 6, y - h / 2 + 4, etiket(c), { size: 11, anchor: 'end', weight: 700, fill: MUTED, maxWidth: 70 }));
-      parts.push(txt(x + w + dx + 6, y - h / 2 - dx * 0.34 + 2, etiket(b), { size: 11, weight: 700, fill: MUTED, maxWidth: 70 }));
+      /* Yükseklik cismin solunda, genişlik altta, derinlik sağ üst kenarda:
+         hiçbiri yüzün içine düşmez, hangi ayrıt olduğu şaşmaz. */
+      parts.push(txt(x - 8, y - h / 2 + 4, etiket(c), { size: 11, anchor: 'end', weight: 700, fill: MUTED, maxWidth: 76 }));
+      parts.push(txt(x + w + dx + 8, y - h - dy / 2 + 2, etiket(b), { size: 11, weight: 700, fill: MUTED, maxWidth: 70 }));
     }
     const ad = options.ad || (tur === 'kup' ? 'Küp' : tur === 'kare' ? 'Kare prizma' : 'Dikdörtgenler prizması');
     parts.push(txt(170, 182, ad, { size: 11, anchor: 'middle', weight: 800, maxWidth: 300 }));
     return frame(parts.join(''), `${ad}, ayrıtları ${a}, ${c}, ${b} ${birim}`);
   }
 
-  /* İki cisim yan yana: hangisi daha çok kâğıt ister? */
-  function ikiliOlcu() {
+  /* İki cisim yan yana: ölçüler kenarlarda yazar, hangi ayrıt olduğu şaşmaz. */
+  function ikiliOlcu(options = {}) {
+    const olcu = options.olcu || [3, 5, 4];
+    const [a, h, k] = olcu;
+    const scale = Math.min(10, 74 / h, 74 / k);
     const parts = [];
-    const left = renkliKutu(88, 142, 46, 78, 46, {});
+    /* Etiketler taşmasın: uzun ölçülerde cisimler biraz içeri alınır. */
+    const left = renkliKutu(118, 126, a * scale, h * scale, a * scale, {});
+    const right = renkliKutu(276, 126, k * scale, k * scale, k * scale, {});
     parts.push(left.parts);
-    parts.push(txt(88, 160, '3 ve 5 br', { size: 10.5, anchor: 'middle', weight: 700, fill: MUTED, maxWidth: 110 }));
-    parts.push(txt(88, 176, 'Kare prizma', { size: 11, anchor: 'middle', weight: 800, maxWidth: 120 }));
-    const right = renkliKutu(252, 142, 66, 66, 66, {});
     parts.push(right.parts);
-    parts.push(txt(252, 160, '4 br', { size: 10.5, anchor: 'middle', weight: 700, fill: MUTED, maxWidth: 110 }));
-    parts.push(txt(252, 176, 'Küp', { size: 11, anchor: 'middle', weight: 800, maxWidth: 120 }));
-    return frame(parts.join(''), 'Taban ayrıtı 3, yüksekliği 5 birim kare prizma ile ayrıtı 4 birim küp');
+    parts.push(txt(left.x - 6, left.y - left.h / 2 + 4, `${h} br`, { size: 10.5, anchor: 'end', weight: 700, fill: MUTED, maxWidth: 70 }));
+    parts.push(txt(left.x + left.w / 2, left.y + 14, `${a} br`, { size: 10.5, anchor: 'middle', weight: 700, fill: MUTED, maxWidth: 70 }));
+    parts.push(txt(70, 166, 'Kare prizma', { size: 11, anchor: 'middle', weight: 800, maxWidth: 130 }));
+    parts.push(txt(right.x - 6, right.y - right.h / 2 + 4, `${k} br`, { size: 10.5, anchor: 'end', weight: 700, fill: MUTED, maxWidth: 70 }));
+    parts.push(txt(right.x + right.w / 2, right.y + 14, `${k} br`, { size: 10.5, anchor: 'middle', weight: 700, fill: MUTED, maxWidth: 70 }));
+    parts.push(txt(250, 166, 'Küp', { size: 11, anchor: 'middle', weight: 800, maxWidth: 130 }));
+    parts.push(txt(170, 184, 'Hangisi daha çok kâğıt ister?', { size: 10, anchor: 'middle', fill: MUTED, maxWidth: 320 }));
+    return frame(parts.join(''), `Taban ayrıtı ${a}, yüksekliği ${h} birim kare prizma ile ayrıtı ${k} birim küp`);
   }
 
   /* Prizma solda, açınımı sağda; karşılıklı yüzler aynı renkte. */
@@ -1885,44 +1918,152 @@
     return frame(parts.join(''), 'Küpün 11 farklı açınımı');
   }
 
-  /* Beş açınım: dördü kutu kapatır, dördüncüsünde iki kapak üst üste biner. */
+  /* Beş kare açınım, aynı görselde: numaralı, aralarında açıklama yok.
+     İkisi katlanınca küp kapanır (biri küpün 11 açınımı listesindeki seyrek
+     görülen basamak biçimi), üçü kapanmaz. Hangisinin kapandığı görselde
+     yazmaz; numaralar cümlelerdeki numaralarla eşleşir. */
+  const FIVE_NETS = [
+    /* 1) iki sıra üçlü: iki yüz üst üste biner. */
+    [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]],
+    /* 2) basamak (küpün 11 açınımından biri). */
+    [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [2, 3]],
+    /* 3) T biçimi: kapanır. */
+    [[0, 0], [1, 0], [2, 0], [1, 1], [1, 2], [1, 3]],
+    /* 4) tek sıra altı kare: iki uç çakışır, kapanmaz. */
+    [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0]],
+    /* 5) P biçimi: kapaklar aynı yüze gelir. */
+    [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [0, 2]],
+  ];
+
   function netFive(options = {}) {
-    const a = 3;
-    const b = 2;
-    const h = 2;
-    const keys = ['hac', 'capraz', 'donuk', 'cakisan', 'kayik'];
-    /* Tek açınım istenirse (secili: 1–5) yalnız o çizilir ve büyük gösterilir:
-       soru hangi açınımdan söz ediyorsa şekil de onu gösterir. */
     const pick = Math.round(Number(options.secili));
-    if (Number.isFinite(pick) && pick >= 1 && pick <= keys.length) {
-      const shape = netShape(a, b, h, keys[pick - 1]);
-      const unit = Math.min(84 / shape.width, 104 / shape.height);
-      const ox = 12 + (316 - shape.width * unit) / 2;
-      const oy = 30 + (132 - shape.height * unit) / 2;
-      const single = [txt(170, 20, `${pick}. açınım`, { size: 12, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: 300 })];
-      netParts(shape, ox, oy, unit).forEach((part) => single.push(part));
-      single.push(txt(170, 180, 'altı yüz · katlanınca kutu olur mu?', { size: 10, anchor: 'middle', fill: MUTED, maxWidth: 300 }));
-      return frame(single.join(''), `Dikdörtgenler prizmasının ${pick}. açınımı`);
+    if (Number.isFinite(pick) && pick >= 1 && pick <= FIVE_NETS.length) {
+      const cells = FIVE_NETS[pick - 1];
+      const width = Math.max(...cells.map(([x]) => x)) + 1;
+      const height = Math.max(...cells.map(([, y]) => y)) + 1;
+      const unit = Math.min(30, 130 / width, 120 / height);
+      const ox = 170 - (width * unit) / 2;
+      const oy = 34 + (120 - height * unit) / 2;
+      const single = [txt(170, 22, `${pick}. açınım`, { size: 12, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: 300 })];
+      cells.forEach(([x, y]) => {
+        single.push(rect(ox + x * unit, oy + y * unit, unit, unit, { fill: '#cfe0f5', stroke: '#3f6c93', width: 1.2 }));
+      });
+      return frame(single.join(''), `${pick}. açınım: katlanınca küp olur mu?`);
     }
     const panels = [
-      { x: 8, y: 8, w: 106, h: 84 },
-      { x: 118, y: 8, w: 106, h: 84 },
-      { x: 228, y: 8, w: 104, h: 84 },
-      { x: 8, y: 100, w: 106, h: 84 },
-      { x: 118, y: 100, w: 106, h: 84 },
+      { x: 8, y: 8, w: 104, h: 86 },
+      { x: 118, y: 8, w: 104, h: 86 },
+      { x: 228, y: 8, w: 104, h: 86 },
+      { x: 8, y: 98, w: 104, h: 86 },
+      { x: 118, y: 98, w: 104, h: 86 },
     ];
     const parts = [];
-    keys.forEach((key, index) => {
+    FIVE_NETS.forEach((cells, index) => {
       const panel = panels[index];
-      const shape = netShape(a, b, h, key);
-      const unit = Math.min((panel.w - 18) / shape.width, (panel.h - 26) / shape.height);
-      const ox = panel.x + (panel.w - shape.width * unit) / 2;
-      const oy = panel.y + 6;
+      const width = Math.max(...cells.map(([x]) => x)) + 1;
+      const height = Math.max(...cells.map(([, y]) => y)) + 1;
+      const unit = Math.min(17, (panel.w - 22) / width, (panel.h - 26) / height);
+      const ox = panel.x + (panel.w - width * unit) / 2;
+      const oy = panel.y + 6 + (panel.h - 26 - height * unit) / 2;
       parts.push(rect(panel.x, panel.y, panel.w, panel.h, { fill: '#fbfaff', stroke: '#e6e1f8', rx: 9, width: 1 }));
-      netParts(shape, ox, oy, unit).forEach((part) => parts.push(part));
-      parts.push(txt(panel.x + panel.w / 2, panel.y + panel.h - 4, `${index + 1}. açınım`, { size: 10, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: panel.w - 8 }));
+      cells.forEach(([x, y]) => {
+        parts.push(rect(ox + x * unit, oy + y * unit, unit, unit, { fill: '#cfe0f5', stroke: '#3f6c93', width: 1.1 }));
+      });
+      parts.push(txt(panel.x + panel.w / 2, panel.y + panel.h - 6, String(index + 1), { size: 11, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: panel.w - 8 }));
     });
-    return frame(parts.join(''), 'Aynı dikdörtgenler prizmasının beş açınımı');
+    return frame(parts.join(''), 'Beş açınım, numaralı: hangileri katlanınca küp olur?');
+  }
+
+  /* İki prizma yan yana, ölçüleriyle: yüzey alanı karşılaştırmaları bu
+     görsel üzerinden yapılır. Numaralar (1, 2) cümlelerdeki numaralarla eşleşir. */
+  function ikiPrizma(options = {}) {
+    const p1 = options.p1 || { a: 4, b: 4, h: 9 };
+    const p2 = options.p2 || { a: 6, b: 5, h: 4 };
+    const birim = options.birim || 'cm';
+    const scale = Math.min(9, 46 / p1.h, 46 / p2.h, 40 / Math.max(p1.a, p2.a), 40 / Math.max(p1.b, p2.b));
+    const parts = [];
+    const draw = (cx, base, p, no, ad) => {
+      const geo = renkliKutu(cx, base, p.a * scale, p.h * scale, p.b * scale, {});
+      parts.push(geo.parts);
+      parts.push(txt(cx, base + 34, `${no}. prizma`, { size: 10.5, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: 140 }));
+      parts.push(txt(cx, base + 47, ad, { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 140 }));
+      parts.push(txt(geo.x + geo.w / 2, geo.y + 13, `${p.a} ${birim}`, { size: 9.5, anchor: 'middle', weight: 700, fill: MUTED, maxWidth: 90 }));
+      parts.push(txt(geo.x - 6, geo.y - geo.h / 2 + 3, `${p.h} ${birim}`, { size: 9.5, anchor: 'end', weight: 700, fill: MUTED, maxWidth: 70 }));
+      parts.push(txt(geo.x + geo.w + geo.dx + 6, geo.y - geo.h - geo.dy / 2 + 2, `${p.b} ${birim}`, { size: 9.5, weight: 700, fill: MUTED, maxWidth: 60 }));
+    };
+    draw(92, 120, p1, 1, p1.a === p1.b ? 'tabanı kare' : 'dikdörtgen taban');
+    draw(250, 120, p2, 2, p2.a === p2.b ? 'tabanı kare' : 'dikdörtgen taban');
+    parts.push(txt(170, 184, 'Aynı renk yüzler karşılıklı; ölçüler ayrıt uzunluklarıdır.', { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 320 }));
+    return frame(parts.join(''), 'İki prizma ve ayrıtları');
+  }
+
+  /* Ölçülü açınım: harfli prizmanın açınımı. Kapalı cisim çizimi kalabalık
+     olduğu için kural açınım üstünde anlatılır: sekiz köşe harfi ve üç ayrıt
+     ölçüsü doğru kenarlarda durur. Karşılıklı yüzler aynı renkte. */
+  function netMeasured(options = {}) {
+    const a = Number(options.a) || 6;
+    const b = Number(options.b) || 4;
+    const c = Number(options.c) || 5;
+    const birim = options.birim || 'cm';
+    /* Açınım düzlemi: sol yüz, ön yüz, sağ yüz, arka yüz yan yana; kapaklar
+       ön yüzün üstünde ve altında. Y ekseni yukarı doğru sayılır. */
+    const totalW = 2 * a + 2 * c;
+    const totalH = b + 2 * c;
+    const unit = Math.min(30, 296 / totalW, 98 / totalH);
+    const left = 12 + Math.max(0, (300 - totalW * unit) / 2) + 6;
+    const top = 46;
+    const X = (value) => left + (value + c) * unit;
+    const Y = (value) => top + (b + c - value) * unit;
+    const face = (x, y, w, h, fill) => rect(X(x), Y(y + h), w * unit, h * unit, { fill, stroke: NET_EDGE, width: 1.2 });
+    const parts = [];
+    parts.push(txt(170, 14, 'ABCDEFGH prizmasının açınımı',
+      { size: 10.5, anchor: 'middle', weight: 800, fill: ACCENT, maxWidth: 322 }));
+    parts.push(txt(170, 27, `a = ${a} · b = ${b} · c = ${c} ${birim}`, { size: 10, anchor: 'middle', fill: MUTED, maxWidth: 322 }));
+    parts.push(face(0, 0, a, b, NET_FILL.govde));       /* ABFE ön yüz */
+    parts.push(face(a, 0, c, b, NET_FILL.yan));         /* BCGF sağ yüz */
+    parts.push(face(a + c, 0, a, b, NET_FILL.govde));   /* DCGH arka yüz */
+    parts.push(face(-c, 0, c, b, NET_FILL.yan));        /* ADHE sol yüz */
+    parts.push(face(0, b, a, c, NET_FILL.kapak));       /* ABCD üst kapak */
+    parts.push(face(0, -c, a, c, NET_FILL.kapak));      /* EFGH alt kapak */
+    /* Köşe harfleri: her yüzün kendi köşesine yazılır; aynı noktaya denk
+       gelen aynı harf bir kez çizilir. */
+    const marks = [
+      ['A', 0, b], ['B', a, b], ['F', a, 0], ['E', 0, 0],
+      ['C', a + c, b], ['G', a + c, 0],
+      ['D', 2 * a + c, b], ['H', 2 * a + c, 0],
+      ['C', a, b + c], ['D', 0, b + c],
+      ['G', a, -c], ['H', 0, -c],
+    ];
+    const drawn = new Set();
+    const cx = totalW / 2 - c;
+    const cy = b / 2;
+    marks.forEach(([name, x, y]) => {
+      const id = `${name}:${Math.round(x * 100)}:${Math.round(y * 100)}`;
+      if (drawn.has(id)) return;
+      drawn.add(id);
+      const px = X(x);
+      const py = Y(y);
+      const dx = x > cx + 0.001 ? 8 : x < cx - 0.001 ? -8 : 0;
+      const dy = y > cy + 0.001 ? -4 : y < cy - 0.001 ? 13 : 11;
+      parts.push(circle(px, py, 2.6, { fill: '#fff', stroke: NET_EDGE, width: 1.2 }));
+      parts.push(txt(px + dx, py + dy, name, { size: 9.5, anchor: dx > 0 ? 'start' : dx < 0 ? 'end' : 'middle', weight: 800, fill: '#231a45', maxWidth: 14 }));
+    });
+    /* Ayrıt ölçüleri doğru kenarın ortasında: a = AB, c = BC, b = AE. */
+    const edgeLabel = (text2, x, y, dx, dy, anchor) => {
+      const px = X(x) + dx;
+      const py = Y(y) + dy;
+      parts.push(rect(px - 15, py - 9, 30, 15, { fill: '#ffffff', stroke: '#cfc7ea', width: 1, rx: 7 }));
+      parts.push(txt(px, py + 2, text2, { size: 9.5, anchor, weight: 800, fill: '#2f6f9c', maxWidth: 28 }));
+    };
+    /* Ölçüler açınımın dış kenarlarına yazılır: iç kenarlarda harf ve köşe
+       yazıları üst üste biniyordu. Dış kenarda uzunluk değişmez; a, b, c
+       yalnız ayrıt uzunluğunu gösterir. */
+    edgeLabel('a', a / 2, -c, 0, 14, 'middle');
+    edgeLabel('b', -c, b / 2, -16, 4, 'middle');
+    edgeLabel('c', a + c / 2, b, 0, -9, 'middle');
+    parts.push(txt(170, 184, 'Aynı renk: katlanınca karşılıklı gelen yüzler (turuncu tabanlar, mor ön–arka, yeşil yanlar).',
+      { size: 9.5, anchor: 'middle', fill: MUTED, maxWidth: 322 }));
+    return frame(parts.join(''), 'Ölçülü açınım: köşe harfleri ve ayrıtlar');
   }
 
   /* Bilgi kutusu: ABCDEFGH prizması. Alt taban ABCD, üst taban EFGH;
@@ -2062,6 +2203,8 @@
     'acilim-bes': netFive,
     'acilim-onbir': netEleven,
     'acilim-harfli': netLetters,
+    'acilim-olculu': netMeasured,
+    'iki-prizma': ikiPrizma,
     'gunluk-esya': dailyBoxes,
     'olculu-cisim': olculuCisim,
     'ikili-olcu': ikiliOlcu,

@@ -281,16 +281,17 @@ assert.ok(GG.hasSplit('uc-gorunum') && GG.hasNet('acim'), 'Bölünmüş görün�
 assert.ok(GG.hasSplit('duzensiz-yigin'), 'Düzensiz yığın da bölünmüş görünümle açılmalı (ön · yan · üst).');
 
 /* Küpün 11 açınımı: hepsi GeoGebra `Net` komutuyla kurulmalı, sürgüyle katlanmalı,
-   açınım numarası sürgüsü 1–11 arasında gezmeli ve yalnız seçili açınım görünmeli. */
+   açınım numarası radyo düğmesiyle seçilmeli ve yalnız seçili açınım görünmeli. */
 const netParams = GG.params('kup-net');
-assert.deepEqual(netParams.map((param) => param.name), ['t', 'net'],
-  'Küp açınımı sahnesinde katlanma (t) ve açınım numarası sürgüleri olmalı.');
-assert.equal(netParams[0].min, 0, 'Katlanma sürgüsü 0 (kapalı küp) ile başlamalı.');
-assert.equal(netParams[0].max, 1, 'Katlanma sürgüsü 1 (düz açınım) ile bitmeli.');
-assert.equal(netParams[1].min, 1, 'Açınım numarası 1 ile başlamalı.');
-assert.equal(netParams[1].max, 11, 'Açınım numarası 11 ile bitmeli.');
-const netCommands = GG.script('kup-net', { net: 5, t: 0.5 });
-const netLines = netCommands.filter((command) => /=\s*Net\(/.test(command));
+assert.deepEqual(netParams.map((param) => param.name), ['kat', 'net'],
+  'Küp açınımı sahnesinde katlanma sürgüsü ve açınım seçimi olmalı.');
+assert.equal(netParams[0].min, 0, 'Katlanma sürgüsü 0 (düz açınım) ile başlamalı.');
+assert.equal(netParams[0].max, 1, 'Katlanma sürgüsü 1 (kapalı küp) ile bitmeli.');
+assert.equal(netParams[0].value, 0, 'Sahne açınım açık başlamalı.');
+assert.equal(netParams[1].kind, 'secim', 'Açınım numarası sürgü değil radyo düğmesi olmalı.');
+assert.equal((netParams[1].secenekler || []).length, 11, 'On bir açınım düğmesi olmalı.');
+const netCommands = GG.script('kup-net', { net: 5, kat: 0 });
+const netLines = netCommands.filter((command) => /= \s*Net\(/.test(command));
 assert.equal(netLines.length, 11, `Küpün 11 açınımı da kurulmalı (${netLines.length}).`);
 assert.ok(netLines.every((command) => /^net\d+ = Net\(cub, t, faceABCD, edge[A-H]{2}/.test(command)),
   'Her açınım tek bir taban yüzü ve kesilen kenarlarla kurulmalı.');
@@ -302,12 +303,20 @@ assert.ok(netCommands.includes('SetVisibleInView(net5, -1, true)'),
 assert.ok(netCommands.includes('SetVisibleInView(net4, -1, false)')
   && netCommands.includes('SetVisibleInView(cub, -1, false)'),
   'Seçili olmayan açınımlar ve açıkken küp gizlenmeli (3B görünüm -1).');
-assert.ok(GG.script('kup-net', { net: 1, t: 0 }).includes('SetVisibleInView(cub, -1, true)'),
-  'Katlanma sıfırken kapalı küp görünmeli.');
+assert.ok(GG.script('kup-net', { net: 1, kat: 1 }).includes('SetVisibleInView(cub, -1, true)'),
+  'Katlanma sonunda kapalı küp görünmeli.');
+assert.ok(GG.script('kup-net', { net: 1, kat: 1 }).some((command) => /^SetValue\(t, 0/.test(command)),
+  'Katlanma sonunda Net sürgüsü 0 olmalı (küp kapalı).');
+assert.ok(GG.script('kup-net', { net: 1, kat: 0 }).some((command) => /^SetValue\(t, 1/.test(command)),
+  'Açınım açıkken Net sürgüsü 1 olmalı (düz açınım).');
 assert.ok(/data-ggb-anim/.test(ggb) && /Katlanmayı oynat/.test(ggb),
   'Küp açınımı kendiliğinden katlanabilmeli (oynat düğmesi).');
-assert.ok(/StartAnimation/.test(ggb) && /StopAnimation/.test(ggb),
-  'Oynatma GeoGebra animasyon komutlarıyla yapılmalı.');
+/* Görünüm düğmeleri bu sahnede yok: bakış hep eğik kalır. */
+const netSpec = ggb.slice(ggb.indexOf("'kup-net': {"));
+assert.ok(/viewBar: false/.test(netSpec.slice(0, 400)),
+  'Küp açınımı sahnesinde ön/arka/sağ/sol düğmeleri olmamalı.');
+assert.ok(!/views: true/.test(netSpec.slice(0, 400)),
+  'Küp açınımı sahnesi bölünmüş görünüm kullanmamalı.');
 
 /* Birim küpler tek tek görünmeli: hacim sahneleri her küpü ayrı nesne olarak kurar. */
 ['hacim', 'bilesik-hacim', 'duzensiz-yigin'].forEach((type) => {
@@ -422,9 +431,19 @@ const kose = new Set(katlanmis
 assert.equal(kose.size, 8, `Kapalı kutuda 8 köşe olmalı (${kose.size}).`);
 assert.ok(/kapalı kutu/.test(kapali), 'Sürgü sonunda “kapalı kutu” durumu yazılmalı.');
 assert.ok(/açınım/.test(SAHNE.render('acilim-katla', { tur: 3, kat: 0 })), 'Sürgü başında düz açınım görünmeli.');
-/* Kutu açınımı kapatmalı: dört açınım geçerli, biri çakışan. */
+/* Beş açınım tek görselde, numaralı: yalnızca sayı yazar, kapanıp
+   kapanmadığını söylemez (cevap görselde verilmez). */
 const besNet = SAHNE.types().includes('acilim-katla') && FIG.render('acilim-bes', {});
-assert.ok(/4\. açınım/.test(besNet), 'Beş açınım numaralanmalı.');
+['1', '2', '3', '4', '5'].forEach((no) => {
+  assert.ok(new RegExp(`>${no}</text>`).test(besNet), `Beş açınımın ${no}. numarası yazılmalı.`);
+});
+assert.ok(!/>[^<]*(kapanır|kapanmaz|küp olur)[^<]*</.test(besNet),
+  'Görsel hangi açınımın kapanıp kapanmadığını yazmamalı (yalnız numara yazar).');
+/* Kare sayımı: beş açınım × altı kare. */
+assert.equal((besNet.match(/<rect[^>]*fill="#cfe0f5"/g) || []).length, 30,
+  'Beş açınımın her biri altı kareden oluşmalı.');
+/* İki açınım gerçekten kapanır, üçü kapanmaz; tek açınım seçimi de çalışır. */
+assert.ok(/1\. açınım/.test(FIG.render('acilim-bes', { secili: 1 })), 'Tek açınım seçilebilmeli.');
 assert.ok(/scene-out-/.test(scene), 'Sürgü değeri canlı okunmalı (output).');
 assert.ok(/pointerdown/.test(scene) && /pointermove/.test(scene), 'Sahne noktaları sürüklenebilmeli.');
 assert.ok(/data-handle/.test(scene), 'Sürüklenebilir nokta işaretlenmeli.');
@@ -663,6 +682,20 @@ assert.ok(/@media\(max-width:700px\)[\s\S]{0,220}\.math-scene-controls\{grid-tem
   'Mobilde sürgüler tek kolonda olmalı.');
 assert.ok(/\.math-scene-svg\{[^}]*width:100%/.test(css), 'Sahne genişliğe uyum sağlamalı.');
 assert.ok(!/\.math-scene-card \.math-scene-frame\{height:/.test(css), 'Sahne kartı sabit yükseklikle kırpılmamalı.');
+
+/* Doğru / yanlış bileşeni: tek görselin altında alt alta cümleler, her cümlede
+   iki kutu; cevap anahtarı sayfaya yazılmaz. */
+assert.ok(/function statementsMarkup/.test(app) && /function bindStatements/.test(app),
+  'Doğru/yanlış cümleleri ayrı bileşenle çizilmeli.');
+assert.ok(/data-dy-index/.test(app) && /radio\('dogru', 'Doğru'\)/.test(app)
+  && /radio\('yanlis', 'Yanlış'\)/.test(app),
+  'Her cümlede Doğru ve Yanlış kutusu olmalı.');
+assert.ok(/\.math-dy-row\{display:grid/.test(css) && /\.math-dy-picks\{display:flex/.test(css),
+  'Cümle satırı ve kutular yerleşim kurallarıyla çizilmeli.');
+assert.ok(!/answer:/.test(app), 'Cevap anahtarı uygulama koduna gömülmemeli.');
+assert.ok(/math-dy/.test(css), 'Doğru/yanlış yerleşimi CSS içinde tanımlı olmalı.');
+assert.ok(/şurup kutusu/.test(figure), 'Kare prizma örneği şurup kutusu olarak verilmeli.');
+assert.ok(/örnek:/.test(figure), 'Cisim görsellerinde günlük hayat örneği yazılmalı.');
 
 // 6. Bağlantılar
 assert.ok(/matematik-sahne\.js/.test(html), 'index.html sahne motorunu yüklemeli.');

@@ -107,6 +107,14 @@ const FIGURE_OPTIONS = {
   'olculu-cisim': [{ tur: 'kup', a: 1 }, { tur: 'kup', a: 9, gizli: true }, { tur: 'kare', a: 1, c: 9 }, { tur: 'dikdortgen', a: 9, b: 1, c: 1 }],
   'acilim-harfli': [{ a: 1, b: 1, c: 1 }, { a: 9, b: 9, c: 9 }, { a: 6, b: 4, c: 5 }],
   'acilim-renk': [{ tur: 'kup' }, { tur: 'kare' }, { tur: 'dikdortgen' }],
+  /* Yeni açınım ve prizma şekilleri: uç ölçülerde de taşmamalı. */
+  'acilim-olculu': [{ a: 9, b: 9, c: 9 }, { a: 1, b: 1, c: 1 }, { a: 9, b: 1, c: 1 }],
+  'iki-prizma': [
+    { p1: { a: 1, b: 1, h: 9 }, p2: { a: 9, b: 1, h: 1 } },
+    { p1: { a: 9, b: 9, h: 1 }, p2: { a: 1, b: 9, h: 9 } },
+  ],
+  'cisimler-uc': [{ ornekler: true }, { adlar: false }],
+  'ikili-olcu': [{ olcu: [1, 9, 9] }, { olcu: [9, 1, 1] }],
 };
 FIG.types().forEach((type) => {
   const variants = [{}].concat(FIGURE_OPTIONS[type] || []);

@@ -37,8 +37,11 @@
  *   seçer. On bir açınım birlikte kurulur, yalnız seçili olan görünür; katlanma sıfırken
  *   onlar gizlenip kapalı küp görünür (aynı yerde çakışıp titremesinler). Sürgü
  *   çekilirken nesneler **yeniden kurulmaz** (`live`): yalnız değer ve görünürlük
- *   değişir, katlanma akıcı kalır. “Katlanmayı oynat” düğmesi `StartAnimation` ile
- *   kendiliğinden katlar; HTML sürgüsü animasyon boyunca eşitlenir.
+ *   değişir, katlanma akıcı kalır. Sahne **açınım açık** başlar: katlanma 0 iken
+ *   düz açınım görünür, sürgü sağa çekildikçe küp kapanır. Açınım numarası sürgü
+ *   değil **radyo düğmesidir** (1–11); görünüm düğmeleri yoktur, sahne hep eğik
+ *   bakışta kalır. “Katlanmayı oynat” düğmesi katlanmayı adım adım ilerletir;
+ *   HTML sürgüsü ve 3B sahne aynı anda güncellenir.
  * - `uc-gorunum` ve `duzensiz-yigin` sahneleri **bölünmüş** çalışır: solda döndürülebilir
  *   3B cisim, sağda ön/yan/üst dik izdüşümleri aynı sürgülerle eşzamanlı güncellenir.
  *   Düzensiz yığında izdüşümler gerçek siluettir (boşluklar ve basamaklar görünür).
@@ -634,24 +637,25 @@
   };
   const NET_COUNT = 11;
 
-  /* Görünürlük kararı yalnız katlanma başladığında ve açınım numarası
-     değiştiğinde değişir; sürgü her kıpırdadığında 20+ komut göndermemek için
-     karar kısa bir imzayla önbelleklenir. */
-  function netSignature(values) {
-    return `${Number(values && values.t) > 0.004 ? 'acik' : 'kapali'}:${netIndex(values && values.net)}`;
-  }
-
   function netIndex(value) {
     const number = Math.round(Number(value));
     if (!Number.isFinite(number)) return 1;
     return Math.max(1, Math.min(NET_COUNT, number));
   }
 
-  /* Katlanma sıfırda açınım küpün yüzeyiyle çakışır: o anda yalnız kapalı küp
-     görünür, katlanma başlar başlamaz küp gizlenip seçili açınım görünür.
-     Gizleme 3B görünüm (-1) için yapılır; görünüm 1 verilirse nesne 3B'de kalır. */
+  /* Görünürlük kararı yalnız katlanma başladığında ve açınım numarası
+     değiştiğinde değişir; sürgü her kıpırdadığında 20+ komut göndermemek için
+     karar kısa bir imzayla önbelleklenir. */
+  function netSignature(values) {
+    return `${Number(values && values.kat) >= 0.996 ? 'kapali' : 'acik'}:${netIndex(values && values.net)}`;
+  }
+
+  /* Açınım düz hâldeyken (t = 1) küpün yüzeyiyle çakışır: o anda yalnız seçili
+     açınım görünür, kapalı küp gizlenir. Katlanma ilerledikçe küp görünür,
+     açınım gizlenir. Gizleme 3B görünüm (-1) için yapılır; görünüm 1 verilirse
+     nesne 3B'de görünür kalır. */
   function applyNetVisibility(run, values, api) {
-    const open = Number(values && values.t) > 0.004;
+    const open = Number(values && values.kat) < 0.996;
     const chosen = netIndex(values && values.net);
     const show = (name, on) => {
       run(`SetVisibleInView(${name}, -1, ${on ? 'true' : 'false'})`);
@@ -672,7 +676,7 @@
      küçülüyor ya da açınım kenardan kesiliyordu. */
   function frameNetZoom(api, values) {
     if (!api || typeof api.setCoordSystem !== 'function') return;
-    const t = Math.max(0, Math.min(1, Number(values && values.t) || 0));
+    const t = 1 - Math.max(0, Math.min(1, Number(values && values.kat) || 0));
     const half = 0.95 + 1.7 * t;
     const centerZ = VIEW_CENTER_Z + 0.5;
     const halfZ = 0.65 + 0.45 * t;
@@ -1049,22 +1053,31 @@
       },
     },
 
-    /* Küpün on bir açınımı: `Net` komutu küpü t sürgüsüyle katlar. On bir
-       açınım da kurulur, yalnız seçili olan görünür; sürgü çekilirken nesneler
-       yeniden kurulmaz (yeni açınım seçilmedikçe), böylece katlanma akıcıdır. */
+    /* Küpün on bir açınımı: `Net` komutu küpü katlar. Sahne **açınım açık**
+       başlar (katlanma 0): öğrenci önce düz açınımı görür, sürgüyü sağa
+       çektikçe küp kapanır. Açınım numarası sürgü değil radyo düğmesidir. */
     'kup-net': {
       label: 'Küp açınımı (3B)',
-      views: true,
       clean: true,
-      /* Sürgü oynatılırken yeniden kurulum yok: yalnız değer ve görünürlük. */
+      /* Görünüm düğmeleri yok: sahne hep eğik bakışta kalır. */
+      viewBar: false,
       live: true,
-      animate: 't',
+      animate: 'kat',
       /* Sabit kadraj (yedek): kutu, düz açınımın en geniş hâlini de içine alır.
          Asıl kadraj `frameNetZoom` ile katlanmaya göre yumuşakça genişler. */
       frame: { x: 2.8, y: 2.8, zMin: -0.6, zMax: 1.4 },
       params: [
-        { name: 't', label: 'Katlanma', min: 0, max: 1, step: 0.05, value: 0 },
-        { name: 'net', label: 'Açınım no', min: 1, max: NET_COUNT, step: 1, value: 1 },
+        { name: 'kat', label: 'Açınım → kapalı küp', min: 0, max: 1, step: 0.05, value: 0 },
+        {
+          name: 'net',
+          label: 'Açınım',
+          kind: 'secim',
+          min: 1,
+          max: NET_COUNT,
+          step: 1,
+          value: 1,
+          secenekler: Array.from({ length: NET_COUNT }, (_, index) => ({ value: index + 1, label: String(index + 1) })),
+        },
       ],
       /* Küp ve katlama sürgüsü her durumda kurulur: `Net` desteklenmese bile
          sahne boş kalmaz, durum yazısı öğrenciye yolu gösterir. */
@@ -1080,7 +1093,9 @@
         b.mark('cub', false);
         b.slider('t', 0, 1, 0.01);
         b.mark('t', false);
-        b.set('t', Number(v.t) || 0);
+        /* `Net` küpü t = 0 kapalı, t = 1 düz açınım arasında katlar; sahnedeki
+           sürgü tersini gösterir (0 açınım, 1 kapalı kutu). */
+        b.set('t', 1 - (Number(v.kat) || 0));
         for (let index = 1; index <= NET_COUNT; index += 1) {
           const edges = [NET_FACE].concat(CUBE_NET_EDGES[index]).join(', ');
           b.run(`net${index} = Net(cub, t, ${edges})`);
@@ -1093,6 +1108,7 @@
          kalır (yeniden kurulum yok), katlanma akıcı olur. */
       sync(api, box, values) {
         const signature = netSignature(values);
+        try { api.setValue('t', 1 - Math.max(0, Math.min(1, Number(values.kat) || 0))); } catch (error) { /* yok say */ }
         if (!box || box.netSignature !== signature) {
           if (box) box.netSignature = signature;
           applyNetVisibility((command) => {
@@ -1102,8 +1118,8 @@
         frameNetZoom(api, values);
       },
       liveStatus(values) {
-        const open = Number(values && values.t) > 0.004;
-        return `${netIndex(values && values.net)}. açınım · ${open ? 'katlanma' : 'kapalı küp'} ${Math.round(Number(values && values.t) * 100)}%`;
+        const open = Number(values.kat) < 0.996;
+        return `${netIndex(values.net)}. açınım · ${open ? 'açınım açık' : 'kapalı küp'} (katlanma ${Math.round(Number(values.kat) * 100)}%)`;
       },
       /* `Net` komutu bu sürümde yoksa küp görünür ama açınım görünmez: sessiz
          kalmak yerine öğrenciye ne olduğunu ve ne yapacağını yazarız. */
@@ -1247,15 +1263,32 @@
     ));
   }
 
+  /* Sürgülerin yanında seçim düğmeleri de olabilir: açınım numarası gibi
+     seçenekler sürgüyle değil radyoyla seçilir. İkisi de `data-scene-param`
+     taşır; motor değeri aynı yoldan okur. */
   function renderControls(controls, params, values, scope) {
     if (!controls) return;
-    controls.innerHTML = params.map((param) => `<div class="scene-slider">
+    controls.innerHTML = params.map((param) => {
+      if (param.kind === 'secim') {
+        const choices = (param.secenekler || []).map((choice) => `<label class="scene-choice">
+            <input type="radio" name="scene-${scope}-${escapeHtml(param.name)}" value="${escapeHtml(String(choice.value))}"
+              data-scene-param="${escapeHtml(param.name)}"
+              ${Number(values[param.name]) === Number(choice.value) ? 'checked' : ''}>
+            <span>${escapeHtml(choice.label)}</span>
+          </label>`).join('');
+        return `<fieldset class="scene-pick">
+        <legend>${escapeHtml(param.label || param.name)}</legend>
+        ${choices}
+      </fieldset>`;
+      }
+      return `<div class="scene-slider">
         <label for="scene-${scope}-${escapeHtml(param.name)}">${escapeHtml(param.label)}
-          <output id="scene-out-${scope}-${escapeHtml(param.name)}">${values[param.name]}</output>
+          <output id="scene-out-${scope}-${escapeHtml(param.name)}">${f(values[param.name])}</output>
         </label>
         <input type="range" id="scene-${scope}-${escapeHtml(param.name)}" data-scene-param="${escapeHtml(param.name)}"
           min="${param.min}" max="${param.max}" step="${param.step || 1}" value="${values[param.name]}">
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   /* ---------- dışa açılan tanıtıcılar ---------- */
@@ -1295,6 +1328,8 @@
         return {
           name: param.name,
           label: param.label || base.label || param.name,
+          kind: param.kind || base.kind,
+          secenekler: param.secenekler || base.secenekler,
           min: Number(param.min),
           max: Number(param.max),
           step: Number(param.step) || 1,
@@ -1520,11 +1555,11 @@
       <div class="math-ggb-canvas" id="ggb-${scope}"></div>
       <div class="math-ggb-loading">GeoGebra hazırlanıyor… <span>Üç boyutlu cisim yükleniyor.</span></div>
       ${conf.split ? '<div class="math-ggb-views" aria-hidden="true"></div>' : ''}
-      <div class="math-ggb-bar">
-        ${VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}"${key === 'egik' ? ' class="is-active"' : ''}>${label}</button>`).join('')}
+      ${(conf.viewBar === false && !conf.animate && !conf.net) ? '' : `<div class="math-ggb-bar">
+        ${conf.viewBar === false ? '' : VIEW_LABELS.map(([key, label]) => `<button type="button" data-ggb-view="${key}"${key === 'egik' ? ' class="is-active"' : ''}>${label}</button>`).join('')}
         ${conf.animate ? `<button type="button" data-ggb-anim="${conf.animate}">Katlanmayı oynat</button>` : ''}
         ${conf.net ? '<button type="button" data-ggb-net="1">Açınımı aç</button>' : ''}
-      </div>
+      </div>`}
       ${conf.legend ? `<p class="math-ggb-legend">${FACE_LEGEND.map(([label, color]) => `<span><i style="background:${color}"></i>${label}</span>`).join('')}</p>` : ''}
     </div>`;
     const canvas = host.querySelector('.math-ggb-canvas');
@@ -1796,25 +1831,27 @@
       }, delay);
     }
 
-    function syncFromControls() {
+    /* Sürgü ya da radyo: ikisi de `data-scene-param` taşır. Radyoda seçili
+       olan okunur; sürgüde değer doğrudan. */
+    function readControls() {
       params.forEach((param) => {
-        const input = controls ? controls.querySelector(`[data-scene-param="${param.name}"]`) : null;
-        const out = controls ? controls.querySelector(`#scene-out-${scope}-${param.name}`) : null;
+        if (!controls) return;
+        const out = controls.querySelector(`#scene-out-${scope}-${param.name}`);
+        const input = param.kind === 'secim'
+          ? controls.querySelector(`[data-scene-param="${param.name}"]:checked`)
+          : controls.querySelector(`[data-scene-param="${param.name}"]`);
         if (!input) return;
         values[param.name] = Number(input.value);
         if (out) out.textContent = String(values[param.name]);
       });
+    }
+
+    function syncFromControls() {
+      readControls();
       if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
       if (!api) return;
-      params.forEach((param) => {
-        try {
-          api.setValue(param.name, values[param.name]);
-        } catch (error) {
-          /* nesne henüz yoksa sessiz geç */
-        }
-      });
-      /* Canlı appletlerde (küpün katlanması) nesneler yeniden kurulmaz: sürgü
-         çekilirken küp silinip yeniden çizilirse katlanma sıçrar. */
+      /* Canlı applette parametre adları GeoGebra nesnesi değildir (kat → t):
+         değeri `sync` doğru nesneye yazar. */
       if (conf.live) {
         if (typeof conf.sync === 'function') {
           try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
@@ -1826,6 +1863,13 @@
         }
         return;
       }
+      params.forEach((param) => {
+        try {
+          api.setValue(param.name, values[param.name]);
+        } catch (error) {
+          /* nesne henüz yoksa sessiz geç */
+        }
+      });
       rebuild();
       if (done) status('GeoGebra hazır · sürgüler cismi güncelliyor.');
     }
@@ -1850,37 +1894,40 @@
       playing = false;
       stopAnimPoll();
       setPlayButton(false);
-      if (!api) return;
-      const button = bar ? bar.querySelector('[data-ggb-anim]') : null;
-      const name = button ? button.getAttribute('data-ggb-anim') : conf.animate;
-      try { api.evalCommand(`StopAnimation(${name})`); } catch (error) { /* yok say */ }
+    }
+
+    /* Oynatma: katlanma sürgüsü kendiliğinden ilerler. GeoGebra'nın kendi
+       animasyonu yön verilemediği için adım adım biz ilerletiyoruz: değer hem
+       sürgüye hem 3B sahneye yazılır, öğrenci aynı anda ikisini görür. */
+    function paintPlayback() {
+      const input = controls ? controls.querySelector(`[data-scene-param="${conf.animate}"]`) : null;
+      const out = controls ? controls.querySelector(`#scene-out-${scope}-${conf.animate}`) : null;
+      if (input) input.value = String(values[conf.animate]);
+      if (out) out.textContent = String(Math.round(values[conf.animate] * 100) / 100);
+      if (typeof conf.sync === 'function') {
+        try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
+      }
+      status(typeof conf.liveStatus === 'function'
+        ? conf.liveStatus(values)
+        : 'GeoGebra hazır · cismi parmağınla döndürebilirsin.');
     }
 
     function startPlayback(name) {
+      if (!api) return;
+      /* Sona gelmişse baştan başlat: düğme her basışta katlanmayı gösterir. */
+      if (Number(values[name]) >= 0.99) values[name] = 0;
       playing = true;
       setPlayButton(true);
-      try { api.evalCommand(`StartAnimation(${name}, true)`); } catch (error) { /* yok say */ }
       stopAnimPoll();
       animTimer = window.setInterval(() => {
         if (destroyed || !api) {
           stopAnimPoll();
           return;
         }
-        let current = NaN;
-        try { current = Number(api.getValue(name)); } catch (error) { current = NaN; }
-        if (!Number.isFinite(current)) return;
-        values[name] = Math.max(0, Math.min(1, current));
-        const input = controls ? controls.querySelector(`[data-scene-param="${name}"]`) : null;
-        const out = controls ? controls.querySelector(`#scene-out-${scope}-${name}`) : null;
-        if (input) input.value = String(values[name]);
-        if (out) out.textContent = String(Math.round(values[name] * 100) / 100);
-        if (typeof conf.sync === 'function') {
-          try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
-        }
-        status(typeof conf.liveStatus === 'function'
-          ? conf.liveStatus(values)
-          : 'GeoGebra hazır · cismi parmağınla döndürebilirsin.');
-      }, 120);
+        values[name] = Math.min(1, Math.round((Number(values[name]) + 0.02) * 1000) / 1000);
+        paintPlayback();
+        if (values[name] >= 1) stopPlayback();
+      }, 70);
     }
 
     if (controls) {
@@ -2048,12 +2095,27 @@
         }
         if (!(name in values)) return;
         values[name] = Number(value);
+        const param = params.find((item) => item.name === name);
         const input = controls ? controls.querySelector(`[data-scene-param="${name}"]`) : null;
         const out = controls ? controls.querySelector(`#scene-out-${scope}-${name}`) : null;
-        if (input) input.value = String(values[name]);
+        if (input) {
+          if (param && param.kind === 'secim') {
+            controls.querySelectorAll(`[data-scene-param="${name}"]`).forEach((radio) => {
+              radio.checked = Number(radio.value) === values[name];
+            });
+          } else {
+            input.value = String(values[name]);
+          }
+        }
         if (out) out.textContent = String(values[name]);
         if (viewsHost) viewsHost.innerHTML = orthographicSvg(values, conf);
         if (!api) return;
+        if (conf.live) {
+          if (typeof conf.sync === 'function') {
+            try { conf.sync(api, box, values); } catch (error) { /* yok say */ }
+          }
+          return;
+        }
         try {
           api.setValue(name, values[name]);
         } catch (error) {

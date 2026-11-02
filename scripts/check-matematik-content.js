@@ -196,7 +196,13 @@ assert.equal(exploreStages.length, 15, `On beş haftada katıl-uygula bölümü 
 exploreStages.forEach(({ week, stage }) => {
   assert.ok(stage.scene && stage.scene.type, `h${week} katıl-uygula sahnesi eksik.`);
   assert.ok(SAHNE.types().includes(stage.scene.type), `h${week} sahnesi tanınmıyor: ${stage.scene.type}`);
-  assert.ok((stage.steps || []).length >= 2, `h${week} katıl-uygula bölümünde en az iki adım olmalı.`);
+  /* Sahne tek görsel olarak bir kez verilir; sorular sahnenin altında
+     doğru/yanlış cümleleri (statements) ya da adım soruları olarak gelir.
+     İkisinden biri yeterli, ikisi birden de olabilir. */
+  const stepCount = (stage.steps || []).length;
+  const statementCount = (stage.statements || []).length;
+  assert.ok(stepCount >= 2 || statementCount >= 3,
+    `h${week} katıl-uygula bölümünde en az iki adım ya da üç doğru/yanlış cümlesi olmalı.`);
   (stage.steps || []).forEach((step, index) => {
     assert.ok(step.prompt && step.hint, `h${week} katıl-uygula ${index + 1}. adımında soru veya ipucu eksik.`);
   });
@@ -235,7 +241,9 @@ allActivities.forEach(({ week, activity }) => {
      sorular bu sözler üzerine düşünmeyi ister; şekil eklemek soruyu bozar. */
   const METIN_SORUSU = activity.stageKind === 'discuss';
   if (Number(week.id) >= 8 && !METIN_SORUSU) {
-    assert.ok(activity.figure || activity.scene,
+    /* Bölümün ortak görseli de sayılır: “görsel bir kez verilir, altında
+       farklı sorular sorulur” (kullanıcı isteği). */
+    assert.ok(activity.figure || activity.scene || activity.stageFigure,
       `${activity.id} sorusunda ne şekil ne sahne var; her soruya görsel gerekir.`);
   }
   if (activity.figure) {
@@ -267,21 +275,42 @@ content.weeks.filter((week) => week.theme === 'geometri').forEach((week) => {
   assert.ok(withVisual.length >= 2, `Hafta ${week.id} geometri haftası ama sahne/şekil yok.`);
 });
 
-/* Görsel tekrarı yasak: aynı haftada iki soru birebir aynı şekli kullanamaz.
-   (Kullanıcı geri bildirimi: “sürekli görsel tekrarı yapmışsın”.) Henüz yeniden
-   yazılmamış haftalar listede; hafta yeniden yazıldıkça listeden çıkarılır. */
+/* Görsel tekrarı kuralı: aynı şekil **ayrı bölümlerde** yinelenemez (kullanıcı
+   geri bildirimi: “sürekli görsel tekrarı yapmışsın”). Aynı bölüm içinde ise
+   kullanıcı açıkça tek görsel + birden çok soru istedi: “görseli bir kere ver
+   sonra farklı sorular sor”. Bu yüzden yineleme yalnız aynı bölümde serbest. */
 const REPEAT_ALLOWED = new Set([10, 11, 12, 13, 14, 15]);
 content.weeks.forEach((week) => {
   const seen = new Map();
   ACT.forWeek(week.id).forEach((activity) => {
     if (!activity.figure) return;
     const key = `${activity.figure.type}:${JSON.stringify(activity.figure.options || {})}`;
+    const place = String(activity.stageIndex);
     if (seen.has(key)) {
-      assert.ok(REPEAT_ALLOWED.has(Number(week.id)),
-        `Hafta ${week.id}: “${seen.get(key)}” ile “${activity.id}” aynı görseli kullanıyor.`);
+      const sameStage = seen.get(key).stage === place;
+      assert.ok(sameStage || REPEAT_ALLOWED.has(Number(week.id)),
+        `Hafta ${week.id}: “${seen.get(key).id}” ile “${activity.id}” aynı görseli kullanıyor.`);
     } else {
-      seen.set(key, activity.id);
+      seen.set(key, { id: activity.id, stage: place });
     }
+  });
+});
+
+/* Doğru / yanlış cümleleri: cevap anahtarı sayfaya yazılmaz, her cümlede
+   boolean `answer` bulunur ve aynı bölümde hem doğru hem yanlış cümle olur. */
+content.weeks.forEach((week) => {
+  const stages = KITAP.weeks[week.id] ? KITAP.weeks[week.id].stages : [];
+  stages.forEach((stage, index) => {
+    if (!stage.statements) return;
+    assert.ok(Array.isArray(stage.statements) && stage.statements.length >= 3,
+      `Hafta ${week.id} ${index + 1}. bölümde doğru/yanlış cümlesi az.`);
+    const answers = new Set();
+    stage.statements.forEach((item, order) => {
+      assert.ok(item.text && item.text.length > 10, `Hafta ${week.id} ${order + 1}. cümle metni eksik.`);
+      assert.equal(typeof item.answer, 'boolean', `Hafta ${week.id} ${order + 1}. cümlede cevap boolean olmalı.`);
+      answers.add(item.answer);
+    });
+    assert.equal(answers.size, 2, `Hafta ${week.id} ${index + 1}. bölümde doğru ve yanlış cümle birlikte olmalı.`);
   });
 });
 
