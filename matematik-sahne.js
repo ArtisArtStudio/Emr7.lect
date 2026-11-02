@@ -1446,20 +1446,29 @@
        açınım), seçilen açınım numarası ikisinde de aynıdır. */
     'kup-net': {
       params: [
-        { name: 't', label: 'Katlanma', min: 0, max: 1, step: 0.05, value: 0 },
-        { name: 'net', label: 'Açınım no', min: 1, max: 11, step: 1, value: 1 },
+        { name: 'kat', label: 'Açınım → kapalı küp', min: 0, max: 1, step: 0.05, value: 0 },
+        {
+          name: 'net',
+          label: 'Açınım',
+          kind: 'secim',
+          min: 1,
+          max: 11,
+          step: 1,
+          value: 1,
+          secenekler: Array.from({ length: 11 }, (_, index) => ({ value: index + 1, label: String(index + 1) })),
+        },
       ],
       normalize(state) {
-        state.t = clampValue(state.t, 0, 1, 0.05);
+        state.kat = clampValue(state.kat, 0, 1, 0.05);
         state.net = clampValue(state.net, 1, 11, 1);
       },
       draw(state) {
         const index = Math.round(state.net);
-        const open = state.t >= 0.5;
+        const open = Number(state.kat) < 0.5;
         const faceFills = ['#d7ccf7', '#c9bff2', '#cfe4f7', '#d5efdf', '#ffe3a3', '#f3d7e6'];
         const parts = [text(40, 30, open
           ? `${num(index)}. açınım: altı yüz tek düzlemde`
-          : `Kapalı küp: ${num(index)}. açınım seçili`, { size: 14, weight: 800, fill: '#33265f' })];
+          : 'Kapalı küp', { size: 14, weight: 800, fill: '#33265f' })];
         if (open) {
           /* Açınım kareleri tablodan gelir: her açınım altı birim kareden oluşur. */
           const source = window.MATEMATIK_FIGURE;
@@ -1505,7 +1514,7 @@
           parts.push(text(x0 + side + du / 2, y0 - side / 2 - dv / 2 + 5, 'sağ', { size: 12, anchor: 'middle', weight: 800, fill: '#33265f' }));
           parts.push(text(x0 + side / 2 + du / 2, y0 - side - dv / 2 + 4, 'üst', { size: 12, anchor: 'middle', weight: 800, fill: '#fff' }));
         }
-        parts.push(note(40, H - 20, 'Sürgü katlanmayı yönetir; açınım numarası on bir açınımı gezer.', { size: 12 }));
+        parts.push(note(40, H - 20, 'Sürgü açınımı katlar; numaralardan birini seçerek on bir açınımı gez.', { size: 12 }));
         return parts.join('');
       },
     },

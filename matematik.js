@@ -202,6 +202,112 @@
     </div>`;
   }
 
+  /* Doğru / yanlış cümleleri: tek görselin altında alt alta cümleler, her
+     cümlenin yanında iki kutu. Cevap anahtarı sayfaya hiç yazılmaz; “Kontrol
+     et” yalnız hangi cümlelerin yeniden düşünülmesi gerektiğini söyler.
+     İşaretlemeler bu tarayıcıda saklanır. */
+  const STATEMENT_KEY = 'emr7lect.matematik.dogruyanlis.v1';
+
+  function statementStore() {
+    try {
+      const raw = window.localStorage.getItem(STATEMENT_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (parsed && typeof parsed === 'object') return parsed;
+    } catch (error) { /* depolama kapalı */ }
+    return {};
+  }
+
+  function saveStatements(data) {
+    try { window.localStorage.setItem(STATEMENT_KEY, JSON.stringify(data)); } catch (error) { /* kota */ }
+  }
+
+  function statementsMarkup(stage, key) {
+    const list = Array.isArray(stage.statements) ? stage.statements : [];
+    if (!list.length) return '';
+    const saved = statementStore()[key] || {};
+    const rows = list.map((item, index) => {
+      const pick = saved[index] === undefined ? '' : (saved[index] ? 'dogru' : 'yanlis');
+      const radio = (value, label) => `<label class="math-dy-pick">
+          <input type="radio" name="dy-${key}-${index}" value="${value}" data-dy-index="${index}" data-dy-value="${value}"${pick === value ? ' checked' : ''}>
+          <span>${label}</span>
+        </label>`;
+      return `<li class="math-dy-row" data-dy-row="${index}">
+        <span class="math-dy-text">${rich(item.text)}</span>
+        <span class="math-dy-picks">${radio('dogru', 'Doğru')}${radio('yanlis', 'Yanlış')}</span>
+        <span class="math-dy-mark" data-dy-mark="${index}" aria-live="polite"></span>
+      </li>`;
+    }).join('');
+    return `<div class="math-dy" data-dy-key="${escapeHTML(key)}">
+      <p class="math-knowledge-title">DOĞRU MU, YANLIŞ MI?</p>
+      <ol class="math-dy-list">${rows}</ol>
+      <div class="math-dy-actions">
+        <button type="button" class="math-dy-check">Kontrol et</button>
+        <button type="button" class="math-dy-clear">İşaretleri sil</button>
+      </div>
+      <p class="math-dy-status" role="status" aria-live="polite"></p>
+    </div>`;
+  }
+
+  function bindStatements(week) {
+    const list = Array.isArray(bookOf(week.id) && bookOf(week.id).stages) ? bookOf(week.id).stages : [];
+    list.forEach((stage, index) => {
+      const items = Array.isArray(stage.statements) ? stage.statements : [];
+      if (!items.length) return;
+      /* Anahtar, çizimdeki `data-dy-key` ile birebir aynı olmalı. */
+      const key = `m${week.id}-${index}`;
+      const host = document.querySelector(`[data-dy-key="${key}"]`);
+      if (!host || host.dataset.bound === '1') return;
+      host.dataset.bound = '1';
+      const status = host.querySelector('.math-dy-status');
+      host.querySelectorAll('input[type="radio"]').forEach((input) => {
+        input.addEventListener('change', () => {
+          const data = statementStore();
+          data[key] = data[key] || {};
+          data[key][Number(input.dataset.dyIndex)] = input.dataset.dyValue === 'dogru';
+          saveStatements(data);
+          const mark = host.querySelector(`[data-dy-mark="${input.dataset.dyIndex}"]`);
+          if (mark) mark.textContent = '';
+          if (status) status.textContent = 'İşaretlemen kaydedildi.';
+        });
+      });
+      const check = host.querySelector('.math-dy-check');
+      if (check) {
+        check.addEventListener('click', () => {
+          const data = statementStore();
+          const answers = data[key] || {};
+          const missing = items.map((item, index2) => (answers[index2] === undefined ? index2 + 1 : 0)).filter(Boolean);
+          items.forEach((item, index2) => {
+            const mark = host.querySelector(`[data-dy-mark="${index2}"]`);
+            if (!mark) return;
+            if (answers[index2] === undefined) { mark.textContent = '—'; return; }
+            mark.textContent = answers[index2] === Boolean(item.answer) ? '✓' : '✗';
+          });
+          if (missing.length) {
+            if (status) status.textContent = `${missing.join(', ')}. cümleyi işaretlemedin; kutulardan birini seç.`;
+            return;
+          }
+          const wrong = items.map((item, index2) => (answers[index2] === Boolean(item.answer) ? 0 : index2 + 1)).filter(Boolean);
+          if (status) {
+            status.textContent = wrong.length
+              ? `${items.length - wrong.length}/${items.length} doğru. ${wrong.join(', ')}. cümleyi yeniden düşün: katlanınca yüzler nereye geliyor?`
+              : `${items.length}/${items.length} doğru. Cümlelerin hepsi yerinde.`;
+          }
+        });
+      }
+      const clear = host.querySelector('.math-dy-clear');
+      if (clear) {
+        clear.addEventListener('click', () => {
+          const data = statementStore();
+          delete data[key];
+          saveStatements(data);
+          host.querySelectorAll('input[type="radio"]').forEach((input) => { input.checked = false; });
+          host.querySelectorAll('[data-dy-mark]').forEach((mark) => { mark.textContent = ''; });
+          if (status) status.textContent = 'İşaretler silindi.';
+        });
+      }
+    });
+  }
+
   function stageCard(week, stage, index, scenes) {
     const label = STAGE[stage.kind] || 'ETKİNLİK';
     const sceneId = `mathScene-${week.id}-${index}`;
@@ -221,6 +327,7 @@
       ${boxesMarkup(stage.boxes)}
       ${stage.scene ? sceneFrame(stage.scene, sceneId) : ''}
       ${stage.figure ? figureBlock(stage.figure) : ''}
+      ${statementsMarkup(stage, `m${week.id}-${index}`)}
       ${stepsMarkup(stage.steps, stage.result)}
       ${Array.isArray(stage.atolye) && stage.atolye.length
         ? `<div class="math-atolye" id="mathAtolye-${week.id}-${index}"></div>` : ''}
@@ -492,6 +599,7 @@
     content.innerHTML = markup.html;
     markup.scenes.forEach(mountScene);
     bindQuestions(week);
+    bindStatements(week);
     bindDone(week);
     const title = document.getElementById('mathWeekTitle');
     if (title) title.focus({ preventScroll: true });

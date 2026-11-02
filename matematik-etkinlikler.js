@@ -84,6 +84,10 @@
       minChars: 40,
       scene: item.scene || stage.scene || null,
       figure: item.figure || null,
+      /* Bölümün ortak görseli: kullanıcı isteğiyle “görsel bir kez verilir,
+         altında farklı sorular sorulur”. Soru kendi görselini taşımıyorsa
+         bölüm görseli ekranda durur; kart yeniden çizmez. */
+      stageFigure: stage.figure || null,
     };
   }
 
